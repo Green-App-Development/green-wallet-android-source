@@ -1,431 +1,431 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_all_settings"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/cardView_background">
-
-    <LinearLayout
-        android:id="@+id/back_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="@+id/guideline11"
-        app:layout_constraintTop_toTopOf="@+id/guideline8">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
-            android:src="@drawable/back_arrow_ic" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:text="@string/back_btn"
-            android:textColor="@color/greey"
-            android:textFontWeight="500"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_btm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="@+id/guideline9">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <RadioGroup
-                android:id="@+id/btnRadioGroupMode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/cardView_background"
-                android:orientation="horizontal"
-                android:padding="3dp">
-
-                <RadioButton
-                    android:id="@+id/btnLightMode"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/mode_selector_toggle"
-                    android:button="@null"
-                    android:drawableStart="@drawable/sun_mode_selector"
-                    android:drawablePadding="11dp"
-                    android:paddingStart="15dp"
-                    android:text="@string/menu_light_theme"
-                    android:textColor="@drawable/mode_selector_text_color_btn"
-                    android:textSize="14sp"
-                    tools:ignore="RtlSymmetry" />
-
-                <RadioButton
-                    android:id="@+id/btnNightMode"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/mode_selector_toggle"
-                    android:button="@null"
-                    android:drawableStart="@drawable/moon_mode_selector"
-                    android:drawablePadding="15dp"
-                    android:padding="15dp"
-                    android:paddingStart="20dp"
-                    android:text="@string/menu_dark_theme"
-                    android:textColor="@drawable/mode_selector_text_color_btn"
-                    android:textSize="14sp"
-                    tools:ignore="RtlSymmetry" />
-            </RadioGroup>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="7dp"
-            android:background="@color/line_divider" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/eye_ic"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:src="@drawable/eye_ic" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/eye_ic"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_hide_wallet_balance_title"
-                    android:textColor="@color/setting_text_color"
-                    android:textFontWeight="550"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/menu_hide_wallet_balance_description"
-                    android:textFontWeight="500"
-                    android:textColor="@color/txt_grey_settings"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/btn_hide_balance_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="15dp"
-                android:checked="true"
-                android:padding="10dp"
-                android:thumb="@drawable/switch_thumb"
-                app:switchMinWidth="55dp"
-                app:track="@drawable/selector_switch_track" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_divider" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/notification_id"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:src="@drawable/notifcation_ic" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/notification_id"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_hide_wallet_balance_description"
-                    android:textColor="@color/setting_text_color"
-                    android:textFontWeight="550"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/menu_push_notifications_description"
-                    android:textColor="@color/txt_grey_settings"
-                    android:textFontWeight="500"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/btn_push_notif_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="15dp"
-                android:checked="false"
-                android:padding="10dp"
-                android:thumb="@drawable/switch_thumb"
-                app:switchMinWidth="55dp"
-                app:track="@drawable/selector_switch_track" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_divider" />
-
-        <RelativeLayout
-            android:id="@+id/relSupportCall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="?android:attr/selectableItemBackground">
-
-            <ImageView
-                android:id="@+id/center_support"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:src="@drawable/support_ic" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/center_support"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_support_title"
-                    android:textColor="@color/setting_text_color"
-                    android:textFontWeight="550"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp"
-                    android:text="@string/menu_support_description"
-                    android:textColor="@color/txt_grey_settings"
-                    android:textFontWeight="500"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/forward_ic_support"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_forward_ic_green" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_divider" />
-
-        <RelativeLayout
-            android:id="@+id/relNotif"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="?android:attr/selectableItemBackground">
-
-            <ImageView
-                android:id="@+id/notif_ic"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:src="@drawable/notifcation_ic" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/notif_ic"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_notifications"
-                    android:textColor="@color/setting_text_color"
-                    android:textFontWeight="550"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/forward_ic_notif"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_forward_ic_green" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_divider" />
-
-        <RelativeLayout
-            android:id="@+id/rel_change_language"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="?android:attr/selectableItemBackground">
-
-            <ImageView
-                android:id="@+id/img_change_lang"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:src="@drawable/ic_change_language" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/img_change_lang"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/menu_change_language"
-                    android:textColor="@color/setting_text_color"
-                    android:textFontWeight="550"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/forward_ic_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_forward_ic_green" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_divider" />
-
-        <RelativeLayout
-            android:id="@+id/rel_about_app"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="?android:attr/selectableItemBackground">
-
-            <ImageView
-                android:id="@+id/img_about_app"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
-                android:src="@drawable/ic_about_app" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@+id/img_about_app"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_the_application_title"
-                    android:textColor="@color/setting_text_color"
-                    android:textFontWeight="550"
-                    android:textSize="16sp"
-                    android:textStyle="normal" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_forward_ic_green" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/line_divider" />
-
-    </LinearLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.03" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.03" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.10" />
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/root_all_settings"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/cardView_background">
+
+	<LinearLayout
+			android:id="@+id/back_layout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:foreground="?android:attr/selectableItemBackground"
+			android:orientation="horizontal"
+			app:layout_constraintStart_toStartOf="@+id/guideline11"
+			app:layout_constraintTop_toTopOf="@+id/guideline8">
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:gravity="center_vertical"
+				android:src="@drawable/back_arrow_ic" />
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:text="@string/back_btn"
+				android:textColor="@color/greey"
+				android:textFontWeight="500"
+				android:textSize="18sp" />
+
+	</LinearLayout>
+
+	<LinearLayout
+			android:id="@+id/linear_btm"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintTop_toTopOf="@+id/guideline9">
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:padding="8dp">
+
+			<RadioGroup
+					android:id="@+id/btnRadioGroupMode"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:background="@color/cardView_background"
+					android:orientation="horizontal"
+					android:padding="3dp">
+
+				<RadioButton
+						android:id="@+id/btnLightMode"
+						android:layout_width="0dp"
+						android:layout_height="60dp"
+						android:layout_marginEnd="4dp"
+						android:layout_weight="1"
+						android:background="@drawable/mode_selector_toggle"
+						android:button="@null"
+						android:drawableStart="@drawable/sun_mode_selector"
+						android:drawablePadding="11dp"
+						android:paddingStart="15dp"
+						android:text="@string/menu_light_theme"
+						android:textColor="@drawable/mode_selector_text_color_btn"
+						android:textSize="14sp"
+						tools:ignore="RtlSymmetry" />
+
+				<RadioButton
+						android:id="@+id/btnNightMode"
+						android:layout_width="0dp"
+						android:layout_height="60dp"
+						android:layout_marginStart="4dp"
+						android:layout_weight="1"
+						android:background="@drawable/mode_selector_toggle"
+						android:button="@null"
+						android:drawableStart="@drawable/moon_mode_selector"
+						android:drawablePadding="15dp"
+						android:padding="15dp"
+						android:paddingStart="20dp"
+						android:text="@string/menu_dark_theme"
+						android:textColor="@drawable/mode_selector_text_color_btn"
+						android:textSize="14sp"
+						tools:ignore="RtlSymmetry" />
+			</RadioGroup>
+
+		</LinearLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:layout_marginTop="7dp"
+				android:background="@color/line_divider" />
+
+		<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+			<ImageView
+					android:id="@+id/eye_ic"
+					android:layout_width="68dp"
+					android:layout_height="68dp"
+					android:src="@drawable/eye_ic" />
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_toEndOf="@+id/eye_ic"
+					android:orientation="vertical">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/menu_hide_wallet_balance_title"
+						android:textColor="@color/setting_text_color"
+						android:textFontWeight="550"
+						android:textSize="16sp"
+						android:textStyle="normal" />
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:text="@string/menu_hide_wallet_balance_description"
+						android:textColor="@color/txt_grey_settings"
+						android:textFontWeight="500"
+						android:textSize="14sp" />
+
+			</LinearLayout>
+
+			<androidx.appcompat.widget.SwitchCompat
+					android:id="@+id/btn_hide_balance_switch"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					android:layout_marginEnd="15dp"
+					android:checked="true"
+					android:padding="10dp"
+					android:thumb="@drawable/switch_thumb"
+					app:switchMinWidth="55dp"
+					app:track="@drawable/selector_switch_track" />
+
+		</RelativeLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/line_divider" />
+
+		<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+			<ImageView
+					android:id="@+id/notification_id"
+					android:layout_width="68dp"
+					android:layout_height="68dp"
+					android:src="@drawable/notifcation_ic" />
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_toEndOf="@+id/notification_id"
+					android:orientation="vertical">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/menu_push_notifications_title"
+						android:textColor="@color/setting_text_color"
+						android:textFontWeight="550"
+						android:textSize="16sp"
+						android:textStyle="normal" />
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:text="@string/menu_push_notifications_description"
+						android:textColor="@color/txt_grey_settings"
+						android:textFontWeight="500"
+						android:textSize="14sp" />
+
+			</LinearLayout>
+
+			<androidx.appcompat.widget.SwitchCompat
+					android:id="@+id/btn_push_notif_switch"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					android:layout_marginEnd="15dp"
+					android:checked="false"
+					android:padding="10dp"
+					android:thumb="@drawable/switch_thumb"
+					app:switchMinWidth="55dp"
+					app:track="@drawable/selector_switch_track" />
+
+		</RelativeLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/line_divider" />
+
+		<RelativeLayout
+				android:id="@+id/relSupportCall"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:foreground="?android:attr/selectableItemBackground">
+
+			<ImageView
+					android:id="@+id/center_support"
+					android:layout_width="68dp"
+					android:layout_height="68dp"
+					android:src="@drawable/support_ic" />
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_toEndOf="@+id/center_support"
+					android:orientation="vertical">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/menu_support_title"
+						android:textColor="@color/setting_text_color"
+						android:textFontWeight="550"
+						android:textSize="16sp"
+						android:textStyle="normal" />
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:text="@string/menu_support_description"
+						android:textColor="@color/txt_grey_settings"
+						android:textFontWeight="500"
+						android:textSize="14sp" />
+
+			</LinearLayout>
+
+			<ImageView
+					android:id="@+id/forward_ic_support"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					android:layout_margin="10dp"
+					android:src="@drawable/ic_forward_ic_green" />
+
+		</RelativeLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/line_divider" />
+
+		<RelativeLayout
+				android:id="@+id/relNotif"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:foreground="?android:attr/selectableItemBackground">
+
+			<ImageView
+					android:id="@+id/notif_ic"
+					android:layout_width="68dp"
+					android:layout_height="68dp"
+					android:src="@drawable/notifcation_ic" />
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_toEndOf="@+id/notif_ic"
+					android:orientation="vertical">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/menu_notifications"
+						android:textColor="@color/setting_text_color"
+						android:textFontWeight="550"
+						android:textSize="16sp"
+						android:textStyle="normal" />
+
+
+			</LinearLayout>
+
+			<ImageView
+					android:id="@+id/forward_ic_notif"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					android:layout_marginEnd="10dp"
+					android:src="@drawable/ic_forward_ic_green" />
+
+		</RelativeLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/line_divider" />
+
+		<RelativeLayout
+				android:id="@+id/rel_change_language"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:foreground="?android:attr/selectableItemBackground">
+
+			<ImageView
+					android:id="@+id/img_change_lang"
+					android:layout_width="68dp"
+					android:layout_height="68dp"
+					android:src="@drawable/ic_change_language" />
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_toEndOf="@+id/img_change_lang"
+					android:orientation="vertical">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/menu_change_language"
+						android:textColor="@color/setting_text_color"
+						android:textFontWeight="550"
+						android:textSize="16sp"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+			<ImageView
+					android:id="@+id/forward_ic_settings"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					android:layout_marginEnd="10dp"
+					android:src="@drawable/ic_forward_ic_green" />
+
+		</RelativeLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/line_divider" />
+
+		<RelativeLayout
+				android:id="@+id/rel_about_app"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:foreground="?android:attr/selectableItemBackground">
+
+			<ImageView
+					android:id="@+id/img_about_app"
+					android:layout_width="68dp"
+					android:layout_height="68dp"
+					android:src="@drawable/ic_about_app" />
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerVertical="true"
+					android:layout_toEndOf="@+id/img_about_app"
+					android:orientation="vertical">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/about_the_application_title"
+						android:textColor="@color/setting_text_color"
+						android:textFontWeight="550"
+						android:textSize="16sp"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_alignParentEnd="true"
+					android:layout_centerVertical="true"
+					android:layout_marginEnd="10dp"
+					android:src="@drawable/ic_forward_ic_green" />
+
+		</RelativeLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:background="@color/line_divider" />
+
+	</LinearLayout>
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline11"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.03" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline8"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.03" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline9"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.10" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

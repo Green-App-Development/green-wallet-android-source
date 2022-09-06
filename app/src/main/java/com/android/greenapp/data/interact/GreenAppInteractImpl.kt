@@ -232,6 +232,7 @@ class GreenAppInteractImpl @Inject constructor(
 
                 val coinList = res.body()!!.getAsJsonObject("result").getAsJsonArray("list")
 
+
                 for (coinJsonElement in coinList) {
                     val jsonObject = JSONObject(coinJsonElement.toString())
                     val coinCode = jsonObject.getString("code")
@@ -257,7 +258,6 @@ class GreenAppInteractImpl @Inject constructor(
                         gson.toJson(coinDetails)
                     )
                 }
-
             } else {
                 VLog.d("Response is not success in getting coins details list : ${res.body()}")
             }

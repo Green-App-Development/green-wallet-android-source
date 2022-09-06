@@ -95,7 +95,7 @@ class MainActivity : BaseActivity() {
         initUpdateBalanceJobRegulation()
         (application as App).applicationIsAlive = true
         startServiceAppRemoveRecentTask()
-        monitoringConnection()
+//        monitoringConnection()
         softKeyboardListener()
     }
 
