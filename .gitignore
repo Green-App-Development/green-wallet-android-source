@@ -10,6 +10,8 @@
 /.idea
 .DS_Store
 /build
+/app/release
+/app/build
 /common/build
 /captures
 .externalNativeBuild
