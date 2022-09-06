@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bcgNetworkType"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txt_network_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="Chia"
+        android:textFontWeight="400"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/txtHiddenPublicKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="14dp"
+        android:text="******5630"
+        android:textColor="@color/txt_greey"
+        android:textSize="12sp" />
+
+</RelativeLayout>

@@ -1,0 +1,94 @@
+package com.android.greenapp.presentation.main.home
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.android.greenapp.data.preference.PrefsManager
+import com.android.greenapp.domain.entity.CurrencyItem
+import com.android.greenapp.domain.interact.*
+import com.example.common.tools.VLog
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+/**
+ * Created by bekjan on 12.04.2022.
+ * email: bekjan.omirzak98@gmail.com
+ */
+class HomeFragmentViewModel @Inject constructor(
+    private val prefs: PrefsInteract,
+    private val blockChainInteract: BlockChainInteract,
+    private val walletInteract: WalletInteract,
+    private val cryptocurrencyInteract: CryptocurrencyInteract,
+    private val greenAppInteract: GreenAppInteract
+) : ViewModel() {
+
+    private var updateTrans: Job? = null
+    private var updateNotifsFromServer: Job? = null
+
+    init {
+        requestOtherNotifItems()
+    }
+
+    fun requestOtherNotifItems() {
+        updateNotifsFromServer?.cancel()
+        updateNotifsFromServer = viewModelScope.launch {
+            greenAppInteract.requestOtherNotifItems()
+        }
+    }
+
+    private val handler = CoroutineExceptionHandler { _, ex ->
+        VLog.d("Exception in homefragmentViewModel : ${ex}")
+    }
+
+    fun updateAllTransactions() {
+        VLog.d("Updating all transactions got called from homeFragmentViewModel")
+        updateTrans?.cancel()
+        updateTrans = viewModelScope.launch {
+            blockChainInteract.requestAllTransactions()
+        }
+    }
+
+
+    private var cryptoJob: Job? = null
+
+
+    private val _curCryptoCourse = MutableStateFlow<CurrencyItem?>(null)
+    val curCryptoCourse: StateFlow<CurrencyItem?> = _curCryptoCourse
+
+    suspend fun prevModeChanged() =
+        prefs.getSettingBoolean(PrefsManager.PREV_MODE_CHANGED, default = false)
+
+
+    suspend fun flowBalanceIsHidden() =
+        prefs.getSettingBooleanFlow(PrefsManager.BALANCE_IS_HIDDEN, false)
+
+
+
+    fun savePrevModeChanged(changed: Boolean) = viewModelScope.launch {
+        prefs.saveSettingBoolean(PrefsManager.PREV_MODE_CHANGED, changed)
+    }
+
+    fun saveHomeIsAddedWalletCounter(counter: Int) {
+        viewModelScope.launch {
+            prefs.saveSettingInt(PrefsManager.HOME_ADDED_COUNTER, counter)
+        }
+    }
+
+    suspend fun getHomeAddedWalletWithTokens() = walletInteract.getHomeAddedWalletWithTokens()
+
+    fun updateCryptoCurrencyCourse(networkType: String) {
+        cryptoJob?.cancel()
+        cryptoJob = viewModelScope.launch(handler) {
+            cryptocurrencyInteract.getCurrentCurrencyCourseByNetwork(networkType).collect {
+                VLog.d("Emitting CourseValue for : $networkType and value : ${it.price}")
+                _curCryptoCourse.emit(it)
+            }
+        }
+    }
+
+
+}

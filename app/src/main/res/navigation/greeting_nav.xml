@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/greeting_nav"
+    app:startDestination="@id/themeFragment">
+
+
+    <fragment
+        android:id="@+id/themeFragment"
+        android:name="com.android.greenapp.presentation.greeting.icon.IconFragment"
+        android:label="ThemeFragment"
+        tools:layout="@layout/fragment_icon">
+        <action
+            android:id="@+id/action_themeFragment_to_languageFragment2"
+            app:destination="@id/languageFragment2" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/languageFragment2"
+        android:name="com.android.greenapp.presentation.greeting.language.LanguageFragment"
+        android:label="LanguageFragment"
+        tools:layout="@layout/fragment_language">
+        <action
+            android:id="@+id/action_languageFragment2_to_termsFragment"
+            app:destination="@id/termsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/termsFragment"
+        android:name="com.android.greenapp.presentation.greeting.terms.TermsFragment"
+        android:label="TermsFragment"
+        tools:layout="@layout/fragment_termsofuse">
+        <action
+            android:id="@+id/action_termsFragment_to_languageFragment2"
+            app:destination="@id/languageFragment2"
+            app:popUpTo="@id/languageFragment2"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_termsFragment_to_setPasswordFragment"
+            app:destination="@id/setPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/setPasswordFragment"
+        android:name="com.android.greenapp.presentation.greeting.setpassword.SetPasswordFragment"
+        android:label="SetPasswordFragment"
+        tools:layout="@layout/fragment_set_password">
+        <action
+            android:id="@+id/action_setPasswordFragment_to_termsFragment"
+            app:destination="@id/termsFragment" />
+        <action
+            android:id="@+id/action_setPasswordFragment_to_timeFragment2"
+            app:destination="@id/timeFragment2" />
+        <!--            app:popUpToInclusive="true"-->
+        <!--            app:popUpTo="@id/termsFragment"-->
+
+    </fragment>
+    <fragment
+        android:id="@+id/timeFragment2"
+        tools:layout="@layout/fragment_time"
+        android:name="com.android.greenapp.presentation.greeting.time.GreetingTimeFragment"
+        android:label="TimeFragment" >
+        <action
+            android:id="@+id/action_timeFragment2_to_setPasswordFragment"
+            app:destination="@id/setPasswordFragment" />
+    </fragment>
+</navigation>

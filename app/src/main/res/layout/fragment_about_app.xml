@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardView_background">
+
+    <LinearLayout
+        android:id="@+id/back_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@+id/guideline11"
+        app:layout_constraintTop_toTopOf="@+id/guideline8">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:src="@drawable/back_arrow_ic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="@string/back_btn"
+            android:textColor="@color/greey"
+            android:textFontWeight="500"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.97" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.03" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.98" />
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:text="@string/about_the_application_title"
+        android:textColor="@color/green"
+        android:textFontWeight="600"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_layout" />
+
+    <TextView
+        android:id="@+id/txtAboutApp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:scrollbars="vertical"
+        android:text="1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit lacus, aliquam tincidunt tempus quam malesuada nulla pharetra. Arcu facilisi molestie diam morbi ultrices sollicitudin egestas non. Tellus cursus lobortis sociis elementum. Euismod nunc, amet est neque, posuere eu mauris. Leo sit sed viverra amet. Ac consectetur in convallis velit tristique eget morbi tortor consectetur. Ac nunc tincidunt erat quam convallis mattis cras sollicitudin pellentesque. Urna vel pellentesque viverra mi.
+Nisl nunc, accumsan malesuada nisl, vestibulum, tempus vel. Enim felis arcu nulla malesuada quis in dignissim. Pretium magnis quis id pharetra vitae. Enim ut vitae ultrices laoreet urna facilisi quam laoreet. Mauris arcu arcu eget platea sodales. In feugiat odio egestas eget. Tellus libero, malesuada in egestas aliquam velit. Neque vel a, morbi mauris sed eros, faucibus. In pretium accumsan, sit nibh nunc sodales diam eget. Et, lorem odio velit id nisl egestas purus. Nec augue risus, vulputate diam amet, dui nunc ut nisl. Rutrum nulla nisl, in eu vivamus rhoncus sit egestas ultricies. Scelerisque pellentesque tellus, libero, fermentum tempor consequat sed. Aliquet consequat feugiat pharetra maecenas et tincidunt.
+Accumsan, amet mi hac massa vitae nulla turpis orci. Tempus, euismod proin a luctus. Eu aenean tristique est, quam tristique aliquet donec tincidunt. Phasellus porttitor fringilla adipiscing eros, ultrices odio. Maecenas lobortis vitae a aliquam scelerisque ut egestas adipiscing volutpat. At egestas duis aliquam integer augue."
+        android:textColor="@color/secondary_text_color"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline14"
+        app:layout_constraintEnd_toStartOf="@+id/guideline12"
+        app:layout_constraintStart_toStartOf="@+id/guideline11"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

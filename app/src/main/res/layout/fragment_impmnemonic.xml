@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardView_background">
+
+
+    <LinearLayout
+        android:id="@+id/linearAgree"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autoSizeTextType="uniform"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/txt_warning"
+        app:layout_constraintEnd_toEndOf="@+id/btnContinue"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_goneMarginBottom="5dp">
+
+        <CheckBox
+            android:id="@+id/checkboxAgree"
+            android:layout_width="30dp"
+            android:layout_height="26dp" />
+
+        <TextView
+            android:id="@+id/checkboxText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoSizeTextType="uniform"
+            android:clickable="false"
+            android:text="@string/agreement_with_terms_of_use_chekbox"
+            android:textColor="@color/secondary_text_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/back_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toTopOf="@+id/guideline34">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:src="@drawable/back_arrow_ic" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="@string/back_btn"
+            android:textColor="@color/greey"
+            android:textFontWeight="500"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radioGroupWordCount"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/switch_imp_words_outline"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toBottomOf="@+id/txtAssuring">
+
+        <RadioButton
+            android:id="@+id/btn12Words"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/switch_bcg_rdbtn"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/import_mnemonics_twelve_words_btn"
+            android:textColor="@drawable/toggle_selector_text_color_words"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/btn24Words"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:background="@drawable/switch_bcg_rdbtn"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/import_mnemonics_twenty_four_words_btn"
+            android:textColor="@drawable/toggle_selector_text_color_words"
+            android:textStyle="bold" />
+
+    </RadioGroup>
+
+    <ScrollView
+        android:id="@+id/scroll12Words"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/linearAgree"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupWordCount">
+
+        <LinearLayout
+            android:id="@+id/linearLayout12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt121"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="1."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="121"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt122"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="7."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="122"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt123"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="2."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="123"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt124"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="8."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="124"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt125"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="3."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="125"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt126"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="9."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="126"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt127"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="4."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="127"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt128"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="10."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="128"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt129"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="5."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="129"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt1210"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="11."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="1210"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt1211"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="6."
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="1211"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt1212"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="12."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="1212"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/temp_linear"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/scroll24Words"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/linearAgree"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupWordCount">
+
+        <LinearLayout
+            android:id="@+id/linearLayout24"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt241"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="1."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="241"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/ed242"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="13."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="242"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt243"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="2."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="243"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt244"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="14."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="244"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt245"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="3."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="245"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt246"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="15."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="246"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt247"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="4."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="247"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt248"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="16."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="248"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt249"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="5."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="249"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2410"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="17."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2410"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2411"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="6."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2411"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2412"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="18."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2412"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2413"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="7."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2413"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2414"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="19."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2414"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2415"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="8."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2415"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2416"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="20."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2416"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2417"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="9."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2417"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2418"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="21."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2418"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2419"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="10."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2419"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2420"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="22."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2420"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2421"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="11."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2421"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2422"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="23."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2422"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/edt2423"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="12."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2423"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+                <EditText
+                    android:id="@+id/edt2424"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edt_mnemonic_green"
+                    android:hint="24."
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="10dp"
+                    android:tag="2424"
+                    android:textColor="@color/actual_color_mnemonic"
+                    android:textColorHint="@color/hint_color" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/temp_linear_2"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/txt_warning"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:autoSizeTextType="uniform"
+        android:paddingStart="5dp"
+        android:text="Слова должны отличаться друг от друга"
+        android:textColor="#FF2222"
+        android:textFontWeight="500"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/btnContinue"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        tools:ignore="RtlSymmetry" />
+
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:gravity="center_horizontal"
+        android:text="@string/import_mnemonics_title"
+        android:textColor="@color/green"
+        android:textFontWeight="600"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toTopOf="@+id/guideline35"
+        app:layout_goneMarginEnd="20dp"
+        app:layout_goneMarginStart="20dp" />
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center_horizontal"
+        android:text="@string/import_mnemonics_description"
+        android:textColor="@color/greey"
+        android:textFontWeight="500"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toTopOf="@+id/guideline37" />
+
+
+    <TextView
+        android:id="@+id/txtAssuring"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/assuring_12_background"
+        android:drawablePadding="10dp"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp"
+        android:text="@string/import_mnemonics_warning"
+        android:textColor="@color/assuring_txt_color"
+        android:textFontWeight="500"
+        android:visibility="visible"
+        app:drawableLeftCompat="@drawable/exclamation"
+        app:layout_constraintEnd_toStartOf="@+id/guideline36"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline33"
+        app:layout_constraintTop_toTopOf="@+id/guideline38" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline34"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.02" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline33"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline35"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.06" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline36"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.97" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.14" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline38"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline40"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.98" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnContinue"
+        style="@style/Widget.AppTheme.MaterialButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/btn_background_draw"
+        android:enabled="false"
+        android:text="@string/next_btn"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/guideline40"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

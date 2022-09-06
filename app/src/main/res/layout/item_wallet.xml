@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.chauthai.swipereveallayout.SwipeRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/root_swipe"
+		android:layout_width="match_parent"
+		android:layout_height="64dp"
+		android:background="@color/all_wallet_bcg"
+		android:focusable="true"
+		app:dragEdge="right"
+		app:mode="same_level">
+
+	<RelativeLayout
+			android:id="@+id/rel_manage"
+			android:layout_width="110dp"
+			android:layout_height="wrap_content"
+			android:gravity="end"
+			android:visibility="visible">
+
+		<ImageView
+				android:id="@+id/ic_delete"
+				android:clickable="true"
+				android:focusable="true"
+				android:foreground="?android:attr/selectableItemBackground"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_toLeftOf="@id/ic_star"
+				android:src="@drawable/ic_delete" />
+
+		<ImageView
+				android:id="@+id/ic_star"
+				android:clickable="true"
+				android:focusable="true"
+				android:foreground="?android:attr/selectableItemBackground"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:src="@drawable/ic_star_not_enabled" />
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:layout_alignParentBottom="true"
+				android:background="@color/line_divider" />
+
+	</RelativeLayout>
+
+	<RelativeLayout
+			android:id="@+id/rel_icon_detail"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@color/all_wallet_bcg"
+			android:visibility="visible">
+
+		<ImageView
+				android:id="@+id/ic_chia"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginStart="15dp"
+				android:src="@drawable/ic_chia" />
+
+		<LinearLayout
+				android:id="@+id/linear_coin_name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginStart="8dp"
+				android:layout_toEndOf="@id/ic_chia"
+				android:background="@color/all_wallet_bcg"
+				android:orientation="vertical">
+
+			<TextView
+					android:id="@+id/txtNameCoin"
+					android:layout_width="70dp"
+					android:layout_height="wrap_content"
+					android:text="Chives"
+					android:textColor="@color/secondary_text_color"
+					android:textFontWeight="500"
+					android:textSize="18sp" />
+
+			<TextView
+					android:id="@+id/belowName"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="XCH"
+					android:textColor="@color/greey"
+					android:textFontWeight="600"
+					android:textSize="14sp" />
+
+		</LinearLayout>
+
+		<TextView
+				android:id="@+id/txtPublicKey"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginStart="10dp"
+				android:layout_marginEnd="15dp"
+				android:layout_toEndOf="@+id/linear_coin_name"
+				android:text="Приватный ключ с публичным отпечатком 8745635630" />
+
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:layout_alignParentBottom="true"
+				android:background="@color/line_divider" />
+
+	</RelativeLayout>
+
+
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

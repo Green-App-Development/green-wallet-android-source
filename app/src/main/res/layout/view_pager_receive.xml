@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="328dp"
+    android:background="@color/receive_fragment_bcg">
+
+    <TextView
+        android:id="@+id/edtToken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chia Network"
+        android:textColor="@color/green"
+        android:textFontWeight="600"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/edtToken"
+        app:layout_constraintStart_toStartOf="@+id/edtToken"
+        app:layout_constraintTop_toBottomOf="@+id/edtToken">
+
+        <TextView
+            android:id="@+id/txtCoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chia"
+            android:textColor="@color/second_grey" />
+
+        <TextView
+            android:id="@+id/txtHiddenPublicKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="******1422"
+            android:textColor="@color/second_grey" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/qrImg"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="60dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

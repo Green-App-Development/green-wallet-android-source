@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="88dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_token"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_chia_white" />
+
+    <LinearLayout
+        android:id="@+id/linear_token_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/img_token"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtNameWallet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GAD"
+            android:textColor="@color/green" />
+
+        <TextView
+            android:id="@+id/txtAmountWallet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8.5478614578 GAD"
+            android:textColor="@color/token_count_txt"
+            android:textFontWeight="500"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txtAmountInUsd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⁓ 762.14 USD"
+            android:textColor="@color/coin_name_token_color"
+            android:textFontWeight="500"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/linear_token_details"
+        android:layout_marginTop="10dp"
+        android:background="@color/line_divider" />
+
+</RelativeLayout>

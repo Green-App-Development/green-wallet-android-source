@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="@dimen/switch_padding"
+        android:end="@dimen/switch_padding"
+        android:start="@dimen/switch_padding"
+        android:gravity="center_vertical"
+        android:top="@dimen/switch_padding">
+
+        <shape android:shape="rectangle">
+            <size android:width="200dp"/>
+            <solid android:color="@color/switch_track_on" />
+            <corners android:radius="100dp"/>
+        </shape>
+    </item>
+</layer-list>

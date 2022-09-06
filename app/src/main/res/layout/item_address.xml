@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.chauthai.swipereveallayout.SwipeRevealLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:id="@+id/rootSwipeLayout"
+		android:layout_width="match_parent"
+		android:layout_height="65dp"
+		android:background="@color/cardView_background"
+		android:foreground="?android:attr/selectableItemBackground"
+		app:dragEdge="right"
+		android:focusable="true"
+		app:mode="same_level">
+
+	<RelativeLayout
+			android:id="@+id/rel_swiped_left"
+			android:layout_width="150dp"
+			android:layout_height="match_parent"
+			android:visibility="visible">
+
+		<LinearLayout
+
+				android:id="@+id/linear_editing"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:orientation="horizontal"
+				android:visibility="visible">
+
+			<ImageView
+					android:id="@+id/img_delete"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_delete" />
+
+			<ImageView
+					android:id="@+id/img_edit"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_edit" />
+
+			<ImageView
+					android:id="@+id/img_send"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_send_wallet" />
+
+		</LinearLayout>
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:layout_alignParentBottom="true"
+				android:background="@color/transaction_divider" />
+
+
+	</RelativeLayout>
+
+	<RelativeLayout
+			android:id="@+id/rel_address_name"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:visibility="visible">
+
+		<View
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:layout_alignParentBottom="true"
+				android:background="@color/transaction_divider" />
+
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginStart="23dp"
+				android:orientation="vertical"
+				android:visibility="visible">
+
+			<TextView
+					android:id="@+id/txt_name"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Алексей"
+					android:textColor="@color/secondary_text_color"
+					android:textFontWeight="500"
+					android:textSize="18sp" />
+
+			<TextView
+					android:id="@+id/txtAddress"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="500"
+					android:text="xch13pstkkl6yad6ft8pww89v6mdzfk30..."
+					android:textColor="@color/greey"
+					android:textSize="14sp" />
+
+		</LinearLayout>
+
+	</RelativeLayout>
+
+
+</com.chauthai.swipereveallayout.SwipeRevealLayout>

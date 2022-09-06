@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Circles">
+        <attr name="circleEdgeColor" format="color" />
+        <attr name="usedCircleColor" format="color" />
+        <attr name="usedCircleCount" format="integer" />
+        <attr name="wrongCircleColor" format="color"/>
+        <attr name="shouldBeRedAll" format="boolean"/>
+    </declare-styleable>
+</resources>
