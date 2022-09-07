@@ -394,7 +394,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 			dialogManager.showProgress(curActivity())
 			VLog.d("Mnemonics om import : $mnemonics")
 			curActivity().curMnemonicCode = Mnemonics.MnemonicCode(mnemonicsToString(mnemonics))
-			delay(2000)
+//			delay(2000)
 			callingFlutterMethodToGenerateHash()
 			listenToMethodCallFromFlutter()
 		}

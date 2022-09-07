@@ -208,7 +208,7 @@ class VerificationFragment : DaggerFragment() {
             if (phrasesMatched()) {
                 lifecycleScope.launch {
                     dialogManager.showProgress(curActivity())
-                    delay(2000)
+//                    delay(2000)
                     callingFlutterMethodToGenerateHash()
                     listenToMethodCallFromFlutter()
                 }

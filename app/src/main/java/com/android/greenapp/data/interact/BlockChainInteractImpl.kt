@@ -698,7 +698,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val request = curBlockChainService.queryBalance(body)
 
 			val division =
-				if (isThisNotChiaNetwork("Chia Network")) Math.pow(
+				if (isThisNotChiaNetwork(wallet.networkType)) Math.pow(
 					10.0,
 					8.0
 				) else Math.pow(

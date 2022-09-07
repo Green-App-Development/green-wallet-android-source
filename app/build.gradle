@@ -145,7 +145,8 @@ dependencies {
 
 
 	//Circle ImageView
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+	implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.github.bumptech.glide:glide:4.13.2'
     implementation 'com.romandanylyk:pageindicatorview:1.0.0'
 //    implementation 'io.github.novacrypto:BIP39:2019.01.27'
