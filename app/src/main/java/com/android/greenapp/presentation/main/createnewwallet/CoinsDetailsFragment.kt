@@ -28,175 +28,183 @@ import javax.inject.Inject
 
 class CoinsDetailsFragment : DaggerFragment() {
 
-    private val binding by viewBinding(FragmentCoinsInfBinding::bind)
+	private val binding by viewBinding(FragmentCoinsInfBinding::bind)
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: NewWalletViewModel by viewModels { viewModelFactory }
-
-
-    companion object {
-        const val NETWORK_KEY: String = "network_key"
-        const val FOR_IMPORT_MNEMONICS_KEY = "for_import_mnemonics_key"
-    }
-
-    private var curNetworkType: String = "Chia Network"
-    private var for_import_mnemonics = false
-
-    @Inject
-    lateinit var effect: AnimationManager
-
-    @Inject
-    lateinit var dialogManager: DialogManager
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_coins_inf, container, false)
-    }
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val viewModel: NewWalletViewModel by viewModels { viewModelFactory }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            curNetworkType = it.getString(NETWORK_KEY)!!
-            for_import_mnemonics = it.getBoolean(FOR_IMPORT_MNEMONICS_KEY, false)
-        }
-    }
+	companion object {
+		const val NETWORK_KEY: String = "network_key"
+		const val FOR_IMPORT_MNEMONICS_KEY = "for_import_mnemonics_key"
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        registerButtonClicks()
-        determineCoinImg()
-        highlightingWordTermsOfUseSecondVersion()
-        initForImportMnemonicOrNot()
-        initCoinViewDetails()
-    }
+	private var curNetworkType: String = "Chia Network"
+	private var for_import_mnemonics = false
 
-    private fun initCoinViewDetails() {
-        lifecycleScope.launch {
-            val coinDetail = viewModel.getCoinDetails(getShortNetworkType(curNetworkType))
+	@Inject
+	lateinit var effect: AnimationManager
 
-            txtCoinDescription.text = coinDetail.description
-            txtCoinName.setText(coinDetail.name)
+	@Inject
+	lateinit var dialogManager: DialogManager
 
-            val characteristics = coinDetail.characteristics
-            edtCharacteristics.setText(
-                addDotForEachNewLineOfCharacteristics(
-                    characteristics
-                )
-            )
-        }
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		return inflater.inflate(R.layout.fragment_coins_inf, container, false)
+	}
 
-    private fun addDotForEachNewLineOfCharacteristics(text: String): String {
 
-        val lines = text.split("\n")
-        var addedDotText = ""
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		arguments?.let {
+			curNetworkType = it.getString(NETWORK_KEY)!!
+			for_import_mnemonics = it.getBoolean(FOR_IMPORT_MNEMONICS_KEY, false)
+		}
+	}
 
-        for (i in lines.indices) {
-            val line = lines[i]
-            val addedDot = "• $line ${if (i != lines.size - 1) "\r\n" else ""}"
-            addedDotText += addedDot
-        }
-        return addedDotText
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		registerButtonClicks()
+		determineCoinImg()
+		highlightingWordTermsOfUseSecondVersion()
+		initForImportMnemonicOrNot()
+		initCoinViewDetails()
+	}
 
-    private fun initForImportMnemonicOrNot() {
-        if (for_import_mnemonics) {
-            linear_terms.visibility = View.INVISIBLE
-            btnCreate.visibility = View.INVISIBLE
-        }
-    }
+	private fun initCoinViewDetails() {
+		lifecycleScope.launch {
+			val coinDetail = viewModel.getCoinDetails(getShortNetworkType(curNetworkType))
 
-    private fun highlightingWordTermsOfUseSecondVersion() {
-        try {
-            val agreementText = binding.checkboxText.text.toString()
-            val curText = agreementText.split(' ')
-            VLog.d("Locale : ${Restring.locale}")
-            var length = 0
-            var countWords = if (Restring.locale.toString() == "ru") 2 else 3
-            for (i in curText.size - 1 downTo curText.size - countWords) {
-                length += curText[i].length
-            }
-            length += countWords - 1
-            val startingIndex = agreementText.length - length
-            VLog.d("Starting Index : $startingIndex")
-            val text = agreementText
-            val ss = SpannableString(text)
-            val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
-            val underlineSpan = UnderlineSpan()
-            ss.setSpan(fcsGreen, startingIndex, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            ss.setSpan(underlineSpan, startingIndex, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            binding.checkboxText.text = ss
-        } catch (ex: Exception) {
-            VLog.d("Exception occurred : ${ex.message}")
-        }
-    }
+			txtCoinDescription.text = coinDetail.description
+			txtCoinName.setText(coinDetail.name)
 
-    private fun determineCoinImg() {
-        if (curNetworkType.lowercase().contains("chia")) {
-            binding.imgCoin.setImageResource(R.drawable.ic_chia)
-        } else {
-            binding.imgCoin.setImageResource(R.drawable.ic_chives)
-        }
-    }
+			val characteristics = coinDetail.characteristics
+			edtCharacteristics.setText(
+				addDotForEachNewLineOfCharacteristics(
+					characteristics
+				)
+			)
+		}
+	}
 
-    private fun registerButtonClicks() {
+	private fun addDotForEachNewLineOfCharacteristics(text: String): String {
 
-        binding.checkboxAgree.setOnCheckedChangeListener { p0, p1 ->
-            binding.btnCreate.isEnabled = p1
+		val lines = text.split("\n")
+		var addedDotText = ""
 
-        }
+		for (i in lines.indices) {
+			val line = lines[i]
+			val addedDot = "• $line ${if (i != lines.size - 1) "\r\n" else ""}"
+			addedDotText += addedDot
+		}
+		return addedDotText
+	}
 
-        binding.btnCreate.setOnClickListener {
-            requestToBlockChainToGenerateMnemonic()
-        }
+	private fun initForImportMnemonicOrNot() {
+		if (for_import_mnemonics) {
+			linear_terms.visibility = View.INVISIBLE
+			btnCreate.visibility = View.INVISIBLE
+		}
+	}
 
-        binding.backLayout.setOnClickListener {
-            curActivity().popBackStackOnce()
-        }
+	private fun highlightingWordTermsOfUseSecondVersion() {
+		try {
+			val agreementText = binding.checkboxText.text.toString()
+			val curText = agreementText.split(' ')
+			VLog.d("Locale : ${Restring.locale}")
+			var length = 0
+			var countWords = if (Restring.locale.toString() == "ru") 2 else 3
+			for (i in curText.size - 1 downTo curText.size - countWords) {
+				length += curText[i].length
+			}
+			length += countWords - 1
+			val startingIndex = agreementText.length - length
+			VLog.d("Starting Index : $startingIndex")
+			val text = agreementText
+			val ss = SpannableString(text)
+			val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
+			val underlineSpan = UnderlineSpan()
+			ss.setSpan(fcsGreen, startingIndex, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+			ss.setSpan(underlineSpan, startingIndex, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+			binding.checkboxText.text = ss
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred : ${ex.message}")
+		}
+	}
 
-    }
+	private fun determineCoinImg() {
+		if (curNetworkType.lowercase().contains("chia")) {
+			binding.imgCoin.setImageResource(R.drawable.ic_chia)
+		} else {
+			binding.imgCoin.setImageResource(R.drawable.ic_chives)
+		}
+	}
 
-    private fun requestToBlockChainToGenerateMnemonic() {
-        curActivity().curMnemonicCode= Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12)
-        val generatedList = curActivity().curMnemonicCode.words.map { String(it) }.toList()
-        VLog.d("CurNetworkType on Network Details Fragment : $curNetworkType")
-        curActivity().move2SaveMnemonicFragment(generatedList, curNetworkType)
-    }
+	private fun registerButtonClicks() {
 
-    private fun generate12WordMnemonics(): MutableList<String> {
-        val mnemonicCode =
-            Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12).words.map { String(it) }.toSet()
-        if (mnemonicCode.size < 12)
-            return generate12WordMnemonics()
-        return mnemonicCode.toMutableList()
-    }
+		binding.checkboxAgree.setOnCheckedChangeListener { p0, p1 ->
+			binding.btnCreate.isEnabled = p1
 
-    private fun curActivity() = requireActivity() as MainActivity
+		}
 
-    override fun onPause() {
-        super.onPause()
-        VLog.d("OnPause on Coins Details Fragment")
-    }
+		binding.btnCreate.setOnClickListener {
+			generateMnemonicsLocally()
+		}
 
-    override fun onStop() {
-        super.onStop()
-        VLog.d("OnStop on Coins Details Fragment")
-    }
+		binding.backLayout.setOnClickListener {
+			curActivity().popBackStackOnce()
+		}
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        VLog.d("OnDestroy View on CoinsDetailsFragment")
-    }
+	}
 
-    override fun onDestroy() {
-        super.onDestroy()
-        VLog.d("OnDestroy  on CoindsDetailsFragment")
-    }
+	private fun generateMnemonicsLocally() {
+		curActivity().curMnemonicCode = recursiveMnemonicGenerator()
+		val generatedList = curActivity().curMnemonicCode.words.map { String(it) }.toList()
+		VLog.d("CurNetworkType on Network Details Fragment : $curNetworkType")
+		curActivity().move2SaveMnemonicFragment(generatedList, curNetworkType)
+	}
+
+	private fun recursiveMnemonicGenerator(): Mnemonics.MnemonicCode {
+		val mnemonicsCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12)
+		val mnemonicsSet = mnemonicsCode.toList().toSet()
+		if (mnemonicsSet.size < 12)
+			return recursiveMnemonicGenerator()
+		return mnemonicsCode
+	}
+
+	private fun generate12WordMnemonics(): MutableList<String> {
+		val mnemonicCode =
+			Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12).words.map { String(it) }.toSet()
+		if (mnemonicCode.size < 12)
+			return generate12WordMnemonics()
+		return mnemonicCode.toMutableList()
+	}
+
+	private fun curActivity() = requireActivity() as MainActivity
+
+	override fun onPause() {
+		super.onPause()
+		VLog.d("OnPause on Coins Details Fragment")
+	}
+
+	override fun onStop() {
+		super.onStop()
+		VLog.d("OnStop on Coins Details Fragment")
+	}
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		VLog.d("OnDestroy View on CoinsDetailsFragment")
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		VLog.d("OnDestroy  on CoindsDetailsFragment")
+	}
 
 
 }

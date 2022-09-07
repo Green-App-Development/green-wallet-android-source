@@ -533,11 +533,22 @@ class SendFragment : DaggerFragment() {
 			argSpendBundle["mnemonicString"] = mnemonicString
 			argSpendBundle["url"] = url
 			argSpendBundle["dest"] = dest_puzzle_hash
-			argSpendBundle["is_main_net"] =
-				!wallet.networkType.lowercase().contains("test")
+			argSpendBundle["network_type"] = convertNetworkTypeForFlutter(wallet.networkType)
 			VLog.d("Body From Sending Fragment to flutter : $argSpendBundle ")
 			methodChannel.invokeMethod("createSpendBundle", argSpendBundle)
 		}
+	}
+
+	private fun convertNetworkTypeForFlutter(networkType: String): String {
+		val lowercaseNetwork = networkType.lowercase()
+		if (lowercaseNetwork.contains("chia")) {
+			if (lowercaseNetwork.contains("testnet"))
+				return "Chia TestNet"
+			return "Chia"
+		}
+		if (lowercaseNetwork.contains("testnet"))
+			return "Chives TestNet"
+		return "Chives"
 	}
 
 	private suspend fun listenToCreatingSpendBundleRes(url: String) {
