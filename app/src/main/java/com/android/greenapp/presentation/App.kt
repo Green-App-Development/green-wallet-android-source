@@ -97,6 +97,13 @@ class App : DaggerApplication() {
 		CoroutineScope(Dispatchers.IO).launch {
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
 			greenAppInteract.updateCoinDetails()
+			cryptocurrencyInteract.getAllTails()
+			greenAppInteract.requestOtherNotifItems()
+			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
+			if (curLangCode.isNotEmpty()) {
+				greenAppInteract.downloadLanguageTranslate(curLangCode)
+//				greenAppInteract.changeLanguageIsSavedBefore()
+			}
 		}
 	}
 
@@ -120,8 +127,6 @@ class App : DaggerApplication() {
 		}
 		updateCryptoJob?.cancel()
 		updateCryptoJob = CoroutineScope(Dispatchers.IO).launch {
-			cryptocurrencyInteract.getAllTails()
-			greenAppInteract.requestOtherNotifItems()
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()

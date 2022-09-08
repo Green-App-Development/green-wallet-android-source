@@ -619,34 +619,42 @@ class SendFragment : DaggerFragment() {
 			launch {
 				curActivity().mainViewModel.decodedQrCode.collect {
 					if (it.isNotEmpty()) {
-						binding.edtAddressWallet.requestFocus()
 						curSendAddressWallet = it
-						kotlin.runCatching {
-							val truncatedStr =
-								it.substring(0, 20) + "..." + it.substring(it.length - 4, it.length)
-							binding.edtAddressWallet.setText(truncatedStr)
-						}.onFailure {
-							binding.edtAddressWallet.setText(it.toString())
-						}
+						binding.edtAddressWallet.setText(it)
 					}
+//					if (it.isNotEmpty()) {
+//						binding.edtAddressWallet.requestFocus()
+//						curSendAddressWallet = it
+//						kotlin.runCatching {
+//							val truncatedStr =
+//								it.substring(0, 20) + "..." + it.substring(it.length - 4, it.length)
+//
+//						}.onFailure {
+//							binding.edtAddressWallet.setText(it.toString())
+//						}
+//					}
 				}
 			}
 			curActivity().mainViewModel.chosenAddress.collect { addres ->
 				VLog.d("Chosen Address from AddressFragment : $addres")
 				if (addres.isNotEmpty()) {
-					binding.edtAddressWallet.requestFocus()
 					curSendAddressWallet = addres
-					kotlin.runCatching {
-						val truncatedStr =
-							addres.substring(0, 20) + "..." + addres.substring(
-								addres.length - 4,
-								addres.length
-							)
-						binding.edtAddressWallet.setText(truncatedStr)
-					}.onFailure {
-						binding.edtAddressWallet.setText(addres)
-					}
+					binding.edtAddressWallet.setText(addres)
 				}
+//				if (addres.isNotEmpty()) {
+//					binding.edtAddressWallet.requestFocus()
+//					curSendAddressWallet = addres
+//					kotlin.runCatching {
+//						val truncatedStr =
+//							addres.substring(0, 20) + "..." + addres.substring(
+//								addres.length - 4,
+//								addres.length
+//							)
+//						binding.edtAddressWallet.setText(truncatedStr)
+//					}.onFailure {
+//						binding.edtAddressWallet.setText(addres)
+//					}
+//				}
 			}
 		}
 	}

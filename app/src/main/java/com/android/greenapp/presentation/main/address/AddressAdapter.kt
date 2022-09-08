@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
 import com.android.greenapp.domain.entity.Address
+import com.chauthai.swipereveallayout.SwipeRevealLayout
+import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.example.common.tools.VLog
 
 
@@ -21,7 +23,7 @@ class AddressAdapter(
     RecyclerView.Adapter<AddressAdapter.AddressViewHolder>() {
 
     private val addressList = mutableListOf<Address>()
-//    private val viewBinderHelper = ViewBinderHelper()
+    private val viewBinderHelper = ViewBinderHelper()
 
     fun updateAddressList(list: List<Address>) {
         addressList.clear()
@@ -35,9 +37,9 @@ class AddressAdapter(
     }
 
     override fun onBindViewHolder(holder: AddressViewHolder, position: Int) {
-//        viewBinderHelper.setOpenOnlyOne(true)
-//        viewBinderHelper.bind(holder.swipeRevealLayout, "$position")
-//        viewBinderHelper.closeLayout("$position")
+        viewBinderHelper.setOpenOnlyOne(true)
+        viewBinderHelper.bind(holder.swipeRevealLayout, "$position")
+        viewBinderHelper.closeLayout("$position")
         holder.onBind(addressList[position])
 
     }
@@ -51,7 +53,7 @@ class AddressAdapter(
         private val img_delete = v.findViewById<ImageView>(R.id.img_delete)
         private val img_edit = v.findViewById<ImageView>(R.id.img_edit)
         private val img_send = v.findViewById<ImageView>(R.id.img_send)
-//        val swipeRevealLayout = v.findViewById<SwipeRevealLayout>(R.id.rootSwipeLayout)
+        val swipeRevealLayout = v.findViewById<SwipeRevealLayout>(R.id.rootSwipeLayout)
         private val rel_swipe_left = v.findViewById<RelativeLayout>(R.id.rel_swiped_left)
         private val relAddressName = v.findViewById<RelativeLayout>(R.id.rel_address_name)
 
