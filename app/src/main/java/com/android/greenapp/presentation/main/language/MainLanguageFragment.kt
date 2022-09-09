@@ -2,6 +2,7 @@ package com.android.greenapp.presentation.main.language
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 /**
@@ -39,151 +41,165 @@ import javax.inject.Inject
 
 class MainLanguageFragment : DaggerDialogFragment() {
 
-    private val binding by viewBinding(FragmentMainlanguageBinding::bind)
+	private val binding by viewBinding(FragmentMainlanguageBinding::bind)
 
-    @Inject
-    lateinit var effect: AnimationManager
+	@Inject
+	lateinit var effect: AnimationManager
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val mainLanguageViewModel: MainLanguageViewModel by viewModels { viewModelFactory }
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val mainLanguageViewModel: MainLanguageViewModel by viewModels { viewModelFactory }
 
-    @Inject
-    lateinit var jsonHelper: JsonHelper
+	@Inject
+	lateinit var jsonHelper: JsonHelper
 
-    @Inject
-    lateinit var dialogManager: DialogManager
+	@Inject
+	lateinit var dialogManager: DialogManager
 
-    @Inject
-    lateinit var gson: Gson
+	@Inject
+	lateinit var gson: Gson
 
-    @Inject
-    lateinit var languageService: GreenAppService
+	@Inject
+	lateinit var languageService: GreenAppService
 
-    private lateinit var langAdapter: LanguageAdapter
+	private lateinit var langAdapter: LanguageAdapter
 
-    private val handler = CoroutineExceptionHandler { _, ex ->
-        VLog.e("Exception in getting languageItemList : ${ex.message}")
-    }
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.e("Exception in getting languageItemList : ${ex.message}")
+	}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+	}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_mainlanguage, container, false)
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return inflater.inflate(R.layout.fragment_mainlanguage, container, false)
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        registerClicks()
-        initLangRecyclerView()
-        mainLanguageViewModel.getAllLanguageList()
-        initStatusBarColor()
-        downLoadingLang()
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		registerClicks()
+		initLangRecyclerView()
+		mainLanguageViewModel.getAllLanguageList()
+		initStatusBarColor()
+		downLoadingLang()
+	}
 
-    private fun initStatusBarColor() {
-        dialog?.apply {
-            window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window?.statusBarColor = curActivity().getColorResource(R.color.primary_app_background)
-        }
-    }
+	private fun initStatusBarColor() {
+		dialog?.apply {
+			window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+			window?.statusBarColor = curActivity().getColorResource(R.color.primary_app_background)
+		}
+	}
 
-    private fun registerClicks() {
-        binding.apply {
+	private fun registerClicks() {
+		binding.apply {
 
-            backLayout.setOnClickListener {
-                curActivity().popBackStackOnce()
-            }
-
-
-
-        }
-    }
-
-    private fun downLoadingLang() {
-        lifecycleScope.launch {
-            mainLanguageViewModel.downloadingLang.collect {
-                it?.let {
-                    when (it.state) {
-                        Resource.State.ERROR -> {
-                            dialogManager.hideProgress()
-                            dialogManager.showServerErrorDialog(curActivity()) {
-
-                            }
-                        }
-                        Resource.State.LOADING -> {
-
-                        }
-                        Resource.State.SUCCESS -> {
-                            dialogManager.hideProgress()
-                            updateView()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun initLangRecyclerView() {
-        langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
-            override fun onLanguageClicked(langItem: LanguageItem) {
-                mainLanguageViewModel.downloadLanguage(langItem.code)
-            }
-        }, curActivity())
-
-        binding.apply {
-            recViewLang.adapter = langAdapter
-            recViewLang.layoutManager = LinearLayoutManager(curActivity())
-        }
-        lifecycleScope.launch {
-            mainLanguageViewModel.languageList.collect {
-                when (it.state) {
-                    Resource.State.LOADING -> {
-                        VLog.d("Loading Status to get LangList")
-                        dialogManager.showProgress(curActivity())
-                    }
-                    Resource.State.ERROR -> {
-                        curActivity().apply {
-                            dialogManager.hideProgress()
-                            dialogManager.showServerErrorDialog(curActivity()) {
-
-                            }
-                        }
-                    }
-                    Resource.State.SUCCESS -> {
-                        VLog.d("Language List : ${it.data}")
-                        langAdapter.updateLanguageList(it.data ?: mutableListOf())
-                        dialogManager.hideProgress()
-                    }
-                }
-            }
-        }
-
-    }
-
-    private fun updateView() {
-        val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
-        Reword.reword(rootView)
-        Reword.reword(binding.root)
-        curActivity().onLanguageChanged()
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        curActivity().onLanguageChanged()
-    }
+			backLayout.setOnClickListener {
+				curActivity().popBackStackOnce()
+			}
 
 
-    override fun getTheme(): Int {
-        return R.style.DialogTheme
-    }
+		}
+	}
 
-    private fun curActivity() = requireActivity() as MainActivity
+	private fun downLoadingLang() {
+		lifecycleScope.launch {
+			mainLanguageViewModel.downloadingLang.collect {
+				it?.let {
+					when (it.state) {
+						Resource.State.ERROR -> {
+							dialogManager.hideProgress()
+							val errorType = it.error
+							if (errorType is TimeoutException) {
+								dialogManager.showTimeOutException(curActivity()) {
+
+								}
+							} else {
+								dialogManager.showServerErrorDialog(curActivity()) {
+
+								}
+							}
+						}
+						Resource.State.LOADING -> {
+
+						}
+						Resource.State.SUCCESS -> {
+							dialogManager.hideProgress()
+							updateView()
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private fun initLangRecyclerView() {
+		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
+			override fun onLanguageClicked(langItem: LanguageItem) {
+				mainLanguageViewModel.downloadLanguage(langItem.code)
+			}
+		}, curActivity())
+
+		binding.apply {
+			recViewLang.adapter = langAdapter
+			recViewLang.layoutManager = LinearLayoutManager(curActivity())
+		}
+		lifecycleScope.launch {
+			mainLanguageViewModel.languageList.collect {
+				when (it.state) {
+					Resource.State.LOADING -> {
+						VLog.d("Loading Status to get LangList")
+						dialogManager.showProgress(curActivity())
+					}
+					Resource.State.ERROR -> {
+
+						val errorType = it.error
+
+						if (errorType is TimeoutException) {
+							dialogManager.hideProgress()
+							dialogManager.showTimeOutException(curActivity()) {
+
+							}
+						} else {
+							dialogManager.hideProgress()
+							dialogManager.showServerErrorDialog(curActivity()) {
+
+							}
+						}
+					}
+					Resource.State.SUCCESS -> {
+						VLog.d("Language List : ${it.data}")
+						langAdapter.updateLanguageList(it.data ?: mutableListOf())
+						dialogManager.hideProgress()
+					}
+				}
+			}
+		}
+
+	}
+
+	private fun updateView() {
+		val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
+		Reword.reword(rootView)
+		Reword.reword(binding.root)
+		curActivity().onLanguageChanged()
+	}
+
+	override fun onDismiss(dialog: DialogInterface) {
+		super.onDismiss(dialog)
+		curActivity().onLanguageChanged()
+	}
+
+
+	override fun getTheme(): Int {
+		return R.style.DialogTheme
+	}
+
+	private fun curActivity() = requireActivity() as MainActivity
 
 }

@@ -14,7 +14,7 @@ interface GreenAppInteract {
 
     suspend fun getAvailableLanguageList(): Resource<List<LanguageItem>>
 
-    suspend fun downloadLanguageTranslate(langCode: String)
+    suspend fun downloadLanguageTranslate(langCode: String) : Resource<String>
 
     suspend fun changeLanguageIsSavedBefore()
 

@@ -56,6 +56,10 @@ class App : DaggerApplication() {
 
 	var applicationIsAlive = false
 
+	private val handler = CoroutineExceptionHandler { context, ex ->
+		VLog.d("Caught exception in coroutine scope : ${ex.message}")
+	}
+
 	var updateBalanceJob: Job? = null
 	private var updateCryptoJob: Job? = null
 	private var FLUTTER_ENGINE = "flutter_engine"
@@ -94,7 +98,7 @@ class App : DaggerApplication() {
 	}
 
 	private fun oneTimeRequest() {
-		CoroutineScope(Dispatchers.IO).launch {
+		CoroutineScope(Dispatchers.IO +handler).launch {
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
 			greenAppInteract.updateCoinDetails()
 			cryptocurrencyInteract.getAllTails()
