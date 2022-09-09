@@ -99,7 +99,6 @@ class App : DaggerApplication() {
 
 	private fun oneTimeRequest() {
 		CoroutineScope(Dispatchers.IO +handler).launch {
-			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
 			greenAppInteract.updateCoinDetails()
 			cryptocurrencyInteract.getAllTails()
 			greenAppInteract.requestOtherNotifItems()

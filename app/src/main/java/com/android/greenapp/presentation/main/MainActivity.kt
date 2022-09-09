@@ -670,6 +670,7 @@ class MainActivity : BaseActivity() {
 
 				}
 				Resource.State.ERROR -> {
+					VLog.d("Error create or import wallet dialog error : ${res.error}")
 					dialogMan.showServerErrorDialog(this@MainActivity) {
 
 					}

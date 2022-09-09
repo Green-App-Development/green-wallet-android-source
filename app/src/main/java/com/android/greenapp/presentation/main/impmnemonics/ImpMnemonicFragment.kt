@@ -394,7 +394,6 @@ class ImpMnemonicFragment : DaggerFragment() {
 			dialogManager.showProgress(curActivity())
 			VLog.d("Mnemonics om import : $mnemonics")
 			curActivity().curMnemonicCode = Mnemonics.MnemonicCode(mnemonicsToString(mnemonics))
-//			delay(2000)
 			callingFlutterMethodToGenerateHash()
 			listenToMethodCallFromFlutter()
 		}
@@ -414,7 +413,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 					initWebView()
 					createNewWallet(curNetworkType, puzzle_hash)
 				} else if (call.method == "exception") {
-					VLog.d("Exception from flutter caught : ${call.arguments}")
+					VLog.d("Exception from methodCallHandler : ${call.arguments}")
 					adjustingAssureTxt(24)
 				}
 			} catch (ex: Exception) {
@@ -722,7 +721,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 //                                R.drawable.edt_mneumonic_red,
 //                                null
 //                            )
-							if (layout.childCount == 12)
+							if (binding.btn24Words.isChecked)
 								edtOf24.remove(edtText)
 							else
 								edtOf12.remove(edtText)
@@ -740,7 +739,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 								)
 							)
 
-							if (layout.childCount == 12)
+							if (binding.btn24Words.isChecked)
 								edtOf24.add(edtText)
 							else
 								edtOf12.add(edtText)
@@ -1004,7 +1003,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 		VLog.d("Size of egtOf12 on Start  : ${edtOf12.size} 24 -> ${edtOf24.size}")
 		if (binding.btn12Words.isChecked)
 			return edtOf12.size >= 12
-		return edtOf24.size == 24
+		return edtOf24.size >= 24
 	}
 
 	private fun reinitializeEdts() {
