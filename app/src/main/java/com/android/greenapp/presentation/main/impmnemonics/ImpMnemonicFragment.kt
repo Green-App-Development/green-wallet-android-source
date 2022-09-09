@@ -361,7 +361,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 				VLog.d("We have empty cells")
 			else if (res == "valid") {
 				VLog.d("Requesting mnemonics to the server on ImpMneFragment")
-				importMnemonicsToServer()
+				importMnemonicsLocally()
 			}
 		}
 		binding.backLayout.setOnClickListener {
@@ -373,7 +373,7 @@ class ImpMnemonicFragment : DaggerFragment() {
 
 	}
 
-	private fun importMnemonicsToServer() {
+	private fun importMnemonicsLocally() {
 		importJob?.cancel()
 		importJob = lifecycleScope.launch {
 			val mnemonics = getMnemonicsList()
@@ -406,13 +406,20 @@ class ImpMnemonicFragment : DaggerFragment() {
 			METHOD_CHANNEL_GENERATE_HASH
 		)
 		methodChannel.setMethodCallHandler { call, callBack ->
-			if (call.method == "getHash") {
-				val puzzle_hash = (call.arguments as HashMap<*, *>)["puzzle_hash"].toString()
-				VLog.d("Got puzzle_hash from flutter on create wallet : $puzzle_hash")
-				initWebView()
-				createNewWallet(curNetworkType, puzzle_hash)
-			} else if (call.method == "exception") {
-				VLog.d("Exception from flutter caught : ${call.arguments}")
+			try {
+				if (call.method == "getHash") {
+					val puzzle_hash = (call.arguments as HashMap<*, *>)["puzzle_hash"].toString()
+					VLog.d("Got puzzle_hash from flutter on create wallet : $puzzle_hash")
+					curActivity().curMnemonicCode.validate()
+					initWebView()
+					createNewWallet(curNetworkType, puzzle_hash)
+				} else if (call.method == "exception") {
+					VLog.d("Exception from flutter caught : ${call.arguments}")
+					adjustingAssureTxt(24)
+				}
+			} catch (ex: Exception) {
+				VLog.d("Exception in methodCallHandler in Android : ${ex.message}")
+				dialogManager.hideProgress()
 				adjustingAssureTxt(24)
 			}
 		}
