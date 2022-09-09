@@ -57,8 +57,9 @@ class App : DaggerApplication() {
 	var applicationIsAlive = false
 
 	private val handler = CoroutineExceptionHandler { context, ex ->
-		VLog.d("Caught exception in coroutine scope : ${ex.message}")
+		VLog.d("Caught exception in coroutine scope : ${ex.message} for testing")
 	}
+
 
 	var updateBalanceJob: Job? = null
 	private var updateCryptoJob: Job? = null
