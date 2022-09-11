@@ -85,7 +85,7 @@ class MainActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		VLog.d(
-			"OnCreate got called on MainActivity"
+			"OnCreate got called on MainActivity 1"
 		)
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)

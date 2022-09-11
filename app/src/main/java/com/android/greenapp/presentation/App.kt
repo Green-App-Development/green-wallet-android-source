@@ -69,7 +69,7 @@ class App : DaggerApplication() {
 	@RequiresApi(Build.VERSION_CODES.N)
 	override fun onCreate() {
 		super.onCreate()
-		VLog.d("OnCreate Got Called on App")
+		VLog.d("OnCreate Got Called on App 1")
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		Restring.init(this)
 		ViewPump.init(RewordInterceptor)

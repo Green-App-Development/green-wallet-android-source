@@ -33,6 +33,7 @@ import com.example.common.tools.*
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_verification_wallet.*
+import kotlinx.android.synthetic.main.fragment_verification_wallet.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -347,6 +348,7 @@ class VerificationFragment : DaggerFragment() {
 
 
     private fun warningWrongChoices() {
+        binding.scroll12Words.isEnabled = false
         binding.relWarningWrongChosen.visibility = View.VISIBLE
         for (pair in binding.linearLayout12.children) {
             pair as LinearLayout
@@ -375,6 +377,7 @@ class VerificationFragment : DaggerFragment() {
         binding.apply {
             relWarningWrongChosen.visibility = View.GONE
             txtFillWithOptions.visibility = View.VISIBLE
+            binding.scroll12Words.isEnabled = true
         }
         setUpInitialValues()
         curOptionsWords.addAll(optionsWords)

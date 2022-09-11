@@ -8,6 +8,7 @@ import com.android.greenapp.domain.interact.*
 import com.example.common.tools.VLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -28,9 +29,10 @@ class HomeFragmentViewModel @Inject constructor(
 
     private var updateTrans: Job? = null
     private var updateNotifsFromServer: Job? = null
+    private var job10Seconds: Job? = null
 
     init {
-        requestOtherNotifItems()
+
     }
 
     fun requestOtherNotifItems() {
@@ -41,7 +43,7 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     private val handler = CoroutineExceptionHandler { _, ex ->
-        VLog.d("Exception in homefragmentViewModel : ${ex}")
+        VLog.d("Exception in homefragmentViewModel scope : ${ex}")
     }
 
     fun updateAllTransactions() {
@@ -52,8 +54,7 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
-
-    private var cryptoJob: Job? = null
+    private var cryptoUpdateCourseJob: Job? = null
 
 
     private val _curCryptoCourse = MutableStateFlow<CurrencyItem?>(null)
@@ -65,7 +66,6 @@ class HomeFragmentViewModel @Inject constructor(
 
     suspend fun flowBalanceIsHidden() =
         prefs.getSettingBooleanFlow(PrefsManager.BALANCE_IS_HIDDEN, false)
-
 
 
     fun savePrevModeChanged(changed: Boolean) = viewModelScope.launch {
@@ -80,15 +80,30 @@ class HomeFragmentViewModel @Inject constructor(
 
     suspend fun getHomeAddedWalletWithTokens() = walletInteract.getHomeAddedWalletWithTokens()
 
-    fun updateCryptoCurrencyCourse(networkType: String) {
-        cryptoJob?.cancel()
-        cryptoJob = viewModelScope.launch(handler) {
+    fun changeCryptCourseEvery10Seconds() {
+        job10Seconds?.cancel()
+        job10Seconds = viewModelScope.launch {
+            var network = "Chia Network"
+            while (true) {
+                updateCryptoCurrencyCourse(network)
+                if (network == "Chia Network") {
+                    network = "Chives Network"
+                } else {
+                    network = "Chia Network"
+                }
+                delay(10000)
+            }
+        }
+    }
+
+    private fun updateCryptoCurrencyCourse(networkType: String) {
+        cryptoUpdateCourseJob?.cancel()
+        cryptoUpdateCourseJob = viewModelScope.launch(handler) {
             cryptocurrencyInteract.getCurrentCurrencyCourseByNetwork(networkType).collect {
                 VLog.d("Emitting CourseValue for : $networkType and value : ${it.price}")
                 _curCryptoCourse.emit(it)
             }
         }
     }
-
 
 }

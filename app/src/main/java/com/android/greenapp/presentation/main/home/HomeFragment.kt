@@ -107,6 +107,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
         updateViewDetails()
         initCurCryptoCourseUpdate()
         homeFragmentViewModel.requestOtherNotifItems()
+        homeFragmentViewModel.changeCryptCourseEvery10Seconds()
     }
 
 
@@ -178,7 +179,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
             curNetwork = homeAddedList[prevChosenPositionInViewPager].networkType
             pageIndicator.setSelected(prevChosenPositionInViewPager)
             mainWalletViewPager.setCurrentItem(prevChosenPositionInViewPager, true)
-            homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
+//            homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
             curFingerPrint = homeAddedList[prevChosenPositionInViewPager].fingerPrint
             updateBalanceToDollarStr()
             homeFragmentViewModel.saveHomeIsAddedWalletCounter(homeAddedList.size)
@@ -191,7 +192,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
                 txtMyBalance.text = "0 USD"
             }
             hasAtLeastOneWallet = false
-            homeFragmentViewModel.updateCryptoCurrencyCourse("Chia Network")
+//            homeFragmentViewModel.updateCryptoCurrencyCourse("Chia Network")
         }
     }
 
@@ -235,7 +236,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
                 if (this@HomeFragment::mainViewPagerWalletAdapter.isInitialized) {
                     curBalance = mainViewPagerWalletAdapter.walletList[position].totalAmountInUSD
                     curNetwork = mainViewPagerWalletAdapter.walletList[position].networkType
-                    homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
+//                    homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
                     curFingerPrint =
                         mainViewPagerWalletAdapter.walletList[position].fingerPrint
                     updateBalanceToDollarStr()
