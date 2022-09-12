@@ -25,11 +25,13 @@ class NewWalletViewModel @Inject constructor(
     ViewModel() {
 
     fun createNewWallet(
-        wallet: Wallet
+        wallet: Wallet,
+        callBack: () -> Unit
     ) = viewModelScope.launch {
         blockChainInteract.saveNewWallet(
             wallet
         )
+        callBack()
     }
 
     suspend fun getCoinDetails(coinCode: String) = greenAppInteract.getCoinDetails(coinCode)

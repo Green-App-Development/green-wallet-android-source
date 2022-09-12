@@ -506,9 +506,11 @@ class VerificationFragment : DaggerFragment() {
                 System.currentTimeMillis(),
                 0.0
             )
-            newWalletViewModel.createNewWallet(newWallet)
-            dialogManager.hideProgress()
-            showCongratulateDialog()
+            newWalletViewModel.createNewWallet(newWallet) {
+                dialogManager.hideProgress()
+                showCongratulateDialog()
+            }
+
         }
     }
 

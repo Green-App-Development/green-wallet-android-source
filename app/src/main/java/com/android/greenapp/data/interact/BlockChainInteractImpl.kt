@@ -52,13 +52,14 @@ class BlockChainInteractImpl @Inject constructor(
     @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun saveNewWallet(
         wallet: Wallet
-    ) {
+    ) :Resource<String>{
         val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
         val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
         val walletEntity = wallet.toWalletEntity(encMnemonics)
         walletDao.insertWallet(walletEntity = walletEntity)
-        updateTransactionsBalance(walletEntity, true, false)
+//        updateTransactionsBalance(walletEntity, true, false)
         updateTransactionsBalance(walletEntity, true, true)
+        return Resource.success("OK")
     }
 
     private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {
@@ -83,7 +84,7 @@ class BlockChainInteractImpl @Inject constructor(
         val walletListDb = walletDao.getAllWalletList()
         for (wallet in walletListDb) {
             updateTransactionsBalance(wallet, false, true)
-            updateTransactionsBalance(wallet, false, false)
+//            updateTransactionsBalance(wallet, false, false)
         }
     }
 
@@ -195,7 +196,7 @@ class BlockChainInteractImpl @Inject constructor(
                             status = Status.Incoming
                         }
                         val transactionDto = TransactionDto(
-                            parent_coin_info,
+                            parent_coin_info+wallet.fingerPrint,
                             timeStamp,
                             amount / division,
                             true,

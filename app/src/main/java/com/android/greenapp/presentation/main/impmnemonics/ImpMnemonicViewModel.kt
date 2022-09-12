@@ -27,14 +27,14 @@ class ImpMnemonicViewModel @Inject constructor(
     private var job: Job? = null
 
 
-    fun importNewWallet(wallet: Wallet) {
+    fun importNewWallet(wallet: Wallet, callBack: () -> Unit) {
         viewModelScope.launch {
             blockChainInteract.saveNewWallet(wallet)
+            callBack()
         }
     }
 
-    suspend fun checkIfMnemonicsExist(mnemonics: List<String>,networkType: String) =
-        walletInteract.checkIfMnemonicsExistInDB(mnemonics,networkType)
-
+    suspend fun checkIfMnemonicsExist(mnemonics: List<String>, networkType: String) =
+        walletInteract.checkIfMnemonicsExistInDB(mnemonics, networkType)
 
 }

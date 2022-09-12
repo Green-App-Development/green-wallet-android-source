@@ -93,6 +93,7 @@ class HomeFragmentViewModel @Inject constructor(
         cryptoUpdateCourseJob = viewModelScope.launch(handler) {
             cryptocurrencyInteract.getCurrentCurrencyCourseByNetwork(networkType).collect {
                 VLog.d("Emitting CourseValue for : $networkType and value : ${it.price}")
+                it.network=networkType
                 _curCryptoCourse.emit(it)
             }
         }
