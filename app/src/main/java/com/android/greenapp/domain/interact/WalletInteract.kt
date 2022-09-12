@@ -34,8 +34,6 @@ interface WalletInteract {
 
     suspend fun getDistinctNetworkTypes(): List<String>
 
-    suspend fun importToken(fingerPrint: Long, hash: String, added: Boolean): Resource<String>
-
     suspend fun checkIfMnemonicsExistInDB(mnemonics: List<String>,networkType: String): Optional<Boolean>
 
     suspend fun getAllWalletListFirstHomeIsAddedThenRemain():List<Wallet>

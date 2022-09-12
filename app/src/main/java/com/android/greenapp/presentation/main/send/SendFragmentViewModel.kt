@@ -37,18 +37,7 @@ class SendFragmentViewModel @Inject constructor(
     suspend fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
         walletInteract.getWalletWithTokensByFingerPrintNetworkType(fingerPrint, type)
 
-
     suspend fun push_transaction(spendBundle: String,url: String)=blockChainInteract.push_tx(spendBundle,url)
-
-    suspend fun sendTransaction(
-        amount: Double,
-        fee: Double,
-        address: String,
-        fingerPrint: Long,
-        networkType: String,
-        walletId: Int
-    ) =
-        blockChainInteract.sendTransaction(amount, fee, address, fingerPrint, networkType, walletId)
 
     suspend fun checkIfAddressExistInDb(address: String) =
         addressInteract.checkIfAddressAlreadyExist(address = address)

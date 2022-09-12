@@ -84,8 +84,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/manage_wallet_view_pager"
                     app:piv_animationType="swap"
-                    app:piv_count="2"
-                    app:piv_radius="3dp"
+                    app:piv_count="1"
+                    android:visibility="visible"
+                    app:piv_radius="4dp"
                     app:piv_selectedColor="@color/selected_dot_indicator"
                     app:piv_unselectedColor="@color/unselected_dot_indicator" />
 

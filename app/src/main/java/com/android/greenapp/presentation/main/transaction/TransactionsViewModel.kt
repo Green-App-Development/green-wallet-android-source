@@ -24,11 +24,6 @@ class TransactionsViewModel @Inject constructor(
     ViewModel() {
 
 
-    init {
-
-    }
-
-
     suspend fun getAllQueriedTransactionList(
         fingerPrint: Long?,
         amount: Double?,
@@ -58,12 +53,6 @@ class TransactionsViewModel @Inject constructor(
             yesterdayStart,
             yesterdayEnd
         )
-    }
-
-    fun queryAllTransactions() {
-        viewModelScope.launch(Dispatchers.IO) {
-            blockChainInteract.requestAllTransactions()
-        }
     }
 
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()

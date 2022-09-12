@@ -17,9 +17,6 @@ class ImportTokenViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    suspend fun importToken(fingerPrint: Long, hash: String, added: Boolean) =
-        walletInteract.importToken(fingerPrint, hash, added)
-
     suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode:String?) =
         tokenInteract.getTokenListAndSearch(fingerPrint, nameCode)
 

@@ -169,10 +169,10 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
                     balanceIsHidden = toHideBalance
                 )
             mainWalletViewPager.adapter = mainViewPagerWalletAdapter
+            pageIndicator.count = homeAddedList.size
             pageIndicator.visibility = View.VISIBLE
             mainWalletViewPager.visibility = View.VISIBLE
             rel_no_wallet.visibility = View.GONE
-            pageIndicator.count = homeAddedList.size
             if (prevChosenPositionInViewPager >= homeAddedList.size)
                 prevChosenPositionInViewPager = 0
             curBalance = homeAddedList[prevChosenPositionInViewPager].totalAmountInUSD
@@ -188,11 +188,10 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
             binding.apply {
                 rel_no_wallet.visibility = View.VISIBLE
                 mainWalletViewPager.visibility = View.GONE
-                pageIndicator.visibility = View.GONE
                 txtMyBalance.text = "0 USD"
+                pageIndicator.visibility = View.INVISIBLE
             }
             hasAtLeastOneWallet = false
-//            homeFragmentViewModel.updateCryptoCurrencyCourse("Chia Network")
         }
     }
 

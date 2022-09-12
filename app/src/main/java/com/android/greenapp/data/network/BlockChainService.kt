@@ -60,11 +60,16 @@ interface BlockChainService {
     suspend fun delete_all_keys(): Response<BaseResponse>
 
     @POST("get_coin_records_by_puzzle_hash")
-    suspend fun queryBalance(@Body body:HashMap<String,Any>):Response<JsonObject>
+    suspend fun queryBalance(@Body body: HashMap<String, Any>): Response<JsonObject>
 
 
     @POST("push_tx")
-    suspend fun push_transaction(@Body body: SpenBunde): Response<BaseResponse>
+    suspend fun pushTransaction(@Body body: SpenBunde): Response<BaseResponse>
 
+    @POST("get_coin_records_by_names")
+    suspend fun getCoinRecordsByNames(@Body body: HashMap<String, Any>): Response<JsonObject>
+
+    @POST("get_coin_record_by_name")
+    suspend fun getCoinRecordByName(@Body body: HashMap<String, Any>): Response<JsonObject>
 
 }

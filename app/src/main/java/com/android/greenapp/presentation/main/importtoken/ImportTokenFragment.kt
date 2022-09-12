@@ -146,34 +146,6 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
                 dialog.showProgress(curActivity())
             }
 
-            val res = viewModel.importToken(curFingerPrint!!, hash, added)
-
-            if (res.state == Resource.State.SUCCESS) {
-                dialogJob.cancel()
-                dialog.hideProgress()
-                binding.relAddedHome.apply {
-                    visibility = View.VISIBLE
-                    background.setTint(
-                        ContextCompat.getColor(
-                            curActivity(),
-                            if (added) R.color.green else R.color.red_mnemonic
-                        )
-                    )
-                }
-                binding.txtAddedOrNot.text =
-                    if (added) curActivity().getStringResource(R.string.import_tokens_label_add) else curActivity().getStringResource(
-                        R.string.my_wallets_label_removed
-                    )
-                makeViewGone(binding.relAddedHome)
-                token.imported = added
-            } else if (res.state == Resource.State.ERROR) {
-                dialogJob.cancel()
-                dialog.hideProgress()
-                dialog.showBlockChainIsNotAvailableDialog(curActivity()) {
-                    switch.isChecked = false
-                    token.imported = false
-                }
-            }
         }
 
     }

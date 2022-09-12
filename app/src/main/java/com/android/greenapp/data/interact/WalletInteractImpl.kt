@@ -250,67 +250,6 @@ class WalletInteractImpl @Inject constructor(
 		return walletDao.getDistinctNetworkTypes()
 	}
 
-	override suspend fun importToken(
-		fingerPrint: Long,
-		hash: String,
-		added: Boolean
-	): Resource<String> {
-		try {
-			val wallet = walletDao.getWalletByFingerPrint(fingerPrint)[0]
-			val hashListImported = wallet.hashListImported
-			val hashWithIdWallet = wallet.hashWithIdWallet
-			VLog.d("Importing token : $fingerPrint , hash: $hash , added : $added")
-			VLog.d("Importing token : HashListImported $hashListImported, HashWithId : $hashWithIdWallet")
-			if (added) {
-				if (hashWithIdWallet.containsKey(hash)) {
-					VLog.d("Importing token : $hash already contains in wallet tokenList")
-					hashListImported.add(hash)
-					walletDao.updateChiaNetworkHashListImported(fingerPrint, hashListImported)
-					return Resource.success("OK")
-				} else {
-
-					val networkItem = getNetworkItemFromPrefs("Chia Network")
-						?: throw Exception("Exception in converting json str to networkItem")
-
-					val curBlockChainService =
-						retrofitBilder.baseUrl(networkItem.wallet + "/").build()
-							.create(BlockChainService::class.java)
-					val loginStatus = blockChainInteract.logIn(fingerPrint, curBlockChainService)
-
-					if (loginStatus.state == Resource.State.SUCCESS) {
-						val importToken = importNewToken(hash, curBlockChainService)
-						if (importToken.state == Resource.State.SUCCESS) {
-							val importedHashList = wallet.hashListImported
-							importedHashList.add(hash)
-							val row = walletDao.updateChiaNetworkHashListImported(
-								fingerPrint,
-								importedHashList
-							)
-							blockChainInteract.getWalletTokensForChiaNetwork(
-								fingerPrint,
-								curBlockChainService
-							)
-							VLog.d("Update importedHashList for wallet : Row -> $row, FingerPrint : $fingerPrint, ImportedHashList : $importedHashList")
-							return Resource.success("OK")
-						} else {
-							return Resource.error(Throwable("Importing New token failed : ${importToken.data}"))
-						}
-					} else {
-						VLog.d("Login status is not success in  importing token")
-					}
-				}
-			} else {
-				hashListImported.remove(hash)
-				val row = walletDao.updateChiaNetworkHashListImported(fingerPrint, hashListImported)
-				VLog.d("Removing token hash : $hash, from hashListImported and updating db : row : $row, After removing hash $hashListImported")
-				return Resource.success("OK")
-			}
-		} catch (ex: Exception) {
-			VLog.d("Exception in importing token  ${ex.message}")
-		}
-		return Resource.error(Throwable("Exception in importing token"))
-	}
-
 	override suspend fun checkIfMnemonicsExistInDB(
 		mnemonics: List<String>,
 		networkType: String
@@ -370,5 +309,6 @@ class WalletInteractImpl @Inject constructor(
 		if (item.isEmpty()) return null
 		return gson.fromJson(item, NetworkItem::class.java)
 	}
+
 
 }

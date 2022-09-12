@@ -11,41 +11,10 @@ import com.android.greenapp.presentation.tools.Resource
  */
 interface BlockChainInteract {
 
-    suspend fun getGenerateMnemonics(): Resource<MnemonicDto>
 
     suspend fun saveNewWallet(
         wallet: Wallet
     )
-
-    suspend fun getAllPublicKeys(): Resource<List<Long>>
-
-    suspend fun requestBalanceEachWallets()
-
-    suspend fun requestAllTransactions()
-
-    suspend fun sendTransaction(
-        amount: Double,
-        fee: Double,
-        address: String,
-        fingerPrint: Long,
-        networkType: String,
-        walletId: Int
-    ): Resource<String>
-
-
-    suspend fun logIn(
-        fingerPrint: Long,
-        curBlockChainService: BlockChainService
-    ): Resource<String>
-
-    suspend fun updateTokensChiaNetwork()
-
-    suspend fun getWalletTokensForChiaNetwork(
-        fingerPrint: Long,
-        curBlockChainService: BlockChainService
-    )
-
-    suspend fun deleteAllKeys()
 
     suspend fun updateBalanceAndTransactionsPeriodically()
 

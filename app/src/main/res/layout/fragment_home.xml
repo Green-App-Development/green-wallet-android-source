@@ -237,12 +237,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:piv_animationType="swap"
-        app:piv_count="3"
+        app:piv_count="1"
         app:piv_radius="4dp"
         app:piv_selectedColor="@color/selected_dot_indicator"
         app:piv_unselectedColor="@color/unselected_dot_indicator" />

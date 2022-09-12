@@ -52,17 +52,6 @@ class ProgressCreatingWalletFragment : DaggerDialogFragment() {
         initStatusBarColor()
     }
 
-    private fun getMnemonics() {
-        lifecycleScope.launch {
-            viewModel.generateMnemonic.collect {
-                when (it.state) {
-                    Resource.State.SUCCESS -> {
-                        curActivity().popBackStackOnce()
-                    }
-                }
-            }
-        }
-    }
 
     private fun initStatusBarColor() {
         dialog?.apply {

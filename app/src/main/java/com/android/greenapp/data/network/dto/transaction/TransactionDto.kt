@@ -11,7 +11,7 @@ data class TransactionDto(
     @SerializedName("created_at_time")
     var created_at_time: Long,
     @SerializedName("amount")
-    val amount: Double,
+    var amount: Double,
     @SerializedName("confirmed")
     val confirmed: Boolean,
     @SerializedName("confirmed_at_height")

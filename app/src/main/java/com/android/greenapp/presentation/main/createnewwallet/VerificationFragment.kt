@@ -348,7 +348,6 @@ class VerificationFragment : DaggerFragment() {
 
 
     private fun warningWrongChoices() {
-        binding.scroll12Words.isEnabled = false
         binding.relWarningWrongChosen.visibility = View.VISIBLE
         for (pair in binding.linearLayout12.children) {
             pair as LinearLayout
@@ -365,6 +364,8 @@ class VerificationFragment : DaggerFragment() {
                     curActivity().getDrawableResource(R.drawable.bcg_txt_mnemonic_wrong)
                 text = separatingStringFromDigitSS(txt2.text.toString())
             }
+            txt1.isEnabled = false
+            txt2.isEnabled = false
         }
         lifecycleScope.launch {
             binding.btnContinue.isEnabled = false
@@ -377,7 +378,6 @@ class VerificationFragment : DaggerFragment() {
         binding.apply {
             relWarningWrongChosen.visibility = View.GONE
             txtFillWithOptions.visibility = View.VISIBLE
-            binding.scroll12Words.isEnabled = true
         }
         setUpInitialValues()
         curOptionsWords.addAll(optionsWords)
@@ -394,6 +394,8 @@ class VerificationFragment : DaggerFragment() {
                 background =
                     curActivity().getDrawableResource(R.drawable.bcg_txt_mnemonic)
             }
+            txt1.isEnabled = true
+            txt2.isEnabled = true
         }
         curSelectedTxtLocation = 0
         setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsOptions())

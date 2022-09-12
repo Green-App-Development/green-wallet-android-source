@@ -46,14 +46,6 @@ class HomeFragmentViewModel @Inject constructor(
         VLog.d("Exception in homefragmentViewModel scope : ${ex}")
     }
 
-    fun updateAllTransactions() {
-        VLog.d("Updating all transactions got called from homeFragmentViewModel")
-        updateTrans?.cancel()
-        updateTrans = viewModelScope.launch {
-            blockChainInteract.requestAllTransactions()
-        }
-    }
-
     private var cryptoUpdateCourseJob: Job? = null
 
 

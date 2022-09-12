@@ -24,17 +24,6 @@ class NewWalletViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val _publicKeyAndPrivateKey =
-        MutableStateFlow<Resource<String>>(Resource.loading())
-    val publicKeyAndPrivateKey: StateFlow<Resource<String>> =
-        _publicKeyAndPrivateKey.asStateFlow()
-    private var job: Job? = null
-
-    private val _generateMnemonic =
-        MutableSharedFlow<Resource<MnemonicDto>>(1, 1)
-    val generateMnemonic: SharedFlow<Resource<MnemonicDto>> =
-        _generateMnemonic
-
     fun createNewWallet(
         wallet: Wallet
     ) = viewModelScope.launch {
@@ -43,21 +32,6 @@ class NewWalletViewModel @Inject constructor(
         )
     }
 
-    fun getGeneratedMnemonics() {
-        job?.cancel()
-        job = viewModelScope.launch {
-            try {
-                _generateMnemonic.emit(Resource.loading())
-                val res = blockChainInteract.getGenerateMnemonics()
-                _generateMnemonic.emit(res)
-            } catch (ex: Exception) {
-                VLog.d("GenerateMnemonics Exception : ${ex.message}")
-                _generateMnemonic.emit(Resource.error(ex))
-            }
-        }
-    }
-
     suspend fun getCoinDetails(coinCode: String) = greenAppInteract.getCoinDetails(coinCode)
-
 
 }
