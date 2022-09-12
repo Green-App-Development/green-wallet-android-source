@@ -35,6 +35,7 @@ fun showBtmDialogChoosingNetworks(
     val networkAdapter = NetworkAdapter(activity, object : NetworkAdapter.ChooseNetworkListener {
         override fun onNetworkClicked(position: Int) {
             chooseCallBack(position)
+            dialog.dismiss()
         }
     })
     networkRecView?.adapter = networkAdapter
@@ -55,6 +56,7 @@ fun showBtmAddOrImportWalletDialog(
     dialog.setContentView(sheetView)
     dialog.findViewById<RelativeLayout>(R.id.rel_new_wallet)?.setOnClickListener {
         listener.newClicked(it)
+        dialog.dismiss()
     }
     dialog.findViewById<RelativeLayout>(R.id.rel_import)?.setOnClickListener {
         listener.importClicked(it)
