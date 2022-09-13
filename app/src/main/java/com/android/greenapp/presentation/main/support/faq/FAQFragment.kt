@@ -53,7 +53,6 @@ class FAQFragment : DaggerDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initStatusBarColor()
         initFAQAdapter()
         registerClicks()
     }
@@ -97,6 +96,11 @@ class FAQFragment : DaggerDialogFragment() {
             }
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        initStatusBarColor()
     }
 
 

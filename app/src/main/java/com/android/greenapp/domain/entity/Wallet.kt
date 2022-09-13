@@ -19,6 +19,7 @@ data class Wallet(
     val networkType: String,
     var home_id_added: Long,
     var balance: Double,
+    var savedTime:Long
 ) : Parcelable {
 
     var balanceInUSD: Double = 0.0
@@ -31,7 +32,8 @@ data class Wallet(
         encMnemonics,
         networkType,
         home_id_added,
-        balance
+        balance,
+        savedTime=savedTime
     )
 
 

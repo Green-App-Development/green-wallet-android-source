@@ -35,7 +35,9 @@ data class WalletEntity(
     @ColumnInfo(name = "hashWithAmount")
     var hashWithAmount: HashMap<String, Double> = hashMapOf(),
     @ColumnInfo(name = "hashWithIdWallet")
-    var hashWithIdWallet: HashMap<String,Int> = hashMapOf()
+    var hashWithIdWallet: HashMap<String,Int> = hashMapOf(),
+    @ColumnInfo(name="savedTime")
+    var savedTime:Long
 ) {
 
     fun toWallet(decMnemonics:List<String>) =
@@ -47,7 +49,8 @@ data class WalletEntity(
             decMnemonics,
             networkType,
             home_is_added,
-            balance
+            balance,
+            savedTime
         )
 
 }

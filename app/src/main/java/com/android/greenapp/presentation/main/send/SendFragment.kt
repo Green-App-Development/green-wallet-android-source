@@ -19,6 +19,7 @@ import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.databinding.FragmentSendBinding
 import com.android.greenapp.domain.entity.Address
 import com.android.greenapp.domain.entity.TokenWallet
+import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.domain.entity.WalletWithTokens
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.*
@@ -482,10 +483,10 @@ class SendFragment : DaggerFragment() {
 	}
 
 
-	private fun sendTransaction(spendBundleJSON: String, url: String) {
+	private fun sendTransaction(spendBundleJSON: String, url: String,amount: Double,networkType: String,fingerPrint: Long) {
 		sendTransJob?.cancel()
 		sendTransJob = lifecycleScope.launch {
-			val res = viewModel.push_transaction(spendBundleJSON, url)
+			val res = viewModel.push_transaction(spendBundleJSON, url,amount,networkType,fingerPrint)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
 					dialogManager.hideProgress()
@@ -526,7 +527,7 @@ class SendFragment : DaggerFragment() {
 				(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
 				METHOD_CHANNEL_GENERATE_HASH
 			)
-			listenToCreatingSpendBundleRes(url)
+			listenToCreatingSpendBundleRes(url,getDoubleValueFromEdt(binding.edtEnterAmount),wallet.networkType,wallet.fingerPrint)
 			val argSpendBundle = hashMapOf<String, Any>()
 			argSpendBundle["fee"] = fee
 			argSpendBundle["amount"] = amount
@@ -551,7 +552,7 @@ class SendFragment : DaggerFragment() {
 		return "Chives"
 	}
 
-	private suspend fun listenToCreatingSpendBundleRes(url: String) {
+	private suspend fun listenToCreatingSpendBundleRes(url: String,amount:Double,networkType: String,fingerPrint: Long) {
 		withContext(Dispatchers.Main) {
 			val methodChannel = MethodChannel(
 				(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
@@ -562,7 +563,7 @@ class SendFragment : DaggerFragment() {
 					val spendBundleJson =
 						(method.arguments as HashMap<*, *>)["spendBundle"].toString()
 					VLog.d("Got spend bundle on send fragment : $spendBundleJson")
-					sendTransaction(spendBundleJson, url)
+					sendTransaction(spendBundleJson, url,amount,networkType,fingerPrint)
 				}
 			}
 		}

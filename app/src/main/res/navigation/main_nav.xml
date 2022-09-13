@@ -42,7 +42,7 @@
             app:destination="@id/listingFragment" />
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/coinsDetailsFragment2"
         android:name="com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment"
         android:label="CoinsDetailsFragment"
@@ -54,7 +54,7 @@
         <action
             android:id="@+id/action_coinsDetailsFragment2_to_walletFragment2"
             app:destination="@id/homeFragment" />
-    </fragment>
+    </dialog>
 
     <dialog
         android:id="@+id/progressWalletCreating"
@@ -71,6 +71,7 @@
         android:name="com.android.greenapp.presentation.main.impmnemonics.ImpMnemonicFragment"
         android:label="ImpMnemonicFragment"
         tools:layout="@layout/fragment_impmnemonic" />
+
     <fragment
         android:id="@+id/receiveFragment"
         android:name="com.android.greenapp.presentation.main.receive.ReceiveFragment"
@@ -90,7 +91,7 @@
         tools:layout="@layout/fragment_scanner" />
 
 
-    <fragment
+    <dialog
         android:id="@+id/saveMnemonicsFragment"
         android:name="com.android.greenapp.presentation.main.createnewwallet.SaveMnemonicsFragment"
         android:label="SaveMnemonicsFragment"
@@ -98,10 +99,10 @@
         <action
             android:id="@+id/action_saveMnemonicsFragment_to_verificationFragment"
             app:destination="@id/verificationFragment" />
-    </fragment>
+    </dialog>
 
 
-    <fragment
+    <dialog
         android:id="@+id/verificationFragment"
         android:name="com.android.greenapp.presentation.main.createnewwallet.VerificationFragment"
         android:label="VerificationFragment"
@@ -129,7 +130,7 @@
         android:id="@+id/manageWalletFragment"
         android:name="com.android.greenapp.presentation.main.managewallet.ManageWalletFragment"
         android:label="ManageWalletFragment"
-        tools:layout="@layout/fragment_manage_wallet" />
+        tools:layout="@layout/fragment_manage_wallet_beta" />
     <fragment
         android:id="@+id/importTokenFragment"
         android:name="com.android.greenapp.presentation.main.importtoken.ImportTokenFragment"
@@ -222,6 +223,18 @@
         android:name="com.android.greenapp.presentation.main.noconnection.NoConnectionFragment"
         android:label="NoConnectionFragment"
         tools:layout="@layout/fragment_no_internet" />
+
+    <dialog
+        android:id="@+id/btmSheetChooseNetwork"
+        android:name="com.android.greenapp.presentation.main.btmsheet.BtmSheetDialogChooseNetwork"
+        android:label="btmDialog"
+        tools:layout="@layout/dialog_choose_network" />
+
+    <dialog
+        android:id="@+id/btmSheetDialogNewOrImport"
+        android:name="com.android.greenapp.presentation.main.btmsheet.BtmSheetDialogNewOrImport"
+        android:label="btmDialog"
+        tools:layout="@layout/dialog_add_wallet" />
 
 
 </navigation>

@@ -20,3 +20,4 @@ const val URL_CHIA_CHIVES =
     "https://api.coingecko.com/api/v3/simple/price?ids=chives-coin,chia&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true"
 
 const val METHOD_CHANNEL_GENERATE_HASH = "METHOD_CHANNEL_GENERATE_HASH"
+

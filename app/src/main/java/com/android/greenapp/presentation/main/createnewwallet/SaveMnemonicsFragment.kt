@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
@@ -19,13 +20,15 @@ import com.android.greenapp.databinding.FragmentSavemnemonicsBinding
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
+import com.android.greenapp.presentation.tools.getColorResource
 import com.example.common.tools.VLog
+import dagger.android.support.DaggerDialogFragment
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SaveMnemonicsFragment : DaggerFragment() {
+class SaveMnemonicsFragment : DaggerDialogFragment() {
 
     private lateinit var binding: FragmentSavemnemonicsBinding
     private var hidden = true
@@ -57,6 +60,10 @@ class SaveMnemonicsFragment : DaggerFragment() {
             if (it.getString(NETWORK_TYPE) != null)
                 curNetworkType = it.getString(NETWORK_TYPE)!!
         }
+    }
+
+    override fun getTheme(): Int {
+        return R.style.DialogTheme
     }
 
     override fun onCreateView(
@@ -149,7 +156,7 @@ class SaveMnemonicsFragment : DaggerFragment() {
         }
 
         binding.backLayout.setOnClickListener {
-            curActivity().popBackStackTwice()
+            curActivity().popBackStackOnce()
         }
         binding.btnContinue.setOnClickListener {
             VLog.d("CurNetworkType on SaveMnemonics Fragment : $curNetworkType")
@@ -162,6 +169,11 @@ class SaveMnemonicsFragment : DaggerFragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        initStatusBarColor()
+    }
+
     private fun getMnemonicsFromList(): String {
         val mneMnemonicsString = StringBuilder()
         for (i in 0 until mnemonicsList.size) {
@@ -172,5 +184,12 @@ class SaveMnemonicsFragment : DaggerFragment() {
 
     private fun curActivity() = requireActivity() as MainActivity
 
+
+    private fun initStatusBarColor() {
+        dialog?.apply {
+            window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window?.statusBarColor = curActivity().getColorResource(R.color.save_mnemonic_bcg)
+        }
+    }
 
 }

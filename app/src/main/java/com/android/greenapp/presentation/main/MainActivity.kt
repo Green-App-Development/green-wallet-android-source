@@ -30,6 +30,8 @@ import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.intro.IntroActivity
 import com.android.greenapp.presentation.main.address.AddressFragment
 import com.android.greenapp.presentation.main.address.EditAddressFragment
+import com.android.greenapp.presentation.main.btmsheet.BtmSheetDialogChooseNetwork
+import com.android.greenapp.presentation.main.btmsheet.BtmSheetDialogNewOrImport
 import com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment
 import com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment.Companion.NETWORK_KEY
 import com.android.greenapp.presentation.main.createnewwallet.SaveMnemonicsFragment
@@ -658,13 +660,7 @@ class MainActivity : BaseActivity() {
             when (res.state) {
                 Resource.State.SUCCESS -> {
                     val networkList = res.data!!.map { it.name }.toList()
-                    showBtmDialogChoosingNetworks(
-                        hasAtLeastOneWallet,
-                        this@MainActivity,
-                        networkList
-                    ) { position ->
-                        showBtmDialogAddOrImportWallets(networkList[position])
-                    }
+                    move2BtmDialogChooseNetwork(hasAtLeastOneWallet, networkList)
                 }
                 Resource.State.LOADING -> {
 
@@ -679,18 +675,21 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun showBtmDialogAddOrImportWallets(networkType: String): Dialog {
-        return showBtmAddOrImportWalletDialog(
-            this,
-            object : ChooseWalletImportOrNewListener {
-                override fun newClicked(v: View) {
-                    move2CoinsDetailsFragment(networkType)
-                }
+    fun showBtmDialogAddOrImportWallets(networkType: String) {
+        move2NewOrImportWallet(networkType)
+    }
 
-                override fun importClicked(v: View) {
-                    move2ImportMnemonicFragment(networkType)
-                }
-            })
+    fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {
+        val bundle = bundleOf(
+            BtmSheetDialogChooseNetwork.DATA_LIST_KEY to dataList,
+            BtmSheetDialogChooseNetwork.HAS_AT_LEAST_ONE to hasAtLeastOneWallet
+        )
+        navController.navigate(btmSheetChooseNetwork, bundle)
+    }
+
+    fun move2NewOrImportWallet(networkType: String) {
+        val bundle = bundleOf(BtmSheetDialogNewOrImport.NETWORK_TYPE_KEY to networkType)
+        navController.navigate(R.id.btmSheetDialogNewOrImport, bundle)
     }
 
 

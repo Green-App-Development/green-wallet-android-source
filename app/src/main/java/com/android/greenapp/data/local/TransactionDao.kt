@@ -2,6 +2,7 @@ package com.android.greenapp.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.android.greenapp.data.local.entity.TransactionEntity
@@ -14,7 +15,7 @@ import java.util.*
 interface TransactionDao {
 
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     suspend fun insertTransaction(trans: TransactionEntity)
 
     @Insert(onConflict = REPLACE)

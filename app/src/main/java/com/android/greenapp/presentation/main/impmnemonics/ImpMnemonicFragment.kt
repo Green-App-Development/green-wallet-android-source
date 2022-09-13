@@ -35,11 +35,13 @@ import com.android.greenapp.presentation.custom.mnemonicsToString
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.android.greenapp.presentation.tools.getColorResource
 import com.android.greenapp.presentation.tools.getDrawableResource
 import com.android.greenapp.presentation.tools.getStringResource
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.example.common.tools.getPrefixForAddressFromNetworkType
+import dagger.android.support.DaggerDialogFragment
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.restring.Restring
 import io.flutter.plugin.common.MethodChannel
@@ -57,7 +59,7 @@ import javax.inject.Inject
  * Created by bekjan on 14.04.2022.
  * email: bekjan.omirzak98@gmail.com
  */
-class ImpMnemonicFragment : DaggerFragment() {
+class ImpMnemonicFragment : DaggerDialogFragment() {
 
     private val binding by viewBinding(FragmentImpmnemonicBinding::bind)
     private var jobAfter7Seconds: Job? = null
@@ -120,19 +122,24 @@ class ImpMnemonicFragment : DaggerFragment() {
         VLog.d("OnCreate on Import Mnemonics")
     }
 
+    override fun getTheme(): Int {
+        return R.style.DialogTheme
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        VLog.d("OnCreate View on Import Mnemonics")
+        VLog.d("OnCreate View on Import Mnemonics on $dialog")
         val view = inflater.inflate(R.layout.fragment_impmnemonic, container, false)
         curActivity().impMnemonicsView = view
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         super.onViewCreated(view, savedInstanceState)
         VLog.d("OnViewCreated on Import Mnemonics")
         binding.btn12Words.isChecked = true
@@ -171,7 +178,6 @@ class ImpMnemonicFragment : DaggerFragment() {
             btn24Words.text = "24 ${cur24Txt.lowercase()}"
         }
     }
-
 
     private fun highlightingWordTermsOfUseSecondVersion() {
         try {
@@ -365,8 +371,7 @@ class ImpMnemonicFragment : DaggerFragment() {
             }
         }
         binding.backLayout.setOnClickListener {
-            it.startAnimation(effect.getBtnEffectAnimation())
-            curActivity().backPressedOnImpMnemonicFragment()
+            curActivity().popBackStackOnce()
         }
         binding.btn12Words.isChecked = true
         handlingNextBtnPressOnLastEdtInFirstColumn()
@@ -525,7 +530,8 @@ class ImpMnemonicFragment : DaggerFragment() {
                 getMnemonicsList(),
                 curNetworkType,
                 System.currentTimeMillis(),
-                0.0
+                0.0,
+                System.currentTimeMillis()
             )
             impMnemonicViewModel.importNewWallet(newWallet) {
                 dialogManager.hideProgress()
@@ -996,7 +1002,17 @@ class ImpMnemonicFragment : DaggerFragment() {
         val clearingEdts = areAllEdtsFilled()
         if (binding.checkboxAgree.isChecked && clearingEdts)
             binding.btnContinue.isEnabled = true
+        initStatusBarColor()
     }
+
+    private fun initStatusBarColor() {
+        dialog?.apply {
+            window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window?.statusBarColor = curActivity().getColorResource(R.color.cardView_background)
+            window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
+    }
+
 
     private fun areAllEdtsFilled(): Boolean {
         reinitializeEdts()
@@ -1050,6 +1066,13 @@ class ImpMnemonicFragment : DaggerFragment() {
         jobAfter7Seconds?.cancel()
         jobToMakeDuplicatesWarningGone?.cancel()
         curActivity().impMnemonicsView = null
+    }
+
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        VLog.d("OnCreateDialog appeared on impMnemonicsFragment")
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        return super.onCreateDialog(savedInstanceState)
     }
 
 

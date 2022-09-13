@@ -52,19 +52,20 @@ class AllSettingsFragment : DaggerDialogFragment() {
         VLog.d("onView Created from AllSettingsFragment")
         settingViewDetails()
         registerClicks()
-        initStatusBarColor()
     }
 
     private fun initStatusBarColor() {
         dialog?.apply {
+            VLog.d("Changing status bar color on allSettingsFragment")
             window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window?.statusBarColor = curActivity().getColorResource(R.color.status_bar_color_send)
+            window?.statusBarColor = curActivity().getColorResource(R.color.cardView_background)
         }
     }
 
     override fun onStart() {
         super.onStart()
         VLog.d("onStart from AllSettingsFragment")
+        initStatusBarColor()
     }
 
     override fun onResume() {

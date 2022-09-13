@@ -8,6 +8,7 @@ import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
@@ -18,15 +19,17 @@ import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
+import com.android.greenapp.presentation.tools.getColorResource
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
+import dagger.android.support.DaggerDialogFragment
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.restring.Restring
 import kotlinx.android.synthetic.main.fragment_coins_inf.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class CoinsDetailsFragment : DaggerFragment() {
+class CoinsDetailsFragment : DaggerDialogFragment() {
 
 	private val binding by viewBinding(FragmentCoinsInfBinding::bind)
 
@@ -54,9 +57,13 @@ class CoinsDetailsFragment : DaggerFragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		return inflater.inflate(R.layout.fragment_coins_inf, container, false)
+		val view= inflater.inflate(R.layout.fragment_coins_inf, container, false)
+		return view
 	}
 
+	override fun getTheme(): Int {
+		return R.style.DialogTheme
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -66,6 +73,7 @@ class CoinsDetailsFragment : DaggerFragment() {
 		}
 	}
 
+	
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		registerButtonClicks()
@@ -152,7 +160,7 @@ class CoinsDetailsFragment : DaggerFragment() {
 		}
 
 		binding.btnCreate.setOnClickListener {
-			generateMnemonicsLocally()
+				generateMnemonicsLocally()
 		}
 
 		binding.backLayout.setOnClickListener {
@@ -186,6 +194,11 @@ class CoinsDetailsFragment : DaggerFragment() {
 
 	private fun curActivity() = requireActivity() as MainActivity
 
+	override fun onStart() {
+		super.onStart()
+		initStatusBarColor()
+	}
+
 	override fun onPause() {
 		super.onPause()
 		VLog.d("OnPause on Coins Details Fragment")
@@ -203,7 +216,15 @@ class CoinsDetailsFragment : DaggerFragment() {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		VLog.d("OnDestroy  on CoindsDetailsFragment")
+		VLog.d("OnDestroy  on CoinsDetailsFragment")
+	}
+
+
+	private fun initStatusBarColor() {
+		dialog?.apply {
+			window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+			window?.statusBarColor = curActivity().getColorResource(R.color.cardView_background)
+		}
 	}
 
 

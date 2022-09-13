@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/cardView_background">
 
-
     <LinearLayout
         android:id="@+id/linearAgree"
         android:layout_width="0dp"

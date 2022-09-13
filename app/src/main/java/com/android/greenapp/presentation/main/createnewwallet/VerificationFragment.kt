@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.*
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -27,9 +28,11 @@ import com.android.greenapp.presentation.custom.mnemonicsToString
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.android.greenapp.presentation.tools.getColorResource
 import com.android.greenapp.presentation.tools.getDrawableResource
 import com.android.greenapp.presentation.tools.getStringResource
 import com.example.common.tools.*
+import dagger.android.support.DaggerDialogFragment
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_verification_wallet.*
@@ -40,7 +43,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import javax.inject.Inject
 
-class VerificationFragment : DaggerFragment() {
+class VerificationFragment : DaggerDialogFragment() {
 
     private lateinit var binding: FragmentVerificationWalletBinding
 
@@ -86,6 +89,10 @@ class VerificationFragment : DaggerFragment() {
                 curNetworkType = it.getString(NETWORK_TYPE_KEY)!!
             }
         }
+    }
+
+    override fun getTheme(): Int {
+        return R.style.DialogTheme
     }
 
     private fun settingLeftSideWordsAndOptions(mnemonics: List<String>) {
@@ -504,7 +511,8 @@ class VerificationFragment : DaggerFragment() {
                 mnemonics,
                 curNetworkType,
                 System.currentTimeMillis(),
-                0.0
+                0.0,
+                System.currentTimeMillis()
             )
             newWalletViewModel.createNewWallet(newWallet) {
                 dialogManager.hideProgress()
@@ -613,6 +621,20 @@ class VerificationFragment : DaggerFragment() {
     }
 
     private fun curActivity() = requireActivity() as MainActivity
+
+    override fun onStart() {
+        super.onStart()
+        initStatusBarColor()
+    }
+
+    private fun initStatusBarColor() {
+        dialog?.apply {
+            window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window?.statusBarColor = curActivity().getColorResource(R.color.save_mnemonic_bcg)
+        }
+    }
+
+
 
 
 }
