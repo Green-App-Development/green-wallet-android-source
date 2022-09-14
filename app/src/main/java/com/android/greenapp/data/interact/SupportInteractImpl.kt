@@ -23,7 +23,6 @@ class SupportInteractImpl @Inject constructor(
 ) :
     SupportInteract {
 
-
     @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun getFAQQuestionAnswers(): Resource<List<FAQItem>> {
         try {
@@ -52,6 +51,7 @@ class SupportInteractImpl @Inject constructor(
             }
         } catch (ex: Exception) {
             VLog.d("Exception throws in getting faq list : ${ex.message}")
+            return Resource.error(ex)
         }
         return Resource.error(Exception("Exception thrown in faq list"))
     }
@@ -86,8 +86,9 @@ class SupportInteractImpl @Inject constructor(
             }
         } catch (ex: java.lang.Exception) {
             VLog.d("Exception occurred in posting listing : $ex")
+            return Resource.error(ex)
         }
-        return Resource.error(Throwable("NO"))
+        return Resource.error(Exception("NO"))
     }
 
     override suspend fun postQuestion(question: QuestionPost): Resource<String> {
@@ -107,8 +108,9 @@ class SupportInteractImpl @Inject constructor(
             }
         } catch (ex: Exception) {
             VLog.d("Exception occurred in posting question : $ex")
+            return Resource.error(ex)
         }
-        return Resource.error(Throwable("NO"))
+        return Resource.error(Exception("NO"))
     }
 
 

@@ -42,7 +42,6 @@ import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.example.common.tools.getPrefixForAddressFromNetworkType
 import dagger.android.support.DaggerDialogFragment
-import dagger.android.support.DaggerFragment
 import dev.b3nedikt.restring.Restring
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_impmnemonic.*
@@ -423,7 +422,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
                 }
             } catch (ex: Exception) {
                 VLog.d("Exception in methodCallHandler in Android : ${ex.message}")
-                dialogManager.hideProgress()
+                dialogManager.hidePrevDialogs()
                 adjustingAssureTxt(24)
             }
         }
@@ -534,7 +533,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
                 System.currentTimeMillis()
             )
             impMnemonicViewModel.importNewWallet(newWallet) {
-                dialogManager.hideProgress()
+                dialogManager.hidePrevDialogs()
                 showSuccessImportingDialog()
             }
         }

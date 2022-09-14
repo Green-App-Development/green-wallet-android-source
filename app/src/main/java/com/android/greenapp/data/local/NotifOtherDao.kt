@@ -3,6 +3,7 @@ package com.android.greenapp.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.android.greenapp.data.local.entity.NotifOtherEntity
 import java.util.*
@@ -18,6 +19,8 @@ interface NotifOtherDao {
         today: Long?
     ): List<NotifOtherEntity>
 
+    @Insert(onConflict = REPLACE)
+    suspend fun insertingNotifOther(notifOther:NotifOtherEntity)
 
     @Insert(onConflict = IGNORE)
     suspend fun insertOtherNotifItems(otherNotifItems: List<NotifOtherEntity>)

@@ -11,6 +11,7 @@ import com.android.greenapp.R
 import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
 import com.android.greenapp.databinding.FragmentLanguageBinding
 import com.android.greenapp.presentation.custom.DialogManager
+import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.onboard.OnBoardViewModel
@@ -67,8 +68,8 @@ class LanguageFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initLangRecyclerView()
-        greetingViewModel.getAllLanguageList()
         VLog.d("GreetingViewModel LanguageFragment on ViewCreated : $greetingViewModel")
+        greetingViewModel.getAllLanguageList(3)
     }
 
     private fun downLoadingLang() {
@@ -77,16 +78,23 @@ class LanguageFragment : DaggerFragment() {
                 it?.let {
                     when (it.state) {
                         Resource.State.ERROR -> {
-                            dialogManager.hideProgress()
-                            dialogManager.showServerErrorDialog(curActivity()) {
+                            dialogManager.hidePrevDialogs()
+                            val error = it.error
+                            if (isExceptionBelongsToNoInternet(error!!)) {
+                                dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
 
+                                }
+                            } else {
+                                dialogManager.showServerErrorDialog(curActivity()) {
+
+                                }
                             }
                         }
                         Resource.State.LOADING -> {
 
                         }
                         Resource.State.SUCCESS -> {
-                            dialogManager.hideProgress()
+                            dialogManager.hidePrevDialogs()
                             updateView()
                             curActivity().move2TermsFragment()
                         }
@@ -101,6 +109,16 @@ class LanguageFragment : DaggerFragment() {
         Reword.reword(rootView)
     }
 
+    override fun onStart() {
+        super.onStart()
+        VLog.d("On  Start on  Start Fragment")
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        VLog.d("On Resume on languageFragment")
+    }
 
     private fun initLangRecyclerView() {
         langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
@@ -114,6 +132,7 @@ class LanguageFragment : DaggerFragment() {
             recViewLang.adapter = langAdapter
             recViewLang.layoutManager = LinearLayoutManager(curActivity())
         }
+
         lifecycleScope.launch {
             greetingViewModel.languageList.collect {
                 when (it.state) {
@@ -121,18 +140,24 @@ class LanguageFragment : DaggerFragment() {
                         VLog.d("Loading Status to get LangList")
                     }
                     Resource.State.ERROR -> {
-                        VLog.d("Erros status to get LangList")
+                        VLog.d("Error status to get LangList")
                         curActivity().apply {
-                            dialogManager.hideProgress()
-                            dialogManager.showServerErrorDialog(curActivity()) {
+                            val errorType = it.error
+                            if (isExceptionBelongsToNoInternet(errorType!!)) {
+                                dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
 
+                                }
+                            } else {
+                                dialogManager.showServerErrorDialog(curActivity()) {
+
+                                }
                             }
                         }
                     }
                     Resource.State.SUCCESS -> {
                         VLog.d("Success Status Language List : ${it.data}")
                         langAdapter.updateLanguageList(it.data ?: mutableListOf())
-                        dialogManager.hideProgress()
+                        dialogManager.hidePrevDialogs()
                     }
                 }
             }

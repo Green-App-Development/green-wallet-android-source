@@ -24,6 +24,7 @@ import com.android.greenapp.databinding.FragmentListingBinding
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.CustomSpinner
 import com.android.greenapp.presentation.custom.DialogManager
+import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.main.send.NetworkAdapter
@@ -39,6 +40,7 @@ import kotlinx.android.synthetic.main.fragment_listing.*
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -266,34 +268,42 @@ class ListingFragment : DaggerDialogFragment() {
             val listingPost = getListingPost()
             listingJob?.cancel()
             listingJob = lifecycleScope.launch {
-                val res = viewModel.postListing(listingPost)
+                viewModel.postListing(listingPost, 3)
+                viewModel.postListing.collect { res ->
+                    when (res?.state) {
 
-                when (res.state) {
+                        Resource.State.LOADING -> {
 
-                    Resource.State.LOADING -> {
-
-                    }
-                    Resource.State.SUCCESS -> {
-
-                        curActivity().apply {
-                            dialogManager.showSuccessDialog(
-                                this,
-                                getStringResource(R.string.pop_up_sent_title),
-                                getStringResource(R.string.pop_up_sent_a_question_description),
-                                getStringResource(R.string.ready_btn)
-                            ) {
-                                curActivity().popBackStackOnce()
+                        }
+                        Resource.State.SUCCESS -> {
+                            curActivity().apply {
+                                dialogManager.showSuccessDialog(
+                                    this,
+                                    getStringResource(R.string.pop_up_sent_title),
+                                    getStringResource(R.string.pop_up_sent_a_question_description),
+                                    getStringResource(R.string.ready_btn)
+                                ) {
+                                    curActivity().popBackStackOnce()
+                                }
                             }
                         }
-                    }
-                    Resource.State.ERROR -> {
-                        curActivity().apply {
-                            dialogManager.showFailureDialog(
-                                this, getStringResource(R.string.pop_up_failed_error_title),
-                                getStringResource(R.string.pop_up_failed_error_description),
-                                getStringResource(R.string.pop_up_failed_error_return_btn)
-                            ) {
+                        Resource.State.ERROR -> {
 
+                            val errorType = res.error
+                            if (isExceptionBelongsToNoInternet(errorType!!)) {
+                                dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
+
+                                }
+                            } else {
+                                curActivity().apply {
+                                    dialogManager.showFailureDialog(
+                                        this, getStringResource(R.string.pop_up_failed_error_title),
+                                        getStringResource(R.string.pop_up_failed_error_description),
+                                        getStringResource(R.string.pop_up_failed_error_return_btn)
+                                    ) {
+
+                                    }
+                                }
                             }
                         }
                     }

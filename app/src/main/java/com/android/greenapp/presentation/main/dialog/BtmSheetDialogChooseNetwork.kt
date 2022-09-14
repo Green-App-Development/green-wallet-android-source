@@ -1,6 +1,5 @@
-package com.android.greenapp.presentation.main.btmsheet
+package com.android.greenapp.presentation.main.dialog
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

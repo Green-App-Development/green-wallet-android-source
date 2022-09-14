@@ -20,6 +20,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
+import kotlinx.coroutines.flow.collect
 
 
 /**
@@ -76,26 +78,33 @@ class FAQFragment : DaggerDialogFragment() {
         (binding.recViewFaq.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         faqJob = lifecycleScope.launch {
-            val res = viewModel.getFAQQuestionAnswers()
-            when (res.state) {
+            viewModel.getFAQQuestionAnswers(3)
+            viewModel.faqList.collect { res ->
+                when (res?.state) {
+                    Resource.State.SUCCESS -> {
+                        val faqList = res.data!!
+                        faqAdapter.updateQuestionList(faqList)
+                        dialogManager.hidePrevDialogs()
+                    }
+                    Resource.State.ERROR -> {
+                        val errorType = res.error!!
+                        if (isExceptionBelongsToNoInternet(errorType)) {
+                            dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
+                                
+                            }
+                        } else {
+                            dialogManager.showServerErrorDialog(curActivity()) {
 
-                Resource.State.SUCCESS -> {
-                    val faqList = res.data!!
-                    faqAdapter.updateQuestionList(faqList)
-                }
-                Resource.State.ERROR -> {
-                    dialogManager.showServerErrorDialog(curActivity()) {
+                            }
+                        }
+                    }
+
+                    Resource.State.LOADING -> {
 
                     }
                 }
-
-                Resource.State.LOADING -> {
-
-                }
-
             }
         }
-
     }
 
     override fun onStart() {

@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class IconFragment : Fragment() {
 
+
     private val binding by viewBinding(FragmentIconBinding::bind)
 
     override fun onCreateView(

@@ -7,15 +7,18 @@ import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
+import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -42,19 +45,20 @@ class OnBoardViewModel @Inject constructor(
     }
 
 
-    private var job: Job? = null
+    private var downloadLangJob: Job? = null
+    private var langListJob: Job? = null
 
     suspend fun getGreetingAgreementText() = greenAppInteract.getAgreementsText()
 
     fun downloadLanguage(langCode: String) {
-        job?.cancel()
-        job = viewModelScope.launch {
+        downloadLangJob?.cancel()
+        downloadLangJob = viewModelScope.launch {
             kotlin.runCatching {
                 _downloadingLang.emit(Resource.loading())
-                greenAppInteract.downloadLanguageTranslate(langCode = langCode)
-                _downloadingLang.emit(Resource.success("Success"))
+                val res=greenAppInteract.downloadLanguageTranslate(langCode = langCode)
+                _downloadingLang.emit(res)
             }.onFailure {
-                _downloadingLang.emit(Resource.error(it))
+                _downloadingLang.emit(Resource.error(Exception(it.message)))
             }
         }
     }
@@ -77,10 +81,24 @@ class OnBoardViewModel @Inject constructor(
         }
     }
 
-    fun getAllLanguageList() {
-        viewModelScope.launch {
+    fun getAllLanguageList(times: Int) {
+        langListJob?.cancel()
+        langListJob = viewModelScope.launch {
             val res = greenAppInteract.getAvailableLanguageList()
             _languageList.emit(res)
+            if (times != 0 && res.state == Resource.State.ERROR && isExceptionBelongsToNoInternet(
+                    res.error!!
+                )
+            ) {
+                delay(2500)
+                getAllLanguageList(times - 1)
+            }
+        }
+    }
+
+    fun saveAppStartTime(value: Long) {
+        viewModelScope.launch {
+            prefs.saveSettingLong(PrefsManager.APP_START_TIME, value)
         }
     }
 

@@ -301,7 +301,7 @@ class WalletInteractImpl @Inject constructor(
 		} else {
 			VLog.e("Request for importing new token is not success : ")
 		}
-		return Resource.error(Throwable("Exception in adding importing token"))
+		return Resource.error(Exception("Exception in adding importing token"))
 	}
 
 	private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {

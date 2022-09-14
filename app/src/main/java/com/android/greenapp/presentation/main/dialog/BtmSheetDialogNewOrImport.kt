@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.main.btmsheet
+package com.android.greenapp.presentation.main.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,5 +43,12 @@ class BtmSheetDialogNewOrImport : BottomSheetDialogFragment() {
     }
 
     private fun curActivity()=requireActivity() as MainActivity
+
+
+    override fun getTheme(): Int {
+        return R.style.AppBottomSheetDialogTheme
+    }
+
+
 
 }

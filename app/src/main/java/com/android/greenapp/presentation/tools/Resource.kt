@@ -1,5 +1,7 @@
 package com.android.greenapp.presentation.tools
 
+import java.lang.Exception
+
 /**
  * Created by bekjan on 25.05.2022.
  * email: bekjan.omirzak98@gmail.com
@@ -8,7 +10,7 @@ package com.android.greenapp.presentation.tools
 class Resource<T> private constructor(
     val state: State,
     val data: T?,
-    val error: Throwable?
+    val error: Exception?
 ) {
 
     enum class State {
@@ -33,7 +35,7 @@ class Resource<T> private constructor(
                 null
             )
 
-        fun<T> error(error: Throwable?): Resource<T> =
+        fun<T> error(error: Exception): Resource<T> =
             Resource(
                 State.ERROR,
                 null,

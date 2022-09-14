@@ -19,7 +19,6 @@ import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.databinding.FragmentSendBinding
 import com.android.greenapp.domain.entity.Address
 import com.android.greenapp.domain.entity.TokenWallet
-import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.domain.entity.WalletWithTokens
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.*
@@ -215,7 +214,7 @@ class SendFragment : DaggerFragment() {
 
 		@JavascriptInterface
 		fun errorConverting() {
-			dialogManager.hideProgress()
+			dialogManager.hidePrevDialogs()
 			showFailedSendingTransaction()
 		}
 
@@ -489,12 +488,12 @@ class SendFragment : DaggerFragment() {
 			val res = viewModel.push_transaction(spendBundleJSON, url,amount,networkType,fingerPrint)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
-					dialogManager.hideProgress()
+					dialogManager.hidePrevDialogs()
 					insertAddressEntityIfBoxChecked()
 					showSuccessSendMoneyDialog()
 				}
 				Resource.State.ERROR -> {
-					dialogManager.hideProgress()
+					dialogManager.hidePrevDialogs()
 					showFailedSendingTransaction()
 				}
 				Resource.State.LOADING -> {

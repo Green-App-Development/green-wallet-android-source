@@ -81,18 +81,19 @@ class TransactionItemAdapter(
                 }
             }
             txtHeightTransaction.text = "${transaction.confirmed_at_height}"
-//            txtToken.text =
-//                "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
-//                    getShortNetworkType(
-//                        transaction.networkType
-//                    )
-//                }"
             txtToken.text =
-                "0.00000000000 ${
+                "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
                     getShortNetworkType(
                         transaction.networkType
                     )
                 }"
+
+//            txtToken.text =
+//                "0.00000000000 ${
+//                    getShortNetworkType(
+//                        transaction.networkType
+//                    )
+//                }"
 
             rootLayout.setOnClickListener {
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)

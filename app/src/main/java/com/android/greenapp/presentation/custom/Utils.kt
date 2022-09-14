@@ -19,6 +19,8 @@ import com.example.common.tools.formattedDateMonth
 import com.example.common.tools.formattedHourMinute
 import com.example.common.tools.getCurrentTimeInMinutes
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.DecimalFormat
 
 
@@ -203,6 +205,9 @@ fun mnemonicsToString(mnemonics: List<String>): String {
 }
 
 
+fun isExceptionBelongsToNoInternet(ex: Exception): Boolean {
+    return (ex is SocketTimeoutException) or (ex is UnknownHostException)
+}
 
 
 

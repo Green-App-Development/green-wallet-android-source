@@ -30,8 +30,8 @@ import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.intro.IntroActivity
 import com.android.greenapp.presentation.main.address.AddressFragment
 import com.android.greenapp.presentation.main.address.EditAddressFragment
-import com.android.greenapp.presentation.main.btmsheet.BtmSheetDialogChooseNetwork
-import com.android.greenapp.presentation.main.btmsheet.BtmSheetDialogNewOrImport
+import com.android.greenapp.presentation.main.dialog.BtmSheetDialogChooseNetwork
+import com.android.greenapp.presentation.main.dialog.BtmSheetDialogNewOrImport
 import com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment
 import com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment.Companion.NETWORK_KEY
 import com.android.greenapp.presentation.main.createnewwallet.SaveMnemonicsFragment

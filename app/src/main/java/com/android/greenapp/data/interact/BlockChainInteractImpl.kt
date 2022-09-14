@@ -13,10 +13,7 @@ import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.PrefsInteract
-import com.android.greenapp.presentation.custom.AESEncryptor
-import com.android.greenapp.presentation.custom.NotificationHelper
-import com.android.greenapp.presentation.custom.getPreferenceKeyForNetworkItem
-import com.android.greenapp.presentation.custom.isThisNotChiaNetwork
+import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.main.send.spend.Coin
 import com.android.greenapp.presentation.main.send.spend.CoinSpend
 import com.android.greenapp.presentation.main.send.spend.SpenBunde
@@ -147,9 +144,10 @@ class BlockChainInteractImpl @Inject constructor(
                 }
             }
         } catch (ex: Exception) {
-            VLog.d("Exception occured in puzsh_tx transaction : ${ex.message}")
+            VLog.d("Exception occured in push_tx transaction : ${ex.message}")
+            return Resource.error(ex)
         }
-        return Resource.error(Throwable("ex"))
+        return Resource.error(Exception("Unknown exception in pushing pushing transaction"))
     }
 
     fun temporarilyGenerateFakeHeight(): Long {
@@ -255,7 +253,7 @@ class BlockChainInteractImpl @Inject constructor(
                             wallet.fingerPrint,
                             0.0
                         )
-                        val formatted=String.format("%.8f",coinAmount/division)
+                        val formatted=formattedDoubleAmountWithPrecision(coinAmount/division)
                         notificationHelper.callGreenAppNotificationMessages(
                             "Incoming Transaction : $formatted",
                             System.currentTimeMillis()

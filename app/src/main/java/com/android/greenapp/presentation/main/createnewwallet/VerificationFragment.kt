@@ -33,7 +33,6 @@ import com.android.greenapp.presentation.tools.getDrawableResource
 import com.android.greenapp.presentation.tools.getStringResource
 import com.example.common.tools.*
 import dagger.android.support.DaggerDialogFragment
-import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_verification_wallet.*
 import kotlinx.android.synthetic.main.fragment_verification_wallet.view.*
@@ -515,7 +514,7 @@ class VerificationFragment : DaggerDialogFragment() {
                 System.currentTimeMillis()
             )
             newWalletViewModel.createNewWallet(newWallet) {
-                dialogManager.hideProgress()
+                dialogManager.hidePrevDialogs()
                 showCongratulateDialog()
             }
 

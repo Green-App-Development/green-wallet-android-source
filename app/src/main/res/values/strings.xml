@@ -140,8 +140,8 @@
     <string name="my_wallets_title" />
     <string name="network_description_btn" />
     <string name="next_btn" />
-    <string name="no_connection_description" />
-    <string name="no_connection_title" />
+    <string name="no_connection_description">Check your internet connection and try again</string>
+    <string name="no_connection_title" >No connection</string>
     <string name="non_existent_adress_error" />
     <string name="notifications_all" />
     <string name="notifications_credited_to_chia_wallet" />

@@ -38,7 +38,7 @@ class IconFragment : DaggerFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         VLog.d("GreetingViewModel  IconFragment : $greetingViewModel")
-
+        greetingViewModel.saveAppStartTime(System.currentTimeMillis())
     }
 
     override fun onCreateView(
