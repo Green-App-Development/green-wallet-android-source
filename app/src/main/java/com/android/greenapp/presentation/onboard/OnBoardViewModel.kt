@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting
+package com.android.greenapp.presentation.onboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class GreetingViewModel @Inject constructor(
+class OnBoardViewModel @Inject constructor(
     private val prefs: PrefsInteract,
     private val greenAppInteract: GreenAppInteract,
     private val gson: Gson,

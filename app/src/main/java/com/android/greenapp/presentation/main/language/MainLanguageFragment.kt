@@ -2,7 +2,6 @@ package com.android.greenapp.presentation.main.language
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import com.android.greenapp.databinding.FragmentMainlanguageBinding
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.greeting.language.LanguageAdapter
+import com.android.greenapp.presentation.onboard.language.LanguageAdapter
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.JsonHelper

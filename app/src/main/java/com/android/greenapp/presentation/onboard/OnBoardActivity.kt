@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting
+package com.android.greenapp.presentation.onboard
 
 import android.content.Intent
 import android.os.Build
@@ -19,14 +19,14 @@ import com.example.common.tools.*
 import java.util.*
 import javax.inject.Inject
 
-class GreetingActivity : BaseActivity() {
+class OnBoardActivity : BaseActivity() {
 
     lateinit var binding: ActivityGreetingBinding
     private val navController by lazy { findNavController(R.id.my_nav_host_fragment) }
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    val greetingViewModel: GreetingViewModel by viewModels { viewModelFactory }
+    val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +97,7 @@ class GreetingActivity : BaseActivity() {
     }
 
     fun move2MainActivity() {
-        Intent(this@GreetingActivity, MainActivity::class.java).apply {
+        Intent(this@OnBoardActivity, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(this)
             finish()

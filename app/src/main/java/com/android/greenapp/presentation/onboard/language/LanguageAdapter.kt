@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting.language
+package com.android.greenapp.presentation.onboard.language
 
 import android.app.Activity
 import android.view.LayoutInflater

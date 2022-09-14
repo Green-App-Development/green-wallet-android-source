@@ -3,7 +3,6 @@ package com.android.greenapp.presentation.custom
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,9 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.android.greenapp.R
 import com.android.greenapp.presentation.di.application.AppScope
-import com.android.greenapp.presentation.greeting.GreetingActivity
 import com.android.greenapp.presentation.intro.IntroActivity
-import com.android.greenapp.presentation.main.MainActivity
 import com.example.common.tools.VLog
 import javax.inject.Inject
 

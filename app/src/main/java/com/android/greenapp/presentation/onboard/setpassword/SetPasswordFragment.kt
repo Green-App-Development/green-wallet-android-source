@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting.setpassword
+package com.android.greenapp.presentation.onboard.setpassword
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,15 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
-import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentSetPasswordBinding
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.greeting.GreetingActivity
-import com.android.greenapp.presentation.greeting.GreetingViewModel
+import com.android.greenapp.presentation.onboard.OnBoardActivity
+import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getStringResource
@@ -36,7 +35,7 @@ class SetPasswordFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val greetingViewModel: GreetingViewModel by viewModels { viewModelFactory }
+    private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
 
     @Inject
@@ -151,7 +150,7 @@ class SetPasswordFragment : DaggerFragment() {
             curActivity().getStringResource(R.string.repeat_passcode_description)
     }
 
-    private fun curActivity() = requireActivity() as GreetingActivity
+    private fun curActivity() = requireActivity() as OnBoardActivity
 
 
 }

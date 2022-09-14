@@ -1,11 +1,11 @@
 package com.android.greenapp.presentation.di.application
 
 import android.app.Dialog
-import com.android.greenapp.presentation.greeting.GreetingActivity
-import com.android.greenapp.presentation.greeting.icon.IconFragment
-import com.android.greenapp.presentation.greeting.language.LanguageFragment
-import com.android.greenapp.presentation.greeting.setpassword.SetPasswordFragment
-import com.android.greenapp.presentation.greeting.terms.TermsFragment
+import com.android.greenapp.presentation.onboard.OnBoardActivity
+import com.android.greenapp.presentation.onboard.icon.IconFragment
+import com.android.greenapp.presentation.onboard.language.LanguageFragment
+import com.android.greenapp.presentation.onboard.setpassword.SetPasswordFragment
+import com.android.greenapp.presentation.onboard.terms.TermsFragment
 import com.android.greenapp.presentation.intro.IntroActivity
 import com.android.greenapp.presentation.intro.authenticate.AuthFragmentIntro
 import com.android.greenapp.presentation.main.MainActivity
@@ -42,7 +42,7 @@ import dagger.android.ContributesAndroidInjector
 abstract class InjectorBuildersModule {
 
     @ContributesAndroidInjector
-    abstract fun injectGreetingActivity(): GreetingActivity
+    abstract fun injectGreetingActivity(): OnBoardActivity
 
     @ContributesAndroidInjector
     abstract fun injectIntroLanguageFragment(): LanguageFragment

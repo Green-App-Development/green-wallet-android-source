@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.di.application
 
 import androidx.lifecycle.ViewModel
 import com.android.greenapp.presentation.di.factory.ViewModelKey
-import com.android.greenapp.presentation.greeting.GreetingViewModel
+import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.intro.IntroActViewModel
 import com.android.greenapp.presentation.main.MainViewModel
 import com.android.greenapp.presentation.main.address.AddressViewModel
@@ -30,8 +30,8 @@ abstract class ViewModelsModule {
 
     @IntoMap
     @Binds
-    @ViewModelKey(GreetingViewModel::class)
-    abstract fun bindsGreetingFragmentViewModel(greetingFragmentViewModel: GreetingViewModel): ViewModel
+    @ViewModelKey(OnBoardViewModel::class)
+    abstract fun bindsGreetingFragmentViewModel(greetingFragmentViewModel: OnBoardViewModel): ViewModel
 
     @IntoMap
     @Binds

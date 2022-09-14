@@ -14,7 +14,7 @@ import com.android.greenapp.presentation.BaseActivity
 import com.android.greenapp.presentation.custom.getStatusBarBcgColorBasedOnTime
 import com.android.greenapp.presentation.custom.getStatusBcgBarColorBasedOnTime
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.greeting.GreetingActivity
+import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.main.MainActivity
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getBooleanResource
@@ -113,7 +113,7 @@ class IntroActivity : BaseActivity() {
     }
 
     fun move2GreetingActivity() {
-        Intent(this, GreetingActivity::class.java).apply {
+        Intent(this, OnBoardActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(this)
             finish()

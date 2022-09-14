@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting.icon
+package com.android.greenapp.presentation.onboard.icon
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentIconBinding
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.greeting.GreetingActivity
-import com.android.greenapp.presentation.greeting.GreetingViewModel
+import com.android.greenapp.presentation.onboard.OnBoardActivity
+import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.google.gson.Gson
@@ -26,7 +26,7 @@ class IconFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val greetingViewModel: GreetingViewModel by viewModels { viewModelFactory }
+    private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var effect: AnimationManager
@@ -78,7 +78,7 @@ class IconFragment : DaggerFragment() {
         }
     }
 
-    private fun curActivity() = requireActivity() as GreetingActivity
+    private fun curActivity() = requireActivity() as OnBoardActivity
 
 
 }

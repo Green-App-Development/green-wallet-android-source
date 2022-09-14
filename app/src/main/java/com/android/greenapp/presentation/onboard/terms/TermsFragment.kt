@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting.terms
+package com.android.greenapp.presentation.onboard.terms
 
 import android.os.Bundle
 import android.text.SpannableString
@@ -17,8 +17,8 @@ import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentTermsofuseBinding
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.greeting.GreetingActivity
-import com.android.greenapp.presentation.greeting.GreetingViewModel
+import com.android.greenapp.presentation.onboard.OnBoardActivity
+import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
@@ -38,7 +38,7 @@ class TermsFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: GreetingViewModel by viewModels { viewModelFactory }
+    private val viewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var dialog: DialogManager
@@ -144,7 +144,7 @@ class TermsFragment : DaggerFragment() {
         }
     }
 
-    private fun curActivity() = requireActivity() as GreetingActivity
+    private fun curActivity() = requireActivity() as OnBoardActivity
 
     private val fadeInBackBtn: Animation by lazy {
         AnimationUtils.loadAnimation(requireContext(), R.anim.btn_effect)

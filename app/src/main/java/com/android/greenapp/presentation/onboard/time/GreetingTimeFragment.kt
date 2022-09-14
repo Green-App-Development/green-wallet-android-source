@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting.time
+package com.android.greenapp.presentation.onboard.time
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentTimeBinding
-import com.android.greenapp.presentation.greeting.GreetingActivity
+import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.tools.getColorResource
 import com.android.greenapp.presentation.tools.getDrawableResource
 import com.android.greenapp.presentation.tools.getStringResource
@@ -93,6 +93,6 @@ class GreetingTimeFragment : Fragment(R.layout.fragment_time) {
     }
 
 
-    private fun curActivity() = requireActivity() as GreetingActivity
+    private fun curActivity() = requireActivity() as OnBoardActivity
 
 }

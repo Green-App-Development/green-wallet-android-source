@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.greeting.language
+package com.android.greenapp.presentation.onboard.language
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,8 +12,8 @@ import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
 import com.android.greenapp.databinding.FragmentLanguageBinding
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.greeting.GreetingActivity
-import com.android.greenapp.presentation.greeting.GreetingViewModel
+import com.android.greenapp.presentation.onboard.OnBoardActivity
+import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
@@ -36,7 +36,7 @@ class LanguageFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val greetingViewModel: GreetingViewModel by viewModels { viewModelFactory }
+    private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
 
     @Inject
@@ -161,7 +161,7 @@ class LanguageFragment : DaggerFragment() {
         }
     }
 
-    private fun curActivity() = requireActivity() as GreetingActivity
+    private fun curActivity() = requireActivity() as OnBoardActivity
 
 
     override fun onDestroyView() {

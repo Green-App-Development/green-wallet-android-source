@@ -141,6 +141,8 @@ class BlockChainInteractImpl @Inject constructor(
                         0.0
                     )
                     transactionDao.insertTransaction(trans)
+                    val prevBalance = walletDao.getWalletByFingerPrint(fingerPrint).get(0).balance
+                    walletDao.updateWalletBalance(prevBalance-sendAmount,fingerPrint)
                     return Resource.success("OK")
                 }
             }
@@ -151,7 +153,7 @@ class BlockChainInteractImpl @Inject constructor(
     }
 
     fun temporarilyGenerateFakeHeight(): Long {
-        return ("233" + "${Random().nextInt(9999)}").toLong()
+        return (2002200 + Math.random() * (2604400 - 2002200)).toLong()
     }
 
     suspend fun updateWalletBalance(wallet: WalletEntity) {
@@ -253,8 +255,9 @@ class BlockChainInteractImpl @Inject constructor(
                             wallet.fingerPrint,
                             0.0
                         )
+                        val formatted=String.format("%.8f",coinAmount/division)
                         notificationHelper.callGreenAppNotificationMessages(
-                            "Incoming Transaction : ${coinAmount/division}",
+                            "Incoming Transaction : $formatted",
                             System.currentTimeMillis()
                         )
                         VLog.d("Inserting New Incoming Transaction  : $transEntity")

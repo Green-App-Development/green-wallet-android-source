@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/themeFragment"
-        android:name="com.android.greenapp.presentation.greeting.icon.IconFragment"
+        android:name="com.android.greenapp.presentation.onboard.icon.IconFragment"
         android:label="ThemeFragment"
         tools:layout="@layout/fragment_icon">
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/languageFragment2"
-        android:name="com.android.greenapp.presentation.greeting.language.LanguageFragment"
+        android:name="com.android.greenapp.presentation.onboard.language.LanguageFragment"
         android:label="LanguageFragment"
         tools:layout="@layout/fragment_language">
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/termsFragment"
-        android:name="com.android.greenapp.presentation.greeting.terms.TermsFragment"
+        android:name="com.android.greenapp.presentation.onboard.terms.TermsFragment"
         android:label="TermsFragment"
         tools:layout="@layout/fragment_termsofuse">
         <action
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/setPasswordFragment"
-        android:name="com.android.greenapp.presentation.greeting.setpassword.SetPasswordFragment"
+        android:name="com.android.greenapp.presentation.onboard.setpassword.SetPasswordFragment"
         android:label="SetPasswordFragment"
         tools:layout="@layout/fragment_set_password">
         <action
@@ -57,7 +57,7 @@
     <fragment
         android:id="@+id/timeFragment2"
         tools:layout="@layout/fragment_time"
-        android:name="com.android.greenapp.presentation.greeting.time.GreetingTimeFragment"
+        android:name="com.android.greenapp.presentation.onboard.time.GreetingTimeFragment"
         android:label="TimeFragment" >
         <action
             android:id="@+id/action_timeFragment2_to_setPasswordFragment"

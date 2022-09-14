@@ -81,8 +81,14 @@ class TransactionItemAdapter(
                 }
             }
             txtHeightTransaction.text = "${transaction.confirmed_at_height}"
+//            txtToken.text =
+//                "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
+//                    getShortNetworkType(
+//                        transaction.networkType
+//                    )
+//                }"
             txtToken.text =
-                "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
+                "0.00000000000 ${
                     getShortNetworkType(
                         transaction.networkType
                     )
