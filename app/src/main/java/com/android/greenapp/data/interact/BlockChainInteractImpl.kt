@@ -138,8 +138,8 @@ class BlockChainInteractImpl @Inject constructor(
                         0.0
                     )
                     transactionDao.insertTransaction(trans)
-                    val prevBalance = walletDao.getWalletByFingerPrint(fingerPrint).get(0).balance
-                    walletDao.updateWalletBalance(prevBalance-sendAmount,fingerPrint)
+//                    val prevBalance = walletDao.getWalletByFingerPrint(fingerPrint).get(0).balance
+//                    walletDao.updateWalletBalance(prevBalance-sendAmount,fingerPrint)
                     return Resource.success("OK")
                 }
             }
