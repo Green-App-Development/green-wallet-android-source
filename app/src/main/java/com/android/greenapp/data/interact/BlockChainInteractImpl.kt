@@ -8,6 +8,7 @@ import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.data.local.entity.TransactionEntity
 import com.android.greenapp.data.local.entity.WalletEntity
 import com.android.greenapp.data.network.BlockChainService
+import com.android.greenapp.data.network.ExternalService
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.entity.Wallet
@@ -18,6 +19,7 @@ import com.android.greenapp.presentation.main.send.spend.Coin
 import com.android.greenapp.presentation.main.send.spend.CoinSpend
 import com.android.greenapp.presentation.main.send.spend.SpenBunde
 import com.android.greenapp.presentation.main.send.spend.SpendBundle
+import com.android.greenapp.presentation.tools.BASE_URL_SPACE_SCAN
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
@@ -26,7 +28,6 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 
 /**
@@ -55,6 +56,7 @@ class BlockChainInteractImpl @Inject constructor(
         val walletEntity = wallet.toWalletEntity(encMnemonics)
         walletDao.insertWallet(walletEntity = walletEntity)
         updateWalletBalance(walletEntity)
+        updateTokensBalance(walletEntity)
         return Resource.success("OK")
     }
 
@@ -80,6 +82,7 @@ class BlockChainInteractImpl @Inject constructor(
         val walletListDb = walletDao.getAllWalletList()
         for (wallet in walletListDb) {
             updateWalletBalance(wallet)
+            updateTokensBalance(wallet)
         }
     }
 
@@ -152,6 +155,37 @@ class BlockChainInteractImpl @Inject constructor(
 
     fun temporarilyGenerateFakeHeight(): Long {
         return (2002200 + Math.random() * (2604400 - 2002200)).toLong()
+    }
+
+    suspend fun updateTokensBalance(wallet: WalletEntity) {
+
+        val address = "xch1tdrpnyx27qggwyy3pspaskzw5augv9fhrgctwkr9r2e5jspprtnsdvlf2z"
+
+        try {
+
+            val service = retrofitBuilder.baseUrl(BASE_URL_SPACE_SCAN).build()
+                .create(ExternalService::class.java)
+
+            val res = service.getCATBalance(wallet.address)
+            if (res.isSuccessful) {
+                val cat_balance =
+                    res.body()!!.get("data").asJsonObject.get("cat_balance").asJsonObject
+                VLog.d("Retrieved json object from Spacescan : $cat_balance")
+                val hashWithAmount = hashMapOf<String, Double>()
+                for (key in cat_balance.keySet()) {
+                    val tokenJSON = cat_balance.get(key).asJsonObject
+                    val asset_id = tokenJSON.get("asset_id").asString
+                    val balance = tokenJSON.get("balance").asDouble
+                    hashWithAmount[asset_id] = balance
+                }
+                walletDao.updateChiaNetworkHashTokenBalance(wallet.fingerPrint, hashWithAmount)
+            } else {
+                VLog.d("Request is not success to spacescan : ${res.body()}")
+            }
+
+        } catch (ex: Exception) {
+            VLog.d("Exception in updating token amount : $ex")
+        }
     }
 
     suspend fun updateWalletBalance(wallet: WalletEntity) {
@@ -253,7 +287,7 @@ class BlockChainInteractImpl @Inject constructor(
                             wallet.fingerPrint,
                             0.0
                         )
-                        val formatted=formattedDoubleAmountWithPrecision(coinAmount/division)
+                        val formatted = formattedDoubleAmountWithPrecision(coinAmount / division)
                         notificationHelper.callGreenAppNotificationMessages(
                             "Incoming Transaction : $formatted",
                             System.currentTimeMillis()

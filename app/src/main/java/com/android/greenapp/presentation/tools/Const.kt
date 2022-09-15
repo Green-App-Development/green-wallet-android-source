@@ -21,5 +21,7 @@ const val URL_CHIA_CHIVES =
 
 const val METHOD_CHANNEL_GENERATE_HASH = "METHOD_CHANNEL_GENERATE_HASH"
 
-const val SIX_HOURS_IN_MILLIS_SECONDS=1000*60*60*6
+const val SIX_HOURS_IN_MILLIS_SECONDS = 1000 * 60 * 60 * 6
+
+const val BASE_URL_SPACE_SCAN = "https://api2.spacescan.io/1/xch/balance/"
 

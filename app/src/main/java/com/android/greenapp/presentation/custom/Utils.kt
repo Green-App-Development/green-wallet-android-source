@@ -3,6 +3,8 @@ package com.android.greenapp.presentation.custom
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -208,6 +210,15 @@ fun mnemonicsToString(mnemonics: List<String>): String {
 fun isExceptionBelongsToNoInternet(ex: Exception): Boolean {
     return (ex is SocketTimeoutException) or (ex is UnknownHostException)
 }
+
+fun isOnline(context: Context): Boolean {
+    val cm: ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val netInfo: NetworkInfo? = cm.activeNetworkInfo
+    //should check null because in airplane mode it will be null
+    return netInfo != null && netInfo.isConnected
+}
+
 
 
 

@@ -62,11 +62,6 @@ interface WalletDao {
     @Update
     suspend fun updateWalletEntity(walletEntity: WalletEntity): Int
 
-    @Query("UPDATE WalletEntity SET hashWithIdWallet=:hashWithIdWallet WHERE fingerPrint=:fingerPrint")
-    suspend fun updateChiaNetworkHashTokenIdWallet(
-        fingerPrint: Long,
-        hashWithIdWallet: HashMap<String, Int>
-    ): Int
 
     @Query("UPDATE WalletEntity SET hashWithAmount=:hashWithAmount WHERE fingerPrint=:fingerPrint")
     suspend fun updateChiaNetworkHashTokenBalance(

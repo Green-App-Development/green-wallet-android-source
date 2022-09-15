@@ -23,6 +23,7 @@ import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.getStringResource
+import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -137,17 +138,22 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 
     private fun curActivity() = requireActivity() as MainActivity
 
-    override fun importToken(added: Boolean, hash: String, switch: SwitchCompat, token: Token) {
-        importTokenJob?.cancel()
-        importTokenJob = lifecycleScope.launch {
-
-            val dialogJob = launch {
-                delay(1000)
-                dialog.showProgress(curActivity())
+    override fun importToken(
+        added: Boolean,
+        hash: String,
+        switchImport: SwitchCompat,
+        token: Token
+    ) {
+        VLog.d("Importing token $hash, added : $added, token : $token")
+        val fingerPrint = curFingerPrint!!
+        switchImport.isChecked = added
+        viewModel.importToken(hash, fingerPrint, added)
+        if (added) {
+            binding.relAddedHome.apply {
+                visibility = View.VISIBLE
+                makeViewGone(this)
             }
-
         }
-
     }
 
     private fun makeViewGone(relAddedHome: RelativeLayout) {

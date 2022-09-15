@@ -467,7 +467,7 @@ class SendFragment : DaggerFragment() {
             curActivity().mainViewModel.money_send_success.collect {
                 if (it) {
                     VLog.d("Success entering the passcode : $it")
-                    delay(1000)
+                    delay(500)
                     getPuzzleHashFromAddress()
                     curActivity().mainViewModel.send_money_false()
                 }
@@ -500,7 +500,6 @@ class SendFragment : DaggerFragment() {
                     showSuccessSendMoneyDialog()
                 }
                 Resource.State.ERROR -> {
-                    dialogManager.hidePrevDialogs()
                     showFailedSendingTransaction()
                 }
                 Resource.State.LOADING -> {
@@ -548,7 +547,6 @@ class SendFragment : DaggerFragment() {
             argSpendBundle["network_type"] = convertNetworkTypeForFlutter(wallet.networkType)
             VLog.d("Body From Sending Fragment to flutter : $argSpendBundle ")
             methodChannel.invokeMethod("createSpendBundle", argSpendBundle)
-
         }
     }
 
@@ -581,8 +579,11 @@ class SendFragment : DaggerFragment() {
                         (method.arguments as HashMap<*, *>)["spendBundle"].toString()
                     VLog.d("Got spend bundle on send fragment : $spendBundleJson")
                     sendTransaction(spendBundleJson, url, amount, networkType, fingerPrint)
+                } else if (method.method == "exception") {
+                    showFailedSendingTransaction()
                 }
             }
+
         }
     }
 
@@ -619,6 +620,7 @@ class SendFragment : DaggerFragment() {
     }
 
     private fun showFailedSendingTransaction() {
+        dialogManager.hidePrevDialogs()
         curActivity().apply {
             dialogManager.showFailureDialog(
                 this,

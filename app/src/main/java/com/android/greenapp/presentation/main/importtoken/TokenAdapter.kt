@@ -79,7 +79,7 @@ class TokenAdapter(
     }
 
     interface TokenAdapterListener {
-        fun importToken(added: Boolean, hash: String, switchCompat: SwitchCompat,token:Token)
+        fun importToken(added: Boolean, hash: String, switchImport: SwitchCompat, token:Token)
     }
 
 

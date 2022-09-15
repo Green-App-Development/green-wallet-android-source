@@ -97,19 +97,18 @@ class MainActivity : BaseActivity() {
         initUpdateBalanceJobRegulation()
         (application as App).applicationIsAlive = true
         startServiceAppRemoveRecentTask()
-//        monitoringConnection()
         softKeyboardListener()
     }
 
 
     private fun monitoringConnection() {
-
         connectionLiveData.observe(this) {
-//            if (it) {
+            VLog.d("Monitoring internet connections : ${it}")
+            if (it) {
 //                removeNoConnectionFragmentFromFront()
-//            } else {
+            } else {
 //                noConnecionFragmentToFront()
-//            }
+            }
         }
 
     }

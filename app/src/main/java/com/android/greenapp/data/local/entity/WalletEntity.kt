@@ -34,8 +34,6 @@ data class WalletEntity(
     val hashListImported: MutableSet<String> = mutableSetOf(),
     @ColumnInfo(name = "hashWithAmount")
     var hashWithAmount: HashMap<String, Double> = hashMapOf(),
-    @ColumnInfo(name = "hashWithIdWallet")
-    var hashWithIdWallet: HashMap<String,Int> = hashMapOf(),
     @ColumnInfo(name="savedTime")
     var savedTime:Long
 ) {

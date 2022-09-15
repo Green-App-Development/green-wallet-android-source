@@ -9,6 +9,5 @@ data class TokenWallet(
     val code: String,
     val amount: Double,
     val amountInUSD: Double,
-    val logo_ur: String,
-    val wallet_id: Int
+    val logo_ur: String
 )
