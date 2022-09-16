@@ -29,7 +29,7 @@ class ImpMnemonicViewModel @Inject constructor(
 
     fun importNewWallet(wallet: Wallet, callBack: () -> Unit) {
         viewModelScope.launch {
-            blockChainInteract.saveNewWallet(wallet)
+            blockChainInteract.saveNewWallet(wallet = wallet, imported = true)
             callBack()
         }
     }

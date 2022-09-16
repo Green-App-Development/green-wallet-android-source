@@ -27,8 +27,9 @@ class NotificationHelper @Inject constructor(private val applicationContext: Con
         val title = "Green App Message"
 
         val notifIntent = Intent(applicationContext, IntroActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            action=Intent.ACTION_MAIN
+            addCategory(Intent.CATEGORY_LAUNCHER)
         }
 
         val pendingIntent = PendingIntent.getActivity(

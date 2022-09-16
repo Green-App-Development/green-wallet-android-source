@@ -14,15 +14,19 @@ import com.android.greenapp.domain.entity.Address
 @Entity(tableName = "AddressEntity")
 data class AddressEntity(
     @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = "address_id")
+    val address_id: String,
     @ColumnInfo(name = "address")
     val address: String,
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "description")
-    val description: String
+    val description: String,
+    @ColumnInfo(name="updated_time")
+    val updated_time:Long
 ) {
 
     fun toAddress() =
-        Address(address = address, name = name, description = description)
+        Address(address_id,address = address, name = name, description = description,updated_time=updated_time)
 
 }

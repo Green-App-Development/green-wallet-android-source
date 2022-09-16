@@ -69,7 +69,6 @@ class LanguageFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         initLangRecyclerView()
         VLog.d("GreetingViewModel LanguageFragment on ViewCreated : $greetingViewModel")
-        greetingViewModel.getAllLanguageList(3)
     }
 
     private fun downLoadingLang() {
@@ -82,7 +81,7 @@ class LanguageFragment : DaggerFragment() {
                             val error = it.error
                             if (isExceptionBelongsToNoInternet(error!!)) {
                                 dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
+                                    
                                 }
                             } else {
                                 dialogManager.showServerErrorDialog(curActivity()) {
@@ -118,6 +117,8 @@ class LanguageFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
         VLog.d("On Resume on languageFragment")
+        greetingViewModel.getAllLanguageList(5)
+
     }
 
     private fun initLangRecyclerView() {

@@ -49,14 +49,17 @@ class BlockChainInteractImpl @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.N)
     override suspend fun saveNewWallet(
-        wallet: Wallet
+        wallet: Wallet,
+        imported: Boolean
     ): Resource<String> {
         val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
         val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
         val walletEntity = wallet.toWalletEntity(encMnemonics)
         walletDao.insertWallet(walletEntity = walletEntity)
-        updateWalletBalance(walletEntity)
-        updateTokensBalance(walletEntity)
+        if (imported) {
+            updateWalletBalance(walletEntity)
+            updateTokensBalance(walletEntity)
+        }
         return Resource.success("OK")
     }
 
@@ -141,12 +144,11 @@ class BlockChainInteractImpl @Inject constructor(
                         0.0
                     )
                     transactionDao.insertTransaction(trans)
-//                    val prevBalance = walletDao.getWalletByFingerPrint(fingerPrint).get(0).balance
-//                    walletDao.updateWalletBalance(prevBalance-sendAmount,fingerPrint)
                     return Resource.success("OK")
                 }
             }
         } catch (ex: Exception) {
+
             VLog.d("Exception occured in push_tx transaction : ${ex.message}")
             return Resource.error(ex)
         }

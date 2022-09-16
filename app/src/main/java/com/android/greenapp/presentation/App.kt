@@ -95,20 +95,18 @@ class App : DaggerApplication() {
 			.put(FLUTTER_ENGINE, flutterEngine)
 		VLog.d("LOG_TAG", "warmupFlutterEngine: got initialized  $flutterEngine")
 
-
 	}
 
 	private fun oneTimeRequest() {
-		CoroutineScope(Dispatchers.IO +handler).launch {
-			greenAppInteract.updateCoinDetails()
-			cryptocurrencyInteract.getAllTails()
-			greenAppInteract.requestOtherNotifItems()
-			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
-			if (curLangCode.isNotEmpty()) {
-				greenAppInteract.downloadLanguageTranslate(curLangCode)
-//				greenAppInteract.changeLanguageIsSavedBefore()
-			}
-		}
+//		CoroutineScope(Dispatchers.IO +handler).launch {
+//			greenAppInteract.updateCoinDetails()
+//			cryptocurrencyInteract.getAllTails()
+//			greenAppInteract.requestOtherNotifItems()
+//			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
+//			if (curLangCode.isNotEmpty()) {
+//				greenAppInteract.downloadLanguageTranslate(curLangCode)
+//			}
+//		}
 	}
 
 
@@ -134,6 +132,7 @@ class App : DaggerApplication() {
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()
+				greenAppInteract.requestOtherNotifItems()
 				delay(1000L * 60)
 			}
 		}
@@ -163,8 +162,6 @@ class App : DaggerApplication() {
 
 	override fun onLowMemory() {
 		super.onLowMemory()
-		updateBalanceJob?.cancel()
-		updateCryptoJob?.cancel()
 	}
 
 

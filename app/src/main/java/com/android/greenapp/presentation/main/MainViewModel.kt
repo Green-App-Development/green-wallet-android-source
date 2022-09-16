@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.data.preference.PrefsManager
+import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.domain.interact.WalletInteract
@@ -19,20 +20,26 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val walletInteract: WalletInteract,
-	private val greenAppInteract: GreenAppInteract
+	private val greenAppInteract: GreenAppInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract
 ) : ViewModel() {
 
 	init {
-		updateCoinInfJob()
+		oneTimeRequestEachApplication()
 	}
 
 	private var updateCoinDetailsJob: Job? = null
 
-	private fun updateCoinInfJob() {
+	private fun oneTimeRequestEachApplication() {
 		updateCoinDetailsJob?.cancel()
 		updateCoinDetailsJob = viewModelScope.launch {
 			greenAppInteract.updateCoinDetails()
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
+			cryptocurrencyInteract.getAllTails()
+			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
+			if (curLangCode.isNotEmpty()) {
+				greenAppInteract.downloadLanguageTranslate(curLangCode)
+			}
 		}
 	}
 

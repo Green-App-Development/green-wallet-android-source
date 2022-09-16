@@ -29,12 +29,21 @@ class OnBoardActivity : BaseActivity() {
     val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
 
+    companion object {
+        const val RESET_APP_CLICKED = "reset_app_clicked"
+    }
+
+    var reset_app_clicked = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGreetingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initStatusBarColorRegulation()
-
+        intent.extras?.let {
+            reset_app_clicked = it.getBoolean(RESET_APP_CLICKED, false)
+        }
+        VLog.d("Clearing cache btn clicked : $reset_app_clicked")
     }
 
     private fun initStatusBarColorRegulation() {

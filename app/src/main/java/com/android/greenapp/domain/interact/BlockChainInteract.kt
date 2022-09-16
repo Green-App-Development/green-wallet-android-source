@@ -14,7 +14,8 @@ interface BlockChainInteract {
 
 
     suspend fun saveNewWallet(
-        wallet: Wallet
+        wallet: Wallet,
+        imported:Boolean
     ):Resource<String>
 
     suspend fun updateBalanceAndTransactionsPeriodically()

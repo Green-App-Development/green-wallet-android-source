@@ -22,7 +22,7 @@ interface AddressDao {
     @Update
     suspend fun updateAddressEntity(addressEntity: AddressEntity): Int
 
-    @Query("SELECT * FROM AddressEntity")
+    @Query("SELECT * FROM AddressEntity ORDER BY updated_time DESC")
     fun getAddressFlowOfEntity(): Flow<List<AddressEntity>>
 
     @Query("SELECT * FROM AddressEntity WHERE name LIKE '%' || :name  || '%' ")

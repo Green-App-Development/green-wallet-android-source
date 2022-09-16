@@ -11,18 +11,22 @@ import com.android.greenapp.data.local.entity.AddressEntity
 
 
 data class Address(
+    val address_id: String,
     val address: String,
     val name: String,
-    val description: String
+    val description: String,
+    val updated_time: Long
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readLong()
     )
 
-    fun toAddressEntity() = AddressEntity(address, name, description)
+    fun toAddressEntity() = AddressEntity(address_id, address, name, description, updated_time)
 
     override fun describeContents(): Int {
         return 0

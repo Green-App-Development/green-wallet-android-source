@@ -19,6 +19,8 @@ class ConnectionLiveData @Inject constructor(context: Context) : LiveData<Boolea
     private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
 
+    var isOnline = true
+
     private fun checkValidNetworks() {
         postValue(validNetworks.size > 0)
     }

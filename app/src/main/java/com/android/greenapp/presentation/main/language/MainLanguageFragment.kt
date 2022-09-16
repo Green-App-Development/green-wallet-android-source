@@ -84,7 +84,6 @@ class MainLanguageFragment : DaggerDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         registerClicks()
         initLangRecyclerView()
-        mainLanguageViewModel.getAllLanguageList(3)
         initStatusBarColor()
         downLoadingLang()
     }
@@ -192,6 +191,11 @@ class MainLanguageFragment : DaggerDialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         curActivity().onLanguageChanged()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainLanguageViewModel.getAllLanguageList(5)
     }
 
 

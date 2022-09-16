@@ -141,7 +141,7 @@
     <string name="network_description_btn" />
     <string name="next_btn" />
     <string name="no_connection_description">Check your internet connection and try again</string>
-    <string name="no_connection_title" >No connection</string>
+    <string name="no_connection_title">No connection</string>
     <string name="non_existent_adress_error" />
     <string name="notifications_all" />
     <string name="notifications_credited_to_chia_wallet" />
@@ -175,7 +175,7 @@
     <string name="ready_btn" />
     <string name="receive_a_token_adress" />
     <string name="receive_a_token_copy" />
-    <string name="reconnect_btn" />
+    <string name="reconnect_btn">Reconnect</string>
     <string name="return_btn" />
     <string name="screen_for_creating_a_new_wallet_description" />
     <string name="screen_for_creating_a_new_wallet_title" />

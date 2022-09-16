@@ -66,7 +66,10 @@ class IconFragment : DaggerFragment() {
         changeVisibilityBtns()
         binding.btnStart.setOnClickListener {
             it.startAnimation(effect.getBtnEffectAnimation())
-            curActivity().move2LanguageFragment()
+            if (curActivity().reset_app_clicked) {
+                curActivity().move2TermsFragment()
+            } else
+                curActivity().move2LanguageFragment()
         }
 
     }

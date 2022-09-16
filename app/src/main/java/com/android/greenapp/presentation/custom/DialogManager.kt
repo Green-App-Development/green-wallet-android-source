@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.provider.Settings
+import android.provider.Settings.ACTION_WIRELESS_SETTINGS
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
@@ -13,6 +14,8 @@ import com.android.greenapp.presentation.tools.getColorResource
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getStringResource
 import javax.inject.Inject
+import androidx.core.content.ContextCompat.startActivity
+
 
 /**
  * Created by bekjan on 24.05.2022.
@@ -180,6 +183,12 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
         }
     }
 
+    fun dismissNoConnectionDialog() {
+        if (noConnectionDialog != null && noConnectionDialog!!.isShowing) {
+            noConnectionDialog!!.dismiss()
+        }
+    }
+
 
     fun showServerErrorDialog(activity: Activity, callback: () -> Unit) {
         activity.apply {
@@ -227,8 +236,8 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
         dialog.setContentView(view)
         view.findViewById<Button>(R.id.btnReConnectBtn).setOnClickListener {
             kotlin.runCatching {
-                val intent = Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
-                activity.startActivity(intent)
+                val intent = Intent(ACTION_WIRELESS_SETTINGS)
+                activity.startActivity(intent);
             }.onFailure {
                 VLog.d("On failure calling network settings menu : $it  ")
             }

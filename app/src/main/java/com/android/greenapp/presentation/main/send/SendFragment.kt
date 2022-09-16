@@ -43,7 +43,9 @@ import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
 import kotlinx.android.synthetic.main.fragment_send.network_spinner
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 
 /**
@@ -84,6 +86,9 @@ class SendFragment : DaggerFragment() {
     @Inject
     lateinit var gson: Gson
 
+    @Inject
+    lateinit var connectionLiveData: ConnectionLiveData
+
     private var updateJob: Job? = null
     private var sendTransJob: Job? = null
     private var addressAlreadyExist: Job? = null
@@ -95,6 +100,7 @@ class SendFragment : DaggerFragment() {
     private var availableAmount: Double = 0.0
     private var chosenTokenCode: String = ""
     private var walletAdapterPosition = 0
+    private var tokendAdapterPosition = 0
 
     private val handler = CoroutineExceptionHandler { _, ex ->
         VLog.d("Exception caught on send fragment : ${ex.message} ")
@@ -319,11 +325,13 @@ class SendFragment : DaggerFragment() {
         binding.icTokenDownward.setOnClickListener {
             binding.tokenSpinner.performClick()
         }
-
+        if (tokendAdapterPosition < tokenWalletList.size)
+            binding.tokenSpinner.setSelection(tokendAdapterPosition)
         binding.tokenSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                     tokenAdapter.selectedPosition = p2
+                    tokendAdapterPosition = p2
                     updateAmounts(tokenWalletList[p2])
                 }
 
@@ -598,7 +606,7 @@ class SendFragment : DaggerFragment() {
             val name = binding.edtAddressName.text.toString()
             val existAddress = viewModel.checkIfAddressExistInDb(curSendAddressWallet)
             if (existAddress.isEmpty())
-                viewModel.insertAddressEntity(Address(curSendAddressWallet, name, ""))
+                viewModel.insertAddressEntity(Address(UUID.randomUUID().toString(),curSendAddressWallet, name, "",System.currentTimeMillis()))
         }
     }
 
@@ -750,13 +758,19 @@ class SendFragment : DaggerFragment() {
 
         binding.btnContinue.setOnClickListener {
             binding.apply {
-                val curSum = edtEnterAmount.text.toString().toDoubleOrNull()
-                val addressWalletInValid = edtAddressWallet.text.toString().isEmpty()
-                if (addressWalletInValid) {
-                    showWarningInvalidWalledAddress()
-                    return@setOnClickListener
+
+                if (connectionLiveData.isOnline) {
+                    val addressWalletInValid = edtAddressWallet.text.toString().isEmpty()
+                    if (addressWalletInValid) {
+                        showWarningInvalidWalledAddress()
+                        return@setOnClickListener
+                    }
+                    showConfirmTransactionDialog()
+                } else {
+                    dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
+
+                    }
                 }
-                showConfirmTransactionDialog()
             }
         }
 

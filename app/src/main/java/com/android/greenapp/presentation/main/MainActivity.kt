@@ -70,10 +70,8 @@ class MainActivity : BaseActivity() {
     lateinit var effect: AnimationManager
 
     @Inject
-    lateinit var dialogMan: DialogManager
+    lateinit var notificationHelper: NotificationHelper
 
-    @Inject
-    lateinit var connectionLiveData: ConnectionLiveData
 
     var curMnemonicCode = MnemonicCode(Mnemonics.WordCount.COUNT_12)
 
@@ -97,30 +95,6 @@ class MainActivity : BaseActivity() {
         initUpdateBalanceJobRegulation()
         (application as App).applicationIsAlive = true
         startServiceAppRemoveRecentTask()
-        softKeyboardListener()
-    }
-
-
-    private fun monitoringConnection() {
-        connectionLiveData.observe(this) {
-            VLog.d("Monitoring internet connections : ${it}")
-            if (it) {
-//                removeNoConnectionFragmentFromFront()
-            } else {
-//                noConnecionFragmentToFront()
-            }
-        }
-
-    }
-
-    private fun noConnecionFragmentToFront() {
-        if (navController.currentDestination?.id != noConnectionFragment)
-            navController.navigate(noConnectionFragment)
-    }
-
-    private fun removeNoConnectionFragmentFromFront() {
-        if (navController.currentDestination?.id == noConnectionFragment)
-            navController.popBackStack()
     }
 
 

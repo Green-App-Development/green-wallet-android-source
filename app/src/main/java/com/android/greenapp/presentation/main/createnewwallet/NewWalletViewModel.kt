@@ -29,7 +29,8 @@ class NewWalletViewModel @Inject constructor(
         callBack: () -> Unit
     ) = viewModelScope.launch {
         blockChainInteract.saveNewWallet(
-            wallet
+            wallet=wallet,
+           imported= false
         )
         callBack()
     }

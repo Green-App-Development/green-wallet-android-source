@@ -115,6 +115,7 @@ class IntroActivity : BaseActivity() {
     fun move2GreetingActivity() {
         Intent(this, OnBoardActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(OnBoardActivity.RESET_APP_CLICKED, true)
             startActivity(this)
             finish()
         }

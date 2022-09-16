@@ -37,7 +37,6 @@ class IntroActViewModel @Inject constructor(
         clearingJob?.cancel()
         clearingJob = viewModelScope.launch(Dispatchers.IO) {
             appDatabase.clearAllTables()
-            prefs.clearingDataStore()
             callBack()
         }
     }

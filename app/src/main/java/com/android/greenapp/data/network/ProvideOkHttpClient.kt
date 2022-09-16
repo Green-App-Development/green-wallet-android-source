@@ -42,7 +42,7 @@ fun getUnsafeOkHttpClient(interceptor: Interceptor): OkHttpClient {
         // create an ssl socket factory with our all-trusting manager
         val sslSocketFactory = sslContext.socketFactory
 
-        val timeoutInSec = 10
+        val timeoutInSec = 20
         val dispatcher = Dispatcher()
         dispatcher.maxRequests = 5
 
