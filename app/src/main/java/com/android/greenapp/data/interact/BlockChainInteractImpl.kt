@@ -277,11 +277,13 @@ class BlockChainInteractImpl @Inject constructor(
                     )!!["puzzle_hash"] as String
                     val transExistByParentInfo =
                         transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
+                    val timeValidate = timeStamp * 1000 > wallet.savedTime
+                    val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != wallet.sk
                     if (timeStamp * 1000 > wallet.savedTime && parent_puzzle_hash.substring(2) != wallet.sk && !transExistByParentInfo.isPresent) {
                         val transEntity = TransactionEntity(
                             parent_coin_info,
                             coinAmount / division,
-                            timeStamp * 1000,
+                            System.currentTimeMillis(),
                             height,
                             Status.Incoming,
                             wallet.networkType,
@@ -297,7 +299,8 @@ class BlockChainInteractImpl @Inject constructor(
                         VLog.d("Inserting New Incoming Transaction  : $transEntity")
                         transactionDao.insertTransaction(transEntity)
                     } else {
-                        VLog.d("Current incoming transactions is already saved or can't be saved : $jsRecord and parentPuzzle_Hash : $parent_puzzle_hash")
+                        VLog.d("Current incoming transactions is already saved or can't be saved : $jsRecord and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
+                        VLog.d("Validate time for transactions : $timeValidate , match parent puzzle hash match : $parent_puzzle_hash_match")
                     }
                 }
 

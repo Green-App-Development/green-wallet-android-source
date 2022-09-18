@@ -89,7 +89,7 @@ class IntroActivity : BaseActivity() {
             VLog.d("UserBoarded Value : $userUnBoarded")
             val lastTimeVisited = introViewModel.getLastVisitedLongValue()
             if (!userUnBoarded) {
-                move2GreetingActivity()
+                move2GreetingActivity(false)
             } else if ((application as App).applicationIsAlive && System.currentTimeMillis() - lastTimeVisited <= 180 * 1000) {
                 move2MainActivity()
             }
@@ -112,10 +112,10 @@ class IntroActivity : BaseActivity() {
 
     }
 
-    fun move2GreetingActivity() {
+    fun move2GreetingActivity(reset_app_clicked:Boolean) {
         Intent(this, OnBoardActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra(OnBoardActivity.RESET_APP_CLICKED, true)
+            putExtra(OnBoardActivity.RESET_APP_CLICKED, reset_app_clicked)
             startActivity(this)
             finish()
         }
