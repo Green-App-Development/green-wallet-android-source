@@ -226,13 +226,13 @@
 
     <dialog
         android:id="@+id/btmSheetChooseNetwork"
-        android:name="com.android.greenapp.presentation.main.dialog.BtmSheetDialogChooseNetwork"
+        android:name="com.android.greenapp.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork"
         android:label="btmDialog"
         tools:layout="@layout/dialog_choose_network" />
 
     <dialog
         android:id="@+id/btmSheetDialogNewOrImport"
-        android:name="com.android.greenapp.presentation.main.dialog.BtmSheetDialogNewOrImport"
+        android:name="com.android.greenapp.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
         android:label="btmDialog"
         tools:layout="@layout/dialog_add_wallet" />
 

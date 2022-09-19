@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.main.dialog
+package com.android.greenapp.presentation.main.btmdialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater

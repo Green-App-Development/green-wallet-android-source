@@ -370,7 +370,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
             }
         }
         binding.backLayout.setOnClickListener {
-            curActivity().popBackStackOnce()
+			curActivity().popBackStackOnce()
+            curActivity().showTwoBtmDialogsFromImportBackButton()
         }
         binding.btn12Words.isChecked = true
         handlingNextBtnPressOnLastEdtInFirstColumn()

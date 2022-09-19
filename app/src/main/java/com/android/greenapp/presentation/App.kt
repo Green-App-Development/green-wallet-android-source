@@ -110,14 +110,6 @@ class App : DaggerApplication() {
 	}
 
 
-	private fun generate12WordMnemonics(): MutableList<String> {
-		val mnemonicCode =
-			Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12).words.map { String(it) }.toSet()
-		if (mnemonicCode.size < 12)
-			return generate12WordMnemonics()
-		return mnemonicCode.toMutableList()
-	}
-
 	fun updateBalanceEachPeriodically() {
 		updateBalanceJob?.cancel()
 		updateBalanceJob = CoroutineScope(Dispatchers.IO).launch {
