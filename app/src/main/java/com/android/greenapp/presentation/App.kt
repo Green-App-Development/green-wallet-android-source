@@ -124,7 +124,7 @@ class App : DaggerApplication() {
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()
-//				greenAppInteract.requestOtherNotifItems()
+				greenAppInteract.requestOtherNotifItems()
 				delay(1000L * 60)
 			}
 		}
