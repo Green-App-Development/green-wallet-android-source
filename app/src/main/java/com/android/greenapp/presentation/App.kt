@@ -3,7 +3,6 @@ package com.android.greenapp.presentation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
-import cash.z.ecc.android.bip39.Mnemonics
 import com.android.greenapp.BuildConfig
 import com.android.greenapp.R
 import com.android.greenapp.data.preference.PrefsManager
