@@ -54,7 +54,7 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 		val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
 		val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
-		val walletEntity = wallet.toWalletEntity(encMnemonics)
+		val walletEntity = wallet.toWalletEntity(encMnemonics, hashMapOf())
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
 			updateWalletBalance(walletEntity)
@@ -98,7 +98,7 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 
 		try {
-			VLog.d("Push method got called in data layer")
+			VLog.d("Push method got called in data layer code : $networkType")
 			val curBlockChainService =
 				retrofitBuilder.baseUrl("$url/").build()
 					.create(BlockChainService::class.java)
@@ -143,6 +143,7 @@ class BlockChainInteractImpl @Inject constructor(
 						fingerPrint,
 						0.0
 					)
+					VLog.d("Inserting transaction entity : $trans")
 					transactionDao.insertTransaction(trans)
 					return Resource.success("OK")
 				}
@@ -160,8 +161,6 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	suspend fun updateTokensBalance(wallet: WalletEntity) {
-
-		val address = "xch1tdrpnyx27qggwyy3pspaskzw5augv9fhrgctwkr9r2e5jspprtnsdvlf2z"
 
 		try {
 
@@ -187,6 +186,20 @@ class BlockChainInteractImpl @Inject constructor(
 
 		} catch (ex: Exception) {
 			VLog.d("Exception in updating token amount : $ex")
+		}
+	}
+
+	suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity) {
+		try {
+			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+				?: throw Exception("Exception in converting json str to networkItem")
+
+			val curBlockChainService =
+				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+					.create(BlockChainService::class.java)
+			wallet.hashWithAmount
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Exception occurred in updating token balance : ${ex.message}")
 		}
 	}
 
@@ -403,91 +416,5 @@ class BlockChainInteractImpl @Inject constructor(
 			VLog.d("Exception in updating transactions only  : ${ex.message}")
 		}
 	}
-
-	suspend fun updateBalanceAndTransactionDeprecated(
-		wallet: WalletEntity,
-		isNewWallet: Boolean
-	) {
-		try {
-			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
-				?: throw Exception("Exception in converting json str to networkItem")
-
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
-
-			val body = hashMapOf<String, Any>()
-			body["puzzle_hash"] =
-				wallet.sk
-			body["include_spent_coins"] = true
-			val request = curBlockChainService.queryBalance(body)
-
-			val division =
-				if (isThisNotChiaNetwork(wallet.networkType)) Math.pow(
-					10.0,
-					8.0
-				) else Math.pow(
-					10.0,
-					12.0
-				)
-
-			val allTrans = mutableListOf<TransactionEntity>()
-
-			if (request.isSuccessful) {
-
-				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
-				var sum = 0.0
-				for (coin in coinRecordsJsonArray) {
-					val jsCoin = coin.asJsonObject
-					val amount =
-						jsCoin.get("coin").asJsonObject.get("amount").asLong
-					val blockHeight = jsCoin.get("confirmed_block_index").asLong
-					val timeStamp = jsCoin.get("timestamp").asLong * 1000
-					val trans_id =
-						jsCoin.get("coin").asJsonObject.get("parent_coin_info").asString
-					val spent = jsCoin.get("spent").asBoolean
-					val afterDivision = amount / division
-					if (!spent)
-						sum += amount
-					val status = if (spent) Status.Outgoing else Status.Incoming
-					val trans = TransactionEntity(
-						trans_id,
-						afterDivision,
-						timeStamp,
-						blockHeight,
-						status,
-						wallet.networkType,
-						"",
-						wallet.fingerPrint,
-						0.0
-					)
-					allTrans.add(trans)
-				}
-
-				val sumAfterDivision = sum / division
-				val oldBalance =
-					walletDao.getWalletByFingerPrint(wallet.fingerPrint).get(0).balance
-				if (sumAfterDivision != oldBalance)
-					walletDao.updateWalletBalance(sumAfterDivision, wallet.fingerPrint)
-				VLog.d("Updating balance for : $sumAfterDivision and allTransList : $allTrans")
-				for (tran in allTrans) {
-					val tranExist =
-						transactionDao.checkTransactionByIDExistInDB(tran.transaction_id)
-					if (!tranExist.isPresent && isNewWallet && tran.status == Status.Incoming) {
-						notificationHelper.callGreenAppNotificationMessages(
-							"You received new transaction",
-							System.currentTimeMillis()
-						)
-					}
-//                    transactionDao.insertTransaction(tran)
-				}
-			} else {
-				VLog.d("Request is not success for updating balance and trans ")
-			}
-		} catch (ex: java.lang.Exception) {
-			VLog.d("Exception in updating balance and trans : ${ex.message}")
-		}
-	}
-
 
 }

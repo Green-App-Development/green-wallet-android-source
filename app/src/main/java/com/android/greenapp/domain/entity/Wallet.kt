@@ -11,30 +11,30 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Wallet(
-    val fingerPrint: Long,
-    val privateKey: String,
-    val sk: String,
-    val address: String,
-    val mnemonics: List<String>,
-    val networkType: String,
-    var home_id_added: Long,
-    var balance: Double,
-    var savedTime:Long
+	val fingerPrint: Long,
+	val privateKey: String,
+	val sk: String,
+	val address: String,
+	val mnemonics: List<String>,
+	val networkType: String,
+	var home_id_added: Long,
+	var balance: Double,
+	var savedTime: Long
 ) : Parcelable {
 
-    var balanceInUSD: Double = 0.0
+	var balanceInUSD: Double = 0.0
 
-    fun toWalletEntity(encMnemonics: String) = WalletEntity(
-        fingerPrint,
-        privateKey,
-        sk,
-        address,
-        encMnemonics,
-        networkType,
-        home_id_added,
-        balance,
-        savedTime=savedTime
-    )
-
+	fun toWalletEntity(encMnemonics: String,hashListImported:HashMap<String,String>) = WalletEntity(
+		fingerPrint,
+		privateKey,
+		sk,
+		address,
+		encMnemonics,
+		networkType,
+		home_id_added,
+		balance,
+		savedTime = savedTime,
+		hashListImported = hashListImported
+	)
 
 }

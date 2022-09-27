@@ -46,10 +46,21 @@ object Converters {
         return Gson().toJson(hashWithAmount)
     }
 
+	@TypeConverter
+    fun convertHashListImportedToJson(hashListImported: HashMap<String, String>): String {
+        return Gson().toJson(hashListImported)
+    }
+
     @TypeConverter
     fun convertJsonToHashWithAmount(hashWithAmount: String): HashMap<String, Double> {
         val type = object : TypeToken<HashMap<String, Double>>() {}.type
         return Gson().fromJson(hashWithAmount, type)
+    }
+
+	@TypeConverter
+    fun convertJsonToHashListImported(hashListImported: String): HashMap<String, String> {
+        val type = object : TypeToken<HashMap<String, String>>() {}.type
+        return Gson().fromJson(hashListImported, type)
     }
 
 

@@ -122,7 +122,7 @@ class WalletInteractImpl @Inject constructor(
 		}
 		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
-		var hashListMutList = walletEntity.hashListImported.toMutableList()
+		var hashListMutList = walletEntity.hashListImported.keys.toMutableList()
 		val usds = tokenDao.getTokenByCode("USDS")
 		if (usds.isPresent)
 			hashListMutList.add(0, usds.get().hash)
@@ -282,7 +282,7 @@ class WalletInteractImpl @Inject constructor(
 		val walletEntity = walletDao.getWalletByFingerPrint(fingerPrint)[0]
 		val hashListImported = walletEntity.hashListImported
 		if (add)
-			hashListImported.add(hash)
+			hashListImported[hash] = ""
 		else {
 			hashListImported.remove(hash)
 		}

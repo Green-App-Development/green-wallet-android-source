@@ -30,8 +30,9 @@ data class WalletEntity(
     val home_is_added: Long,
     @ColumnInfo(name = "balance")
     val balance: Double,
+	//asset_id,cat_wrapped_puzzle_hash
     @ColumnInfo(name = "hashListImported")
-    val hashListImported: MutableSet<String> = mutableSetOf(),
+    val hashListImported: HashMap<String,String> = hashMapOf(),
     @ColumnInfo(name = "hashWithAmount")
     var hashWithAmount: HashMap<String, Double> = hashMapOf(),
     @ColumnInfo(name="savedTime")

@@ -20,7 +20,7 @@ class TokenInteractImpl @Inject constructor(
         val walletEntity = walletDoa.getWalletByFingerPrint(fingerPrint)[0]
 
         return tokenDao.getTokenListAndSearch(nameCode).map {
-            val imported = walletEntity.hashListImported.contains(it.hash)
+            val imported = walletEntity.hashListImported.containsKey(it.hash)
             it.toToken(imported)
         }
     }

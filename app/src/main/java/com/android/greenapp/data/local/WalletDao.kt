@@ -73,7 +73,7 @@ interface WalletDao {
     @Query("UPDATE WalletEntity SET hashListImported=:hashListImportedNew WHERE fingerPrint=:fingerPrint")
     suspend fun updateChiaNetworkHashListImported(
         fingerPrint: Long,
-        hashListImportedNew: MutableSet<String>
+        hashListImportedNew: HashMap<String,String>
     ): Int
 
 
