@@ -10,6 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.android.greenapp.R
+import com.android.greenapp.domain.entity.TokenWallet
 
 /**
  * Created by bekjan on 21.04.2022.

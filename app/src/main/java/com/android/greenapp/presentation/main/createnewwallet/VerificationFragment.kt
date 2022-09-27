@@ -134,47 +134,6 @@ class VerificationFragment : DaggerDialogFragment() {
 		updateOptionsValuesSecondVersion()
 	}
 
-	private fun initWebView() {
-		val webView = binding.webView
-		val settings = binding.webView.settings
-		settings.javaScriptEnabled = true
-		settings.allowUniversalAccessFromFileURLs = true
-		webView.webViewClient = CallBack()
-		webView.webChromeClient = MyWebChromeClient()
-		webView.loadUrl("file:///android_asset/just.html")
-	}
-
-	private inner class CallBack : WebViewClient() {
-
-		override fun shouldOverrideUrlLoading(
-			view: WebView?,
-			request: WebResourceRequest?
-		): Boolean {
-
-			return false
-		}
-
-		override fun onPageFinished(view: WebView, url: String?) {
-			super.onPageFinished(view, url)
-			view.loadUrl("javascript:alert(test())")
-		}
-
-	}
-
-
-	private class MyWebChromeClient : WebChromeClient() {
-		override fun onJsAlert(
-			view: WebView,
-			url: String,
-			message: String,
-			result: JsResult
-		): Boolean {
-			Log.d("LogTag MainActivity", message)
-			result.confirm()
-			return true
-		}
-	}
-
 
 	@SuppressLint("SetTextI18n")
 	private fun registerClicks() {
@@ -275,6 +234,7 @@ class VerificationFragment : DaggerDialogFragment() {
 		val mnemonicString = mnemonicsToString(mnemonics)
 		val map = hashMapOf<String, Any>()
 		map["mnemonic"] = mnemonicString
+		map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 		methodChannel.invokeMethod("generateHash", map)
 	}
 
