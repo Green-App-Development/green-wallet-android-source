@@ -117,12 +117,15 @@ class WalletInteractImpl @Inject constructor(
 				balanceUSD,
 				wallet.fingerPrint,
 				listOf(tokenWallet),
-				wallet.mnemonics
+				wallet.mnemonics,
+				wallet.sk
 			)
 		}
 		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
-		var hashListMutList = walletEntity.hashListImported.keys.toMutableList()
+		val hashListMutList = walletEntity.hashListImported.keys.toMutableList()
+		hashListMutList.remove("7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02")
+		hashListMutList.remove("6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589")
 		val usds = tokenDao.getTokenByCode("USDS")
 		if (usds.isPresent)
 			hashListMutList.add(0, usds.get().hash)
@@ -132,6 +135,7 @@ class WalletInteractImpl @Inject constructor(
 				0,
 				gad.get().hash
 			)
+
 		val hashList = hashListMutList.toSet()
 		val tokenList = mutableListOf<TokenWallet>()
 		val amountChia = walletEntity.balance
@@ -176,7 +180,8 @@ class WalletInteractImpl @Inject constructor(
 			totalAmountInUSD,
 			wallet.fingerPrint,
 			tokenList,
-			wallet.mnemonics
+			wallet.mnemonics,
+			wallet.sk
 		)
 	}
 
@@ -278,13 +283,18 @@ class WalletInteractImpl @Inject constructor(
 		return walletTokenList
 	}
 
-	override suspend fun importTokenByFingerPrint(fingerPrint: Long, add: Boolean, hash: String) {
+	override suspend fun importTokenByFingerPrint(
+		fingerPrint: Long,
+		add: Boolean,
+		asset_id: String,
+		outer_puzzle_hash: String
+	) {
 		val walletEntity = walletDao.getWalletByFingerPrint(fingerPrint)[0]
 		val hashListImported = walletEntity.hashListImported
 		if (add)
-			hashListImported[hash] = ""
+			hashListImported[asset_id] = outer_puzzle_hash
 		else {
-			hashListImported.remove(hash)
+			hashListImported.remove(asset_id)
 		}
 		walletDao.updateChiaNetworkHashListImported(fingerPrint, hashListImported)
 	}

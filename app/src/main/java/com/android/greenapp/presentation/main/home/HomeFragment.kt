@@ -394,8 +394,8 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
         curActivity().move2AllWalletFragment()
     }
 
-    override fun impToken(fingerPrint: Long) {
-        curActivity().move2FragmentImportToken(fingerPrint)
+    override fun impToken(fingerPrint: Long,main_puzzle_hash:String) {
+        curActivity().move2FragmentImportToken(fingerPrint,main_puzzle_hash)
     }
 
     override fun onStart() {

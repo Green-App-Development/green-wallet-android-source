@@ -63,7 +63,7 @@ class TokenAdapter(
             homeSwitch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
                 override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
                     if (!searching) {
-                        tokenListener.importToken(p1, token.hash, homeSwitch,token)
+                        tokenListener.importToken(p1, homeSwitch,token)
                     }
                 }
             })
@@ -79,7 +79,7 @@ class TokenAdapter(
     }
 
     interface TokenAdapterListener {
-        fun importToken(added: Boolean, hash: String, switchImport: SwitchCompat, token:Token)
+        fun importToken(added: Boolean, switchImport: SwitchCompat, token:Token)
     }
 
 

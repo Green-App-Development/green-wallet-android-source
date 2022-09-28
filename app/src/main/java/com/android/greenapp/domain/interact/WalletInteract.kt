@@ -40,6 +40,6 @@ interface WalletInteract {
 
     suspend fun getWalletWithTokensByFingerPrintNetworkType(fingerPrint: Long?,networkType: String) : List<WalletWithTokens>
 
-    suspend fun importTokenByFingerPrint(fingerPrint: Long, add:Boolean, hash:String)
+    suspend fun importTokenByFingerPrint(fingerPrint: Long, add:Boolean, asset_id:String,outer_puzzle_hash:String)
 
 }

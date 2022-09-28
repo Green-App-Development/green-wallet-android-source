@@ -6,5 +6,6 @@ data class WalletWithTokens(
     val totalAmountInUSD: Double,
     val fingerPrint: Long,
     val tokenWalletList: List<TokenWallet>,
-    val mnemonics:List<String>
+    val mnemonics:List<String>,
+	val main_puzzle_hash:String
 )

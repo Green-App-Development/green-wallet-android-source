@@ -59,7 +59,7 @@ class ViewPagerWalletsAdapter(
             walletList[position].tokenWalletList,
             object : WalletTokenAdapter.TokenClicker {
                 override fun onImportTokenClicked() {
-                    viewPagerClicker.impToken(walletList[position].fingerPrint)
+                    viewPagerClicker.impToken(walletList[position].fingerPrint,walletList[position].main_puzzle_hash)
                 }
             },
             activity,
@@ -97,7 +97,7 @@ class ViewPagerWalletsAdapter(
     interface ViewPagerWalletClicker {
         fun addWallet()
         fun allWallet()
-        fun impToken(fingerPrint: Long)
+        fun impToken(fingerPrint: Long,main_puzzle_hash:String)
     }
 
 

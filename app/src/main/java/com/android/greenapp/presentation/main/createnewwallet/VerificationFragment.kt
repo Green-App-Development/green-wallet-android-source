@@ -205,8 +205,8 @@ class VerificationFragment : DaggerDialogFragment() {
 				val fingerPrint = arguments["fingerPrint"]!!.toString().toLong()
 				val address = arguments["address"]!!.toString()
 				val puzzle_hash = arguments["puzzle_hash"]!!.toString()
-				val puzzle_hash_gad = arguments[""]!!.toString()
-				val puzzle_hash_usds = arguments[""]!!.toString()
+				val puzzle_hash_gad = arguments["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"]!!.toString()
+				val puzzle_hash_usds = arguments["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"]!!.toString()
 				val newWallet = Wallet(
 					fingerPrint,
 					"",
@@ -218,8 +218,8 @@ class VerificationFragment : DaggerDialogFragment() {
 					0.0,
 					System.currentTimeMillis()
 				)
-				newWallet.hashListImported[""] = puzzle_hash_gad
-				newWallet.hashListImported[""] = puzzle_hash_usds
+				newWallet.hashListImported["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"] = puzzle_hash_gad
+				newWallet.hashListImported["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"] = puzzle_hash_usds
 				newWalletViewModel.createNewWallet(newWallet) {
 					dialogManager.hidePrevDialogs()
 					showCongratulateDialog()

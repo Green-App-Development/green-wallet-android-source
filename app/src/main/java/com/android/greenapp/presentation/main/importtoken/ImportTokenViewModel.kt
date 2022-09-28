@@ -25,10 +25,10 @@ class ImportTokenViewModel @Inject constructor(
 
     private var importTokenJob: Job? = null
 
-    fun importToken(hash:String,fingerPrint:Long,add:Boolean) {
+    fun importToken(hash:String,fingerPrint:Long,add:Boolean,outer_puzzle_hash:String) {
         importTokenJob?.cancel()
         importTokenJob = viewModelScope.launch {
-            walletInteract.importTokenByFingerPrint(fingerPrint,add,hash)
+            walletInteract.importTokenByFingerPrint(fingerPrint,add,hash, outer_puzzle_hash)
         }
     }
 

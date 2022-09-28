@@ -199,6 +199,7 @@ class BlockChainInteractImpl @Inject constructor(
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
+			VLog.d("HashListImported for fingerPrint : ${wallet.fingerPrint} , Imported : AssetHashWithPuzzle : ${wallet.hashListImported}")
 			for ((asset_id, puzzle_hash) in wallet.hashListImported) {
 				val body = hashMapOf<String, Any>()
 				body["puzzle_hash"] =

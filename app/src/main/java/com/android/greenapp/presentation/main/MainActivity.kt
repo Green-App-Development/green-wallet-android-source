@@ -447,10 +447,15 @@ class MainActivity : BaseActivity() {
 		navController.navigate(manageWalletFragment, bundle)
 	}
 
-	fun move2FragmentImportToken(fingerPrint: Long, networkType: String = "Chia Network") {
+	fun move2FragmentImportToken(
+		fingerPrint: Long,
+		main_puzzle_hash: String,
+		networkType: String = "Chia Network"
+	) {
 		val bundle = bundleOf(
 			ImportTokenFragment.FINGER_PRINT_KEY to fingerPrint,
-			ImportTokenFragment.NETWORK_TYPE_KEY to networkType
+			ImportTokenFragment.NETWORK_TYPE_KEY to networkType,
+			ImportTokenFragment.MAIN_PUZZLE_HASH to main_puzzle_hash
 		)
 		navController.navigate(action_walletFragment_to_importTokenFragment2, bundle)
 	}
