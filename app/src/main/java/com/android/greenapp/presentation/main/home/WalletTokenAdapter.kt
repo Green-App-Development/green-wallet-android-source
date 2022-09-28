@@ -12,7 +12,7 @@ import com.android.greenapp.R
 import com.android.greenapp.domain.entity.TokenWallet
 import com.android.greenapp.presentation.custom.formattedDollarWithTwoDecimal
 import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecision
-import com.android.greenapp.presentation.custom.isThisNotChiaNetwork
+import com.android.greenapp.presentation.custom.isThisChivesNetwork
 import com.bumptech.glide.Glide
 import com.android.greenapp.presentation.tools.getDrawableResource
 import de.hdodenhof.circleimageview.CircleImageView
@@ -117,10 +117,10 @@ class WalletTokenAdapter(
 
 		@SuppressLint("SetTextI18n")
 		fun onBind(token: TokenWallet) {
-			if (isThisNotChiaNetwork(token.name))
+			if (isThisChivesNetwork(token.name))
 				importToken.setText(R.string.import_mnemonics_soon)
 			adjustTxtImport(importToken)
-			if (!isThisNotChiaNetwork(token.name)) {
+			if (!isThisChivesNetwork(token.name)) {
 				rootImportToken.setOnClickListener {
 					tokenClicker.onImportTokenClicked()
 				}

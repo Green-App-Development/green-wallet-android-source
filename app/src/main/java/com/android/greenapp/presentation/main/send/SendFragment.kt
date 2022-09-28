@@ -142,7 +142,7 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun removeGADIfCurNetworkChives(networkType: String) {
-		if (isThisNotChiaNetwork(networkType)) {
+		if (isThisChivesNetwork(networkType)) {
 			binding.txtAmountInGAD.visibility = View.GONE
 			binding.txtGAD.visibility = View.GONE
 		} else {
@@ -449,7 +449,7 @@ class SendFragment : DaggerFragment() {
 			val wallet = walletAdapter.walletList[walletAdapter.selectedPosition]
 			val asset_id = curTokenWalletList[tokenAdapter.selectedPosition].asset_id
 			var precision =
-				if (isThisNotChiaNetwork(wallet.networkType)) Math.pow(
+				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
 					10.0,
 					8.0
 				).toLong() else Math.pow(

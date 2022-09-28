@@ -71,7 +71,7 @@ class WalletInteractImpl @Inject constructor(
 	}
 
 	private suspend fun convertWalletEntityToWallet(walletEntity: WalletEntity): Wallet {
-		if (isThisNotChiaNetwork(walletEntity.networkType)) {
+		if (isThisChivesNetwork(walletEntity.networkType)) {
 			val wallet = walletEntity.toWallet(getDecryptedMnemonicsList(walletEntity.encMnemonics))
 			wallet.balanceInUSD = prefsInteract.getCoursePriceDouble(
 				getPreferenceKeyForCurStockNetworkDouble(wallet.networkType.split(" ")[0]), 0.0
@@ -99,7 +99,7 @@ class WalletInteractImpl @Inject constructor(
 
 	private suspend fun convertWalletToWalletWithTokens(walletEntity: WalletEntity): WalletWithTokens {
 		val wallet = walletEntity.toWallet(getDecryptedMnemonicsList(walletEntity.encMnemonics))
-		if (isThisNotChiaNetwork(walletEntity.networkType)) {
+		if (isThisChivesNetwork(walletEntity.networkType)) {
 			val balanceUSD = wallet.balance * prefsInteract.getCoursePriceDouble(
 				getPreferenceKeyForCurStockNetworkDouble(walletEntity.networkType.split(" ")[0]),
 				0.0
@@ -227,7 +227,7 @@ class WalletInteractImpl @Inject constructor(
 	private suspend fun convertWalletEntityToWalletWithAmountInUSD(it: WalletEntity): Wallet {
 		VLog.d("Balance for fingerPrint : ${it.fingerPrint}  : balance : ${it.balance} and HashWithAmount : ${it.hashWithAmount}")
 		var totalBal = it.balance
-		if (!isThisNotChiaNetwork(it.networkType))
+		if (!isThisChivesNetwork(it.networkType))
 			totalBal = it.hashWithAmount[it.networkType] ?: 0.0
 		val balanceInUSD = prefsInteract.getCoursePriceDouble(
 			getPreferenceKeyForCurStockNetworkDouble(

@@ -147,7 +147,7 @@ fun getShortNetworkType(networkType: String): String {
     return if (networkType.lowercase().contains("chia")) "XCH" else "XCC"
 }
 
-fun isThisNotChiaNetwork(networkType: String): Boolean {
+fun isThisChivesNetwork(networkType: String): Boolean {
     return networkType.lowercase().contains("chives")
 }
 

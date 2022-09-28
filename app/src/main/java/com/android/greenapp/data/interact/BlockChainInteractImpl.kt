@@ -54,11 +54,11 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 		val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
 		val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
-		val walletEntity = wallet.toWalletEntity(encMnemonics, hashMapOf())
+		val walletEntity = wallet.toWalletEntity(encMnemonics)
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
 			updateWalletBalance(walletEntity)
-			updateTokensBalance(walletEntity)
+			updateTokenBalanceWithFullNode(walletEntity)
 		}
 		return Resource.success("OK")
 	}
@@ -85,7 +85,7 @@ class BlockChainInteractImpl @Inject constructor(
 		val walletListDb = walletDao.getAllWalletList()
 		for (wallet in walletListDb) {
 			updateWalletBalance(wallet)
-			updateTokensBalance(wallet)
+			updateTokenBalanceWithFullNode(wallet)
 		}
 	}
 
@@ -191,13 +191,38 @@ class BlockChainInteractImpl @Inject constructor(
 
 	suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity) {
 		try {
+			if (isThisChivesNetwork(wallet.networkType)) return
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
 
 			val curBlockChainService =
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
-			wallet.hashWithAmount
+			val hashWithAmount = hashMapOf<String, Double>()
+			for ((asset_id, puzzle_hash) in wallet.hashListImported) {
+				val body = hashMapOf<String, Any>()
+				body["puzzle_hash"] =
+					puzzle_hash
+				body["include_spent_coins"] = false
+				val division = 1000.0
+				var balance = 0L
+				val request = curBlockChainService.queryBalance(body)
+				if (request.isSuccessful) {
+					val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
+					for (coin in coinRecordsJsonArray) {
+						val jsCoin = coin.asJsonObject
+						val curAmount =
+							jsCoin.get("coin").asJsonObject.get("amount").asLong
+						val spent = jsCoin.get("spent").asBoolean
+						if (!spent)
+							balance += curAmount
+					}
+				}
+				hashWithAmount[asset_id] = balance / division
+			}
+			if (wallet.hashWithAmount != hashWithAmount) {
+				walletDao.updateChiaNetworkHashTokenBalance(wallet.fingerPrint, hashWithAmount)
+			}
 		} catch (ex: java.lang.Exception) {
 			VLog.d("Exception occurred in updating token balance : ${ex.message}")
 		}
@@ -216,7 +241,7 @@ class BlockChainInteractImpl @Inject constructor(
 				wallet.sk
 			body["include_spent_coins"] = false
 			val division =
-				if (isThisNotChiaNetwork(wallet.networkType)) Math.pow(
+				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
 					10.0,
 					8.0
 				) else Math.pow(
@@ -265,7 +290,7 @@ class BlockChainInteractImpl @Inject constructor(
 				wallet.sk
 			body["include_spent_coins"] = false
 			val division =
-				if (isThisNotChiaNetwork(wallet.networkType)) Math.pow(
+				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
 					10.0,
 					8.0
 				) else Math.pow(
@@ -365,7 +390,7 @@ class BlockChainInteractImpl @Inject constructor(
 				wallet.sk
 			body["include_spent_coins"] = includeSpentCoins
 			val division =
-				if (isThisNotChiaNetwork(wallet.networkType)) Math.pow(
+				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
 					10.0,
 					8.0
 				) else Math.pow(

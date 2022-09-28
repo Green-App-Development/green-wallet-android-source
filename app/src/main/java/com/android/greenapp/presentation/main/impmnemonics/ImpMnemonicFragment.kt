@@ -417,6 +417,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 					val fingerPrint = arguments["fingerPrint"]!!.toString().toLong()
 					val address = arguments["address"]!!.toString()
 					val puzzle_hash = arguments["puzzle_hash"]!!.toString()
+					val puzzle_hash_gad = arguments[""]!!.toString()
+					val puzzle_hash_usds = arguments[""]!!.toString()
 					val newWallet = Wallet(
 						fingerPrint,
 						"",
@@ -428,6 +430,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 						0.0,
 						System.currentTimeMillis()
 					)
+					newWallet.hashListImported[""] = puzzle_hash_gad
+					newWallet.hashListImported[""] = puzzle_hash_usds
 					impMnemonicViewModel.importNewWallet(newWallet) {
 						dialogManager.hidePrevDialogs()
 						showSuccessImportingDialog()

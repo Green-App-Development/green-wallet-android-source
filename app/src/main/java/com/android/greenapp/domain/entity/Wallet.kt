@@ -24,7 +24,7 @@ data class Wallet(
 
 	var balanceInUSD: Double = 0.0
 
-	fun toWalletEntity(encMnemonics: String,hashListImported:HashMap<String,String>) = WalletEntity(
+	fun toWalletEntity(encMnemonics: String) = WalletEntity(
 		fingerPrint,
 		privateKey,
 		sk,
@@ -36,5 +36,7 @@ data class Wallet(
 		savedTime = savedTime,
 		hashListImported = hashListImported
 	)
+
+	val hashListImported= hashMapOf<String,String>()
 
 }
