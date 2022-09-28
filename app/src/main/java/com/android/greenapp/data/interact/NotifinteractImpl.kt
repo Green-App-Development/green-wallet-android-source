@@ -54,7 +54,8 @@ class NotifinteractImpl @Inject constructor(
                 trans.height,
                 trans.fee_amount,
                 trans.created_at_time,
-                ""
+                "",
+				trans.code
             )
         }.toMutableList()
 

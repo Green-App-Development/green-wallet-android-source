@@ -27,10 +27,12 @@ data class TransactionEntity(
     @ColumnInfo(name = "fkFingerPrint")
     val fkFingerPrint: Long,
     @ColumnInfo(name = "fee_amount")
-    val fee_amount:Double
+    val fee_amount:Double,
+	@ColumnInfo(name="code")
+	val code:String
 ) {
 
     fun toTransaction() =
-        Transaction(transaction_id, amount, created_at_time, height, status, networkType, to_address,fkFingerPrint,fee_amount)
+        Transaction(transaction_id, amount, created_at_time, height, status, networkType, to_address,fkFingerPrint,fee_amount,code)
 
 }

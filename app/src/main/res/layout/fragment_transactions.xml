@@ -267,7 +267,6 @@
 				android:layout_height="match_parent"
 				android:layout_weight="30"
 				android:gravity="center_vertical"
-				android:paddingStart="15dp"
 				android:text="@string/transactions_height"
 				android:textColor="@color/txt_trans_property"
 				android:textFontWeight="600"

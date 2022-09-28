@@ -25,7 +25,8 @@ interface BlockChainInteract {
         url: String,
         sendAmount:Double,
         networkType: String,
-        fingerPrint:Long
+        fingerPrint:Long,
+		code:String
     ):Resource<String>
 
 

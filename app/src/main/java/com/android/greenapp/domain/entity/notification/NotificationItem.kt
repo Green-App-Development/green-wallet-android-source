@@ -14,5 +14,6 @@ data class NotificationItem(
     val height: Long=0L,
     val commission: Double=0.0,
     val created_at_time: Long=0L,
-    val message: String=""
+    val message: String="",
+	val code:String=""
 )

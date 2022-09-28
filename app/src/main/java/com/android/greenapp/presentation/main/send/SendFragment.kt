@@ -423,7 +423,7 @@ class SendFragment : DaggerFragment() {
 		sendTransJob?.cancel()
 		sendTransJob = lifecycleScope.launch {
 			val res =
-				viewModel.push_transaction(spendBundleJSON, url, amount, networkType, fingerPrint)
+				viewModel.push_transaction(spendBundleJSON, url, amount, networkType, fingerPrint,chosenTokenCode)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
 					dialogManager.hidePrevDialogs()
@@ -734,13 +734,13 @@ class SendFragment : DaggerFragment() {
 	private fun convertAmountToUSDGAD(amount: Double) {
 		lifecycleScope.launch {
 			val amountInUSD = amount * viewModel.getCourseCurrencyCoin(curNetworkType)
-			binding.txtAmountInUSD.setText("⁓${formattedDoubleAmountWithPrecision(amountInUSD)}")
+			binding.txtAmountInUSD.setText("⁓${formattedDollarWithPrecision(amountInUSD,3)}")
 			val gadPrice = viewModel.getTokenPriceByCode("GAD")
 			var convertedAmountGAD = 0.0
 			if (gadPrice != 0.0) {
 				convertedAmountGAD = amountInUSD / gadPrice
 			}
-			binding.txtAmountInGAD.setText("~${formattedDoubleAmountWithPrecision(convertedAmountGAD)}")
+			binding.txtAmountInGAD.setText("~${formattedDollarWithPrecision(convertedAmountGAD,3)}")
 		}
 	}
 

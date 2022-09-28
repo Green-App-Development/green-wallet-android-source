@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
 import com.android.greenapp.domain.entity.TokenWallet
-import com.android.greenapp.presentation.custom.formattedDollarWithTwoDecimal
+import com.android.greenapp.presentation.custom.formattedDollarWithPrecision
 import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecision
 import com.android.greenapp.presentation.custom.isThisChivesNetwork
 import com.bumptech.glide.Glide
@@ -100,7 +100,7 @@ class WalletTokenAdapter(
 					}"
 				)
 
-				txtAmountInUsd.setText("⁓${formattedDollarWithTwoDecimal(token.amountInUSD)} USD")
+				txtAmountInUsd.setText("⁓${formattedDollarWithPrecision(token.amountInUSD)} USD")
 			} else {
 				txtWalletAmount.setText("**** ${token.code}")
 				txtAmountInUsd.setText("**** USD")

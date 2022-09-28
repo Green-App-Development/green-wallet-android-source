@@ -13,7 +13,8 @@ data class Transaction(
     val networkType: String,
     val to_address: String,
     val fkFingerPrint: Long,
-    val fee_amount: Double
+    val fee_amount: Double,
+	var code:String
 ) {
     fun toTransactionEntity() =
         TransactionEntity(
@@ -25,6 +26,7 @@ data class Transaction(
             networkType,
             to_address,
             fkFingerPrint,
-            fee_amount
+            fee_amount,
+			code
         )
 }

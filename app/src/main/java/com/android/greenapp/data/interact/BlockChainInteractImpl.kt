@@ -94,7 +94,8 @@ class BlockChainInteractImpl @Inject constructor(
 		url: String,
 		sendAmount: Double,
 		networkType: String,
-		fingerPrint: Long
+		fingerPrint: Long,
+		code: String
 	): Resource<String> {
 
 		try {
@@ -141,7 +142,8 @@ class BlockChainInteractImpl @Inject constructor(
 						networkType,
 						"",
 						fingerPrint,
-						0.0
+						0.0,
+						code
 					)
 					VLog.d("Inserting transaction entity : $trans")
 					transactionDao.insertTransaction(trans)
@@ -160,35 +162,6 @@ class BlockChainInteractImpl @Inject constructor(
 		return (2002200 + Math.random() * (2604400 - 2002200)).toLong()
 	}
 
-	suspend fun updateTokensBalance(wallet: WalletEntity) {
-
-		try {
-
-			val service = retrofitBuilder.baseUrl(BASE_URL_SPACE_SCAN).build()
-				.create(ExternalService::class.java)
-
-			val res = service.getCATBalance(wallet.address)
-			if (res.isSuccessful) {
-				val cat_balance =
-					res.body()!!.get("data").asJsonObject.get("cat_balance").asJsonObject
-				VLog.d("Retrieved json object from Spacescan : $cat_balance")
-				val hashWithAmount = hashMapOf<String, Double>()
-				for (key in cat_balance.keySet()) {
-					val tokenJSON = cat_balance.get(key).asJsonObject
-					val asset_id = tokenJSON.get("asset_id").asString
-					val balance = tokenJSON.get("balance").asDouble
-					hashWithAmount[asset_id] = balance
-				}
-				walletDao.updateChiaNetworkHashTokenBalance(wallet.fingerPrint, hashWithAmount)
-			} else {
-				VLog.d("Request is not success to spacescan : ${res.body()}")
-			}
-
-		} catch (ex: Exception) {
-			VLog.d("Exception in updating token amount : $ex")
-		}
-	}
-
 	suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity) {
 		try {
 			if (isThisChivesNetwork(wallet.networkType)) return
@@ -199,7 +172,6 @@ class BlockChainInteractImpl @Inject constructor(
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
-			VLog.d("HashListImported for fingerPrint : ${wallet.fingerPrint} , Imported : AssetHashWithPuzzle : ${wallet.hashListImported}")
 			for ((asset_id, puzzle_hash) in wallet.hashListImported) {
 				val body = hashMapOf<String, Any>()
 				body["puzzle_hash"] =
@@ -207,6 +179,7 @@ class BlockChainInteractImpl @Inject constructor(
 				body["include_spent_coins"] = false
 				val division = 1000.0
 				var balance = 0L
+				val prevAmount = wallet.hashWithAmount[asset_id] ?: 0.0
 				val request = curBlockChainService.queryBalance(body)
 				if (request.isSuccessful) {
 					val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
@@ -219,13 +192,89 @@ class BlockChainInteractImpl @Inject constructor(
 							balance += curAmount
 					}
 				}
-				hashWithAmount[asset_id] = balance / division
+				val newAmount = balance / division
+				hashWithAmount[asset_id] = newAmount
+				if (newAmount != prevAmount) {
+					getIncomingTransactionNotifForToken(
+						puzzle_hash,
+						wallet,
+						curBlockChainService,
+						asset_id
+					)
+				}
 			}
 			if (wallet.hashWithAmount != hashWithAmount) {
 				walletDao.updateChiaNetworkHashTokenBalance(wallet.fingerPrint, hashWithAmount)
 			}
 		} catch (ex: java.lang.Exception) {
 			VLog.d("Exception occurred in updating token balance : ${ex.message}")
+		}
+	}
+
+	private suspend fun getIncomingTransactionNotifForToken(
+		puzzleHash: String,
+		wallet: WalletEntity,
+		curBlockChainService: BlockChainService,
+		assetId: String
+	) {
+		try {
+			val body = hashMapOf<String, Any>()
+			body["puzzle_hash"] =
+				puzzleHash
+			body["include_spent_coins"] = false
+			val division = 1000.0
+			val code = tokenDao.getTokenByHash(assetId).get().code
+			val request = curBlockChainService.queryBalance(body)
+			if (request.isSuccessful) {
+				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
+				for (record in coinRecordsJsonArray) {
+					val jsRecord = record.asJsonObject
+					val coinAmount =
+						jsRecord.get("coin").asJsonObject.get("amount").asLong
+					val spent = jsRecord.get("spent").asBoolean
+					val timeStamp = jsRecord.get("timestamp").asLong
+					val height = jsRecord.get("confirmed_block_index").asLong
+					val parent_coin_info =
+						jsRecord.get("coin").asJsonObject.get("parent_coin_info").asString
+					val parent_puzzle_hash = getParentCoinsSpentAmountAndHashValue(
+						parent_coin_info,
+						curBlockChainService
+					)!!["puzzle_hash"] as String
+					val transExistByParentInfo =
+						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
+					val timeValidate = timeStamp * 1000 > wallet.savedTime
+					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
+					if (timeStamp * 1000 > wallet.savedTime && parent_puzzle_hash.substring(2) != puzzleHash && !transExistByParentInfo.isPresent) {
+						val transEntity = TransactionEntity(
+							parent_coin_info,
+							coinAmount / division,
+							System.currentTimeMillis(),
+							height,
+							Status.Incoming,
+							wallet.networkType,
+							"",
+							wallet.fingerPrint,
+							0.0,
+							code
+						)
+						val formatted = formattedDoubleAmountWithPrecision(coinAmount / division)
+						notificationHelper.callGreenAppNotificationMessages(
+							"Incoming Transaction Token : $formatted",
+							System.currentTimeMillis()
+						)
+						VLog.d("Inserting New Incoming Transaction Token  : $transEntity")
+						transactionDao.insertTransaction(transEntity)
+					} else {
+						VLog.d("Current incoming transactions Token is already saved or can't be saved : $jsRecord and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
+						VLog.d("Validate time for transactions Token : $timeValidate , match parent puzzle hash match : $parent_puzzle_hash_match")
+					}
+				}
+
+			} else {
+				VLog.d("Request is not success in updating incoming transactions : ${request.message()}")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception  occurred in updating incoming transaction for notification :  ${ex.message}")
 		}
 	}
 
@@ -328,7 +377,8 @@ class BlockChainInteractImpl @Inject constructor(
 							wallet.networkType,
 							"",
 							wallet.fingerPrint,
-							0.0
+							0.0,
+							getShortNetworkType(wallet.networkType)
 						)
 						val formatted = formattedDoubleAmountWithPrecision(coinAmount / division)
 						notificationHelper.callGreenAppNotificationMessages(
