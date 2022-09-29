@@ -15,7 +15,7 @@ interface CryptocurrencyInteract {
 
     suspend fun getAllTails()
 
-    suspend fun getCourseCurrencyCoin(networkType: String): Double
+    suspend fun getCourseCurrencyCoin(code: String): Double
 
 
 }

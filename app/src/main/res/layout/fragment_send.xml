@@ -471,21 +471,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content">
 
-                            <EditText
-                                android:id="@+id/edt_enter_amount"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginTop="3dp"
-                                android:layout_marginRight="0dp"
-                                android:layout_toLeftOf="@+id/txtShortNetworkType"
-                                android:background="@android:color/transparent"
-                                android:hint="@string/send_token_amount"
-                                android:inputType="numberDecimal"
-                                android:maxLines="1"
-                                android:textColor="@color/secondary_text_color"
-                                android:textColorHint="@color/inactive_grey_txt"
-                                android:textSize="16sp" />
+							<EditText
+									android:id="@+id/edt_enter_amount"
+									android:layout_width="match_parent"
+									android:layout_height="wrap_content"
+									android:layout_centerVertical="true"
+									android:layout_marginTop="3dp"
+									android:layout_marginRight="0dp"
+									android:layout_toLeftOf="@+id/txtShortNetworkType"
+									android:background="@android:color/transparent"
+									android:hint="@string/send_token_amount"
+									android:inputType="numberDecimal"
+									android:maxLines="1"
+									android:textColor="@color/secondary_text_color"
+									android:textColorHint="@color/inactive_grey_txt"
+									android:textSize="16sp" />
 
                             <TextView
                                 android:id="@+id/txtShortNetworkType"
@@ -538,12 +538,12 @@
                                 android:layout_height="wrap_content"
                                 android:text="⁓" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/txtGAD"
-                                android:layout_alignParentEnd="true"
-                                android:text="GAD" />
+							<TextView
+									android:id="@+id/txtGAD"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_alignParentEnd="true"
+									android:text="GAD" />
 
                         </RelativeLayout>
 

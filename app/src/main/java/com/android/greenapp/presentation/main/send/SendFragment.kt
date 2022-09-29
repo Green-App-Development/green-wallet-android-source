@@ -283,6 +283,11 @@ class SendFragment : DaggerFragment() {
 		if (binding.enterCommissionToken.text.toString().length > 1) {
 			binding.enterCommissionToken.text = tokenWallet.code
 		}
+		if (tokenAdapter.selectedPosition != 0) {
+			binding.txtGAD.text = "XCH"
+		} else {
+			binding.txtGAD.text = "GAD"
+		}
 	}
 
 
@@ -423,7 +428,14 @@ class SendFragment : DaggerFragment() {
 		sendTransJob?.cancel()
 		sendTransJob = lifecycleScope.launch {
 			val res =
-				viewModel.push_transaction(spendBundleJSON, url, amount, networkType, fingerPrint,chosenTokenCode)
+				viewModel.push_transaction(
+					spendBundleJSON,
+					url,
+					amount,
+					networkType,
+					fingerPrint,
+					chosenTokenCode
+				)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
 					dialogManager.hidePrevDialogs()
@@ -733,14 +745,22 @@ class SendFragment : DaggerFragment() {
 
 	private fun convertAmountToUSDGAD(amount: Double) {
 		lifecycleScope.launch {
-			val amountInUSD = amount * viewModel.getCourseCurrencyCoin(curNetworkType)
-			binding.txtAmountInUSD.setText("⁓${formattedDollarWithPrecision(amountInUSD,3)}")
-			val gadPrice = viewModel.getTokenPriceByCode("GAD")
+			val amountInUSD =
+				amount * viewModel.getTokenPriceByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
+			binding.txtAmountInUSD.setText("⁓${formattedDollarWithPrecision(amountInUSD, 3)}")
+			val gadPrice = viewModel.getTokenPriceByCode(binding.txtGAD.text.toString())
 			var convertedAmountGAD = 0.0
 			if (gadPrice != 0.0) {
 				convertedAmountGAD = amountInUSD / gadPrice
 			}
-			binding.txtAmountInGAD.setText("~${formattedDollarWithPrecision(convertedAmountGAD,3)}")
+			binding.txtAmountInGAD.setText(
+				"~${
+					formattedDollarWithPrecision(
+						convertedAmountGAD,
+						3
+					)
+				}"
+			)
 		}
 	}
 

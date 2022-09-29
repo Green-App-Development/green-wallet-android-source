@@ -84,7 +84,6 @@ class App : DaggerApplication() {
 		updateBalanceEachPeriodically()
 		if (BuildConfig.DEBUG)
 			Timber.plant(Timber.DebugTree())
-		oneTimeRequest()
 		warmupFlutterEngine()
 	}
 
@@ -150,18 +149,6 @@ class App : DaggerApplication() {
 				}
 			}
 		}
-	}
-
-	private fun oneTimeRequest() {
-//		CoroutineScope(Dispatchers.IO +handler).launch {
-//			greenAppInteract.updateCoinDetails()
-//			cryptocurrencyInteract.getAllTails()
-//			greenAppInteract.requestOtherNotifItems()
-//			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
-//			if (curLangCode.isNotEmpty()) {
-//				greenAppInteract.downloadLanguageTranslate(curLangCode)
-//			}
-//		}
 	}
 
 

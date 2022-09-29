@@ -45,8 +45,6 @@ class SendFragmentViewModel @Inject constructor(
     suspend fun getCoinDetailsFeeCommission(code: String) =
         greenAppInteract.getCoinDetails(code).fee_commission
 
-    suspend fun getCourseCurrencyCoin(networkType: String) =
-        cryptocurrencyInteract.getCourseCurrencyCoin(networkType)
 
     suspend fun getTokenPriceByCode(code: String) = tokenInteract.getTokenPriceByCode(code)
 

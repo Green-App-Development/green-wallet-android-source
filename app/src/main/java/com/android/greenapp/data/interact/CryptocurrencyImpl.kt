@@ -1,6 +1,7 @@
 package com.android.greenapp.data.interact
 
 import com.android.greenapp.data.local.TokenDao
+import com.android.greenapp.data.local.entity.TokenEntity
 import com.android.greenapp.data.network.CryptocurrencyService
 import com.android.greenapp.data.network.GreenAppService
 import com.android.greenapp.domain.entity.CurrencyItem
@@ -30,8 +31,6 @@ class CryptocurrencyImpl @Inject constructor(
 
 	override suspend fun updateCourseCryptoInDb() {
 		try {
-//            updateChiaCourse()
-//            updateChivesCourse()
 			updateChiaChivesCourse()
 			updateTokensPrice()
 		} catch (ex: Exception) {
@@ -68,6 +67,8 @@ class CryptocurrencyImpl @Inject constructor(
 					getPreferenceKeyForCurNetworkPrev24ChangeDouble("Chives"),
 					chives24Hour
 				)
+				tokenDao.updateTokenPrice(chiaPrice, "XCH")
+				tokenDao.updateTokenPrice(chivesPrice, "XCC")
 			} else {
 				VLog.d("Result is not success in updating chia and chives course")
 			}
@@ -97,63 +98,6 @@ class CryptocurrencyImpl @Inject constructor(
 		}
 	}
 
-	private suspend fun updateChivesCourse() {
-		val res =
-			cryptocurrencyService.getLatestCurrency(com.android.greenapp.presentation.tools.BASE_URL_CRYPTO_CHIVES)
-		if (res.isSuccessful) {
-
-			val jsonArrayCourse =
-				res.body()!!.getAsJsonArray("data")
-
-			for (jsonObject in jsonArrayCourse) {
-
-				if (jsonObject.asJsonObject.get("symbol").toString() == "\"xcc_usdt\"") {
-					val chivesCourse = JSONObject(
-						jsonObject.asJsonObject.get("ticker").toString()
-					).getDouble("latest")
-					VLog.d(
-						"Saving XCC_USDT course : $chivesCourse : ${
-							jsonObject.asJsonObject.get("symbol")
-						}"
-					)
-					prefs.saveCoursePriceDouble(
-						getPreferenceKeyForCurStockNetworkDouble("Chives"),
-						chivesCourse
-					)
-				}
-			}
-
-		} else {
-			VLog.d("Request is not successful  : ${res.message()}")
-		}
-	}
-
-
-	private suspend fun updateChiaCourse() {
-		val response =
-			cryptocurrencyService.getLatestCurrency(com.android.greenapp.presentation.tools.BASE_URL_CRYPTO_CHIA)
-		if (response.isSuccessful) {
-			val courseJsonList = response.body()?.getAsJsonArray("data")
-			if (courseJsonList != null) {
-				for (course in courseJsonList) {
-					val symbol = course.asJsonObject.get("symbol").asString
-					if (symbol == "xchusdt") {
-						val bid = course.asJsonObject.get("bid").asDouble
-						VLog.d("Saving xchusdt : $bid")
-						prefs.saveCoursePriceDouble(
-							getPreferenceKeyForCurStockNetworkDouble("Chia"),
-							bid
-						)
-					}
-				}
-			} else {
-				VLog.d("CourseJsonList is null")
-			}
-		} else {
-			VLog.d("Response is not successful  : ${response.message()}")
-		}
-	}
-
 	override suspend fun getCurrentCurrencyCourseByNetwork(type: String): Flow<CurrencyItem> {
 		return prefs.getDoubleFlow(
 			getPreferenceKeyForCurStockNetworkDouble(type.split(" ")[0]),
@@ -178,6 +122,10 @@ class CryptocurrencyImpl @Inject constructor(
 
 
 	override suspend fun getAllTails() {
+		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0)
+		tokenDao.insertToken(chiaTokenEntity)
+		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0)
+		tokenDao.insertToken(chivesTokenEntity)
 		try {
 			val res = greenAppService.getAllTails()
 			if (res.isSuccessful) {
@@ -203,13 +151,11 @@ class CryptocurrencyImpl @Inject constructor(
 		}
 	}
 
-	override suspend fun getCourseCurrencyCoin(networkType: String): Double {
-		val curCoinPrice =
-			prefs.getCoursePriceDouble(
-				getPreferenceKeyForCurStockNetworkDouble(networkType.split(" ")[0]),
-				0.0
-			)
-		return curCoinPrice
+	override suspend fun getCourseCurrencyCoin(code: String): Double {
+		val optionalToken= tokenDao.getTokenByCode(code)
+		if(optionalToken.isPresent)
+			return optionalToken.get().price
+		return 0.0
 	}
 
 
