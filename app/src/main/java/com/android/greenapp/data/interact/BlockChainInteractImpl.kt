@@ -258,8 +258,9 @@ class BlockChainInteractImpl @Inject constructor(
 							code
 						)
 						val formatted = formattedDoubleAmountWithPrecision(coinAmount / division)
+						val tokenCode = tokenDao.getTokenByHash(assetId).get().code
 						notificationHelper.callGreenAppNotificationMessages(
-							"Incoming Transaction Token : $formatted",
+							"Incoming Transaction Token : $formatted $tokenCode",
 							System.currentTimeMillis()
 						)
 						VLog.d("Inserting New Incoming Transaction Token  : $transEntity")
@@ -382,7 +383,7 @@ class BlockChainInteractImpl @Inject constructor(
 						)
 						val formatted = formattedDoubleAmountWithPrecision(coinAmount / division)
 						notificationHelper.callGreenAppNotificationMessages(
-							"Incoming Transaction : $formatted",
+							"Incoming Transaction : $formatted ${getShortNetworkType(wallet.networkType)}",
 							System.currentTimeMillis()
 						)
 						VLog.d("Inserting New Incoming Transaction  : $transEntity")

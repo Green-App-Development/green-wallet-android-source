@@ -100,56 +100,10 @@ class App : DaggerApplication() {
 			.getInstance()
 			.put(FLUTTER_ENGINE, flutterEngine)
 		VLog.d("LOG_TAG", "warmupFlutterEngine: got initialized  $flutterEngine")
-//		testingMethod()
+
 	}
 
-	private fun testingMethod() {
-		val methodChannel = MethodChannel(
-			flutterEngine.dartExecutor.binaryMessenger,
-			METHOD_CHANNEL_GENERATE_HASH
-		)
-		methodChannel.setMethodCallHandler { method, callBack ->
-			if (method.method == "getSpendBundle") {
-				val spendBundleFlutter =
-					(method.arguments as HashMap<*, *>)["spendBundle"].toString()
-				VLog.d("Got spend bundle on send fragment : $spendBundleFlutter")
 
-				val spendBundleJson = JSONObject(spendBundleFlutter)
-				val agg_signature = spendBundleJson.getString("aggregated_signature")
-
-				val coinSpends = mutableListOf<CoinSpend>()
-				val coinSpendsSize = spendBundleJson.getJSONArray("coin_spends").length()
-
-				for (i in 0 until coinSpendsSize) {
-					val coin_spend =
-						JSONObject(spendBundleJson.getJSONArray("coin_spends")[i].toString())
-
-					val puzzle_reveal = coin_spend.getString("puzzle_reveal")
-					val solution = coin_spend.getString("solution")
-					val coinJSON = JSONObject(coin_spend.get("coin").toString())
-					val parent_coin_info = coinJSON.getString("parent_coin_info")
-					val puzzle_hash = coinJSON.getString("puzzle_hash")
-					val amount = coinJSON.getLong("amount")
-					val coin = Coin(amount, parent_coin_info, puzzle_hash)
-					val coinSpend = CoinSpend(coin, puzzle_reveal, solution)
-
-					coinSpends.add(coinSpend)
-				}
-				val spendBundle = SpendBundle(agg_signature, coinSpends.toList())
-				val spenBundle = SpenBunde(spendBundle)
-				VLog.d("SpendBundle Sending to server push_tx : $spenBundle")
-				CoroutineScope(Dispatchers.IO).launch {
-					val curBlockChainService =
-						retrofitBuilder.baseUrl("https://chia.blockchain-list.store/full-node/")
-							.build()
-							.create(BlockChainService::class.java)
-
-					val res = curBlockChainService.pushTransaction(spenBundle)
-					VLog.d("Result from push_transaction  ${res.body()} : ${res.body()!!.status}")
-				}
-			}
-		}
-	}
 
 
 	fun updateBalanceEachPeriodically() {

@@ -2,7 +2,14 @@ package com.android.greenapp.presentation.main.send
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Paint
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.*
@@ -261,12 +268,25 @@ class SendFragment : DaggerFragment() {
 					tokenAdapter.selectedPosition = p2
 					tokendAdapterPosition = p2
 					updateAmounts(tokenWalletList[p2])
+					checkBtnEnabled(tokenWalletList[p2])
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
 
 				}
 			}
+	}
+
+	private fun checkBtnEnabled(tokenWallet: TokenWallet) {
+		val curAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull()
+		if (curAmount != null) {
+			val tokenAmount = tokenWallet.amount
+			if (tokenAmount < curAmount) {
+				twoEdtsFilled.remove(2)
+			} else
+				twoEdtsFilled.add(2)
+			enableBtnContinueThreeEdtsFilled()
+		}
 	}
 
 	@SuppressLint("SetTextI18n")
@@ -348,6 +368,7 @@ class SendFragment : DaggerFragment() {
 						text = getShortNetworkType(curNetworkType)
 					}
 					txtRecommendedCommission.visibility = View.VISIBLE
+					changeCommissionValueFromRest()
 				} else if (edtEnterCommission.text.toString().isEmpty()) {
 					txtEnterCommission.visibility = View.INVISIBLE
 					edtEnterCommission.hint =
@@ -361,6 +382,32 @@ class SendFragment : DaggerFragment() {
 				if (!focus) {
 					view3.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
 				}
+			}
+
+
+			txtRecommendedCommission.setOnClickListener {
+				edtEnterCommission.setText(txtRecommendedCommission.text.toString().trim())
+			}
+
+		}
+	}
+
+	@SuppressLint("SetTextI18n")
+	private fun changeCommissionValueFromRest() {
+		lifecycleScope.launch {
+			val commission =
+				viewModel.getCoinDetailsFeeCommission(getShortNetworkType(curNetworkType))
+
+			val text = "$commission"
+			val ss = SpannableString(text)
+			val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
+			val underlineSpan = UnderlineSpan()
+			ss.setSpan(fcsGreen, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
+			ss.setSpan(underlineSpan, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
+			binding.txtRecommendedCommission.apply {
+				setText("$ss")
+				movementMethod = LinkMovementMethod.getInstance()
+				paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
 			}
 		}
 	}
@@ -601,17 +648,6 @@ class SendFragment : DaggerFragment() {
 						curSendAddressWallet = it
 						binding.edtAddressWallet.setText(it)
 					}
-//					if (it.isNotEmpty()) {
-//						binding.edtAddressWallet.requestFocus()
-//						curSendAddressWallet = it
-//						kotlin.runCatching {
-//							val truncatedStr =
-//								it.substring(0, 20) + "..." + it.substring(it.length - 4, it.length)
-//
-//						}.onFailure {
-//							binding.edtAddressWallet.setText(it.toString())
-//						}
-//					}
 				}
 			}
 			curActivity().mainViewModel.chosenAddress.collect { addres ->
@@ -620,20 +656,6 @@ class SendFragment : DaggerFragment() {
 					curSendAddressWallet = addres
 					binding.edtAddressWallet.setText(addres)
 				}
-//				if (addres.isNotEmpty()) {
-//					binding.edtAddressWallet.requestFocus()
-//					curSendAddressWallet = addres
-//					kotlin.runCatching {
-//						val truncatedStr =
-//							addres.substring(0, 20) + "..." + addres.substring(
-//								addres.length - 4,
-//								addres.length
-//							)
-//						binding.edtAddressWallet.setText(truncatedStr)
-//					}.onFailure {
-//						binding.edtAddressWallet.setText(addres)
-//					}
-//				}
 			}
 		}
 	}
@@ -673,8 +695,6 @@ class SendFragment : DaggerFragment() {
 			curActivity().move2AddressFragmentList(true)
 		}
 
-
-
 		binding.edtEnterAmount.addTextChangedListener {
 			kotlin.runCatching {
 				if (it.isNullOrEmpty()) {
@@ -708,19 +728,16 @@ class SendFragment : DaggerFragment() {
 		}
 
 		binding.btnContinue.setOnClickListener {
-			binding.apply {
+			if (connectionLiveData.isOnline) {
+				val addressWalletInValid = binding.edtAddressWallet.text.toString().isEmpty()
+				if (addressWalletInValid) {
+					showWarningInvalidWalledAddress()
+					return@setOnClickListener
+				}
+				showConfirmTransactionDialog()
+			} else {
+				dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
 
-				if (connectionLiveData.isOnline) {
-					val addressWalletInValid = edtAddressWallet.text.toString().isEmpty()
-					if (addressWalletInValid) {
-						showWarningInvalidWalledAddress()
-						return@setOnClickListener
-					}
-					showConfirmTransactionDialog()
-				} else {
-					dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
-					}
 				}
 			}
 		}
@@ -743,6 +760,7 @@ class SendFragment : DaggerFragment() {
 
 	}
 
+	@SuppressLint("SetTextI18n")
 	private fun convertAmountToUSDGAD(amount: Double) {
 		lifecycleScope.launch {
 			val amountInUSD =
