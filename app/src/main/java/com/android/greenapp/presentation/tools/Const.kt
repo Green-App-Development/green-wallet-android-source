@@ -1,7 +1,7 @@
 package com.android.greenapp.presentation.tools
 
 
-const val GENERAL_TAG = "GENERAL_TAG_G"
+const val GENERAL_TAG = "`GENERAL_TAG_G"
 const val CHIA = "Chia"
 const val CHIVES = "Chives"
 

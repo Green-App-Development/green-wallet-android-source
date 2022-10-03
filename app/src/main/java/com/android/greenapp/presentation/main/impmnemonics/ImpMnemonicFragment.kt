@@ -417,8 +417,10 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 					val fingerPrint = arguments["fingerPrint"]!!.toString().toLong()
 					val address = arguments["address"]!!.toString()
 					val puzzle_hash = arguments["puzzle_hash"]!!.toString()
-					val puzzle_hash_gad = arguments["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"]!!.toString()
-					val puzzle_hash_usds = arguments["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"]!!.toString()
+					val puzzle_hash_gad =
+						arguments["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"]!!.toString()
+					val puzzle_hash_usds =
+						arguments["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"]!!.toString()
 					val newWallet = Wallet(
 						fingerPrint,
 						"",
@@ -430,8 +432,10 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 						0.0,
 						System.currentTimeMillis()
 					)
-					newWallet.hashListImported["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"] = puzzle_hash_gad
-					newWallet.hashListImported["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"] = puzzle_hash_usds
+					newWallet.hashListImported["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"] =
+						puzzle_hash_gad
+					newWallet.hashListImported["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"] =
+						puzzle_hash_usds
 					impMnemonicViewModel.importNewWallet(newWallet) {
 						dialogManager.hidePrevDialogs()
 						showSuccessImportingDialog()
@@ -459,7 +463,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		val mnemonicString = mnemonicsToString(mnemonics)
 		val map = hashMapOf<String, Any>()
 		map["mnemonic"] = mnemonicString
-		map["prefix"]= getPrefixForAddressFromNetworkType(curNetworkType)
+		map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 		VLog.d("Calling flutter generate hash : $mnemonicString")
 		methodChannel.invokeMethod("generateHash", map);
 	}
@@ -527,6 +531,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				else
 					clearingEdts(linearLayout24)
 			}
+			dialogManager.hidePrevDialogs()
 		}
 	}
 

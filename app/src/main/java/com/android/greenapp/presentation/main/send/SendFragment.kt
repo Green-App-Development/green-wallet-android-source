@@ -398,7 +398,7 @@ class SendFragment : DaggerFragment() {
 			val commission =
 				viewModel.getCoinDetailsFeeCommission(getShortNetworkType(curNetworkType))
 
-			val text = "$commission"
+			val text = formattedDoubleAmountWithPrecision(commission)
 			val ss = SpannableString(text)
 			val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
 			val underlineSpan = UnderlineSpan()
@@ -470,7 +470,8 @@ class SendFragment : DaggerFragment() {
 		url: String,
 		amount: Double,
 		networkType: String,
-		fingerPrint: Long
+		fingerPrint: Long,
+		dest_puzzle_hash: String
 	) {
 		sendTransJob?.cancel()
 		sendTransJob = lifecycleScope.launch {
@@ -481,7 +482,8 @@ class SendFragment : DaggerFragment() {
 					amount,
 					networkType,
 					fingerPrint,
-					chosenTokenCode
+					chosenTokenCode,
+					dest_puzzle_hash
 				)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
@@ -575,8 +577,17 @@ class SendFragment : DaggerFragment() {
 				if (method.method == "getSpendBundle") {
 					val spendBundleJson =
 						(method.arguments as HashMap<*, *>)["spendBundle"].toString()
+					val dest_puzzle_hash =
+						(method.arguments as HashMap<*, *>)["dest_puzzle_hash"].toString()
 					VLog.d("Got spend bundle on send fragment : $spendBundleJson")
-					sendTransaction(spendBundleJson, url, amount, networkType, fingerPrint)
+					sendTransaction(
+						spendBundleJson,
+						url,
+						amount,
+						networkType,
+						fingerPrint,
+						dest_puzzle_hash
+					)
 				} else if (method.method == "exception") {
 					showFailedSendingTransaction()
 				}
@@ -829,8 +840,12 @@ class SendFragment : DaggerFragment() {
 		commissionJob?.cancel()
 		commissionJob = lifecycleScope.launch(handler) {
 			val commission =
-				viewModel.getCoinDetailsFeeCommission(getShortNetworkType(curNetworkType))
-			binding.edtEnterCommission.setText("$commission")
+				formattedDollarWithPrecision(
+					viewModel.getCoinDetailsFeeCommission(
+						getShortNetworkType(curNetworkType)
+					)
+				)
+			binding.edtEnterCommission.setText(commission)
 		}
 	}
 

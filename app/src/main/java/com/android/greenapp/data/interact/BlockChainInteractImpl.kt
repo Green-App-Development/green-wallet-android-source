@@ -8,7 +8,6 @@ import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.data.local.entity.TransactionEntity
 import com.android.greenapp.data.local.entity.WalletEntity
 import com.android.greenapp.data.network.BlockChainService
-import com.android.greenapp.data.network.ExternalService
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.entity.Wallet
@@ -19,11 +18,12 @@ import com.android.greenapp.presentation.main.send.spend.Coin
 import com.android.greenapp.presentation.main.send.spend.CoinSpend
 import com.android.greenapp.presentation.main.send.spend.SpenBunde
 import com.android.greenapp.presentation.main.send.spend.SpendBundle
-import com.android.greenapp.presentation.tools.BASE_URL_SPACE_SCAN
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
+import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
@@ -86,8 +86,61 @@ class BlockChainInteractImpl @Inject constructor(
 		for (wallet in walletListDb) {
 			updateWalletBalance(wallet)
 			updateTokenBalanceWithFullNode(wallet)
+			updateInProgressTransactions()
 		}
 	}
+
+	private suspend fun updateInProgressTransactions() {
+		try {
+			val inProgressTrans = transactionDao.getTransactionsByStatus(Status.InProgress)
+			for (tran in inProgressTrans) {
+				val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
+				if (unSpentCoinRecordHeight != -1L) {
+					VLog.d("Updating Coin Record Height for inProgress transaction : $tran")
+					transactionDao.updateTransactionStatusHeight(
+						Status.Outgoing,
+						unSpentCoinRecordHeight,
+						tran.transaction_id
+					)
+				}
+			}
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Exception  occurred in updating InProgress Transaction : ${ex.message}")
+		}
+	}
+
+	private suspend fun getFirstUnSpentCoinRecordHeight(tran: TransactionEntity): Long {
+		try {
+			val networkItem = getNetworkItemFromPrefs(tran.networkType)
+				?: throw Exception("Exception in converting json str to networkItem")
+			val curBlockChainService =
+				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+					.create(BlockChainService::class.java)
+			val body = hashMapOf<String, Any>()
+			body["puzzle_hash"] =
+				tran.to_dest_hash
+			body["include_spent_coins"] = false
+			val division = getTokenPrecisionByCode(tran.code)
+			val request = curBlockChainService.queryBalance(body)
+			if (request.isSuccessful) {
+				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
+				for (record in coinRecordsJsonArray) {
+					val jsRecord = record.asJsonObject
+					val coinAmount =
+						jsRecord.get("coin").asJsonObject.get("amount").asLong / division
+					val timeStamp = jsRecord.get("timestamp").asLong
+					val height = jsRecord.get("confirmed_block_index").asLong
+					if (timeStamp * 1000 >= tran.created_at_time && coinAmount == tran.amount) {
+						return height
+					}
+				}
+			}
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Exception in getting unspent transactions coin records :  $ex")
+		}
+		return -1
+	}
+
 
 	override suspend fun push_tx(
 		jsonSpendBundle: String,
@@ -95,7 +148,8 @@ class BlockChainInteractImpl @Inject constructor(
 		sendAmount: Double,
 		networkType: String,
 		fingerPrint: Long,
-		code: String
+		code: String,
+		dest_puzzle_hash: String
 	): Resource<String> {
 
 		try {
@@ -137,10 +191,10 @@ class BlockChainInteractImpl @Inject constructor(
 						UUID.randomUUID().toString(),
 						sendAmount,
 						System.currentTimeMillis(),
-						temporarilyGenerateFakeHeight(),
-						Status.Outgoing,
+						0,
+						Status.InProgress,
 						networkType,
-						"",
+						dest_puzzle_hash,
 						fingerPrint,
 						0.0,
 						code

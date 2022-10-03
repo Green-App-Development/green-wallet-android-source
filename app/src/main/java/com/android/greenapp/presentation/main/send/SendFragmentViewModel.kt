@@ -16,38 +16,54 @@ import javax.inject.Inject
 
 
 class SendFragmentViewModel @Inject constructor(
-    private val walletInteract: WalletInteract,
-    private val blockChainInteract: BlockChainInteract,
-    private val addressInteract: AddressInteract,
-    private val greenAppInteract: GreenAppInteract,
-    private val cryptocurrencyInteract: CryptocurrencyInteract,
-    private val tokenInteract: TokenInteract
+	private val walletInteract: WalletInteract,
+	private val blockChainInteract: BlockChainInteract,
+	private val addressInteract: AddressInteract,
+	private val greenAppInteract: GreenAppInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract,
+	private val tokenInteract: TokenInteract
 ) :
-    ViewModel() {
+	ViewModel() {
 
-    private val _sendTransResponse = MutableStateFlow<Resource<String>>(Resource.loading())
-    val sendTransResponse = _sendTransResponse.asStateFlow()
-    private var sendTransJob: Job? = null
+	private val _sendTransResponse = MutableStateFlow<Resource<String>>(Resource.loading())
+	val sendTransResponse = _sendTransResponse.asStateFlow()
+	private var sendTransJob: Job? = null
 
-    suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
+	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
-    suspend fun queryWalletList(type: String, fingerPrint: Long?) =
-        walletInteract.getWalletListByNetworkTypeFingerPrint(type, fingerPrint)
+	suspend fun queryWalletList(type: String, fingerPrint: Long?) =
+		walletInteract.getWalletListByNetworkTypeFingerPrint(type, fingerPrint)
 
-    suspend fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
-        walletInteract.getWalletWithTokensByFingerPrintNetworkType(fingerPrint, type)
+	suspend fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
+		walletInteract.getWalletWithTokensByFingerPrintNetworkType(fingerPrint, type)
 
-    suspend fun push_transaction(spendBundle: String,url: String,amount:Double,networkType: String,fingerPrint: Long,code:String)=blockChainInteract.push_tx(spendBundle,url,amount,networkType,fingerPrint,code)
+	suspend fun push_transaction(
+		spendBundle: String,
+		url: String,
+		amount: Double,
+		networkType: String,
+		fingerPrint: Long,
+		code: String,
+		dest_puzzle_hash: String
+	) = blockChainInteract.push_tx(
+		spendBundle,
+		url,
+		amount,
+		networkType,
+		fingerPrint,
+		code,
+		dest_puzzle_hash
+	)
 
-    suspend fun checkIfAddressExistInDb(address: String) =
-        addressInteract.checkIfAddressAlreadyExist(address = address)
+	suspend fun checkIfAddressExistInDb(address: String) =
+		addressInteract.checkIfAddressAlreadyExist(address = address)
 
-    suspend fun getCoinDetailsFeeCommission(code: String) =
-        greenAppInteract.getCoinDetails(code).fee_commission
+	suspend fun getCoinDetailsFeeCommission(code: String) =
+		greenAppInteract.getCoinDetails(code).fee_commission
 
 
-    suspend fun getTokenPriceByCode(code: String) = tokenInteract.getTokenPriceByCode(code)
+	suspend fun getTokenPriceByCode(code: String) = tokenInteract.getTokenPriceByCode(code)
 
-    suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
+	suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
 
 }

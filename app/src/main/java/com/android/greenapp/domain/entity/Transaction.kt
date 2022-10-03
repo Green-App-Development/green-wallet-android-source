@@ -5,15 +5,15 @@ import com.android.greenapp.presentation.tools.Status
 
 
 data class Transaction(
-    val transaction_id: String,
-    var amount: Double,
-    val created_at_time: Long,
-    val confirmed_at_height: Long,
-    val status: Status,
-    val networkType: String,
-    val to_address: String,
-    val fkFingerPrint: Long,
-    val fee_amount: Double,
+	val transaction_id: String,
+	var amount: Double,
+	val created_at_time: Long,
+	val confirmed_at_height: Long,
+	val status: Status,
+	val networkType: String,
+	val to_dest_hash: String,
+	val fkFingerPrint: Long,
+	val fee_amount: Double,
 	var code:String
 ) {
     fun toTransactionEntity() =
@@ -24,7 +24,7 @@ data class Transaction(
             confirmed_at_height,
             status,
             networkType,
-            to_address,
+            to_dest_hash,
             fkFingerPrint,
             fee_amount,
 			code

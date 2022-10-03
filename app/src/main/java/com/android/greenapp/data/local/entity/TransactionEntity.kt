@@ -9,30 +9,30 @@ import com.android.greenapp.presentation.tools.Status
 
 @Entity(tableName = "TransactionEntity")
 data class TransactionEntity(
-    @ColumnInfo(name = "transaction_id")
+	@ColumnInfo(name = "transaction_id")
     @PrimaryKey(autoGenerate = false)
     var transaction_id: String,
-    @ColumnInfo(name = "amount")
+	@ColumnInfo(name = "amount")
     var amount: Double,
-    @ColumnInfo(name = "created_at_time")
+	@ColumnInfo(name = "created_at_time")
     val created_at_time: Long,
-    @ColumnInfo(name = "height")
+	@ColumnInfo(name = "height")
     val height: Long,
-    @ColumnInfo(name = "status")
+	@ColumnInfo(name = "status")
     val status: Status,
-    @ColumnInfo(name = "network_type")
+	@ColumnInfo(name = "network_type")
     val networkType: String,
-    @ColumnInfo(name = "to_address")
-    val to_address: String,
-    @ColumnInfo(name = "fkFingerPrint")
+	@ColumnInfo(name = "to_dest_hash")
+    val to_dest_hash: String,
+	@ColumnInfo(name = "fkFingerPrint")
     val fkFingerPrint: Long,
-    @ColumnInfo(name = "fee_amount")
+	@ColumnInfo(name = "fee_amount")
     val fee_amount:Double,
 	@ColumnInfo(name="code")
 	val code:String
 ) {
 
     fun toTransaction() =
-        Transaction(transaction_id, amount, created_at_time, height, status, networkType, to_address,fkFingerPrint,fee_amount,code)
+        Transaction(transaction_id, amount, created_at_time, height, status, networkType, to_dest_hash,fkFingerPrint,fee_amount,code)
 
 }

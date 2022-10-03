@@ -11,26 +11,26 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class TokenInteractImpl @Inject constructor(
-    private val tokenDao: TokenDao,
-    private val walletDoa: WalletDao
+	private val tokenDao: TokenDao,
+	private val walletDoa: WalletDao
 ) : TokenInteract {
 
 
-    override suspend fun getTokenListAndSearch(fingerPrint: Long,nameCode:String?): List<Token> {
-        val walletEntity = walletDoa.getWalletByFingerPrint(fingerPrint)[0]
+	override suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode: String?): List<Token> {
+		val walletEntity = walletDoa.getWalletByFingerPrint(fingerPrint)[0]
 
-        return tokenDao.getTokenListAndSearch(nameCode).map {
-            val imported = walletEntity.hashListImported.containsKey(it.hash)
-            it.toToken(imported)
-        }
-    }
+		return tokenDao.getTokenListAndSearch(nameCode).map {
+			val imported = walletEntity.hashListImported.containsKey(it.hash)
+			it.toToken(imported)
+		}.filter { !arrayOf("XCH", "XCC").contains(it.code) }
+	}
 
-    override suspend fun getTokenPriceByCode(code: String): Double {
-        val tokenOpt = tokenDao.getTokenByCode(code)
-        if (tokenOpt.isPresent)
-            return tokenOpt.get().price
-        return 0.0
-    }
+	override suspend fun getTokenPriceByCode(code: String): Double {
+		val tokenOpt = tokenDao.getTokenByCode(code)
+		if (tokenOpt.isPresent)
+			return tokenOpt.get().price
+		return 0.0
+	}
 
 
 }

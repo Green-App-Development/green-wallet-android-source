@@ -136,6 +136,21 @@ fun getPrefixForAddressFromNetworkType(networkType: String): String {
 	return prefix
 }
 
+fun getTokenPrecisionByCode(code: String): Double {
+	return when (code) {
+		"XCC" -> Math.pow(
+			10.0,
+			8.0
+		)
+		"XCH" ->
+			Math.pow(
+				10.0,
+				12.0
+			)
+		else -> 1000.0
+	}
+}
+
 
 
 

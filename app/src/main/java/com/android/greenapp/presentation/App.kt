@@ -104,8 +104,6 @@ class App : DaggerApplication() {
 	}
 
 
-
-
 	fun updateBalanceEachPeriodically() {
 		updateBalanceJob?.cancel()
 		updateBalanceJob = CoroutineScope(Dispatchers.IO).launch {

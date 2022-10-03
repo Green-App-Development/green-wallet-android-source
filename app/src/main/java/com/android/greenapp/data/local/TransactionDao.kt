@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import androidx.room.Update
 import com.android.greenapp.data.local.entity.TransactionEntity
 import com.android.greenapp.presentation.tools.Status
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,12 @@ interface TransactionDao {
 
     @Query("SELECT * FROM TransactionEntity WHERE transaction_id=:transaction_id")
     suspend fun checkTransactionByIDExistInDB(transaction_id: String): Optional<TransactionEntity>
+
+    @Query("SELECT * FROM TransactionEntity WHERE status=:status")
+	suspend fun getTransactionsByStatus(status: Status):List<TransactionEntity>
+
+	@Query("UPDATE TransactionEntity SET status=:status,height=:height WHERE transaction_id=:transaction_id")
+	suspend fun updateTransactionStatusHeight(status: Status,height:Long,transaction_id: String)
 
 
 }
