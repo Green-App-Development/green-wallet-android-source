@@ -23,7 +23,6 @@ import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
@@ -299,7 +298,7 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
 					val timeValidate = timeStamp * 1000 > wallet.savedTime
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
-					if (timeStamp * 1000 > wallet.savedTime - 600 * 1000 && parent_puzzle_hash.substring(
+					if (timeStamp * 1000 >= wallet.savedTime - 600 * 1000 && parent_puzzle_hash.substring(
 							2
 						) != puzzleHash && !transExistByParentInfo.isPresent
 					) {
@@ -426,7 +425,7 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
 					val timeValidate = timeStamp * 1000 > wallet.savedTime
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != wallet.sk
-					if (timeStamp * 1000 > wallet.savedTime && parent_puzzle_hash.substring(2) != wallet.sk && !transExistByParentInfo.isPresent) {
+					if (timeStamp * 1000 > wallet.savedTime-600*1000 && parent_puzzle_hash.substring(2) != wallet.sk && !transExistByParentInfo.isPresent) {
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,

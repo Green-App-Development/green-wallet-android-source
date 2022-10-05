@@ -721,6 +721,7 @@ class SendFragment : DaggerFragment() {
 						showNotEnoughAmountWarning()
 					} else {
 						twoEdtsFilled.add(2)
+						hideAmountNotEnoughWarning()
 					}
 
 				}
@@ -826,12 +827,14 @@ class SendFragment : DaggerFragment() {
 			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.red_mnemonic))
 			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.red_mnemonic))
 			txtNotEnoughMoneyWarning.visibility = View.VISIBLE
-			lifecycleScope.launch {
-				delay(2000)
-				edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-				txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.green))
-				txtNotEnoughMoneyWarning.visibility = View.GONE
-			}
+		}
+	}
+
+	private fun hideAmountNotEnoughWarning() {
+		binding.apply {
+			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
+			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.green))
+			txtNotEnoughMoneyWarning.visibility = View.GONE
 		}
 	}
 
