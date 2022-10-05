@@ -95,8 +95,8 @@ class BlockChainInteractImpl @Inject constructor(
 			val inProgressTrans = transactionDao.getTransactionsByStatus(Status.InProgress)
 			for (tran in inProgressTrans) {
 				val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
+				VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
 				if (unSpentCoinRecordHeight != -1L) {
-					VLog.d("Updating Coin Record Height for inProgress transaction : $tran")
 					transactionDao.updateTransactionStatusHeight(
 						Status.Outgoing,
 						unSpentCoinRecordHeight,
@@ -130,7 +130,8 @@ class BlockChainInteractImpl @Inject constructor(
 						jsRecord.get("coin").asJsonObject.get("amount").asLong / division
 					val timeStamp = jsRecord.get("timestamp").asLong
 					val height = jsRecord.get("confirmed_block_index").asLong
-					if (timeStamp * 1000 >= tran.created_at_time && coinAmount == tran.amount) {
+					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp * 1000} trantime : ${tran.created_at_time}, CoinAmount : ${coinAmount} , TranCoinAmount : ${tran.amount}")
+					if (timeStamp * 1000 >= tran.created_at_time - 600 * 1000 && coinAmount == tran.amount) {
 						return height
 					}
 				}
@@ -171,8 +172,8 @@ class BlockChainInteractImpl @Inject constructor(
 				val puzzle_reveal = coin_spend.getString("puzzle_reveal")
 				val solution = coin_spend.getString("solution")
 				val coinJSON = JSONObject(coin_spend.get("coin").toString())
-				val parent_coin_info = coinJSON.getString("parent_coin_info")
-				val puzzle_hash = coinJSON.getString("puzzle_hash")
+				val parent_coin_info = "0x" + coinJSON.getString("parent_coin_info")
+				val puzzle_hash = "0x" + coinJSON.getString("puzzle_hash")
 				val amount = coinJSON.getLong("amount")
 				val coin = Coin(amount, parent_coin_info, puzzle_hash)
 				val coinSpend = CoinSpend(coin, puzzle_reveal, solution)
@@ -298,7 +299,10 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
 					val timeValidate = timeStamp * 1000 > wallet.savedTime
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
-					if (timeStamp * 1000 > wallet.savedTime && parent_puzzle_hash.substring(2) != puzzleHash && !transExistByParentInfo.isPresent) {
+					if (timeStamp * 1000 > wallet.savedTime - 600 * 1000 && parent_puzzle_hash.substring(
+							2
+						) != puzzleHash && !transExistByParentInfo.isPresent
+					) {
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,

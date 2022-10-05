@@ -42,7 +42,7 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionEntity WHERE transaction_id=:transaction_id")
     suspend fun checkTransactionByIDExistInDB(transaction_id: String): Optional<TransactionEntity>
 
-    @Query("SELECT * FROM TransactionEntity WHERE status=:status")
+    @Query("SELECT * FROM TransactionEntity WHERE status=:status  ORDER BY created_at_time ASC")
 	suspend fun getTransactionsByStatus(status: Status):List<TransactionEntity>
 
 	@Query("UPDATE TransactionEntity SET status=:status,height=:height WHERE transaction_id=:transaction_id")

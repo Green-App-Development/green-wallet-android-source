@@ -845,6 +845,7 @@ class SendFragment : DaggerFragment() {
 						getShortNetworkType(curNetworkType)
 					)
 				)
+			VLog.d("Commission on send : $commission")
 			binding.edtEnterCommission.setText(commission)
 		}
 	}
