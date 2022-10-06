@@ -308,6 +308,14 @@ class SendFragment : DaggerFragment() {
 		} else {
 			binding.txtGAD.text = "GAD"
 		}
+		if (binding.edtEnterAmount.text.toString().isNotEmpty()) {
+			val amount = binding.edtEnterAmount.text.toString().toDouble()
+			convertAmountToUSDGAD(amount)
+			if (amount > tokenWallet.amount)
+				showNotEnoughAmountWarning()
+			else
+				hideAmountNotEnoughWarning()
+		}
 	}
 
 
