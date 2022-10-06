@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GreenApp</string>
+    <string name="app_name">Green Wallet</string>
     <string name="btn_begin" />
     <string name="choose_lang">Select your language</string>
     <string name="back">Back</string>

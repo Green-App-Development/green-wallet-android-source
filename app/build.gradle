@@ -21,7 +21,7 @@ android {
         minSdk 26
         targetSdk 32
         versionCode 1
-        versionName "0.0.14"
+        versionName "0.0.16"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -161,5 +161,6 @@ dependencies {
 
 	implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
+	implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta02"
 
 }
