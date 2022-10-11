@@ -130,8 +130,8 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeStamp = jsRecord.get("timestamp").asLong
 					val height = jsRecord.get("confirmed_block_index").asLong
 					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp * 1000} trantime : ${tran.created_at_time}, CoinAmount : ${coinAmount} , TranCoinAmount : ${tran.amount}")
-					//Need to add time precision
-					if (timeStamp * 1000 >= tran.created_at_time-1000*60*60 && coinAmount == tran.amount) {
+					//Need to add time precision timeStamp * 1000 >= tran.created_at_time-1000*60*60 &&
+					if (coinAmount == tran.amount) {
 						return height
 					}
 				}
@@ -486,73 +486,5 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 
-	suspend fun updateTransactionsBalance(
-		wallet: WalletEntity,
-		isNewWallet: Boolean,
-		includeSpentCoins: Boolean
-	) {
-		try {
-			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
-				?: throw Exception("Exception in converting json str to networkItem")
-
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
-			val body = hashMapOf<String, Any>()
-			body["puzzle_hash"] =
-				wallet.sk
-			body["include_spent_coins"] = includeSpentCoins
-			val division =
-				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
-					10.0,
-					8.0
-				) else Math.pow(
-					10.0,
-					12.0
-				)
-			var balance = 0L
-			val allTrans = mutableListOf<TransactionEntity>()
-			val request = curBlockChainService.queryBalance(body)
-			if (request.isSuccessful) {
-				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
-				for (coin in coinRecordsJsonArray) {
-					val jsCoin = coin.asJsonObject
-					val curAmount =
-						jsCoin.get("coin").asJsonObject.get("amount").asLong
-					val confirmed_block_index = jsCoin.get("confirmed_block_index").asLong
-					val timeStamp = jsCoin.get("timestamp").asLong * 1000
-					val parent_coin_info =
-						jsCoin.get("coin").asJsonObject.get("parent_coin_info").asString
-					val spent = jsCoin.get("spent").asBoolean
-					if (!spent)
-						balance += curAmount
-
-					var status = Status.Outgoing
-				}
-				for (tran in allTrans) {
-					val tranExist =
-						transactionDao.checkTransactionByIDExistInDB(tran.transaction_id)
-					if (!tranExist.isPresent && !isNewWallet && tran.status == Status.Incoming) {
-						notificationHelper.callGreenAppNotificationMessages(
-							"You received new transaction",
-							System.currentTimeMillis()
-						)
-					}
-					VLog.d("Inserting transaction into : transDAO : $tran")
-					transactionDao.insertTransaction(tran)
-				}
-				val prevBalance =
-					walletDao.getWalletByFingerPrint(wallet.fingerPrint).get(0).balance
-				val newBalance = balance / division
-				VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance")
-				if (prevBalance != newBalance)
-					walletDao.updateWalletBalance(newBalance, wallet.fingerPrint)
-			} else {
-				VLog.d("Request is not success in updating transactions : ${request.body()}")
-			}
-		} catch (ex: Exception) {
-			VLog.d("Exception in updating transactions only  : ${ex.message}")
-		}
-	}
 
 }

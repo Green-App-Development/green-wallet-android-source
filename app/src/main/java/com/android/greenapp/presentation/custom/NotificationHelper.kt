@@ -10,22 +10,35 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.android.greenapp.R
+import com.android.greenapp.data.preference.PrefsManager
+import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.di.application.AppScope
 import com.android.greenapp.presentation.intro.IntroActivity
 import com.example.common.tools.VLog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
 @AppScope
-class NotificationHelper @Inject constructor(private val applicationContext: Context) {
+class NotificationHelper @Inject constructor(
+	private val applicationContext: Context,
+	private val prefs: PrefsManager
+) {
 
-	private val greenAppChannel = "Green App Messages"
+	private val greenAppChannel = "Green Wallet Messages"
+	private val transactionMessages = "Transactions"
 
-	fun callGreenAppNotificationMessages(message: String, create_at_time: Long) {
+	suspend fun callGreenAppNotificationMessages(message: String, create_at_time: Long) {
 		buildingNotificationChannels()
-		VLog.d("Notification got called with message : $message and time : $create_at_time")
 		val title = "Green Wallet"
+		val isNotificationOn =
+			prefs.getSettingBoolean(PrefsManager.PUSH_NOTIF_IS_ON, default = true)
 
+		VLog.d("Notification got called with message : $message and time : $create_at_time, isNotificationOn : $isNotificationOn")
+		if (!isNotificationOn) {
+			return
+		}
 		val notifIntent = Intent(applicationContext, IntroActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 			action = Intent.ACTION_MAIN
@@ -54,7 +67,7 @@ class NotificationHelper @Inject constructor(private val applicationContext: Con
 
 	fun buildingNotificationChannels() {
 
-		val channels = listOf(greenAppChannel)
+		val channels = listOf(greenAppChannel, transactionMessages)
 		channels.forEach {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				val importance: Int = NotificationManager.IMPORTANCE_DEFAULT

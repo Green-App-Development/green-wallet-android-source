@@ -26,6 +26,7 @@ import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
+import okhttp3.Dispatcher
 import org.json.JSONObject
 import retrofit2.Retrofit
 import timber.log.Timber
@@ -85,6 +86,7 @@ class App : DaggerApplication() {
 		if (BuildConfig.DEBUG)
 			Timber.plant(Timber.DebugTree())
 		warmupFlutterEngine()
+		testingMethod()
 	}
 
 	private fun warmupFlutterEngine() {
@@ -122,6 +124,10 @@ class App : DaggerApplication() {
 				delay(1000L * 60)
 			}
 		}
+	}
+
+	private fun testingMethod() {
+		
 	}
 
 
