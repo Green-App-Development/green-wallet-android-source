@@ -18,7 +18,4 @@ interface NotifInteract {
         today: Long?
     ): List<NotifSection>
 
-
-
-
 }

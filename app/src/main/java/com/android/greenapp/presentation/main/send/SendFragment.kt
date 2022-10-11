@@ -743,6 +743,9 @@ class SendFragment : DaggerFragment() {
 				twoEdtsFilled.remove(1)
 			} else {
 				twoEdtsFilled.add(1)
+				txtEnterAddressWallet.visibility = View.VISIBLE
+				edtAddressWallet.hint = ""
+				line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
 			}
 			enableBtnContinueThreeEdtsFilled()
 		}

@@ -130,7 +130,8 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeStamp = jsRecord.get("timestamp").asLong
 					val height = jsRecord.get("confirmed_block_index").asLong
 					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp * 1000} trantime : ${tran.created_at_time}, CoinAmount : ${coinAmount} , TranCoinAmount : ${tran.amount}")
-					if (timeStamp * 1000 >= tran.created_at_time - 600 * 1000 && coinAmount == tran.amount) {
+					//Need to add time precision
+					if (timeStamp * 1000 >= tran.created_at_time-1000*60*60 && coinAmount == tran.amount) {
 						return height
 					}
 				}
@@ -425,7 +426,10 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
 					val timeValidate = timeStamp * 1000 > wallet.savedTime
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != wallet.sk
-					if (timeStamp * 1000 > wallet.savedTime-600*1000 && parent_puzzle_hash.substring(2) != wallet.sk && !transExistByParentInfo.isPresent) {
+					if (timeStamp * 1000 > wallet.savedTime - 600 * 1000 && parent_puzzle_hash.substring(
+							2
+						) != wallet.sk && !transExistByParentInfo.isPresent
+					) {
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
