@@ -160,6 +160,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 		VLog.d("Importing token added : $added, token : $token")
 		val fingerPrint = curFingerPrint!!
 		switchImport.isChecked = added
+		token.imported = added
 		if (added) {
 			binding.relAddedHome.apply {
 				visibility = View.VISIBLE

@@ -34,7 +34,6 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class BlockChainInteractImpl @Inject constructor(
-	private val blockChainService: BlockChainService,
 	private val walletDao: WalletDao,
 	private val prefs: PrefsInteract,
 	private val transactionDao: TransactionDao,

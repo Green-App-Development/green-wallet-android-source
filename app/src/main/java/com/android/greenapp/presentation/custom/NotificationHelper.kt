@@ -14,6 +14,7 @@ import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.di.application.AppScope
 import com.android.greenapp.presentation.intro.IntroActivity
+import com.android.greenapp.presentation.main.MainActivity
 import com.example.common.tools.VLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
