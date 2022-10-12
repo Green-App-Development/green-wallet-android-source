@@ -127,7 +127,7 @@ class App : DaggerApplication() {
 	}
 
 	private fun testingMethod() {
-		
+
 	}
 
 

@@ -311,10 +311,6 @@ class SendFragment : DaggerFragment() {
 		if (binding.edtEnterAmount.text.toString().isNotEmpty()) {
 			val amount = binding.edtEnterAmount.text.toString().toDouble()
 			convertAmountToUSDGAD(amount)
-			if (amount > tokenWallet.amount)
-				showNotEnoughAmountWarning()
-			else
-				hideAmountNotEnoughWarning()
 		}
 	}
 
@@ -731,7 +727,6 @@ class SendFragment : DaggerFragment() {
 						twoEdtsFilled.add(2)
 						hideAmountNotEnoughWarning()
 					}
-
 				}
 				enableBtnContinueThreeEdtsFilled()
 			}.onFailure {
@@ -781,6 +776,13 @@ class SendFragment : DaggerFragment() {
 		anim.animateArrowIconCustomSpinner(wallet_spinner, ic_wallet_list)
 		anim.animateArrowIconCustomSpinner(network_spinner, imgIconSpinner)
 
+	}
+
+	private fun isPrecisionSatisfied(amount: Double?): Boolean {
+		if(amount==null) return false
+		val precision =
+			getTokenPrecisionByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
+		return precision * amount >= 1.0
 	}
 
 	@SuppressLint("SetTextI18n")
@@ -873,7 +875,10 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun enableBtnContinueThreeEdtsFilled() {
-		binding.btnContinue.isEnabled = twoEdtsFilled.size >= 2
+		val precisionSatisfied = isPrecisionSatisfied(
+			binding.edtEnterAmount.text.toString().toDoubleOrNull()
+		)
+		binding.btnContinue.isEnabled = twoEdtsFilled.size >= 2 && precisionSatisfied
 	}
 
 	private fun showConfirmTransactionDialog() {
