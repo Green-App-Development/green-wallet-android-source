@@ -18,6 +18,7 @@ import com.android.greenapp.presentation.main.MainActivity
 import com.example.common.tools.VLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
 import javax.inject.Inject
 
 
@@ -62,7 +63,8 @@ class NotificationHelper @Inject constructor(
 			.setContentIntent(pendingIntent)
 
 		val notificationManager = NotificationManagerCompat.from(applicationContext)
-		notificationManager.notify(101, builder.build())
+		val uniqueId = (Date().time / 1000L % Int.MAX_VALUE)
+		notificationManager.notify(uniqueId.toInt(), builder.build())
 	}
 
 
