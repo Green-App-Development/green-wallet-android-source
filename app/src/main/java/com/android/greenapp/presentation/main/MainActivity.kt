@@ -65,7 +65,8 @@ class MainActivity : BaseActivity() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 
-	var shoulGoBackHomeFragment = false
+	var shouldGoBackHomeFragmentFromTransactions = false
+	var shouldGoBackHomeFragmentFromAddress = false
 
 	var curChosenNetworkTypePosForBackImport = "Chia Network"
 
@@ -483,6 +484,7 @@ class MainActivity : BaseActivity() {
 
 	fun move2AddressFragmentList(clickable: Boolean = false) {
 		val bundle = bundleOf(AddressFragment.SHOULD_BE_CLICKABLE_KEY to clickable)
+		binding.mainBottomNav.menu.findItem(address).isChecked = true
 		navController.navigate(addressFragment, bundle)
 	}
 
@@ -514,7 +516,7 @@ class MainActivity : BaseActivity() {
 	override fun onBackPressed() {
 
 
-		if ((navController.currentDestination?.id == transactionsFragment && shoulGoBackHomeFragment) || navController.currentDestination?.id == addressFragment) {
+		if ((navController.currentDestination?.id == transactionsFragment && shouldGoBackHomeFragmentFromTransactions) || (navController.currentDestination?.id == addressFragment && shouldGoBackHomeFragmentFromAddress)) {
 			move2HomeFragment()
 			return
 		}

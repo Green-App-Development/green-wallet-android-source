@@ -77,7 +77,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		arguments?.let {
 			val incoming = it.getLong(FINGER_PRINT_KEY)
 			currentFingerPrint = if (incoming == 0L) null else incoming
-			curActivity().shoulGoBackHomeFragment = currentFingerPrint == null
+			curActivity().shouldGoBackHomeFragmentFromTransactions = currentFingerPrint == null
 		}
 		VLog.d("Got Incoming arguments For Transactions Fragment : $currentFingerPrint ")
 	}

@@ -56,6 +56,7 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
 			shouldBeClickable = it.getBoolean(SHOULD_BE_CLICKABLE_KEY, false)
+			curActivity().shouldGoBackHomeFragmentFromAddress = !shouldBeClickable
 		}
 	}
 

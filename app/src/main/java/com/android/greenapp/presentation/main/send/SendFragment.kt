@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableString
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
@@ -284,9 +283,12 @@ class SendFragment : DaggerFragment() {
 			val tokenAmount = tokenWallet.amount
 			if (tokenAmount < curAmount) {
 				twoEdtsFilled.remove(2)
-			} else
+				showNotEnoughAmountWarning()
+			} else {
 				twoEdtsFilled.add(2)
-			enableBtnContinueThreeEdtsFilled()
+				hideAmountNotEnoughWarning()
+			}
+			enableBtnContinueTwoEdtsFilled()
 		}
 	}
 
@@ -302,7 +304,7 @@ class SendFragment : DaggerFragment() {
 			txtShortNetworkType.text = tokenWallet.code
 		}
 		if (binding.enterCommissionToken.text.toString().length > 1) {
-			binding.enterCommissionToken.text = tokenWallet.code
+			binding.enterCommissionToken.text = tokenAdapter.dataOptions[0]
 		}
 		if (tokenAdapter.selectedPosition != 0) {
 			binding.txtGAD.text = "XCH"
@@ -525,7 +527,14 @@ class SendFragment : DaggerFragment() {
 			if (asset_id.isNotEmpty())
 				precision = 1000
 			val amount = (getDoubleValueFromEdt(binding.edtEnterAmount) * precision).toLong()
-			val fee = (getDoubleValueFromEdt(binding.edtEnterCommission) * precision).toLong()
+			val fee =
+				(getDoubleValueFromEdt(binding.edtEnterCommission) * if (isThisChivesNetwork(wallet.networkType)) Math.pow(
+					10.0,
+					8.0
+				).toLong() else Math.pow(
+					10.0,
+					12.0
+				).toLong()).toLong()
 			val mnemonicString = mnemonicsToString(wallet.mnemonics)
 			val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
 			val methodChannel = MethodChannel(
@@ -720,8 +729,11 @@ class SendFragment : DaggerFragment() {
 					getCommissionOfCurChosenCoin()
 					convertAmountToUSDGAD(it.toString().toDouble())
 					val enteredAmount = it.toString().toDouble()
+					val commissionAmount = getCommissionAmount()
+					val totalAmount = enteredAmount + commissionAmount
+					VLog.d("Entering amount : $enteredAmount, CommissionAmount : $commissionAmount for enteredEdt")
 					val availableAmount = availableAmount
-					if (enteredAmount > availableAmount) {
+					if (totalAmount > availableAmount) {
 						twoEdtsFilled.remove(2)
 						showNotEnoughAmountWarning()
 					} else {
@@ -729,11 +741,26 @@ class SendFragment : DaggerFragment() {
 						hideAmountNotEnoughWarning()
 					}
 				}
-				enableBtnContinueThreeEdtsFilled()
+				enableBtnContinueTwoEdtsFilled()
 			}.onFailure {
 				VLog.d("Excepting entering amount into amoung edts : ${it}")
 			}
 		}
+
+		binding.edtEnterCommission.addTextChangedListener {
+			val commission = it.toString().toDoubleOrNull() ?: return@addTextChangedListener
+			val enteredAmount = getEnteredAmount()
+			VLog.d("CommissionsEdt : commission : $commission , EnteredAmount : $enteredAmount")
+			val total = commission + enteredAmount
+			val tokenXCAmount =
+				walletAdapter.walletList[walletAdapter.selectedPosition].tokenWalletList[0].amount
+			if (total > tokenXCAmount) {
+				twoEdtsFilled.remove(2)
+			} else
+				twoEdtsFilled.add(2)
+			enableBtnContinueTwoEdtsFilled()
+		}
+
 		binding.edtAddressWallet.addTextChangedListener {
 			if (it.isNullOrEmpty()) {
 				twoEdtsFilled.remove(1)
@@ -743,7 +770,7 @@ class SendFragment : DaggerFragment() {
 				edtAddressWallet.hint = ""
 				line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
 			}
-			enableBtnContinueThreeEdtsFilled()
+			enableBtnContinueTwoEdtsFilled()
 		}
 
 		binding.btnContinue.setOnClickListener {
@@ -760,7 +787,6 @@ class SendFragment : DaggerFragment() {
 				}
 			}
 		}
-
 		ic_wallet_list.setOnClickListener {
 			binding.walletSpinner.performClick()
 		}
@@ -779,8 +805,23 @@ class SendFragment : DaggerFragment() {
 
 	}
 
+	private fun getEnteredAmount(): Double {
+		val sendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
+		if (sendingToken == "XCH" || sendingToken == "XCC")
+			return binding.edtEnterAmount.text.toString().toDouble()
+		return 0.0
+	}
+
+	private fun getCommissionAmount(): Double {
+		val commission = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: return 0.0
+		val curChosenToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
+		if (curChosenToken == "XCH" || curChosenToken == "XCC")
+			return commission
+		return 0.0
+	}
+
 	private fun isPrecisionSatisfied(amount: Double?): Boolean {
-		if(amount==null) return false
+		if (amount == null) return false
 		val precision =
 			getTokenPrecisionByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
 		return precision * amount >= 1.0
@@ -875,7 +916,7 @@ class SendFragment : DaggerFragment() {
 		}
 	}
 
-	private fun enableBtnContinueThreeEdtsFilled() {
+	private fun enableBtnContinueTwoEdtsFilled() {
 		val precisionSatisfied = isPrecisionSatisfied(
 			binding.edtEnterAmount.text.toString().toDoubleOrNull()
 		)
@@ -909,8 +950,6 @@ class SendFragment : DaggerFragment() {
 			findViewById<TextView>(R.id.edtConfirmAddressWallet).setText(binding.edtAddressWallet.text.toString())
 		}
 	}
-
-
 
 
 	@SuppressLint("SetTextI18n")
