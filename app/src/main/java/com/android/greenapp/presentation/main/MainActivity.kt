@@ -95,7 +95,6 @@ class MainActivity : BaseActivity() {
 		handlingVisibilityBottomNavView()
 		bottomNavViewClicks()
 		initStatusBarColorRegulation()
-		initUpdateBalanceJobRegulation()
 		(application as App).applicationIsAlive = true
 		startServiceAppRemoveRecentTask()
 		softKeyboardListener()
