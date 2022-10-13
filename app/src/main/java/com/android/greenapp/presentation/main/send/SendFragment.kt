@@ -133,6 +133,7 @@ class SendFragment : DaggerFragment() {
 	): View? {
 		val view = inflater.inflate(R.layout.fragment_send, container, false)
 		VLog.d("OnCreateView on send Fragment")
+		curActivity().sendCoinsFragmentView = view
 		return view
 	}
 
@@ -910,6 +911,8 @@ class SendFragment : DaggerFragment() {
 	}
 
 
+
+
 	@SuppressLint("SetTextI18n")
 	private fun addingDoubleDotsTxt(txt: TextView) {
 		txt.apply {
@@ -972,6 +975,7 @@ class SendFragment : DaggerFragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
+		curActivity().sendCoinsFragmentView = null
 	}
 
 	override fun onDestroy() {

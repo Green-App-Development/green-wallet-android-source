@@ -82,8 +82,8 @@ class MainActivity : BaseActivity() {
 
 	private var sendReceiveJob: Job? = null
 	private var networkItemsJob: Job? = null
-	var impMnemonicsView: View? = null
-
+	var impMnemonicsFragmentView: View? = null
+	var sendCoinsFragmentView:View? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -98,6 +98,7 @@ class MainActivity : BaseActivity() {
 		initUpdateBalanceJobRegulation()
 		(application as App).applicationIsAlive = true
 		startServiceAppRemoveRecentTask()
+		softKeyboardListener()
 	}
 
 
@@ -305,7 +306,7 @@ class MainActivity : BaseActivity() {
 			SendFragment.NETWORK_TYPE_KEY to networkType,
 			SendFragment.FINGERPRINT_KEY to fingerPrint
 		)
-		navController.navigate(sendFragment, bundle)
+ 		navController.navigate(sendFragment, bundle)
 	}
 
 	private fun handlingVisibilityBottomNavView() {
@@ -520,14 +521,6 @@ class MainActivity : BaseActivity() {
 		}
 
 		super.onBackPressed()
-//        lifecycleScope.launch {
-//            val show_data_visible = mainViewModel.show_data_wallet.value
-//            if (!show_data_visible)
-//                super.onBackPressed()
-//            else {
-//                mainViewModel.show_data_wallet_invisible()
-//            }
-//        }
 	}
 
 	fun launchingIntentForSendingWalletAddress(address: String) {
@@ -603,11 +596,15 @@ class MainActivity : BaseActivity() {
 	}
 
 	private fun changeVisibilityOfViewsDuringSoftKeyBoardOpen(visibility: Boolean) {
-		if (impMnemonicsView != null) {
-			val tempLinear = impMnemonicsView!!.findViewById<LinearLayout>(temp_linear)
-			val tempLinear2 = impMnemonicsView!!.findViewById<LinearLayout>(temp_linear_2)
+		if (impMnemonicsFragmentView != null) {
+			val tempLinear = impMnemonicsFragmentView!!.findViewById<LinearLayout>(temp_linear)
+			val tempLinear2 = impMnemonicsFragmentView!!.findViewById<LinearLayout>(temp_linear_2)
 			tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
 			tempLinear2.visibility = if (visibility) View.VISIBLE else View.GONE
+		}
+		if(sendCoinsFragmentView!=null){
+			val tempLinear=sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
+			tempLinear.visibility=if (visibility) View.VISIBLE else View.GONE
 		}
 	}
 
@@ -676,7 +673,7 @@ class MainActivity : BaseActivity() {
 		importBackBtnJob = lifecycleScope.launch {
 			val networkTypeDistinct = mainViewModel.getDistinctNetworkTypes()
 			showBtmDialogCreateOrImportNewWallet(networkTypeDistinct.isNotEmpty())
-			delay(50)
+			delay(100)
 			move2NewOrImportWallet(curChosenNetworkTypePosForBackImport)
 		}
 	}

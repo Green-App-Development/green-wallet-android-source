@@ -265,6 +265,7 @@
 
 			<androidx.constraintlayout.widget.ConstraintLayout
 					android:layout_width="match_parent"
+					android:id="@+id/send_views_constraint"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="30dp">
 
@@ -671,6 +672,7 @@
 						app:layout_constraintStart_toStartOf="@id/guideline15" />
 
 
+
 				<androidx.constraintlayout.widget.Guideline
 						android:id="@+id/guideline15"
 						android:layout_width="wrap_content"
@@ -687,7 +689,17 @@
 
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="200dp"
+					android:id="@+id/temp_linear"
+					android:layout_below="@id/send_views_constraint"
+					android:orientation="vertical"
+					android:visibility="gone" />
+
 		</RelativeLayout>
+
+
 
 	</ScrollView>
 

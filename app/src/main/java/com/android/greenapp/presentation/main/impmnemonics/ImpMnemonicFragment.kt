@@ -10,7 +10,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.*
@@ -24,7 +23,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
-import cash.z.ecc.android.bip39.toSeed
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentImpmnemonicBinding
 import com.android.greenapp.domain.entity.Wallet
@@ -46,12 +44,10 @@ import dev.b3nedikt.restring.Restring
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_impmnemonic.*
 import kotlinx.android.synthetic.main.fragment_impmnemonic.linearLayout12
-import kotlinx.android.synthetic.main.fragment_impmnemonic.webView
 import kotlinx.android.synthetic.main.fragment_verification_wallet.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 /**
@@ -133,7 +129,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 	): View? {
 		VLog.d("OnCreate View on Import Mnemonics on $dialog")
 		val view = inflater.inflate(R.layout.fragment_impmnemonic, container, false)
-		curActivity().impMnemonicsView = view
+		curActivity().impMnemonicsFragmentView = view
 		return view
 	}
 
@@ -978,7 +974,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		super.onDestroyView()
 		jobAfter7Seconds?.cancel()
 		jobToMakeDuplicatesWarningGone?.cancel()
-		curActivity().impMnemonicsView = null
+		curActivity().impMnemonicsFragmentView = null
 	}
 
 
