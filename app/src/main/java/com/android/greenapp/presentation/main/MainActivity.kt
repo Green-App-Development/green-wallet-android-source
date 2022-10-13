@@ -65,7 +65,7 @@ class MainActivity : BaseActivity() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 
-	var bottomBarShouldBeVisibe = false
+	var shoulGoBackHomeFragment = false
 
 	var curChosenNetworkTypePosForBackImport = "Chia Network"
 
@@ -83,7 +83,7 @@ class MainActivity : BaseActivity() {
 	private var sendReceiveJob: Job? = null
 	private var networkItemsJob: Job? = null
 	var impMnemonicsFragmentView: View? = null
-	var sendCoinsFragmentView:View? = null
+	var sendCoinsFragmentView: View? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -230,9 +230,8 @@ class MainActivity : BaseActivity() {
 				}
 				transactions -> {
 					if (navController.currentDestination?.id != transactionsFragment) {
-						bottomBarShouldBeVisibe = true
 						item.isChecked = true
-						move2TransactionsFragment(null)
+						move2TransactionsFragment(0)
 					}
 				}
 				home -> {
@@ -243,6 +242,7 @@ class MainActivity : BaseActivity() {
 				}
 				address -> {
 					if (navController.currentDestination?.id != addressFragment) {
+						item.isChecked = true
 						move2AddressFragmentList()
 					}
 				}
@@ -305,7 +305,7 @@ class MainActivity : BaseActivity() {
 			SendFragment.NETWORK_TYPE_KEY to networkType,
 			SendFragment.FINGERPRINT_KEY to fingerPrint
 		)
- 		navController.navigate(sendFragment, bundle)
+		navController.navigate(sendFragment, bundle)
 	}
 
 	private fun handlingVisibilityBottomNavView() {
@@ -363,8 +363,9 @@ class MainActivity : BaseActivity() {
 		navController.navigate(homeFragment)
 	}
 
-	fun move2TransactionsFragment(fingerPrint: Long?) {
+	fun move2TransactionsFragment(fingerPrint: Long = 0) {
 		val bundle = bundleOf(TransactionsFragment.FINGER_PRINT_KEY to fingerPrint)
+		binding.mainBottomNav.menu.findItem(transactions).isChecked = true
 		navController.navigate(transactionsFragment, bundle)
 	}
 
@@ -482,7 +483,6 @@ class MainActivity : BaseActivity() {
 
 	fun move2AddressFragmentList(clickable: Boolean = false) {
 		val bundle = bundleOf(AddressFragment.SHOULD_BE_CLICKABLE_KEY to clickable)
-		binding.mainBottomNav.menu.findItem(address).isChecked = true
 		navController.navigate(addressFragment, bundle)
 	}
 
@@ -514,7 +514,7 @@ class MainActivity : BaseActivity() {
 	override fun onBackPressed() {
 
 
-		if (navController.currentDestination?.id == transactions && bottomBarShouldBeVisibe) {
+		if ((navController.currentDestination?.id == transactionsFragment && shoulGoBackHomeFragment) || navController.currentDestination?.id == addressFragment) {
 			move2HomeFragment()
 			return
 		}
@@ -601,9 +601,9 @@ class MainActivity : BaseActivity() {
 			tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
 			tempLinear2.visibility = if (visibility) View.VISIBLE else View.GONE
 		}
-		if(sendCoinsFragmentView!=null){
-			val tempLinear=sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
-			tempLinear.visibility=if (visibility) View.VISIBLE else View.GONE
+		if (sendCoinsFragmentView != null) {
+			val tempLinear = sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
+			tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
 		}
 	}
 
