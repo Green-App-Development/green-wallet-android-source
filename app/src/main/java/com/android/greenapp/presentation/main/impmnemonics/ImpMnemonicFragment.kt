@@ -28,6 +28,7 @@ import com.android.greenapp.databinding.FragmentImpmnemonicBinding
 import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.AnimationManager
+import com.android.greenapp.presentation.custom.CustomEdtText
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.custom.mnemonicsToString
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
@@ -49,6 +50,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.content.ClipboardManager
+import android.content.Context
+
 
 /**
  * Created by bekjan on 14.04.2022.
@@ -143,8 +147,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		addingAddTextChangeListenerForEveryEdt(binding.linearLayout24)
 		addingNumToFront()
 		highlightingWordTermsOfUseSecondVersion()
-//        restrictingUsedEnteringNonEnglishChars(binding.linearLayout12)
-//        restrictingUsedEnteringNonEnglishChars(binding.linearLayout24)
 	}
 
 	private fun restrictingUsedEnteringNonEnglishChars(linear: LinearLayout) {
@@ -624,7 +626,12 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			for (pairLayout in layout.children) {
 				val everyPair = pairLayout as LinearLayout
 				for (edt in everyPair.children) {
-					val edtText = edt as EditText
+					val edtText = edt as CustomEdtText
+					edtText.initEdtListener(object : CustomEdtText.EdtListener {
+						override fun onPasteText() {
+							fillingEdtWithCopiedWords()
+						}
+					})
 					edtText.addTextChangedListener {
 						if (it == null) return@addTextChangedListener
 						if (firstTime) return@addTextChangedListener
@@ -685,6 +692,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 						changeBtnContinueAvailable(edtOf12, edtOf24)
 
 					}
+
 //                    edtText.background =
 //                        ResourcesCompat.getDrawable(resources, R.drawable.edt_mnemonic_green, null)
 				}
@@ -694,6 +702,36 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		}
 		firstTime = false
 	}
+
+	private fun fillingEdtWithCopiedWords() {
+		val clipBoard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+		val copiedText = clipBoard.primaryClip?.getItemAt(0)?.text.toString()
+		val mnemonics = copiedText.split(" ").map { it.trim() }.toList()
+		VLog.d("Split Mnemonics text : $mnemonics  and 12 words is checked : ${binding.btn12Words.isChecked}")
+		if (binding.btn12Words.isChecked) {
+			fillEdtWithCopiedMnemonics(mnemonics, binding.linearLayout12)
+		} else {
+			fillEdtWithCopiedMnemonics(mnemonics, binding.linearLayout24)
+		}
+	}
+
+	private fun fillEdtWithCopiedMnemonics(mnemonics: List<String>, linearLayout: LinearLayout) {
+		var at = 0
+		var rightSideCounter=if(binding.btn12Words.isChecked) 6 else 12
+		try {
+			for (pairLayout in linearLayout.children) {
+				val everyPair = pairLayout as LinearLayout
+				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
+				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
+				leftEdt.setText(mnemonics[at])
+				rightEdt.setText(mnemonics[at + rightSideCounter])
+				at++
+			}
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Exception in filling edt with copied words : ${ex.message}")
+		}
+	}
+
 
 	private fun changeBtnContinueAvailable(
 		edtOf12: MutableSet<EditText>,

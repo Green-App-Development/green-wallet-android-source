@@ -123,7 +123,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt121"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -138,7 +138,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt122"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt123"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt124"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt125"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -214,7 +214,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt126"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -237,7 +237,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt127"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -252,7 +252,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt128"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -275,7 +275,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt129"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -290,7 +290,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt1210"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -313,7 +313,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt1211"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -329,7 +329,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt1212"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -381,7 +381,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt241"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -396,7 +396,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/ed242"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -419,7 +419,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt243"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -434,7 +434,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt244"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -457,7 +457,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt245"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -472,7 +472,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt246"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -495,7 +495,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt247"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -510,7 +510,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt248"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -533,7 +533,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt249"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -548,7 +548,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2410"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -571,7 +571,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2411"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -586,7 +586,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2412"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -609,7 +609,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2413"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -624,7 +624,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2414"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -647,7 +647,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2415"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -662,7 +662,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2416"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -685,7 +685,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2417"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -700,7 +700,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2418"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -723,7 +723,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2419"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -738,7 +738,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2420"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -761,7 +761,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2421"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -776,7 +776,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2422"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -799,7 +799,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2423"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -814,7 +814,7 @@
                     android:textColor="@color/actual_color_mnemonic"
                     android:textColorHint="@color/hint_color" />
 
-                <EditText
+                <com.android.greenapp.presentation.custom.CustomEdtText
                     android:id="@+id/edt2424"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -212,10 +212,6 @@ class BlockChainInteractImpl @Inject constructor(
 		return Resource.error(Exception("Unknown exception in pushing pushing transaction"))
 	}
 
-	fun temporarilyGenerateFakeHeight(): Long {
-		return (2002200 + Math.random() * (2604400 - 2002200)).toLong()
-	}
-
 	suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity) {
 		try {
 			if (isThisChivesNetwork(wallet.networkType)) return
@@ -298,10 +294,12 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
 					val timeValidate = timeStamp * 1000 > wallet.savedTime
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
-					if (timeStamp * 1000 >= wallet.savedTime - 600 * 1000 && parent_puzzle_hash.substring(
+
+					if (timeStamp * 1000 >= wallet.savedTime && parent_puzzle_hash.substring(
 							2
 						) != puzzleHash && !transExistByParentInfo.isPresent
 					) {
+						VLog.d("Actual timeStamp of incoming coin record : $timeStamp and walletCreatedTime : ${wallet.savedTime}")
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
@@ -429,6 +427,7 @@ class BlockChainInteractImpl @Inject constructor(
 							2
 						) != wallet.sk && !transExistByParentInfo.isPresent
 					) {
+						VLog.d("Actual timeStamp of incoming coin record : $timeStamp and walletCreatedTime : ${wallet.savedTime}")
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
@@ -483,7 +482,6 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 		return null
 	}
-
 
 
 }
