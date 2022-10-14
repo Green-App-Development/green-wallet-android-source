@@ -288,8 +288,17 @@ class SendFragment : DaggerFragment() {
 				twoEdtsFilled.add(2)
 				hideAmountNotEnoughWarning()
 			}
-			enableBtnContinueTwoEdtsFilled()
 		}
+		val totalWithCommission = getCommissionAmount() + getEnteredAmount()
+		VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getEnteredAmount()}")
+		if (totalWithCommission > curTokenWalletList[0].amount) {
+			twoEdtsFilled.remove(2)
+			showNotEnoughAmountWarning()
+		} else {
+			twoEdtsFilled.add(2)
+			hideAmountNotEnoughWarning()
+		}
+		enableBtnContinueTwoEdtsFilled()
 	}
 
 	@SuppressLint("SetTextI18n")
@@ -729,17 +738,25 @@ class SendFragment : DaggerFragment() {
 					getCommissionOfCurChosenCoin()
 					convertAmountToUSDGAD(it.toString().toDouble())
 					val enteredAmount = it.toString().toDouble()
-					val commissionAmount = getCommissionAmount()
-					val totalAmount = enteredAmount + commissionAmount
-					VLog.d("Entering amount : $enteredAmount, CommissionAmount : $commissionAmount for enteredEdt")
-					val availableAmount = availableAmount
-					if (totalAmount > availableAmount) {
+					if (enteredAmount > availableAmount) {
 						twoEdtsFilled.remove(2)
 						showNotEnoughAmountWarning()
 					} else {
 						twoEdtsFilled.add(2)
 						hideAmountNotEnoughWarning()
+
+						var totalWithCommission = getCommissionAmount()
+						if (tokenAdapter.selectedPosition == 0)
+							totalWithCommission += enteredAmount
+						if (totalWithCommission > curTokenWalletList[0].amount) {
+							twoEdtsFilled.remove(2)
+							showNotEnoughAmountWarning()
+						} else {
+							twoEdtsFilled.add(2)
+							hideAmountNotEnoughWarning()
+						}
 					}
+
 				}
 				enableBtnContinueTwoEdtsFilled()
 			}.onFailure {
@@ -756,8 +773,11 @@ class SendFragment : DaggerFragment() {
 				walletAdapter.walletList[walletAdapter.selectedPosition].tokenWalletList[0].amount
 			if (total > tokenXCAmount) {
 				twoEdtsFilled.remove(2)
-			} else
+				showNotEnoughAmountWarning()
+			} else {
 				twoEdtsFilled.add(2)
+				hideAmountNotEnoughWarning()
+			}
 			enableBtnContinueTwoEdtsFilled()
 		}
 
@@ -808,16 +828,13 @@ class SendFragment : DaggerFragment() {
 	private fun getEnteredAmount(): Double {
 		val sendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 		if (sendingToken == "XCH" || sendingToken == "XCC")
-			return binding.edtEnterAmount.text.toString().toDouble()
+			return binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
 		return 0.0
 	}
 
 	private fun getCommissionAmount(): Double {
 		val commission = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: return 0.0
-		val curChosenToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
-		if (curChosenToken == "XCH" || curChosenToken == "XCC")
-			return commission
-		return 0.0
+		return commission
 	}
 
 	private fun isPrecisionSatisfied(amount: Double?): Boolean {
@@ -879,10 +896,28 @@ class SendFragment : DaggerFragment() {
 
 	private fun showNotEnoughAmountWarning() {
 		binding.apply {
+			val token = getTokenTypeThatIsNotEnough()
 			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.red_mnemonic))
 			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.red_mnemonic))
+			val text =
+				curActivity().getStringResource(R.string.send_token_insufficient_funds_error) + " $token"
+			txtNotEnoughMoneyWarning.text = text
 			txtNotEnoughMoneyWarning.visibility = View.VISIBLE
 		}
+	}
+
+	private fun getTokenTypeThatIsNotEnough(): String {
+		binding.apply {
+			val enteredAmount = edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
+			var commissionAmount =
+				edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
+			//check only token first
+			if (tokenAdapter.selectedPosition != 0) {
+				if (enteredAmount > availableAmount)
+					return tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
+			}
+		}
+		return getShortNetworkType(curNetworkType)
 	}
 
 	private fun hideAmountNotEnoughWarning() {
@@ -897,14 +932,9 @@ class SendFragment : DaggerFragment() {
 	private fun getCommissionOfCurChosenCoin() {
 		commissionJob?.cancel()
 		commissionJob = lifecycleScope.launch(handler) {
-			val commission =
-				formattedDollarWithPrecision(
-					viewModel.getCoinDetailsFeeCommission(
-						getShortNetworkType(curNetworkType)
-					)
-				)
-			VLog.d("Commission on send : $commission")
-			binding.edtEnterCommission.setText(commission)
+			val commission = binding.edtEnterCommission.text.toString().toDoubleOrNull()
+			if (commission == null)
+				binding.edtEnterCommission.setText("0.00")
 		}
 	}
 
