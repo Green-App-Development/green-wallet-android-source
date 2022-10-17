@@ -238,7 +238,7 @@ class MainActivity : BaseActivity() {
 				home -> {
 					if (navController.currentDestination?.id != homeFragment) {
 						item.isChecked = true
-						move2HomeFragment()
+						popBackStackTillHomeFragment()
 					}
 				}
 				address -> {
@@ -250,6 +250,16 @@ class MainActivity : BaseActivity() {
 			}
 			false
 		}
+	}
+
+	private fun popBackStackTillHomeFragment() {
+		while (navController.currentDestination?.id != homeFragment) {
+			navController.popBackStack()
+		}
+	}
+
+	fun popBackTillHomeFragment() {
+
 	}
 
 	@Suppress("DEPRECATION")
@@ -517,7 +527,7 @@ class MainActivity : BaseActivity() {
 
 
 		if ((navController.currentDestination?.id == transactionsFragment && shouldGoBackHomeFragmentFromTransactions) || (navController.currentDestination?.id == addressFragment && shouldGoBackHomeFragmentFromAddress)) {
-			move2HomeFragment()
+			popBackStackTillHomeFragment()
 			return
 		}
 
