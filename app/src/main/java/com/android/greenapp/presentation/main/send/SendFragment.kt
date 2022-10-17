@@ -287,16 +287,16 @@ class SendFragment : DaggerFragment() {
 			} else {
 				twoEdtsFilled.add(2)
 				hideAmountNotEnoughWarning()
+				val totalWithCommission = getCommissionAmount() + getEnteredAmount()
+				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getEnteredAmount()}")
+				if (totalWithCommission > curTokenWalletList[0].amount) {
+					twoEdtsFilled.remove(2)
+					showNotEnoughAmountWarning()
+				} else {
+					twoEdtsFilled.add(2)
+					hideAmountNotEnoughWarning()
+				}
 			}
-		}
-		val totalWithCommission = getCommissionAmount() + getEnteredAmount()
-		VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getEnteredAmount()}")
-		if (totalWithCommission > curTokenWalletList[0].amount) {
-			twoEdtsFilled.remove(2)
-			showNotEnoughAmountWarning()
-		} else {
-			twoEdtsFilled.add(2)
-			hideAmountNotEnoughWarning()
 		}
 		enableBtnContinueTwoEdtsFilled()
 	}
