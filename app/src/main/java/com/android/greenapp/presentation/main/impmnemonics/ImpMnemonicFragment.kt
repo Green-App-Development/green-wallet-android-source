@@ -707,24 +707,54 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		val clipBoard = context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 		val copiedText = clipBoard.primaryClip?.getItemAt(0)?.text.toString()
 		val mnemonics = copiedText.split(" ").map { it.trim() }.toList()
-		VLog.d("Split Mnemonics text : $mnemonics  and 12 words is checked : ${binding.btn12Words.isChecked}")
+		VLog.d("Mnemonics text : $mnemonics")
 		if (binding.btn12Words.isChecked) {
-			fillEdtWithCopiedMnemonics(mnemonics, binding.linearLayout12)
+			fillEdtWithCopiedMnemonics12Words(mnemonics, binding.linearLayout12)
 		} else {
-			fillEdtWithCopiedMnemonics(mnemonics, binding.linearLayout24)
+			fillEdtWithCopiedMnemonics24Words(mnemonics, binding.linearLayout24)
 		}
 	}
 
-	private fun fillEdtWithCopiedMnemonics(mnemonics: List<String>, linearLayout: LinearLayout) {
+	private fun fillEdtWithCopiedMnemonics24Words(
+		mnemonics: List<String>,
+		linearLayout: LinearLayout
+	) {
+		VLog.d("LinearLayoutCont for 24 Words : ${linearLayout.childCount}")
 		var at = 0
-		var rightSideCounter=if(binding.btn12Words.isChecked) 6 else 12
+		try {
+			for (i in 0 until 12) {
+				val pairLayout = linearLayout.getChildAt(i)
+				val everyPair = pairLayout as LinearLayout
+				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
+				if (leftEdt.text.toString().isEmpty() && at<mnemonics.size) {
+					leftEdt.setText(mnemonics[at++])
+				}
+			}
+			for (i in 0 until 12) {
+				val pairLayout = linearLayout.getChildAt(i)
+				val everyPair = pairLayout as LinearLayout
+				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
+				if (rightEdt.text.toString().isEmpty() && at<mnemonics.size) {
+					rightEdt.setText(mnemonics[at++])
+				}
+			}
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Exception in filling edt with copied words : ${ex.message}")
+		}
+	}
+
+	private fun fillEdtWithCopiedMnemonics12Words(
+		mnemonics: List<String>,
+		linearLayout: LinearLayout
+	) {
+		var at = 0
 		try {
 			for (pairLayout in linearLayout.children) {
 				val everyPair = pairLayout as LinearLayout
 				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
 				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
 				leftEdt.setText(mnemonics[at])
-				rightEdt.setText(mnemonics[at + rightSideCounter])
+				rightEdt.setText(mnemonics[at + 6])
 				at++
 			}
 		} catch (ex: java.lang.Exception) {

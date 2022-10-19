@@ -57,7 +57,7 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		val view= inflater.inflate(R.layout.fragment_coins_inf, container, false)
+		val view = inflater.inflate(R.layout.fragment_coins_inf, container, false)
 		return view
 	}
 
@@ -73,7 +73,7 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 		}
 	}
 
-	
+
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		registerButtonClicks()
@@ -160,36 +160,13 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 		}
 
 		binding.btnCreate.setOnClickListener {
-				generateMnemonicsLocally()
+			curActivity().move2ProgressCreatingWalletFragment(networkType = curNetworkType)
 		}
 
 		binding.backLayout.setOnClickListener {
 			curActivity().popBackStackOnce()
 		}
 
-	}
-
-	private fun generateMnemonicsLocally() {
-		curActivity().curMnemonicCode = recursiveMnemonicGenerator()
-		val generatedList = curActivity().curMnemonicCode.words.map { String(it) }.toList()
-		VLog.d("CurNetworkType on Network Details Fragment : $curNetworkType")
-		curActivity().move2SaveMnemonicFragment(generatedList, curNetworkType)
-	}
-
-	private fun recursiveMnemonicGenerator(): Mnemonics.MnemonicCode {
-		val mnemonicsCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12)
-		val mnemonicsSet = mnemonicsCode.toList().toSet()
-		if (mnemonicsSet.size < 12)
-			return recursiveMnemonicGenerator()
-		return mnemonicsCode
-	}
-
-	private fun generate12WordMnemonics(): MutableList<String> {
-		val mnemonicCode =
-			Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12).words.map { String(it) }.toSet()
-		if (mnemonicCode.size < 12)
-			return generate12WordMnemonics()
-		return mnemonicCode.toMutableList()
 	}
 
 	private fun curActivity() = requireActivity() as MainActivity

@@ -87,5 +87,10 @@
         <item name="android:statusBarColor">@color/status_bar_color</item>
     </style>
 
+	<style name="MyCheckBox" parent="Theme.AppCompat.NoActionBar">
+		<item name="colorControlNormal">@color/check_box_edge_color</item>   <!-- normal border color change as you wish -->
+		<item name="colorControlActivated">@color/green</item> <!-- activated color change as you wish -->
+	</style>
+
 
 </resources>

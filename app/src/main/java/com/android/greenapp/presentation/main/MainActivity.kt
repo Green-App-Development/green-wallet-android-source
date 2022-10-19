@@ -34,6 +34,7 @@ import com.android.greenapp.presentation.main.btmdialogs.BtmSheetDialogChooseNet
 import com.android.greenapp.presentation.main.btmdialogs.BtmSheetDialogNewOrImport
 import com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment
 import com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment.Companion.NETWORK_KEY
+import com.android.greenapp.presentation.main.createnewwallet.ProgressCreatingWalletFragment
 import com.android.greenapp.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.android.greenapp.presentation.main.createnewwallet.VerificationFragment
 import com.android.greenapp.presentation.main.enterpasscode.EnterPasscodeFragment
@@ -165,8 +166,8 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = false)
 				}
 				progressWalletCreating -> {
-					window.statusBarColor = getColorResource(R.color.status_bar_color_home)
-					setSystemUiLightStatusBar(isLightStatusBar = false)
+//					window.statusBarColor = getColorResource(R.color.status_bar_color_home)
+//					setSystemUiLightStatusBar(isLightStatusBar = false)
 				}
 				transactionsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
@@ -412,10 +413,6 @@ class MainActivity : BaseActivity() {
 	}
 
 
-	fun backToMainWalletFragment() {
-		navController.navigate(homeFragment)
-	}
-
 	fun move2SaveMnemonicFragment(mnemonics: List<String>, networkType: String) {
 		val bundle = bundleOf(
 			SaveMnemonicsFragment.MNEMONICS to mnemonics,
@@ -523,8 +520,12 @@ class MainActivity : BaseActivity() {
 			navController.navigate(action_addressFragment_to_addAddressFragment)
 	}
 
-	override fun onBackPressed() {
+	fun move2ProgressCreatingWalletFragment(networkType: String) {
+		val bundle = bundleOf(ProgressCreatingWalletFragment.NETWORK_TYPE_KEY to networkType)
+		navController.navigate(progressWalletCreating, bundle)
+	}
 
+	override fun onBackPressed() {
 
 		if ((navController.currentDestination?.id == transactionsFragment && shouldGoBackHomeFragmentFromTransactions) || (navController.currentDestination?.id == addressFragment && shouldGoBackHomeFragmentFromAddress)) {
 			popBackStackTillHomeFragment()

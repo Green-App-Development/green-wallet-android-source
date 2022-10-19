@@ -6,20 +6,22 @@
     android:layout_height="match_parent"
     android:background="@color/save_mnemonic_bcg">
 
-    <CheckBox
-        android:id="@+id/checkboxAgree"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/create_a_mnemonic_phrase_agreement"
-        android:textColor="@color/secondary_text_color"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/txt_warning"
-        app:layout_constraintEnd_toEndOf="@+id/btnContinue"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline33"
-        app:layout_goneMarginBottom="7dp" />
+	<CheckBox
+			android:id="@+id/checkboxAgree"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="4dp"
+			android:theme="@style/MyCheckBox"
+			android:text="@string/create_a_mnemonic_phrase_agreement"
+			android:textColor="@color/secondary_text_color"
+			android:textSize="15sp"
+			app:layout_constraintBottom_toTopOf="@+id/txt_warning"
+			app:layout_constraintEnd_toEndOf="@+id/btnContinue"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintStart_toStartOf="@+id/guideline33"
+			app:layout_goneMarginBottom="7dp" />
 
-    <RelativeLayout
+	<RelativeLayout
         android:id="@+id/relCopied"
         android:layout_width="0dp"
         android:layout_height="40dp"

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import cash.z.ecc.android.bip39.toSeed
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentVerificationWalletBinding
 import com.android.greenapp.domain.entity.Wallet
@@ -39,7 +37,6 @@ import kotlinx.android.synthetic.main.fragment_verification_wallet.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import javax.inject.Inject
 
 class VerificationFragment : DaggerDialogFragment() {
@@ -156,12 +153,12 @@ class VerificationFragment : DaggerDialogFragment() {
 							curSelectedTxtPlaceHolder.text.toString() + " " + txtView.text
 						changingTextColorBasedMode(curSelectedTxtPlaceHolder)
 						curSelectedTxtPlaceHolder.background =
-							curActivity().getDrawableResource(R.drawable.bcg_txt_mnemonic)
+							curActivity().getDrawableResource(R.drawable.focused_bcg_options)
 						curOptionsWords.remove(txtView.text)
 						updateOptionsValuesSecondVersion()
 						setCLicksContinuously(
 							++curSelectedTxtLocation,
-							getRightSide6WordsOptions()
+							getRightSide6WordsPlaceHolders()
 						)
 					}
 				}
@@ -191,7 +188,7 @@ class VerificationFragment : DaggerDialogFragment() {
 //            puttingToInitialState()
 //        }
 
-		setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsOptions())
+		setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsPlaceHolders())
 	}
 
 	private fun listenToMethodCallFromFlutter() {
@@ -260,7 +257,7 @@ class VerificationFragment : DaggerDialogFragment() {
 				val pair = getDigitAndStringSeparate(txts[index - 1]?.text.toString())
 				txts[index - 1]?.text = "${pair.first}."
 				curSelectedTxtLocation--
-				setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsOptions())
+				setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsPlaceHolders())
 				curOptionsWords.add(pair.second)
 				updateOptionsValuesSecondVersion()
 				if (index < txts.size) txts[index]?.background =
@@ -272,7 +269,7 @@ class VerificationFragment : DaggerDialogFragment() {
 		}
 	}
 
-	private fun getRightSide6WordsOptions(): Array<TextView?> {
+	private fun getRightSide6WordsPlaceHolders(): Array<TextView?> {
 		val placeHolder = Array<TextView?>(6) { null }
 		var index = 0
 		for (pair in binding.linearLayout12.children) {
@@ -382,7 +379,7 @@ class VerificationFragment : DaggerDialogFragment() {
 			txt2.isEnabled = true
 		}
 		curSelectedTxtLocation = 0
-		setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsOptions())
+		setCLicksContinuously(curSelectedTxtLocation, getRightSide6WordsPlaceHolders())
 	}
 
 	private fun separatingStringFromDigitSS(text: String): SpannableString {

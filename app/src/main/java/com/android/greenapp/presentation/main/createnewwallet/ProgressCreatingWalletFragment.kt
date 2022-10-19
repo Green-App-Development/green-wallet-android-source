@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import cash.z.ecc.android.bip39.Mnemonics
 import com.android.greenapp.R
 import com.android.greenapp.databinding.ProgressWalletCreatingBinding
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
@@ -15,7 +16,9 @@ import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.getColorResource
+import com.example.common.tools.VLog
 import dagger.android.support.DaggerDialogFragment
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,50 +30,85 @@ import javax.inject.Inject
 class ProgressCreatingWalletFragment : DaggerDialogFragment() {
 
 
-    private val binding: ProgressWalletCreatingBinding by viewBinding(ProgressWalletCreatingBinding::bind)
+	companion object {
+		const val NETWORK_TYPE_KEY = "network_type_key"
+	}
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: NewWalletViewModel by viewModels { viewModelFactory }
+	var curNetworkType: String = "Chia Network"
 
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		curNetworkType = arguments?.getString(NETWORK_TYPE_KEY, "Chia Network")!!
+	}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.progress_wallet_creating, container, false)
-    }
+	private val binding: ProgressWalletCreatingBinding by viewBinding(ProgressWalletCreatingBinding::bind)
 
-    override fun getTheme(): Int {
-        return R.style.DialogTheme
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        addingThreeDotsEnd()
-        initStatusBarColor()
-    }
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val viewModel: NewWalletViewModel by viewModels { viewModelFactory }
 
 
-    private fun initStatusBarColor() {
-        dialog?.apply {
-            window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window?.statusBarColor =
-                requireActivity().getColorResource(R.color.status_bar_clr_progress_create_wallet)
-        }
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return inflater.inflate(R.layout.progress_wallet_creating, container, false)
+	}
+
+	override fun getTheme(): Int {
+		return R.style.DialogTheme
+	}
+
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		addingThreeDotsEnd()
+		initStatusBarColor()
+		threeSecondsWaiting()
+	}
+
+	private fun threeSecondsWaiting() {
+		lifecycleScope.launch {
+			delay(2500)
+			generateMnemonicsLocally()
+		}
+	}
 
 
-    @SuppressLint("SetTextI18n")
-    private fun addingThreeDotsEnd() {
-        binding.apply {
-            val curText = txtForCreatingANewWalletDescription.text.toString()
-            txtForCreatingANewWalletDescription.text = "$curText..."
-        }
-    }
+	private fun initStatusBarColor() {
+		dialog?.apply {
+			window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+			window?.statusBarColor =
+				requireActivity().getColorResource(R.color.status_bar_clr_progress_create_wallet)
+			window?.decorView?.systemUiVisibility=0
+		}
+	}
 
-    private fun curActivity() = requireActivity() as MainActivity
+	@SuppressLint("SetTextI18n")
+	private fun addingThreeDotsEnd() {
+		binding.apply {
+			val curText = txtForCreatingANewWalletDescription.text.toString()
+			txtForCreatingANewWalletDescription.text = "$curText..."
+		}
+	}
+
+	private fun curActivity() = requireActivity() as MainActivity
+
+
+	private fun generateMnemonicsLocally() {
+		curActivity().curMnemonicCode = recursiveMnemonicGenerator()
+		val generatedList = curActivity().curMnemonicCode.words.map { String(it) }.toList()
+		VLog.d("CurNetworkType on Network Details Fragment : $curNetworkType")
+		curActivity().move2SaveMnemonicFragment(generatedList, curNetworkType)
+	}
+
+	private fun recursiveMnemonicGenerator(): Mnemonics.MnemonicCode {
+		val mnemonicsCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_12)
+		val mnemonicsSet = mnemonicsCode.toList().toSet()
+		if (mnemonicsSet.size < 12)
+			return recursiveMnemonicGenerator()
+		return mnemonicsCode
+	}
 
 
 }
