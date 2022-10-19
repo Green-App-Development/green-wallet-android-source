@@ -45,21 +45,21 @@
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/btn_switch_enabled_token"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:checked="false"
-        android:padding="10dp"
-        android:thumb="@drawable/switch_thumb"
-        app:switchMinWidth="55dp"
-        app:track="@drawable/selector_switch_track" />
+	<androidx.appcompat.widget.SwitchCompat
+			android:id="@+id/btn_switch_enabled_token"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:layout_marginStart="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_marginEnd="10dp"
+			android:layout_marginBottom="10dp"
+			android:checked="false"
+			android:padding="10dp"
+			android:thumb="@drawable/switch_thumb_token"
+			app:switchMinWidth="55dp"
+			app:track="@drawable/selector_switch_track" />
 
     <View
         android:id="@+id/view_divider"

@@ -9,7 +9,7 @@
 
         <shape android:shape="rectangle">
             <size android:width="200dp" />
-            <solid android:color="#828282" />
+            <solid android:color="@color/disabled_thumb_track" />
             <corners android:radius="100dp" />
         </shape>
     </item>

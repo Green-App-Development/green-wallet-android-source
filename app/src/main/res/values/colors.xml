@@ -68,7 +68,7 @@
     <color name="stick">#C9C9C9</color>
     <color name="switch_track_off">#C9C9C9</color>
     <color name="switch_track_on">#C1E0D6</color>
-    <color name="switch_thumb_off">#FFFFFF</color>
+    <color name="switch_thumb_off_token">#F2F2F2</color>
     <color name="switch_thumb_on">#3AAC59</color>
     <color name="txt_verfic_mnemonic">#3AAC59</color>
     <color name="txt_verfic_mnemonic_bcg">#C1E0D6</color>
@@ -122,6 +122,8 @@
     <color name="txt_grey_settings">#C9C9C9</color>
 	<color name="bcg_btn_color">#DADADA</color>
 	<color name="check_box_edge_color">#202020</color>
+	<color name="disabled_thumb_track">#c7c7c7</color>
+	<color name="switch_thumb_off_settings">#202020</color>
 
 
 </resources>

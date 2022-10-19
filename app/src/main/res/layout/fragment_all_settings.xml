@@ -143,7 +143,7 @@
 					android:layout_marginEnd="15dp"
 					android:checked="true"
 					android:padding="10dp"
-					android:thumb="@drawable/switch_thumb"
+					android:thumb="@drawable/switch_thumb_token"
 					app:switchMinWidth="55dp"
 					app:track="@drawable/selector_switch_track" />
 
@@ -200,7 +200,7 @@
 					android:layout_marginEnd="15dp"
 					android:checked="false"
 					android:padding="10dp"
-					android:thumb="@drawable/switch_thumb"
+					android:thumb="@drawable/switch_thumb_token"
 					app:switchMinWidth="55dp"
 					app:track="@drawable/selector_switch_track" />
 

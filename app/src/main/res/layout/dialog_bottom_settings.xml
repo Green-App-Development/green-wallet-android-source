@@ -108,18 +108,18 @@
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/btn_hide_balance_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="15dp"
-            android:checked="true"
-            android:padding="10dp"
-            android:thumb="@drawable/switch_thumb"
-            app:switchMinWidth="55dp"
-            app:track="@drawable/selector_switch_track" />
+		<androidx.appcompat.widget.SwitchCompat
+				android:id="@+id/btn_hide_balance_switch"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:layout_marginEnd="15dp"
+				android:checked="false"
+				android:padding="10dp"
+				android:thumb="@drawable/switch_thumb_settings"
+				app:switchMinWidth="55dp"
+				app:track="@drawable/selector_switch_track" />
 
     </RelativeLayout>
 
@@ -165,18 +165,18 @@
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/btn_push_notif_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="15dp"
-            android:checked="false"
-            android:padding="10dp"
-            android:thumb="@drawable/switch_thumb"
-            app:switchMinWidth="55dp"
-            app:track="@drawable/selector_switch_track" />
+		<androidx.appcompat.widget.SwitchCompat
+				android:id="@+id/btn_push_notif_switch"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:layout_marginEnd="15dp"
+				android:checked="false"
+				android:padding="10dp"
+				android:thumb="@drawable/switch_thumb_settings"
+				app:switchMinWidth="55dp"
+				app:track="@drawable/selector_switch_track" />
 
     </RelativeLayout>
 

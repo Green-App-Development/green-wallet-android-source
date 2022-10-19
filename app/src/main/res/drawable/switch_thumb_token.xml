@@ -18,7 +18,7 @@
 
     <item android:state_checked="false">
         <shape android:shape="oval">
-            <solid android:color="@color/switch_thumb_off" />
+            <solid android:color="@color/switch_thumb_off_token" />
             <size android:width="22dp" android:height="22dp" />
         </shape>
     </item>
