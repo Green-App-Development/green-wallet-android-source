@@ -88,16 +88,15 @@ class WalletInteractImpl @Inject constructor(
 		return wallet
 	}
 
-	override suspend fun getHomeAddedWalletWithTokens(): List<WalletWithTokens> {
+	override fun getHomeAddedWalletWithTokensFlow(): Flow<List<WalletWithTokens>> {
 
-		val walletWithTokens = walletDao.getWalletListHomeIsAdded().map {
-			convertWalletToWalletWithTokens(it)
+		val walletWithTokens = walletDao.getWalletListHomeIsAdded().map { walletEntityList ->
+			walletEntityList.map { convertWalletEntityToWalletWithTokens(it) }
 		}
-
 		return walletWithTokens
 	}
 
-	private suspend fun convertWalletToWalletWithTokens(walletEntity: WalletEntity): WalletWithTokens {
+	private suspend fun convertWalletEntityToWalletWithTokens(walletEntity: WalletEntity): WalletWithTokens {
 		val wallet = walletEntity.toWallet(getDecryptedMnemonicsList(walletEntity.encMnemonics))
 		if (isThisChivesNetwork(walletEntity.networkType)) {
 			val balanceUSD = wallet.balance * prefsInteract.getCoursePriceDouble(
@@ -278,7 +277,7 @@ class WalletInteractImpl @Inject constructor(
 	): List<WalletWithTokens> {
 		val walletTokenList =
 			walletDao.getWalletListByNetworkTypeAndFingerPrint(networkType, fingerPrint).map {
-				convertWalletToWalletWithTokens(it)
+				convertWalletEntityToWalletWithTokens(it)
 			}
 		return walletTokenList
 	}

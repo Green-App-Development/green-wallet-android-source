@@ -20,83 +20,83 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class HomeFragmentViewModel @Inject constructor(
-    private val prefs: PrefsInteract,
-    private val blockChainInteract: BlockChainInteract,
-    private val walletInteract: WalletInteract,
-    private val cryptocurrencyInteract: CryptocurrencyInteract,
-    private val greenAppInteract: GreenAppInteract
+	private val prefs: PrefsInteract,
+	private val blockChainInteract: BlockChainInteract,
+	private val walletInteract: WalletInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract,
+	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
-    private var updateTrans: Job? = null
-    private var updateNotifsFromServer: Job? = null
-    private var job10Seconds: Job? = null
+	private var updateTrans: Job? = null
+	private var updateNotifsFromServer: Job? = null
+	private var job10Seconds: Job? = null
 
-    init {
+	init {
 
-    }
+	}
 
-    fun requestOtherNotifItems() {
-        updateNotifsFromServer?.cancel()
-        updateNotifsFromServer = viewModelScope.launch {
-            greenAppInteract.requestOtherNotifItems()
-        }
-    }
+	fun requestOtherNotifItems() {
+		updateNotifsFromServer?.cancel()
+		updateNotifsFromServer = viewModelScope.launch {
+			greenAppInteract.requestOtherNotifItems()
+		}
+	}
 
-    private val handler = CoroutineExceptionHandler { _, ex ->
-        VLog.d("Exception in homefragmentViewModel scope : ${ex}")
-    }
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.d("Exception in homefragmentViewModel scope : ${ex}")
+	}
 
-    private var cryptoUpdateCourseJob: Job? = null
-
-
-    private val _curCryptoCourse = MutableStateFlow<CurrencyItem?>(null)
-    val curCryptoCourse: StateFlow<CurrencyItem?> = _curCryptoCourse
-
-    suspend fun prevModeChanged() =
-        prefs.getSettingBoolean(PrefsManager.PREV_MODE_CHANGED, default = false)
+	private var cryptoUpdateCourseJob: Job? = null
 
 
-    suspend fun flowBalanceIsHidden() =
-        prefs.getSettingBooleanFlow(PrefsManager.BALANCE_IS_HIDDEN, false)
+	private val _curCryptoCourse = MutableStateFlow<CurrencyItem?>(null)
+	val curCryptoCourse: StateFlow<CurrencyItem?> = _curCryptoCourse
+
+	suspend fun prevModeChanged() =
+		prefs.getSettingBoolean(PrefsManager.PREV_MODE_CHANGED, default = false)
 
 
-    fun savePrevModeChanged(changed: Boolean) = viewModelScope.launch {
-        prefs.saveSettingBoolean(PrefsManager.PREV_MODE_CHANGED, changed)
-    }
+	suspend fun flowBalanceIsHidden() =
+		prefs.getSettingBooleanFlow(PrefsManager.BALANCE_IS_HIDDEN, false)
 
-    fun saveHomeIsAddedWalletCounter(counter: Int) {
-        viewModelScope.launch {
-            prefs.saveSettingInt(PrefsManager.HOME_ADDED_COUNTER, counter)
-        }
-    }
 
-    suspend fun getHomeAddedWalletWithTokens() = walletInteract.getHomeAddedWalletWithTokens()
+	fun savePrevModeChanged(changed: Boolean) = viewModelScope.launch {
+		prefs.saveSettingBoolean(PrefsManager.PREV_MODE_CHANGED, changed)
+	}
 
-    fun changeCryptCourseEvery10Seconds() {
-        job10Seconds?.cancel()
-        job10Seconds = viewModelScope.launch {
-            var network = "Chia Network"
-            while (true) {
-                updateCryptoCurrencyCourse(network)
-                if (network == "Chia Network") {
-                    network = "Chives Network"
-                } else {
-                    network = "Chia Network"
-                }
-                delay(10000)
-            }
-        }
-    }
+	fun saveHomeIsAddedWalletCounter(counter: Int) {
+		viewModelScope.launch {
+			prefs.saveSettingInt(PrefsManager.HOME_ADDED_COUNTER, counter)
+		}
+	}
 
-    private fun updateCryptoCurrencyCourse(networkType: String) {
-        cryptoUpdateCourseJob?.cancel()
-        cryptoUpdateCourseJob = viewModelScope.launch(handler) {
-            cryptocurrencyInteract.getCurrentCurrencyCourseByNetwork(networkType).collect {
-                VLog.d("Emitting CourseValue for : $networkType and value : ${it.price}")
-                it.network=networkType
-                _curCryptoCourse.emit(it)
-            }
-        }
-    }
+	fun getHomeAddedWalletWithTokensFlow() = walletInteract.getHomeAddedWalletWithTokensFlow()
+
+	fun changeCryptCourseEvery10Seconds() {
+		job10Seconds?.cancel()
+		job10Seconds = viewModelScope.launch {
+			var network = "Chia Network"
+			while (true) {
+				updateCryptoCurrencyCourse(network)
+				if (network == "Chia Network") {
+					network = "Chives Network"
+				} else {
+					network = "Chia Network"
+				}
+				delay(10000)
+			}
+		}
+	}
+
+	private fun updateCryptoCurrencyCourse(networkType: String) {
+		cryptoUpdateCourseJob?.cancel()
+		cryptoUpdateCourseJob = viewModelScope.launch(handler) {
+			cryptocurrencyInteract.getCurrentCurrencyCourseByNetwork(networkType).collect {
+				VLog.d("Emitting CourseValue for : $networkType and value : ${it.price}")
+				it.network = networkType
+				_curCryptoCourse.emit(it)
+			}
+		}
+	}
 
 }

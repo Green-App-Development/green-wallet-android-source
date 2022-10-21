@@ -13,33 +13,44 @@ import java.util.*
  */
 interface WalletInteract {
 
-    fun getFlowOfWalletList(): Flow<List<Wallet>>
+	fun getFlowOfWalletList(): Flow<List<Wallet>>
 
-    suspend fun getAllWalletList(): List<Wallet>
+	suspend fun getAllWalletList(): List<Wallet>
 
-    suspend fun getHomeAddedWalletWithTokens(): List<WalletWithTokens>
+	fun getHomeAddedWalletWithTokensFlow(): Flow<List<WalletWithTokens>>
 
-    suspend fun deleteWallet(wallet: Wallet): Int
+	suspend fun deleteWallet(wallet: Wallet): Int
 
-    suspend fun getWalletByFingerPrint(id: Long): List<Wallet>
+	suspend fun getWalletByFingerPrint(id: Long): List<Wallet>
 
-    suspend fun update_home_is_added(time: Long, fingerPrint: Long): Int
+	suspend fun update_home_is_added(time: Long, fingerPrint: Long): Int
 
-    suspend fun getWalletListByNetworkTypeFingerPrint(
-        networkType: String,
-        fingerPrint: Long?
-    ): List<Wallet>
+	suspend fun getWalletListByNetworkTypeFingerPrint(
+		networkType: String,
+		fingerPrint: Long?
+	): List<Wallet>
 
-    suspend fun getRandomWalletByNetworktype(networkType: NetworkType): List<Wallet>
+	suspend fun getRandomWalletByNetworktype(networkType: NetworkType): List<Wallet>
 
-    suspend fun getDistinctNetworkTypes(): List<String>
+	suspend fun getDistinctNetworkTypes(): List<String>
 
-    suspend fun checkIfMnemonicsExistInDB(mnemonics: List<String>,networkType: String): Optional<Boolean>
+	suspend fun checkIfMnemonicsExistInDB(
+		mnemonics: List<String>,
+		networkType: String
+	): Optional<Boolean>
 
-    suspend fun getAllWalletListFirstHomeIsAddedThenRemain():List<Wallet>
+	suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet>
 
-    suspend fun getWalletWithTokensByFingerPrintNetworkType(fingerPrint: Long?,networkType: String) : List<WalletWithTokens>
+	suspend fun getWalletWithTokensByFingerPrintNetworkType(
+		fingerPrint: Long?,
+		networkType: String
+	): List<WalletWithTokens>
 
-    suspend fun importTokenByFingerPrint(fingerPrint: Long, add:Boolean, asset_id:String,outer_puzzle_hash:String)
+	suspend fun importTokenByFingerPrint(
+		fingerPrint: Long,
+		add: Boolean,
+		asset_id: String,
+		outer_puzzle_hash: String
+	)
 
 }

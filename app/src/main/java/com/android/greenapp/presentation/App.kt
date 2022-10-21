@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import com.android.greenapp.BuildConfig
 import com.android.greenapp.R
+import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.data.network.BlockChainService
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.interact.*
@@ -61,6 +62,9 @@ class App : DaggerApplication() {
 
 	@Inject
 	lateinit var notificationHelper: NotificationHelper
+
+	@Inject
+	lateinit var walletDao: WalletDao
 
 	var applicationIsAlive = false
 
@@ -127,7 +131,11 @@ class App : DaggerApplication() {
 	}
 
 	private fun testingMethod() {
-		VLog.d("Checking logcat")
+		VLog.d("Checking logcat for testing method")
+		CoroutineScope(Dispatchers.IO).launch {
+			delay(15000L)
+			walletDao.updateWalletBalance(0.15, 1119184098L)
+		}
 	}
 
 
