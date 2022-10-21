@@ -156,61 +156,67 @@ class ManageWalletFragment : DaggerFragment(),
 	}
 
 	private fun initViewPagerWithAdapter() {
-		viewPagerJob?.cancel()
 		viewPagerJob = lifecycleScope.launchWhenStarted {
-			val walletList = viewModel.getAllWalletListFirstHomeIsAddedThenRemain()
+
+			val walletList = viewModel.getAllWalletList()
 
 			if (walletList.isEmpty()) {
 				curActivity().move2HomeFragment()
 				return@launchWhenStarted
 			}
-
-			manageWalletAdapter = ManageWalletViewPagerAdapter(
-				effect = effect,
-				walletList = walletList,
-				adapterListener = this@ManageWalletFragment,
-				activity = this@ManageWalletFragment.curActivity()
-			)
-			binding.manageWalletViewPager.adapter = manageWalletAdapter
-			binding.pageIndicator.count = Math.min(walletList.size, 10)
-			binding.manageWalletViewPager.addOnPageChangeListener(object :
-				ViewPager.OnPageChangeListener {
-				override fun onPageScrolled(
-					position: Int,
-					positionOffset: Float,
-					positionOffsetPixels: Int
-				) {
-
-				}
-
-				override fun onPageSelected(position: Int) {
-					curActivity().mainViewModel.show_data_wallet_invisible()
-					if (position <= 10)
-						binding.pageIndicator.setSelected(position)
-					manageWalletAdapter.changeToShowData(
-						curChosenWalletPosition,
-						show_data_visible = false
+			launch {
+				viewModel.getFlowAllWalletListFirstHomeIsAddedThenRemain().collect {
+					VLog.d("FLow of wallet List changed on manage view : $it")
+					manageWalletAdapter = ManageWalletViewPagerAdapter(
+						effect = effect,
+						walletList = walletList,
+						adapterListener = this@ManageWalletFragment,
+						activity = this@ManageWalletFragment.curActivity()
 					)
-					curChosenWalletPosition = position
+					binding.manageWalletViewPager.adapter = manageWalletAdapter
+					binding.pageIndicator.count = Math.min(walletList.size, 10)
+					binding.manageWalletViewPager.addOnPageChangeListener(object :
+						ViewPager.OnPageChangeListener {
+						override fun onPageScrolled(
+							position: Int,
+							positionOffset: Float,
+							positionOffsetPixels: Int
+						) {
+
+						}
+
+						override fun onPageSelected(position: Int) {
+							curActivity().mainViewModel.show_data_wallet_invisible()
+							if (position <= 10)
+								binding.pageIndicator.setSelected(position)
+							manageWalletAdapter.changeToShowData(
+								curChosenWalletPosition,
+								show_data_visible = false
+							)
+							curChosenWalletPosition = position
+						}
+
+						override fun onPageScrollStateChanged(state: Int) {
+
+						}
+
+					})
+					updateViewsIfSavedBefore(manageWalletAdapter, it)
 				}
+				curChosenWalletPosition = Math.min(curChosenWalletPosition, walletList.size - 1)
+				manage_wallet_view_pager.setCurrentItem(
+					curChosenWalletPosition
+				)
 
-				override fun onPageScrollStateChanged(state: Int) {
-
-				}
-
-			})
-
-			curChosenWalletPosition = Math.min(curChosenWalletPosition, walletList.size - 1)
-			manage_wallet_view_pager.setCurrentItem(
-				curChosenWalletPosition
-			)
+			}
 
 			curActivity().mainViewModel.show_data_wallet.collect {
 				job30s?.cancel()
-				manageWalletAdapter.changeToShowData(
-					binding.manageWalletViewPager.currentItem,
-					it
-				)
+				if (this@ManageWalletFragment::manageWalletAdapter.isInitialized)
+					manageWalletAdapter.changeToShowData(
+						binding.manageWalletViewPager.currentItem,
+						it
+					)
 				if (it) {
 					job30s = lifecycleScope.launch {
 						delay(30000)
@@ -221,14 +227,22 @@ class ManageWalletFragment : DaggerFragment(),
 
 		}
 
-//        manage_wallet_view_pager.postDelayed({
-//            manage_wallet_view_pager.setCurrentItem(
-//                curChosenWalletPosition
-//            )
-//        }, 100)
-
 	}
 
+	private fun updateViewsIfSavedBefore(
+		manageWalletAdapter: ManageWalletViewPagerAdapter,
+		walletList: List<Wallet>
+	) {
+		for (i in 0 until walletList.size) {
+			if (manageWalletAdapter.views[i] != null) {
+				manageWalletAdapter.initViewDetails(
+					manageWalletAdapter.views[i]!!,
+					walletList[i],
+					i
+				)
+			}
+		}
+	}
 
 	private fun showConfirmationDialog(wallet: Wallet) {
 		val btnCancel = {
@@ -261,7 +275,7 @@ class ManageWalletFragment : DaggerFragment(),
 							getStringResource(R.string.pop_up_wallet_removed_description),
 							getStringResource(R.string.ready_btn)
 						) {
-							initViewPagerWithAdapter()
+
 						}
 					}
 					curActivity().mainViewModel.deleteWalletFalse()

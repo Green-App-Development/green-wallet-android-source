@@ -32,6 +32,7 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 class App : DaggerApplication() {
@@ -133,8 +134,10 @@ class App : DaggerApplication() {
 	private fun testingMethod() {
 		VLog.d("Checking logcat for testing method")
 		CoroutineScope(Dispatchers.IO).launch {
-			delay(15000L)
-			walletDao.updateWalletBalance(0.15, 1119184098L)
+			while (true) {
+				delay(5000L)
+				walletDao.updateWalletBalance(Random.nextDouble(), 666027770L)
+			}
 		}
 	}
 

@@ -18,49 +18,44 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class WalletListViewModel @Inject constructor(
-    private val walletInteract: WalletInteract,
-    private val blockChainInteract: BlockChainInteract,
-    private val prefs: PrefsInteract,
-    private val greenAppInteract: GreenAppInteract
+	private val walletInteract: WalletInteract,
+	private val blockChainInteract: BlockChainInteract,
+	private val prefs: PrefsInteract,
+	private val greenAppInteract: GreenAppInteract
 ) :
-    ViewModel() {
+	ViewModel() {
 
-    private val _walletList = MutableStateFlow<List<Wallet>?>(null)
-    val walletList: Flow<List<Wallet>?> = _walletList
-    private var allListJob: Job? = null
+	private val _walletList = MutableStateFlow<List<Wallet>?>(null)
+	val walletList: Flow<List<Wallet>?> = _walletList
+	private var allListJob: Job? = null
 
-    init {
+	init {
 
-    }
+	}
 
-    fun getAllWalletListFirstHomeIsAddedThenRemain() {
-        allListJob?.cancel()
-        allListJob = viewModelScope.launch {
-            val list = walletInteract.getAllWalletListFirstHomeIsAddedThenRemain()
-            _walletList.emit(list)
-        }
-    }
+	fun getAllWalletListFirstHomeIsAddedThenRemain() =
+		walletInteract.getAllWalletListFirstHomeIsAddedThenRemain()
 
-    fun deleteWallet(wallet: Wallet) {
-        viewModelScope.launch {
-            walletInteract.deleteWallet(wallet)
-        }
-    }
+	fun deleteWallet(wallet: Wallet) {
+		viewModelScope.launch {
+			walletInteract.deleteWallet(wallet)
+		}
+	}
 
-    fun updateHomeIdAdded(time: Long, fingerPrint: Long) {
-        viewModelScope.launch {
-            walletInteract.update_home_is_added(time, fingerPrint)
-        }
-    }
+	fun updateHomeIdAdded(time: Long, fingerPrint: Long) {
+		viewModelScope.launch {
+			walletInteract.update_home_is_added(time, fingerPrint)
+		}
+	}
 
 
-    suspend fun getHomeAddCounter() = prefs.getHomeAddedCounter()
+	suspend fun getHomeAddCounter() = prefs.getHomeAddedCounter()
 
-    suspend fun increaseHomeAddCounter() = prefs.increaseHomeAddedCounter()
+	suspend fun increaseHomeAddCounter() = prefs.increaseHomeAddedCounter()
 
-    suspend fun decreaseHomeAddCounter() = prefs.decreaseHomeAddedCounter()
+	suspend fun decreaseHomeAddCounter() = prefs.decreaseHomeAddedCounter()
 
-    suspend fun getAvailableNetworkItems() =
-        greenAppInteract.getAllNetworkItemsListFromPrefs()
+	suspend fun getAvailableNetworkItems() =
+		greenAppInteract.getAllNetworkItemsListFromPrefs()
 
 }

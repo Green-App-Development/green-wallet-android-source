@@ -264,10 +264,14 @@ class WalletInteractImpl @Inject constructor(
 		return Optional.empty()
 	}
 
-	override suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet> {
-		val homeAddedWalletList = walletDao.getWalletListHomeAddedFirstThenRemaining().map {
-			convertWalletEntityToWallet(it)
-		}
+	override fun getAllWalletListFirstHomeIsAddedThenRemain(): Flow<List<Wallet>> {
+		val homeAddedWalletList =
+			walletDao.getWalletListHomeAddedFirstThenRemaining().map { walletEntityList ->
+				VLog.d("WalletList Changed for On Manage Fragment : $walletEntityList")
+				walletEntityList.map {
+					convertWalletEntityToWallet(it)
+				}
+			}
 		return homeAddedWalletList
 	}
 

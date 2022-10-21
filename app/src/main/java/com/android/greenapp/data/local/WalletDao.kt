@@ -87,7 +87,7 @@ interface WalletDao {
 	suspend fun getWalletListHomeIsNotAdded(): List<WalletEntity>
 
 	@Query("SELECT * FROM WalletEntity ORDER BY  homeAdded>0 DESC, homeAdded")
-	suspend fun getWalletListHomeAddedFirstThenRemaining(): List<WalletEntity>
+	fun getWalletListHomeAddedFirstThenRemaining(): Flow<List<WalletEntity>>
 
 
 }

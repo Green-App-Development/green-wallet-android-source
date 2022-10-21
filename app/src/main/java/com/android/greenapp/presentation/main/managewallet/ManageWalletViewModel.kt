@@ -17,31 +17,25 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class ManageWalletViewModel @Inject constructor(
-    private val walletInteract: WalletInteract,
-    private val blockChainInteract: BlockChainInteract
+	private val walletInteract: WalletInteract,
+	private val blockChainInteract: BlockChainInteract
 ) :
-    ViewModel() {
+	ViewModel() {
 
-    suspend fun getAllWalletListFirstHomeIsAddedThenRemain() = walletInteract.getAllWalletListFirstHomeIsAddedThenRemain()
+	fun getFlowAllWalletListFirstHomeIsAddedThenRemain() =
+		walletInteract.getAllWalletListFirstHomeIsAddedThenRemain()
 
-    private val _walletList = MutableStateFlow<List<Wallet>?>(null)
-    val walletList = _walletList.asStateFlow()
+	suspend fun getAllWalletList() = walletInteract.getAllWalletList()
 
-    private var job: Job? = null
+	private val _walletList = MutableStateFlow<List<Wallet>?>(null)
+	val walletList = _walletList.asStateFlow()
 
-    fun getWalletListFragment() {
-        job?.cancel()
-        job = viewModelScope.launch {
-            val walletList = walletInteract.getAllWalletList()
-            VLog.d("All Wallet List Size : ${walletList.size}")
-            _walletList.emit(walletList)
-        }
-    }
+	private var job: Job? = null
 
-    fun deleteWallet(wallet:Wallet) {
-        viewModelScope.launch {
-            walletInteract.deleteWallet(wallet)
-        }
-    }
+	fun deleteWallet(wallet: Wallet) {
+		viewModelScope.launch {
+			walletInteract.deleteWallet(wallet)
+		}
+	}
 
 }

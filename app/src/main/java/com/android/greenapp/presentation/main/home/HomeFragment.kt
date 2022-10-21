@@ -20,6 +20,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.android.greenapp.R
+import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.databinding.FragmentHomeBinding
 import com.android.greenapp.domain.entity.WalletWithTokens
 import com.android.greenapp.presentation.custom.*
@@ -51,6 +52,9 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	@Inject
 	lateinit var effect: AnimationManager
 	private val homeFragmentViewModel: HomeFragmentViewModel by viewModels { viewModelFactory }
+
+	@Inject
+	lateinit var walletDao: WalletDao
 
 	@Inject
 	lateinit var dialogMan: DialogManager

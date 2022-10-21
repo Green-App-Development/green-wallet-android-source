@@ -39,7 +39,7 @@ interface WalletInteract {
 		networkType: String
 	): Optional<Boolean>
 
-	suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet>
+	fun getAllWalletListFirstHomeIsAddedThenRemain(): Flow<List<Wallet>>
 
 	suspend fun getWalletWithTokensByFingerPrintNetworkType(
 		fingerPrint: Long?,
