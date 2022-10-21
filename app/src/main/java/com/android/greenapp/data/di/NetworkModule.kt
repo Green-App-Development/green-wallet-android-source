@@ -28,7 +28,7 @@ class NetworkModule {
     fun provideLanguageRetrofitInstance(): Retrofit {
 
         val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE
         }
         return Retrofit.Builder().baseUrl(BASE_URL_GREEN_APP)
             .client(getUnsafeOkHttpClient(interceptor))
@@ -42,7 +42,7 @@ class NetworkModule {
     fun provideBlockchainRetrofitInstance(): Retrofit {
 
         val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE
         }
 
         return Retrofit.Builder().baseUrl(BASE_URL_BLOCKCHAIN)
@@ -72,7 +72,7 @@ class NetworkModule {
     @AppScope
     fun provideRetrofitBuilder(): Retrofit.Builder {
         val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE
         }
         return Retrofit.Builder()
             .client(getUnsafeOkHttpClient(interceptor))
