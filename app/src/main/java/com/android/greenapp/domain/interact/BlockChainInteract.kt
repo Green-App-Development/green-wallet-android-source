@@ -1,9 +1,6 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.data.network.BlockChainService
-import com.android.greenapp.data.network.dto.blockchain.MnemonicDto
 import com.android.greenapp.domain.entity.Wallet
-import com.android.greenapp.presentation.tools.NetworkType
 import com.android.greenapp.presentation.tools.Resource
 
 /**

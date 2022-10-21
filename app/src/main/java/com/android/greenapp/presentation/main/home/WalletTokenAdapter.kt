@@ -80,9 +80,9 @@ class WalletTokenAdapter(
 			txtWalletName.setText(token.name)
 			initRegulateBalance(token)
 
-			if (token.name.lowercase().contains("chia")) {
+			if (token.name.contains("Chia") && token.logo_ur.isEmpty()) {
 				imgToken.setImageDrawable(activity.getDrawableResource(R.drawable.ic_chia_white))
-			} else if (token.name.lowercase().contains("chives")) {
+			} else if (token.name.contains("Chives") && token.logo_ur.isEmpty()) {
 				imgToken.setImageDrawable(activity.getDrawableResource(R.drawable.ic_chives_white))
 			} else {
 				Glide.with(activity).load(token.logo_ur).placeholder(R.drawable.white_radius)
