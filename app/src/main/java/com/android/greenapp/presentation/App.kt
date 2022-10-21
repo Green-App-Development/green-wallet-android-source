@@ -31,6 +31,7 @@ import okhttp3.Dispatcher
 import org.json.JSONObject
 import retrofit2.Retrofit
 import timber.log.Timber
+import java.lang.RuntimeException
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -132,13 +133,7 @@ class App : DaggerApplication() {
 	}
 
 	private fun testingMethod() {
-		VLog.d("Checking logcat for testing method")
-		CoroutineScope(Dispatchers.IO).launch {
-			while (true) {
-				delay(5000L)
-				walletDao.updateWalletBalance(Random.nextDouble(), 666027770L)
-			}
-		}
+
 	}
 
 

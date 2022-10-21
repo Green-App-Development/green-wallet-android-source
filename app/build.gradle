@@ -3,6 +3,11 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'org.jetbrains.kotlin.android.extensions'
+	// Make sure that you have the Google services Gradle plugin
+	id 'com.google.gms.google-services'
+
+	// Add the Crashlytics Gradle plugin
+	id 'com.google.firebase.crashlytics'
 }
 
 
@@ -136,8 +141,6 @@ dependencies {
     //BIP 39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.2"
 
-
-
 	//Circle ImageView
 
 	implementation 'de.hdodenhof:circleimageview:3.1.0'
@@ -162,5 +165,11 @@ dependencies {
 	implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
 	implementation "androidx.paging:paging-runtime-ktx:3.0.0-beta02"
+
+	implementation platform('com.google.firebase:firebase-bom:29.0.0')
+	// Add the dependencies for the Crashlytics and Analytics libraries
+	// When using the BoM, you don't specify versions in Firebase library dependencies
+	implementation 'com.google.firebase:firebase-crashlytics'
+	implementation 'com.google.firebase:firebase-analytics'
 
 }
