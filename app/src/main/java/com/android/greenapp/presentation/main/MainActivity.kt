@@ -643,6 +643,8 @@ class MainActivity : BaseActivity() {
 
 			val res = mainViewModel.getAvailableNetworkItems()
 
+			VLog.d("All NetworkItems List to create or import new wallet : $res")
+
 			when (res.state) {
 				Resource.State.SUCCESS -> {
 					val networkList = res.data!!.map { it.name }.toList()

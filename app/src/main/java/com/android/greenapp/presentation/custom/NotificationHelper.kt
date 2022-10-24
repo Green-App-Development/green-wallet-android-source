@@ -68,7 +68,7 @@ class NotificationHelper @Inject constructor(
 	}
 
 
-	fun buildingNotificationChannels() {
+	private fun buildingNotificationChannels() {
 
 		val channels = listOf(greenAppChannel, transactionMessages)
 		channels.forEach {

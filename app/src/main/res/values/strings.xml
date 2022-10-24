@@ -162,8 +162,8 @@
     <string name="passcode_entry_screen_error" />
     <string name="passcode_entry_screen_reset" />
     <string name="personal_data_agreement_chekbox" />
-    <string name="pop_up_failed_create_a_mnemonic_phrase_title" />
-    <string name="pop_up_failed_error_description" />
+    <string name="pop_up_failed_create_a_mnemonic_phrase_title">Oops...</string>
+    <string name="pop_up_failed_error_description">Something went wrong, please try again</string>
     <string name="pop_up_failed_error_return_btn" />
     <string name="pop_up_failed_error_title" />
     <string name="pop_up_failed_import_mnemonics_title" />
@@ -176,7 +176,7 @@
     <string name="receive_a_token_adress" />
     <string name="receive_a_token_copy" />
     <string name="reconnect_btn">Reconnect</string>
-    <string name="return_btn" />
+    <string name="return_btn">Return</string>
     <string name="screen_for_creating_a_new_wallet_description" />
     <string name="screen_for_creating_a_new_wallet_title" />
     <string name="search" />
@@ -290,6 +290,8 @@
     <string name="pop_up_failed_error_description_address_already_exists" />
     <string name="notifications_credited_to_wallet" />
     <string name="notifications_withdrawn_from_wallet" />
+    <string name="push_notifications_incoming"/>
+    <string name="push_notifications_outgoing"/>
 
 
 </resources>

@@ -41,7 +41,7 @@ class OnBoardViewModel @Inject constructor(
     }
 
     init {
-        notificationHelper.buildingNotificationChannels()
+//        notificationHelper.buildingNotificationChannels()
     }
 
 
