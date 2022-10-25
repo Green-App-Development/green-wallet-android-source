@@ -21,10 +21,8 @@ import javax.inject.Inject
  */
 class HomeFragmentViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
-	private val blockChainInteract: BlockChainInteract,
 	private val walletInteract: WalletInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract,
-	private val greenAppInteract: GreenAppInteract
+	private val cryptocurrencyInteract: CryptocurrencyInteract
 ) : ViewModel() {
 
 	private var updateTrans: Job? = null
@@ -33,13 +31,6 @@ class HomeFragmentViewModel @Inject constructor(
 
 	init {
 
-	}
-
-	fun requestOtherNotifItems() {
-		updateNotifsFromServer?.cancel()
-		updateNotifsFromServer = viewModelScope.launch {
-			greenAppInteract.requestOtherNotifItems()
-		}
 	}
 
 	private val handler = CoroutineExceptionHandler { _, ex ->

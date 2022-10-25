@@ -12,7 +12,7 @@ import dagger.android.AndroidInjector
 
 
 @AppScope
-@Component(modules = [AndroidInjectionModule::class, InteractModule::class, InjectorBuildersModule::class, ViewModelsModule::class, AppModule::class, NetworkModule::class])
+@Component(modules = [AndroidInjectionModule::class, InteractModule::class, InjectorBuildersModule::class, ViewModelsModule::class, AppModule::class, NetworkModule::class, WorkerBindingModule::class])
 interface AppComponent : AndroidInjector<App> {
 
 

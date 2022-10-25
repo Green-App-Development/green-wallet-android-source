@@ -110,7 +110,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		initWalletTokenAdapter()
 		updateViewDetails()
 		initCurCryptoCourseUpdate()
-		homeFragmentViewModel.requestOtherNotifItems()
 		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
 	}
 

@@ -1,6 +1,7 @@
 package com.android.greenapp.presentation.di.application
 
 import android.app.Dialog
+import com.android.greenapp.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.onboard.icon.IconFragment
 import com.android.greenapp.presentation.onboard.language.LanguageFragment
@@ -140,11 +141,8 @@ abstract class InjectorBuildersModule {
     @ContributesAndroidInjector
     abstract fun injectIntoListingFragment(): ListingFragment
 
-
     @ContributesAndroidInjector
     abstract fun injectTermsFragment(): TermsFragment
-
-
 
 
 

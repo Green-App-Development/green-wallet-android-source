@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.android.greenapp">
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -63,6 +64,17 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
+            <!-- If you are using androidx.startup to initialize other components -->
+<!--            <meta-data-->
+<!--                android:name="androidx.work.impl.WorkManagerInitializer"-->
+<!--                android:value="androidx.startup"-->
+<!--                tools:node="remove" />-->
 
     </application>
 
