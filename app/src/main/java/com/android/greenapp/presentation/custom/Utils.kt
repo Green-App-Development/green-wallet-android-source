@@ -162,7 +162,7 @@ fun formattedDoubleAmountWithPrecision(double: Double): String {
     df.maximumFractionDigits = 340
     val formatted = df.format(double).replace(",", ".")
     val dotPos = formatted.indexOf('.')
-    val endMin = Math.min(dotPos + 12, formatted.length)
+    val endMin = Math.min(dotPos + 13, formatted.length)
     return formatted.substring(0, endMin)
 }
 

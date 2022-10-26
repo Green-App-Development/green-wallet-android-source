@@ -120,14 +120,14 @@ class App : DaggerApplication() {
             }
         }
         updateCryptoJob?.cancel()
-//        updateCryptoJob = CoroutineScope(Dispatchers.IO).launch {
-//            while (true) {
-//                VLog.d("Start updating CourseCrypto each Wallets :")
-//                cryptocurrencyInteract.updateCourseCryptoInDb()
-//                greenAppInteract.requestOtherNotifItems()
-//                delay(1000L * 60)
-//            }
-//        }
+        updateCryptoJob = CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                VLog.d("Start updating CourseCrypto each Wallets :")
+                cryptocurrencyInteract.updateCourseCryptoInDb()
+                greenAppInteract.requestOtherNotifItems()
+                delay(1000L * 60)
+            }
+        }
     }
 
     private fun initWorkManager() {

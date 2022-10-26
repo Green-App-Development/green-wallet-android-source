@@ -15,7 +15,6 @@ import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCoinDetail
 import com.android.greenapp.presentation.custom.getPreferenceKeyForNetworkItem
-import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
 import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.SIX_HOURS_IN_MILLIS_SECONDS
@@ -25,15 +24,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dev.b3nedikt.restring.Restring
-import kotlinx.coroutines.delay
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.util.*
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 /**
@@ -192,7 +186,7 @@ class GreenAppInteractImpl @Inject constructor(
 						)
 						notifOtherDao.insertingNotifOther(notifOther)
 					} else {
-						VLog.d("Not insert OtherNotifItems : $notifOther")
+						VLog.d("Not insert OtherNotifOtherItems : $notifOther")
 					}
 
 				}
