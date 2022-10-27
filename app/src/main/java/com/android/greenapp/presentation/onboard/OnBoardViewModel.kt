@@ -96,9 +96,9 @@ class OnBoardViewModel @Inject constructor(
         }
     }
 
-    fun saveAppStartTime(value: Long) {
+    fun saveAppInstallTime(value: Long) {
         viewModelScope.launch {
-            prefs.saveSettingLong(PrefsManager.APP_START_TIME, value)
+            prefs.saveSettingLong(PrefsManager.APP_INSTALL_TIME, value)
         }
     }
 

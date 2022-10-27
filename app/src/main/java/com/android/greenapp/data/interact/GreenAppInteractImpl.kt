@@ -17,7 +17,6 @@ import com.android.greenapp.presentation.custom.getPreferenceKeyForCoinDetail
 import com.android.greenapp.presentation.custom.getPreferenceKeyForNetworkItem
 import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
-import com.android.greenapp.presentation.tools.SIX_HOURS_IN_MILLIS_SECONDS
 import com.example.common.tools.VLog
 import com.example.common.tools.convertDateFormatToMilliSeconds
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -27,6 +26,7 @@ import dev.b3nedikt.restring.Restring
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -160,6 +160,7 @@ class GreenAppInteractImpl @Inject constructor(
 					)
 				)
 
+			val currentTimeInZulu = getAppInstallTimeInMillisInZuluTime(prefs)
 			if (res.isSuccessful) {
 
 				val otherNotifItemsJsonArray = JSONArray(
@@ -170,15 +171,12 @@ class GreenAppInteractImpl @Inject constructor(
 
 					val guid = curJsonObject.getString("guid")
 					val timeStamp =
-						convertDateFormatToMilliSeconds(curJsonObject.getString("created_at")) + SIX_HOURS_IN_MILLIS_SECONDS
+						convertDateFormatToMilliSeconds(curJsonObject.getString("created_at"))
 					val message = curJsonObject.getString("message")
 					val notifOther = NotifOtherEntity(guid, timeStamp, message)
 
 					val existInDb = notifOtherDao.getNotifOtherItemByGuid(notifOther.guid)
-					if (!existInDb.isPresent && timeStamp > prefs.getSettingLong(
-							PrefsManager.APP_START_TIME,
-							System.currentTimeMillis()
-						)
+					if (!existInDb.isPresent && timeStamp >= currentTimeInZulu
 					) {
 						notifHelper.callGreenAppNotificationMessages(
 							notifOther.message,
@@ -186,7 +184,7 @@ class GreenAppInteractImpl @Inject constructor(
 						)
 						notifOtherDao.insertingNotifOther(notifOther)
 					} else {
-						VLog.d("Not insert OtherNotifOtherItems : $notifOther")
+						VLog.d("Not insert OtherNotifOtherItems : $curJsonObject time : $timeStamp")
 					}
 
 				}
@@ -197,6 +195,16 @@ class GreenAppInteractImpl @Inject constructor(
 		} catch (ex: Exception) {
 			VLog.d("Exception occurred in requestingOtherNotifItems $ex ")
 		}
+	}
+
+	private suspend fun getAppInstallTimeInMillisInZuluTime(prefs: PrefsInteract): Long {
+		val date =
+			Date(prefs.getSettingLong(PrefsManager.APP_INSTALL_TIME, System.currentTimeMillis()))
+		val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+		df.timeZone = TimeZone.getTimeZone("Zulu")
+		return convertDateFormatToMilliSeconds(
+			df.format(date)
+		)
 	}
 
 	override suspend fun getAgreementsText(): Resource<String> {

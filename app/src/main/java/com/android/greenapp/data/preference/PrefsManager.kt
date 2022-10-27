@@ -143,7 +143,7 @@ class PrefsManager @Inject constructor(private val context: Context) : PrefsInte
         val HOME_ADDED_COUNTER = intPreferencesKey("home_added_counter")
         val APP_REMOVED_RECENT_TASKS = booleanPreferencesKey("app_removed_recent_tasks")
         val ALL_NETWORK_ITEMS_LIST= stringPreferencesKey("all_network_items_list")
-        val APP_START_TIME=longPreferencesKey("app_install_time")
+        val APP_INSTALL_TIME=longPreferencesKey("app_install_time")
     }
 
 }
