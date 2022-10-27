@@ -1,8 +1,10 @@
 package com.android.greenapp.presentation.onboard.terms
 
 import android.os.Bundle
+import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import android.text.method.ScrollingMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
@@ -21,6 +23,7 @@ import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.Resource
+import com.android.greenapp.presentation.tools.getStringResource
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.restring.Restring
@@ -91,21 +94,28 @@ class TermsFragment : DaggerFragment() {
 
     private fun registerButtons() {
 
-        binding.backLayout.setOnClickListener {
-            VLog.d("Backstack is cleared on termsFragment, now")
-            curActivity().popBackStack()
-        }
+		binding.apply {
+			backLayout.setOnClickListener {
+				VLog.d("Backstack is cleared on termsFragment, now")
+				curActivity().popBackStack()
+			}
 
-        binding.checkboxAgree.setOnCheckedChangeListener { p0, p1 ->
-            binding.btnContinue.isEnabled = p1
-        }
+			checkboxAgree.setOnCheckedChangeListener { p0, p1 ->
+				btnContinue.isEnabled = p1
+			}
 
 
-        binding.btnContinue.setOnClickListener {
-            curActivity().move2SetPasswordFragment()
-        }
-        binding.txtTerms.movementMethod = ScrollingMovementMethod()
-        highlightingWordTermsOfUseSecondVersion()
+			btnContinue.setOnClickListener {
+				curActivity().move2SetPasswordFragment()
+			}
+			txtTerms.movementMethod = ScrollingMovementMethod()
+		}
+
+		binding.apply {
+			checkboxText.text =
+				Html.fromHtml(curActivity().getStringResource(R.string.agreement_with_terms_of_use_chekbox))
+			checkboxText.setMovementMethod(LinkMovementMethod.getInstance())
+		}
     }
 
     private fun highlitingWordTermsOfUse() {
