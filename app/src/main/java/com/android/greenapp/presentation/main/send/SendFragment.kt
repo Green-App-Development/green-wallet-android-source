@@ -602,7 +602,6 @@ class SendFragment : DaggerFragment() {
 						(method.arguments as HashMap<*, *>)["spendBundle"].toString()
 					val dest_puzzle_hash =
 						(method.arguments as HashMap<*, *>)["dest_puzzle_hash"].toString()
-					VLog.d("Got spend bundle on send fragment : $spendBundleJson")
 					sendTransaction(
 						spendBundleJson,
 						url,

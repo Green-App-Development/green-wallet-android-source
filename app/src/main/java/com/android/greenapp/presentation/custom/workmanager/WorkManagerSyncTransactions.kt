@@ -11,44 +11,44 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 class WorkManagerSyncTransactions(
-    private val context: Context,
-    private val params: WorkerParameters,
-    private val blockChainInteract: BlockChainInteract,
-    private val greenAppInteract: GreenAppInteract,
+	context: Context,
+	params: WorkerParameters,
+	private val blockChainInteract: BlockChainInteract,
+	private val greenAppInteract: GreenAppInteract,
 ) :
-    CoroutineWorker(context, params) {
+	CoroutineWorker(context, params) {
 
 
-    class Factory @Inject constructor(
-        private val blockChainInteract: Provider<BlockChainInteract>,
-        private val greenAppInteract: Provider<GreenAppInteract>
-    ) : ChildWorkerFactory {
+	class Factory @Inject constructor(
+		private val blockChainInteract: Provider<BlockChainInteract>,
+		private val greenAppInteract: Provider<GreenAppInteract>
+	) : ChildWorkerFactory {
 
-        override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
-            return WorkManagerSyncTransactions(
-                appContext,
-                params,
-                blockChainInteract.get(),
-                greenAppInteract.get()
-            )
-        }
-    }
+		override fun create(appContext: Context, params: WorkerParameters): ListenableWorker {
+			return WorkManagerSyncTransactions(
+				appContext,
+				params,
+				blockChainInteract.get(),
+				greenAppInteract.get()
+			)
+		}
+	}
 
 
-    override suspend fun doWork(): Result {
-        try {
-            checkingPushNotification()
-        } catch (ex: Exception) {
-            VLog.d("Exception occurred in  work manager with message ${ex.message}")
-            return Result.retry()
-        }
-        return Result.success()
-    }
+	override suspend fun doWork(): Result {
+		try {
+			checkingPushNotification()
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred in  work manager with message ${ex.message}")
+			return Result.retry()
+		}
+		return Result.success()
+	}
 
-    private suspend fun checkingPushNotification() {
-        blockChainInteract.updateBalanceAndTransactionsPeriodically()
-        greenAppInteract.requestOtherNotifItems()
-    }
+	private suspend fun checkingPushNotification() {
+		blockChainInteract.updateBalanceAndTransactionsPeriodically()
+		greenAppInteract.requestOtherNotifItems()
+	}
 
 
 }

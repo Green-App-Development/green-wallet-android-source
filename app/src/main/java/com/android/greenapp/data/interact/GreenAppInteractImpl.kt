@@ -19,6 +19,8 @@ import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
 import com.example.common.tools.convertDateFormatToMilliSeconds
+import com.example.common.tools.formattedDay
+import com.example.common.tools.formattedTime
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -161,6 +163,7 @@ class GreenAppInteractImpl @Inject constructor(
 				)
 
 			val currentTimeInZulu = getAppInstallTimeInMillisInZuluTime(prefs)
+
 			if (res.isSuccessful) {
 
 				val otherNotifItemsJsonArray = JSONArray(
