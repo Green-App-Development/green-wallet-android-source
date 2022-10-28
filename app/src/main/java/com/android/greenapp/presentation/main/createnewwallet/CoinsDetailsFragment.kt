@@ -1,8 +1,10 @@
 package com.android.greenapp.presentation.main.createnewwallet
 
 import android.os.Bundle
+import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
@@ -20,6 +22,7 @@ import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.getColorResource
+import com.android.greenapp.presentation.tools.getStringResource
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerDialogFragment
@@ -36,7 +39,6 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	private val viewModel: NewWalletViewModel by viewModels { viewModelFactory }
-
 
 	companion object {
 		const val NETWORK_KEY: String = "network_key"
@@ -78,7 +80,7 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		registerButtonClicks()
 		determineCoinImg()
-		highlightingWordTermsOfUseSecondVersion()
+//		highlightingWordTermsOfUseSecondVersion()
 		initForImportMnemonicOrNot()
 		initCoinViewDetails()
 	}
@@ -166,7 +168,11 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 		binding.backLayout.setOnClickListener {
 			curActivity().popBackStackOnce()
 		}
-
+		binding.apply {
+			checkboxText.text =
+				Html.fromHtml(curActivity().getStringResource(R.string.agreement_with_terms_of_use_chekbox))
+			checkboxText.setMovementMethod(LinkMovementMethod.getInstance())
+		}
 	}
 
 	private fun curActivity() = requireActivity() as MainActivity

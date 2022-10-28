@@ -3,9 +3,6 @@ package com.android.greenapp.presentation.main.impmnemonics
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.text.InputFilter
-import android.text.SpannableString
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
@@ -52,6 +49,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.content.ClipboardManager
 import android.content.Context
+import android.text.*
 
 
 /**
@@ -146,7 +144,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		addingAddTextChangeListenerForEveryEdt(binding.linearLayout12)
 		addingAddTextChangeListenerForEveryEdt(binding.linearLayout24)
 		addingNumToFront()
-		highlightingWordTermsOfUseSecondVersion()
+//		highlightingWordTermsOfUseSecondVersion()
 	}
 
 	private fun restrictingUsedEnteringNonEnglishChars(linear: LinearLayout) {
@@ -373,6 +371,11 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		}
 		binding.btn12Words.isChecked = true
 		handlingNextBtnPressOnLastEdtInFirstColumn()
+		binding.apply {
+			checkboxText.text =
+				Html.fromHtml(curActivity().getStringResource(R.string.agreement_with_terms_of_use_chekbox))
+			checkboxText.setMovementMethod(LinkMovementMethod.getInstance())
+		}
 
 	}
 
@@ -688,13 +691,50 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 									}
 								}
 							}
+
+
 						}
 						changeBtnContinueAvailable(edtOf12, edtOf24)
 
 					}
 
-//                    edtText.background =
-//                        ResourcesCompat.getDrawable(resources, R.drawable.edt_mnemonic_green, null)
+					edtText.addTextChangedListener(object : TextWatcher {
+						override fun beforeTextChanged(
+							p0: CharSequence?,
+							p1: Int,
+							p2: Int,
+							p3: Int
+						) {
+
+						}
+
+						override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+							if (p3 > 2 && p0 != null) {
+//								VLog.d("On Text Changed  from clipboard  : $p0")
+								val mnemonics = p0.split(" ").toList()
+								if (edtText.text.toString() == mnemonics[0])
+									return
+								if (binding.btn12Words.isChecked) {
+									fillEdtWithCopiedMnemonics12Words(
+										mnemonics,
+										binding.linearLayout12
+									)
+								} else {
+									fillEdtWithCopiedMnemonics24Words(
+										mnemonics,
+										binding.linearLayout24
+									)
+								}
+								edtText.setText(mnemonics[0])
+							}
+						}
+
+						override fun afterTextChanged(p0: Editable?) {
+
+						}
+
+					})
+
 				}
 			}
 		} catch (ex: Exception) {
@@ -726,7 +766,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				val pairLayout = linearLayout.getChildAt(i)
 				val everyPair = pairLayout as LinearLayout
 				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
-				if (leftEdt.text.toString().isEmpty() && at<mnemonics.size) {
+				if (leftEdt.text.toString().isEmpty() && at < mnemonics.size) {
 					leftEdt.setText(mnemonics[at++])
 				}
 			}
@@ -734,7 +774,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				val pairLayout = linearLayout.getChildAt(i)
 				val everyPair = pairLayout as LinearLayout
 				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
-				if (rightEdt.text.toString().isEmpty() && at<mnemonics.size) {
+				if (rightEdt.text.toString().isEmpty() && at < mnemonics.size) {
 					rightEdt.setText(mnemonics[at++])
 				}
 			}
