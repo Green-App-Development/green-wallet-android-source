@@ -37,33 +37,18 @@ class App : DaggerApplication() {
 	lateinit var cryptocurrencyInteract: CryptocurrencyInteract
 
 	@Inject
-	lateinit var transactionInteract: TransactionInteract
-
-	@Inject
-	lateinit var retrofitBuilder: Retrofit.Builder
-
-	@Inject
 	lateinit var prefs: PrefsInteract
 
 	@Inject
 	lateinit var greenAppInteract: GreenAppInteract
 
-	@Inject
-	lateinit var blockchainInteract: BlockChainInteract
-
-	@Inject
-	lateinit var notifHelper: NotificationHelper
-
-	@Inject
-	lateinit var notificationHelper: NotificationHelper
-
-	@Inject
-	lateinit var walletDao: WalletDao
 
 	@Inject
 	lateinit var workerFactory: WorkerFactory
 
+
 	var applicationIsAlive = false
+	var isUserUnBoardDed = true
 
 	private val handler = CoroutineExceptionHandler { context, ex ->
 		VLog.d("Caught exception in coroutine scope : ${ex.message} for testing")
@@ -78,6 +63,7 @@ class App : DaggerApplication() {
 	override fun onCreate() {
 		super.onCreate()
 		VLog.d("OnCreate Got Called on App 1")
+		quickNavigationIfUserUnBoarded()
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		Restring.init(this)
 		ViewPump.init(RewordInterceptor)
@@ -91,6 +77,12 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		initWorkManager()
+	}
+
+	private fun quickNavigationIfUserUnBoarded() {
+		CoroutineScope(Dispatchers.IO).launch {
+			isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, true)
+		}
 	}
 
 	private fun warmupFlutterEngine() {

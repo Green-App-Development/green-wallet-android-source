@@ -73,8 +73,11 @@ class MainViewModel @Inject constructor(
 
 	fun saveNightIsOn(nightMode: Boolean) {
 		viewModelScope.launch {
-			prefs.saveSettingBoolean(PrefsManager.PREV_MODE_CHANGED, value = true)
-			prefs.saveSettingBoolean(PrefsManager.NIGHT_MODE_ON, value = nightMode)
+			with(prefs) {
+				saveSettingLong(PrefsManager.LAST_VISITED, System.currentTimeMillis())
+				saveSettingBoolean(PrefsManager.PREV_MODE_CHANGED, value = true)
+				saveSettingBoolean(PrefsManager.NIGHT_MODE_ON, value = nightMode)
+			}
 			AppCompatDelegate.setDefaultNightMode(if (nightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
 		}
 	}

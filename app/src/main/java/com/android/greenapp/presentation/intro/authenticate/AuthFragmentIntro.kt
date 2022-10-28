@@ -162,7 +162,7 @@ class AuthFragmentIntro : DaggerFragment() {
 
             val btnConfirm = {
                 introActViewModel.clearRoomDataStore() {
-                    curActivity().move2GreetingActivity(true)
+                    curActivity().move2OnboardingActivity(true)
                 }
             }
 

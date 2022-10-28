@@ -33,8 +33,8 @@ class IntroActivity : BaseActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_intro)
 		navigateUser()
+		setContentView(R.layout.activity_intro)
 		initStatusBarColorRegulation()
 		VLog.d("Application is Alive : ${(application as App).applicationIsAlive}")
 	}
@@ -84,14 +84,18 @@ class IntroActivity : BaseActivity() {
 	}
 
 	private fun navigateUser() {
+		if (!(application as App).isUserUnBoardDed) {
+			move2OnboardingActivity(false)
+			return
+		}
 		lifecycleScope.launch {
 			val userUnBoarded = introViewModel.isUserUnBoarded()
 			VLog.d("UserBoarded Value : $userUnBoarded")
-			val lastTimeVisited = introViewModel.getLastVisitedLongValue()
-			introViewModel.saveLastVisitedLongValue(System.currentTimeMillis())
 			if (!userUnBoarded) {
-				move2GreetingActivity(false)
-			} else if ((application as App).applicationIsAlive && System.currentTimeMillis() - lastTimeVisited <= 180 * 1000) {
+				move2OnboardingActivity(false)
+			}
+			val lastTimeVisited = introViewModel.getLastVisitedLongValue()
+			if ((application as App).applicationIsAlive && System.currentTimeMillis() - lastTimeVisited <= 180 * 1000) {
 				move2MainActivity()
 			}
 		}
@@ -113,7 +117,7 @@ class IntroActivity : BaseActivity() {
 
 	}
 
-	fun move2GreetingActivity(reset_app_clicked: Boolean) {
+	fun move2OnboardingActivity(reset_app_clicked: Boolean) {
 		Intent(this, OnBoardActivity::class.java).apply {
 			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 			putExtra(OnBoardActivity.RESET_APP_CLICKED, reset_app_clicked)

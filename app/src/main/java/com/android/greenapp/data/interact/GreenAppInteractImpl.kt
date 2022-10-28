@@ -162,8 +162,7 @@ class GreenAppInteractImpl @Inject constructor(
 					)
 				)
 
-			val currentTimeInZulu = getAppInstallTimeInMillisInZuluTime(prefs)
-
+			val appInstallTimeInZulu = getAppInstallTimeInMillisInZuluTime(prefs)
 			if (res.isSuccessful) {
 
 				val otherNotifItemsJsonArray = JSONArray(
@@ -179,7 +178,7 @@ class GreenAppInteractImpl @Inject constructor(
 					val notifOther = NotifOtherEntity(guid, timeStamp, message)
 
 					val existInDb = notifOtherDao.getNotifOtherItemByGuid(notifOther.guid)
-					if (!existInDb.isPresent && timeStamp >= currentTimeInZulu
+					if (!existInDb.isPresent && timeStamp >= appInstallTimeInZulu
 					) {
 						notifHelper.callGreenAppNotificationMessages(
 							notifOther.message,
