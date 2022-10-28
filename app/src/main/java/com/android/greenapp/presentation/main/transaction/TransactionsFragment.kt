@@ -231,16 +231,16 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	}
 
 	private fun updateCurChosenNetworkTypeTxt(network: String, position: Int) {
-		var len: Int
-		if (position == 0)
-			len = 145
-		else if (network.contains("Chia"))
-			len = 350
-		else
-			len = 400
-
-		rel_txt_network.layoutParams.width = len
-		txtNetworkType.text = network
+//		var len: Int
+//		if (position == 0)
+//			len = 145
+//		else if (network.contains("Chia"))
+//			len = 350
+//		else
+//			len = 400
+//
+//		rel_txt_network.layoutParams.width = len
+		binding.txtNetworkType.text = network
 	}
 
 	private fun getCurChosenStatus(): Status? {

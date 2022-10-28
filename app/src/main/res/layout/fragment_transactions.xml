@@ -72,6 +72,7 @@
 
 
 	<RelativeLayout
+			android:id="@+id/relativeLayout4"
 			android:layout_width="200dp"
 			android:layout_height="0dp"
 			android:layout_marginTop="5dp"
@@ -205,9 +206,9 @@
 
 	</HorizontalScrollView>
 
-	<RelativeLayout
+	<androidx.appcompat.widget.LinearLayoutCompat
 			android:id="@+id/rel_txt_network"
-			android:layout_width="140dp"
+			android:layout_width="wrap_content"
 			android:layout_height="0dp"
 			android:layout_marginTop="10dp"
 			android:layout_marginEnd="15dp"
@@ -215,19 +216,12 @@
 			android:gravity="center_vertical"
 			android:paddingTop="6dp"
 			android:paddingBottom="6dp"
+			android:paddingStart="8dp"
+			android:paddingEnd="0dp"
+			android:orientation="horizontal"
 			app:layout_constraintBottom_toBottomOf="@+id/horizontal_sorting"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
-
-		<TextView
-				android:id="@+id/txtNetworkType"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_alignParentEnd="true"
-				android:text="Chives TestNet"
-				android:textColor="@color/green"
-				android:textFontWeight="500"
-				android:textSize="15sp" />
 
 		<ImageView
 				android:id="@+id/imgArrow"
@@ -238,7 +232,17 @@
 				android:layout_toStartOf="@+id/txtNetworkType"
 				android:src="@drawable/ic_arrow_downword" />
 
-	</RelativeLayout>
+		<TextView
+				android:id="@+id/txtNetworkType"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Chives TestNet"
+				android:textColor="@color/green"
+				android:textFontWeight="500"
+				android:textSize="15sp" />
+
+
+	</androidx.appcompat.widget.LinearLayoutCompat>
 
 
 	<LinearLayout
