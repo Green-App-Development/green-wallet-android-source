@@ -27,7 +27,7 @@ data class SendTransResponse(
 
 	fun toTransactionEntity(
 		toAddress: String,
-		fkFingerPrint: Long,
+		fkAddress: String,
 		networkType: String,
 		created_at_time: Long,
 		amount: Double
@@ -39,7 +39,7 @@ data class SendTransResponse(
 		Status.InProgress,
 		networkType,
 		toAddress,
-		fkFingerPrint,
+		fkAddress,
 		fee_amount,
 		networkType
 	)

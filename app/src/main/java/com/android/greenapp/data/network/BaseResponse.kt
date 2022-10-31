@@ -1,7 +1,6 @@
 package com.android.greenapp.data.network
 
 import com.android.greenapp.data.network.dto.transaction.SendTransResponse
-import com.android.greenapp.data.network.dto.transaction.TransactionDto
 import com.google.gson.annotations.SerializedName
 
 /**

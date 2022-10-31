@@ -1,8 +1,5 @@
 package com.android.greenapp.data.network.dto.transaction
 
-import com.android.greenapp.data.local.entity.TransactionEntity
-import com.android.greenapp.domain.entity.Transaction
-import com.android.greenapp.presentation.tools.Status
 import com.google.gson.annotations.SerializedName
 
 data class TransactionDto(

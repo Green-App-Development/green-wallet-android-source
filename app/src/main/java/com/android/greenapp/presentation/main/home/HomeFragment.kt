@@ -397,8 +397,8 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		curActivity().move2AllWalletFragment()
 	}
 
-	override fun impToken(fingerPrint: Long, main_puzzle_hash: String) {
-		curActivity().move2FragmentImportToken(fingerPrint, main_puzzle_hash)
+	override fun impToken(fingerPrint: Long, main_puzzle_hash: String,address:String) {
+		curActivity().move2FragmentImportToken(fingerPrint, main_puzzle_hash,networkType="Chia Network", address = address)
 	}
 
 	override fun onStart() {

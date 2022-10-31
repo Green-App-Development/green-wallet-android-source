@@ -487,7 +487,8 @@ class SendFragment : DaggerFragment() {
 		amount: Double,
 		networkType: String,
 		fingerPrint: Long,
-		dest_puzzle_hash: String
+		dest_puzzle_hash: String,
+		address:String
 	) {
 		sendTransJob?.cancel()
 		sendTransJob = lifecycleScope.launch {
@@ -499,7 +500,8 @@ class SendFragment : DaggerFragment() {
 					networkType,
 					fingerPrint,
 					chosenTokenCode,
-					dest_puzzle_hash
+					dest_puzzle_hash,
+					address = address
 				)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
@@ -554,7 +556,8 @@ class SendFragment : DaggerFragment() {
 				url,
 				getDoubleValueFromEdt(binding.edtEnterAmount),
 				wallet.networkType,
-				wallet.fingerPrint
+				wallet.fingerPrint,
+				wallet.address
 			)
 			val argSpendBundle = hashMapOf<String, Any>()
 			argSpendBundle["fee"] = fee
@@ -589,7 +592,8 @@ class SendFragment : DaggerFragment() {
 		url: String,
 		amount: Double,
 		networkType: String,
-		fingerPrint: Long
+		fingerPrint: Long,
+		address:String
 	) {
 		withContext(Dispatchers.Main) {
 			val methodChannel = MethodChannel(
@@ -608,7 +612,8 @@ class SendFragment : DaggerFragment() {
 						amount,
 						networkType,
 						fingerPrint,
-						dest_puzzle_hash
+						dest_puzzle_hash,
+						address
 					)
 				} else if (method.method == "exception") {
 					showFailedSendingTransaction()

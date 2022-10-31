@@ -48,6 +48,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 	companion object {
 		const val FINGER_PRINT_KEY = "finger_print_key"
+		const val ADDRESS_KEY = "address_key"
 	}
 
 	@Inject
@@ -72,6 +73,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	//XCC  chives
 	//XCH  chia
 	private var currentFingerPrint: Long? = null
+	private var currentAddress: String? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -79,6 +81,8 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			val incoming = it.getLong(FINGER_PRINT_KEY)
 			currentFingerPrint = if (incoming == 0L) null else incoming
 			curActivity().shouldGoBackHomeFragmentFromTransactions = currentFingerPrint == null
+			val address = it.getString(ADDRESS_KEY,"")
+			currentAddress = if (address == "") null else address
 		}
 		VLog.d("Got Incoming arguments For Transactions Fragment : $currentFingerPrint ")
 	}
@@ -108,7 +112,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		updateTransJob?.cancel()
 		updateTransJob = lifecycleScope.launch {
 			viewModel.getAllQueriedFlowTransactionList(
-				currentFingerPrint,
+				currentAddress,
 				getCurSearchAmount(),
 				getCurChosenNetworkType(),
 				getCurChosenStatus(),

@@ -24,8 +24,8 @@ data class TransactionEntity(
     val networkType: String,
 	@ColumnInfo(name = "to_dest_hash")
     val to_dest_hash: String,
-	@ColumnInfo(name = "fkFingerPrint")
-    val fkFingerPrint: Long,
+	@ColumnInfo(name = "fkAddress")
+    val fkAddress: String,
 	@ColumnInfo(name = "fee_amount")
     val fee_amount:Double,
 	@ColumnInfo(name="code")
@@ -33,6 +33,6 @@ data class TransactionEntity(
 ) {
 
     fun toTransaction() =
-        Transaction(transaction_id, amount, created_at_time, height, status, networkType, to_dest_hash,fkFingerPrint,fee_amount,code)
+        Transaction(transaction_id, amount, created_at_time, height, status, networkType, to_dest_hash,fkAddress,fee_amount,code)
 
 }

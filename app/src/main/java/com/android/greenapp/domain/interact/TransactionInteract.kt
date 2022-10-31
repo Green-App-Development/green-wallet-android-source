@@ -11,7 +11,7 @@ import java.util.concurrent.Flow
 interface TransactionInteract {
 
 	suspend fun getTransactionsByProvidedParameters(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		amount: Double?,
 		networkType: String?,
 		status: Status?,
@@ -21,7 +21,7 @@ interface TransactionInteract {
 	): List<Transaction>
 
 	fun getTransactionsFlowByProvidedParameters(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		amount: Double?,
 		networkType: String?,
 		status: Status?,

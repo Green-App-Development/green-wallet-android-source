@@ -12,7 +12,7 @@ data class Transaction(
 	val status: Status,
 	val networkType: String,
 	val to_dest_hash: String,
-	val fkFingerPrint: Long,
+	val fkAddress: String,
 	val fee_amount: Double,
 	var code:String
 ) {
@@ -25,7 +25,7 @@ data class Transaction(
             status,
             networkType,
             to_dest_hash,
-            fkFingerPrint,
+			fkAddress,
             fee_amount,
 			code
         )

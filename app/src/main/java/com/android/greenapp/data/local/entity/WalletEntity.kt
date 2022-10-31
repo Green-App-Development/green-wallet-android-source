@@ -13,13 +13,13 @@ import java.util.*
 
 @Entity(tableName = "WalletEntity")
 data class WalletEntity(
-    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "fingerPrint")
     val fingerPrint: Long,
     @ColumnInfo(name = "privateKey")
     val privateKey: String,
     @ColumnInfo(name = "sk")
     val sk: String,
+	@PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "address")
     val address: String,
     @ColumnInfo(name = "mnemonics")

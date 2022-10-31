@@ -386,15 +386,17 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			val walletExist = impMnemonicViewModel.checkIfMnemonicsExist(mnemonics, curNetworkType)
 			if (walletExist.isPresent && walletExist.get()) {
 				curActivity().apply {
-					dialogManager.showFailureDialog(
-						curActivity(),
-						getStringResource(R.string.pop_up_failed_error_title),
-						getStringResource(R.string.pop_up_failed_error_description_wallet_has_already_added),
-						getStringResource(R.string.return_btn)
-					) {
+					if(!this.isFinishing) {
+						dialogManager.showFailureDialog(
+							this,
+							getStringResource(R.string.pop_up_failed_error_title),
+							getStringResource(R.string.pop_up_failed_error_description_wallet_has_already_added),
+							getStringResource(R.string.return_btn)
+						) {
 
+						}
+						return@launch
 					}
-					return@launch
 				}
 			}
 			dialogManager.showProgress(curActivity())

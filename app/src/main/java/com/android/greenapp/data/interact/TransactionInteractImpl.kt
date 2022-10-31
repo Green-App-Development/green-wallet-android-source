@@ -16,7 +16,7 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 	TransactionInteract {
 
 	override suspend fun getTransactionsByProvidedParameters(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		amount: Double?,
 		networkType: String?,
 		status: Status?,
@@ -24,7 +24,7 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 		yesterday: Long?,
 		today: Long?
 	) = transactionDao.getALlTransactionsByGivenParameters(
-		fingerPrint,
+		fkAddress,
 		amount,
 		networkType,
 		status,
@@ -35,7 +35,7 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 		.map { transaction -> transaction.toTransaction() }
 
 	override fun getTransactionsFlowByProvidedParameters(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		amount: Double?,
 		networkType: String?,
 		status: Status?,
@@ -44,7 +44,7 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 		today: Long?
 	): Flow<List<Transaction>> {
 		val flowTransactionList = transactionDao.getALlTransactionsFlowByGivenParameters(
-			fingerPrint,
+			fkAddress,
 			amount,
 			networkType,
 			status,

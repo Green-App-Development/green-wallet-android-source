@@ -84,7 +84,7 @@ class App : DaggerApplication() {
 
 	private fun tetingMethod() {
 		val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:SS")
-		val dateString = formatter.format(Date(1667192560000L))
+		val dateString = formatter.format(Date(1667197641000L))
 		VLog.d("Date String  : $dateString")
 	}
 

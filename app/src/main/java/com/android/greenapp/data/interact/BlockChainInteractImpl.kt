@@ -1,9 +1,7 @@
 package com.android.greenapp.data.interact
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.android.greenapp.R
 import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.TransactionDao
@@ -44,8 +42,7 @@ class BlockChainInteractImpl @Inject constructor(
     private val gson: Gson,
     private val tokenDao: TokenDao,
     private val encryptor: AESEncryptor,
-    private val notificationHelper: NotificationHelper,
-    private val context: Context
+    private val notificationHelper: NotificationHelper
 ) :
     BlockChainInteract {
 
@@ -164,7 +161,8 @@ class BlockChainInteractImpl @Inject constructor(
         networkType: String,
         fingerPrint: Long,
         code: String,
-        dest_puzzle_hash: String
+        dest_puzzle_hash: String,
+		address:String
     ): Resource<String> {
 
         try {
@@ -210,7 +208,7 @@ class BlockChainInteractImpl @Inject constructor(
                         Status.InProgress,
                         networkType,
                         dest_puzzle_hash,
-                        fingerPrint,
+                        address,
                         0.0,
                         code
                     )
@@ -269,7 +267,7 @@ class BlockChainInteractImpl @Inject constructor(
                 }
             }
             if (wallet.hashWithAmount != hashWithAmount) {
-                walletDao.updateChiaNetworkHashTokenBalance(wallet.fingerPrint, hashWithAmount)
+                walletDao.updateChiaNetworkHashTokenBalanceByAddress(wallet.address, hashWithAmount)
             }
         } catch (ex: java.lang.Exception) {
             VLog.d("Exception occurred in updating token balance : ${ex.message}")
@@ -323,7 +321,7 @@ class BlockChainInteractImpl @Inject constructor(
                             Status.Incoming,
                             wallet.networkType,
                             "",
-                            wallet.fingerPrint,
+                            wallet.address,
                             0.0,
                             code
                         )
@@ -388,12 +386,12 @@ class BlockChainInteractImpl @Inject constructor(
                         balance += curAmount
                 }
                 val prevBalance =
-                    walletDao.getWalletByFingerPrint(wallet.fingerPrint).get(0).balance
+                    walletDao.getWalletByAddress(wallet.address).get(0).balance
                 val newBalance = balance / division
                 VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance")
                 if (prevBalance != newBalance) {
                     VLog.d("CurBalance is not the same as the previous one for wallet : ${wallet.fingerPrint}")
-                    walletDao.updateWalletBalance(newBalance, wallet.fingerPrint)
+                    walletDao.updateWalletBalanceByAddress(newBalance, wallet.address)
                     updateIncomingTransactions(wallet)
                 }
             } else {
@@ -457,7 +455,7 @@ class BlockChainInteractImpl @Inject constructor(
                             Status.Incoming,
                             wallet.networkType,
                             "",
-                            wallet.fingerPrint,
+                            wallet.address,
                             0.0,
                             getShortNetworkType(wallet.networkType)
                         )

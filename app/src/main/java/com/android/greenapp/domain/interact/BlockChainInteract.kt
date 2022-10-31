@@ -24,7 +24,8 @@ interface BlockChainInteract {
         networkType: String,
         fingerPrint:Long,
 		code:String,
-		dest_puzzle_hash:String
+		dest_puzzle_hash:String,
+		address:String
     ):Resource<String>
 
 

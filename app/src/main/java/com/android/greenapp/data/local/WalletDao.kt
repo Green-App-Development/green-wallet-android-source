@@ -51,7 +51,7 @@ interface WalletDao {
 	suspend fun getAllWalletList(): List<WalletEntity>
 
 	@Query("UPDATE WalletEntity SET balance=:new_balance WHERE fingerPrint=:fingerPrint")
-	suspend fun updateWalletBalance(new_balance: Double, fingerPrint: Long)
+	suspend fun updateWalletBalanceByFingerPrint(new_balance: Double, fingerPrint: Long)
 
 	@Query("SELECT * FROM WalletEntity WHERE fingerPrint=:fingerPrint")
 	suspend fun getWalletByFingerPrint(fingerPrint: Long): List<WalletEntity>
@@ -64,14 +64,14 @@ interface WalletDao {
 
 
 	@Query("UPDATE WalletEntity SET hashWithAmount=:hashWithAmount WHERE fingerPrint=:fingerPrint")
-	suspend fun updateChiaNetworkHashTokenBalance(
+	suspend fun updateChiaNetworkHashTokenBalanceByFingerPrint(
 		fingerPrint: Long,
 		hashWithAmount: HashMap<String, Double>
 	): Int
 
 
 	@Query("UPDATE WalletEntity SET hashListImported=:hashListImportedNew WHERE fingerPrint=:fingerPrint")
-	suspend fun updateChiaNetworkHashListImported(
+	suspend fun updateChiaNetworkHashListImportedByFingerPrint(
 		fingerPrint: Long,
 		hashListImportedNew: HashMap<String, String>
 	): Int
@@ -88,6 +88,30 @@ interface WalletDao {
 
 	@Query("SELECT * FROM WalletEntity ORDER BY  homeAdded>0 DESC, homeAdded")
 	fun getWalletListHomeAddedFirstThenRemaining(): Flow<List<WalletEntity>>
+
+
+	@Query("UPDATE WalletEntity SET hashWithAmount=:hashWithAmount WHERE address=:address")
+	suspend fun updateChiaNetworkHashTokenBalanceByAddress(
+		address: String,
+		hashWithAmount: HashMap<String, Double>
+	): Int
+
+
+	@Query("UPDATE WalletEntity SET hashListImported=:hashListImportedNew WHERE address=:address")
+	suspend fun updateChiaNetworkHashListImportedByAddress(
+		address: String,
+		hashListImportedNew: HashMap<String, String>
+	): Int
+
+
+	@Query("UPDATE WalletEntity SET balance=:new_balance WHERE address=:address")
+	suspend fun updateWalletBalanceByAddress(new_balance: Double, address: String)
+
+	@Query("SELECT * FROM WalletEntity WHERE address=:address")
+	suspend fun getWalletByAddress(address: String): List<WalletEntity>
+
+	@Query("DELETE FROM WalletEntity WHERE address=:address")
+	suspend fun deleteWalletByAddress(address: String): Int
 
 
 }

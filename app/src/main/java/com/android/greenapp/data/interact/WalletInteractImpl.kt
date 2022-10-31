@@ -117,7 +117,8 @@ class WalletInteractImpl @Inject constructor(
 				wallet.fingerPrint,
 				listOf(tokenWallet),
 				wallet.mnemonics,
-				wallet.sk
+				wallet.sk,
+				wallet.address
 			)
 		}
 		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
@@ -180,13 +181,14 @@ class WalletInteractImpl @Inject constructor(
 			wallet.fingerPrint,
 			tokenList,
 			wallet.mnemonics,
-			wallet.sk
+			wallet.sk,
+			wallet.address
 		)
 	}
 
 	override suspend fun deleteWallet(wallet: Wallet): Int {
-		val rowDeleted = walletDao.deleteWalletByFingerPrint(wallet.fingerPrint)
-		transactionDao.deleteTransactionsWhenWalletDeleted(wallet.fingerPrint)
+		val rowDeleted = walletDao.deleteWalletByAddress(wallet.address)
+		transactionDao.deleteTransactionsWhenWalletDeleted(wallet.address)
 
 		if (wallet.home_id_added != 0L) {
 			prefsInteract.decreaseHomeAddedCounter()
@@ -299,7 +301,23 @@ class WalletInteractImpl @Inject constructor(
 		else {
 			hashListImported.remove(asset_id)
 		}
-		walletDao.updateChiaNetworkHashListImported(fingerPrint, hashListImported)
+		walletDao.updateChiaNetworkHashListImportedByFingerPrint(fingerPrint, hashListImported)
+	}
+
+	override suspend fun importTokenByAddress(
+		address: String,
+		add: Boolean,
+		asset_id: String,
+		outer_puzzle_hash: String
+	) {
+		val walletEntity = walletDao.getWalletByAddress(address)[0]
+		val hashListImported = walletEntity.hashListImported
+		if (add)
+			hashListImported[asset_id] = outer_puzzle_hash
+		else {
+			hashListImported.remove(asset_id)
+		}
+		walletDao.updateChiaNetworkHashListImportedByAddress(address, hashListImported)
 	}
 
 	private suspend fun importNewToken(

@@ -27,7 +27,7 @@ class TransactionsViewModel @Inject constructor(
 	val transactionList = _transactionList.asStateFlow()
 
 	suspend fun getAllQueriedTransactionList(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		amount: Double?,
 		networkType: String?,
 		status: Status?,
@@ -36,7 +36,7 @@ class TransactionsViewModel @Inject constructor(
 		yesterdayEnd: Long?
 	): List<Transaction> {
 		VLog.d(
-			"FingerPrint : $fingerPrint  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
+			"FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
 				formattedTime(
 					at_least_created_at ?: 0
 				)
@@ -47,7 +47,7 @@ class TransactionsViewModel @Inject constructor(
 			}"
 		)
 		return transactionInteract.getTransactionsByProvidedParameters(
-			fingerPrint,
+			fkAddress,
 			amount,
 			networkType,
 			status,
@@ -59,7 +59,7 @@ class TransactionsViewModel @Inject constructor(
 
 
 	fun getAllQueriedFlowTransactionList(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		amount: Double?,
 		networkType: String?,
 		status: Status?,
@@ -68,7 +68,7 @@ class TransactionsViewModel @Inject constructor(
 		yesterdayEnd: Long?
 	): Flow<List<Transaction>> {
 		VLog.d(
-			"FingerPrint : $fingerPrint  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
+			"FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
 				formattedTime(
 					at_least_created_at ?: 0
 				)
@@ -79,7 +79,7 @@ class TransactionsViewModel @Inject constructor(
 			}"
 		)
 		return transactionInteract.getTransactionsFlowByProvidedParameters(
-			fingerPrint,
+			fkAddress,
 			amount,
 			networkType,
 			status,

@@ -53,4 +53,10 @@ interface WalletInteract {
 		outer_puzzle_hash: String
 	)
 
+	suspend fun importTokenByAddress(
+		address: String,
+		add: Boolean,
+		asset_id: String,
+		outer_puzzle_hash: String
+	)
 }

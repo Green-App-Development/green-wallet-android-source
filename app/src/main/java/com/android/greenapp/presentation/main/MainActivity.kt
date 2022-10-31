@@ -375,8 +375,8 @@ class MainActivity : BaseActivity() {
 		navController.navigate(homeFragment)
 	}
 
-	fun move2TransactionsFragment(fingerPrint: Long = 0) {
-		val bundle = bundleOf(TransactionsFragment.FINGER_PRINT_KEY to fingerPrint)
+	fun move2TransactionsFragment(fingerPrint: Long = 0,address:String="") {
+		val bundle = bundleOf(TransactionsFragment.FINGER_PRINT_KEY to fingerPrint,TransactionsFragment.ADDRESS_KEY to address)
 		binding.mainBottomNav.menu.findItem(transactions).isChecked = true
 		navController.navigate(transactionsFragment, bundle)
 	}
@@ -459,12 +459,14 @@ class MainActivity : BaseActivity() {
 	fun move2FragmentImportToken(
 		fingerPrint: Long,
 		main_puzzle_hash: String,
-		networkType: String = "Chia Network"
+		networkType: String = "Chia Network",
+		address:String
 	) {
 		val bundle = bundleOf(
 			ImportTokenFragment.FINGER_PRINT_KEY to fingerPrint,
 			ImportTokenFragment.NETWORK_TYPE_KEY to networkType,
-			ImportTokenFragment.MAIN_PUZZLE_HASH to main_puzzle_hash
+			ImportTokenFragment.MAIN_PUZZLE_HASH to main_puzzle_hash,
+			ImportTokenFragment.ADDRESS_KEY to address
 		)
 		navController.navigate(action_walletFragment_to_importTokenFragment2, bundle)
 	}

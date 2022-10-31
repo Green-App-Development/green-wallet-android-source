@@ -64,11 +64,13 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 		const val FINGER_PRINT_KEY = "finger_print_key"
 		const val NETWORK_TYPE_KEY = "network_type_key"
 		const val MAIN_PUZZLE_HASH = "main_puzzle_hash"
+		const val ADDRESS_KEY="address_key"
 	}
 
 	var curFingerPrint: Long? = null
 	var curNetworkType: String = ""
 	var curMainPuzzleHash: String = ""
+	var address:String=""
 
 
 	lateinit var methodChannel: MethodChannel
@@ -79,6 +81,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 			curFingerPrint = it.getLong(FINGER_PRINT_KEY)
 			curNetworkType = it.getString(NETWORK_TYPE_KEY, "")
 			curMainPuzzleHash = it.getString(MAIN_PUZZLE_HASH, "")
+			address = it.getString(ADDRESS_KEY, "")
 		}
 	}
 
@@ -173,12 +176,12 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 				if (method.method == "generate_outer_hash") {
 					val args = method.arguments as HashMap<*, *>
 					val outer_hash = args[token.hash]!!.toString()
-					viewModel.importToken(token.hash, fingerPrint, added, outer_hash)
+					viewModel.importToken(token.hash,address , added, outer_hash)
 				}
 			}
 			methodChannel.invokeMethod("generatewrappedcatpuzzle", map)
 		} else
-			viewModel.importToken(token.hash, fingerPrint, added, "")
+			viewModel.importToken(token.hash, address, added, "")
 	}
 
 	private fun makeViewGone(relAddedHome: RelativeLayout) {

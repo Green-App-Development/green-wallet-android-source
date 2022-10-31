@@ -127,7 +127,8 @@ class ManageWalletFragment : DaggerFragment(),
             }
 
             btnStoryTransactions.setOnClickListener {
-                curActivity().move2TransactionsFragment(manageWalletAdapter.walletList[manageWalletViewPager.currentItem].fingerPrint)
+				val wallet=manageWalletAdapter.walletList[manageWalletViewPager.currentItem]
+                curActivity().move2TransactionsFragment(wallet.fingerPrint,wallet.address)
             }
 
         }

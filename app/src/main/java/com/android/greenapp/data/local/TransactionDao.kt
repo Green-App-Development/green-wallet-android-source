@@ -25,9 +25,9 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionEntity ORDER BY created_at_time DESC")
     fun getAllTransactionsFlow(): Flow<List<TransactionEntity>>
 
-    @Query("SELECT * FROM TransactionEntity WHERE (:fingerPrint IS NULL OR fkFingerPrint=:fingerPrint) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) ORDER BY created_at_time DESC")
+    @Query("SELECT * FROM TransactionEntity WHERE (:fkAddress IS NULL OR fkAddress=:fkAddress) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) ORDER BY created_at_time DESC")
     suspend fun getALlTransactionsByGivenParameters(
-        fingerPrint: Long?,
+		fkAddress: String?,
         qAmount: Double?,
         networkType: String?,
         status: Status?,
@@ -36,8 +36,8 @@ interface TransactionDao {
         today: Long?
     ): List<TransactionEntity>
 
-    @Query("DELETE FROM TransactionEntity WHERE fkFingerPrint=:fingerPrint")
-    suspend fun deleteTransactionsWhenWalletDeleted(fingerPrint: Long): Int
+    @Query("DELETE FROM TransactionEntity WHERE fkAddress=:address")
+    suspend fun deleteTransactionsWhenWalletDeleted(address:String): Int
 
     @Query("SELECT * FROM TransactionEntity WHERE transaction_id=:transaction_id")
     suspend fun checkTransactionByIDExistInDB(transaction_id: String): Optional<TransactionEntity>
@@ -49,9 +49,9 @@ interface TransactionDao {
 	suspend fun updateTransactionStatusHeight(status: Status,height:Long,transaction_id: String)
 
 
-	@Query("SELECT * FROM TransactionEntity WHERE (:fingerPrint IS NULL OR fkFingerPrint=:fingerPrint) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) ORDER BY created_at_time DESC")
+	@Query("SELECT * FROM TransactionEntity WHERE (:fkAddress IS NULL OR fkAddress=:fkAddress) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) ORDER BY created_at_time DESC")
 	fun getALlTransactionsFlowByGivenParameters(
-		fingerPrint: Long?,
+		fkAddress: String?,
 		qAmount: Double?,
 		networkType: String?,
 		status: Status?,
