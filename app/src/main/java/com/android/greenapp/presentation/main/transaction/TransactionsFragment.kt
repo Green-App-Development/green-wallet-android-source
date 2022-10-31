@@ -34,6 +34,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -106,7 +107,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	private fun updateTransactions() {
 		updateTransJob?.cancel()
 		updateTransJob = lifecycleScope.launch {
-			val transList = viewModel.getAllQueriedTransactionList(
+			viewModel.getAllQueriedFlowTransactionList(
 				currentFingerPrint,
 				getCurSearchAmount(),
 				getCurChosenNetworkType(),
@@ -114,14 +115,17 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 				getCurSearchTransByDateCreatedExceptYesterday(),
 				getCurSearchByForYesterdayStart(),
 				getCurSearchByForYesterdayEnds()
-			)
-			if (transList.isNotEmpty()) {
-				rec_transaction_items.visibility = View.VISIBLE
-				txt_no_trans.visibility = View.GONE
-				updateTransactionItems(transList)
-			} else {
-				rec_transaction_items.visibility = View.GONE
-				txt_no_trans.visibility = View.VISIBLE
+			).collectLatest { transList ->
+				binding.apply {
+					if (transList.isNotEmpty()) {
+						recTransactionItems.visibility = View.VISIBLE
+						txtNoTrans.visibility = View.GONE
+						updateTransactionItems(transList)
+					} else {
+						recTransactionItems.visibility = View.GONE
+						txtNoTrans.visibility = View.VISIBLE
+					}
+				}
 			}
 		}
 	}
@@ -148,7 +152,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		val recHeight = binding.recTransactionItems.height
 		val dp = curActivity().pxToDp(recHeight)
 		val atLeastItemCount = (dp / 45) - 2
-		VLog.d("At Least Item Count of RecyclerView Items : ${atLeastItemCount}")
+		VLog.d("At Least Item Count of RecyclerView Items : $atLeastItemCount")
 		for (tran in transList) {
 			VLog.d("Update Trans Adapter : $tran")
 		}

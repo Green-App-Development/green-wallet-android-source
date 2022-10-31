@@ -384,7 +384,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		importJob = lifecycleScope.launch {
 			val mnemonics = getMnemonicsList()
 			val walletExist = impMnemonicViewModel.checkIfMnemonicsExist(mnemonics, curNetworkType)
-			if (walletExist.isPresent) {
+			if (walletExist.isPresent && walletExist.get()) {
 				curActivity().apply {
 					dialogManager.showFailureDialog(
 						curActivity(),

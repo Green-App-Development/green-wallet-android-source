@@ -625,8 +625,11 @@ class MainActivity : BaseActivity() {
 			VLog.d("Previous NetworkItemsJob is active ")
 			return
 		}
-		VLog.d("Create or import method has  been called on MainActivity")
 		networkItemsJob = lifecycleScope.launch {
+			delay(1000)
+		}
+		VLog.d("Create or import method has  been called on MainActivity")
+		lifecycleScope.launch {
 
 			val walletSize = mainViewModel.getWalletSizeInDB().size
 			if (walletSize >= 10) {

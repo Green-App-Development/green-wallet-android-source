@@ -49,4 +49,17 @@ interface TransactionDao {
 	suspend fun updateTransactionStatusHeight(status: Status,height:Long,transaction_id: String)
 
 
+	@Query("SELECT * FROM TransactionEntity WHERE (:fingerPrint IS NULL OR fkFingerPrint=:fingerPrint) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) ORDER BY created_at_time DESC")
+	fun getALlTransactionsFlowByGivenParameters(
+		fingerPrint: Long?,
+		qAmount: Double?,
+		networkType: String?,
+		status: Status?,
+		at_least_created_time: Long?,
+		yesterday: Long?,
+		today: Long?
+	): Flow<List<TransactionEntity>>
+
+
+
 }

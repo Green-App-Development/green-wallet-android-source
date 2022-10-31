@@ -261,7 +261,7 @@ class WalletInteractImpl @Inject constructor(
 		val walletOpt = walletDao.checkIfEncMnemonicsExistInDB(encMnemonics, networkType)
 		if (walletOpt.isPresent)
 			return Optional.of(true)
-		return Optional.empty()
+		return Optional.of(false)
 	}
 
 	override fun getAllWalletListFirstHomeIsAddedThenRemain(): Flow<List<Wallet>> {

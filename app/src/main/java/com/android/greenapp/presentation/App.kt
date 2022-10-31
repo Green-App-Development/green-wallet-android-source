@@ -24,6 +24,8 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import kotlinx.coroutines.*
 import retrofit2.Retrofit
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -77,6 +79,13 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		initWorkManager()
+		tetingMethod()
+	}
+
+	private fun tetingMethod() {
+		val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:SS")
+		val dateString = formatter.format(Date(1667192560000L))
+		VLog.d("Date String  : $dateString")
 	}
 
 	private fun quickNavigationIfUserUnBoarded() {
