@@ -13,7 +13,7 @@ import com.android.greenapp.data.local.entity.*
 
 @Database(
     entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class],
-    version = 19,
+    version = 20,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

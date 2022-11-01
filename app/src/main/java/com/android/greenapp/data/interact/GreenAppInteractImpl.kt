@@ -19,8 +19,6 @@ import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
 import com.example.common.tools.convertDateFormatToMilliSeconds
-import com.example.common.tools.formattedDay
-import com.example.common.tools.formattedTime
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -162,7 +160,7 @@ class GreenAppInteractImpl @Inject constructor(
 					)
 				)
 
-			val appInstallTimeInZulu = getAppInstallTimeInMillisInZuluTime(prefs)
+			val appInstallTimeInZulu = convertAppInstallTimeInMillisInZuluTime(prefs)
 			if (res.isSuccessful) {
 
 				val otherNotifItemsJsonArray = JSONArray(
@@ -199,15 +197,6 @@ class GreenAppInteractImpl @Inject constructor(
 		}
 	}
 
-	private suspend fun getAppInstallTimeInMillisInZuluTime(prefs: PrefsInteract): Long {
-		val date =
-			Date(prefs.getSettingLong(PrefsManager.APP_INSTALL_TIME, System.currentTimeMillis()))
-		val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-		df.timeZone = TimeZone.getTimeZone("Zulu")
-		return convertDateFormatToMilliSeconds(
-			df.format(date)
-		)
-	}
 
 	override suspend fun getAgreementsText(): Resource<String> {
 		try {
@@ -308,6 +297,17 @@ class GreenAppInteractImpl @Inject constructor(
 			VLog.d("Exception : ${ex.message}")
 		}
 		return resHashMap
+	}
+
+
+	private suspend fun convertAppInstallTimeInMillisInZuluTime(prefs: PrefsInteract): Long {
+		val date =
+			Date(prefs.getSettingLong(PrefsManager.APP_INSTALL_TIME, System.currentTimeMillis()))
+		val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+		df.timeZone = TimeZone.getTimeZone("Zulu")
+		return convertDateFormatToMilliSeconds(
+			df.format(date)
+		)
 	}
 
 

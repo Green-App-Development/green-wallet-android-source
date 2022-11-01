@@ -6,10 +6,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
 import com.android.greenapp.BuildConfig
 import com.android.greenapp.R
-import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.data.preference.PrefsManager
-import com.android.greenapp.domain.interact.*
-import com.android.greenapp.presentation.custom.NotificationHelper
+import com.android.greenapp.domain.interact.BlockChainInteract
+import com.android.greenapp.domain.interact.CryptocurrencyInteract
+import com.android.greenapp.domain.interact.GreenAppInteract
+import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.android.greenapp.presentation.di.application.DaggerAppComponent
 import com.example.common.tools.VLog
@@ -22,10 +23,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
 import kotlinx.coroutines.*
-import retrofit2.Retrofit
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -79,13 +77,11 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		initWorkManager()
-		tetingMethod()
+		testingMethod()
 	}
 
-	private fun tetingMethod() {
-		val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:SS")
-		val dateString = formatter.format(Date(1667197641000L))
-		VLog.d("Date String  : $dateString")
+	private fun testingMethod() {
+
 	}
 
 	private fun quickNavigationIfUserUnBoarded() {
