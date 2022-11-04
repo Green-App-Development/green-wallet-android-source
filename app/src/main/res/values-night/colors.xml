@@ -119,6 +119,7 @@
 	<color name="check_box_edge_color">#FFFFFF</color>
 	<color name="disabled_thumb_track">#828282</color>
 	<color name="switch_thumb_off_settings">#949494</color>
+	<color name="app_icon_main">#20AE80</color>
 
 
 </resources>

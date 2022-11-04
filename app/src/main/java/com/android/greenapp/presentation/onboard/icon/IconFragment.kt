@@ -58,7 +58,7 @@ class IconFragment : DaggerFragment() {
 
 
     private fun changeAppIcon() {
-        binding.imgIcon.setImageResource(if (true) R.drawable.green_ic_night else R.drawable.green_ic_light)
+
     }
 
 

@@ -1,6 +1,7 @@
 package com.android.greenapp.presentation
 
 import android.os.Build
+import android.util.ArrayMap
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
@@ -150,7 +151,7 @@ class App : DaggerApplication() {
 			}
 			launch {
 				val nightMode =
-					prefs.getSettingBoolean(PrefsManager.NIGHT_MODE_ON, default = true)
+					prefs.getSettingBoolean(PrefsManager.NIGHT_MODE_ON, default = false)
 				withContext(Dispatchers.Main) {
 					AppCompatDelegate.setDefaultNightMode(if (nightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
 				}
