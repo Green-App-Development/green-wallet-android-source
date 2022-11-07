@@ -600,10 +600,8 @@ class MainActivity : BaseActivity() {
 
 			val height = window.decorView.height
 			if (height - r.bottom > height * 0.1399) {
-				VLog.d("Keyboard is open")
 				changeVisibilityOfViewsDuringSoftKeyBoardOpen(true)
 			} else {
-				VLog.d("Keyboard is close")
 				changeVisibilityOfViewsDuringSoftKeyBoardOpen(false)
 			}
 		}

@@ -22,7 +22,8 @@ import javax.inject.Inject
 class HomeFragmentViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val walletInteract: WalletInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract
+	private val cryptocurrencyInteract: CryptocurrencyInteract,
+	private val blockChainInteract: BlockChainInteract
 ) : ViewModel() {
 
 	private var updateTrans: Job? = null
@@ -89,5 +90,13 @@ class HomeFragmentViewModel @Inject constructor(
 			}
 		}
 	}
+
+	fun swipedRefreshLayout(onFinished: () -> Unit) {
+		viewModelScope.launch {
+			blockChainInteract.updateBalanceAndTransactionsPeriodically()
+			onFinished()
+		}
+	}
+
 
 }

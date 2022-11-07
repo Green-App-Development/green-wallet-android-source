@@ -1,250 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primary_app_background">
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/swipe_refresh"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/toolbar_color"
-        app:layout_constraintBottom_toTopOf="@+id/guideline5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@color/primary_app_background">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+		<androidx.appcompat.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:background="@color/toolbar_color"
+				app:layout_constraintBottom_toTopOf="@+id/guideline5"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/img_three_dots"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:src="@drawable/three_dots" />
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="match_parent">
 
-
-        </RelativeLayout>
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.071" />
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout2"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:paddingStart="15dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="15dp"
-        android:paddingBottom="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+				<ImageView
+						android:id="@+id/img_three_dots"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="10dp"
+						android:focusable="true"
+						android:foreground="?android:attr/selectableItemBackground"
+						android:src="@drawable/three_dots" />
 
 
-        <ImageView
-            android:id="@+id/img_ic_up"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_alignParentEnd="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_up" />
+			</RelativeLayout>
 
-        <ImageView
-            android:id="@+id/img_qr"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_below="@+id/img_ic_up"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:src="@drawable/ic_qr_rect" />
+		</androidx.appcompat.widget.Toolbar>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="13dp"
-            android:layout_toStartOf="@+id/img_ic_up"
-            android:background="@drawable/card_view_bcg_shape"
-            android:paddingStart="15dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="12dp"
-            tools:ignore="RtlSymmetry">
+		<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline5"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				app:layout_constraintGuide_percent="0.071" />
 
-            <TextView
-                android:id="@+id/txtBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/main_screen_title_balance"
-                android:textColor="@color/green"
-                android:textFontWeight="600"
-                android:textSize="20sp" />
+		<RelativeLayout
+				android:id="@+id/relativeLayout2"
+				android:layout_width="0dp"
+				android:layout_height="150dp"
+				android:paddingStart="15dp"
+				android:paddingTop="15dp"
+				android:paddingEnd="15dp"
+				android:paddingBottom="10dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
 
-            <TextView
-                android:id="@+id/txtMyBalance"
-                android:layout_width="match_parent"
-                android:layout_height="33dp"
-                android:layout_below="@+id/txtBalance"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:autoSizeTextType="uniform"
-                android:text="0 USD"
-                android:textColor="@color/secondary_text_color"
-                android:textFontWeight="600" />
+			<ImageView
+					android:id="@+id/img_ic_up"
+					android:layout_width="55dp"
+					android:layout_height="55dp"
+					android:layout_alignParentEnd="true"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_up" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/txtMyBalance"
-                android:layout_marginTop="10dp">
+			<ImageView
+					android:id="@+id/img_qr"
+					android:layout_width="55dp"
+					android:layout_height="55dp"
+					android:layout_below="@+id/img_ic_up"
+					android:layout_alignParentEnd="true"
+					android:layout_marginTop="15dp"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_qr_rect" />
 
-                <TextView
-                    android:id="@+id/txtPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="XCС price: 0.00"
-                    android:textColor="@color/grey_txt_color"
-                    android:textSize="13sp" />
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_marginEnd="13dp"
+					android:layout_toStartOf="@+id/img_ic_up"
+					android:background="@drawable/card_view_bcg_shape"
+					android:paddingStart="15dp"
+					android:paddingTop="15dp"
+					android:paddingBottom="12dp"
+					tools:ignore="RtlSymmetry">
 
-                <RelativeLayout
-                    android:id="@+id/rel_course_trade"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_toRightOf="@id/txtPrice"
-                    android:background="@drawable/bcg_trade_shape"
-                    android:backgroundTint="@color/green">
-
-                    <ImageView
-                        android:id="@+id/img_polygon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="3dp"
-                        android:src="@drawable/ic_polygon_up" />
-
-                    <TextView
-                        android:id="@+id/txtTradePercent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        android:layout_toRightOf="@+id/img_polygon"
-                        android:text="0.00%"
-                        android:textColor="@color/white"
-                        android:textSize="10sp" />
-
-                </RelativeLayout>
-
-            </RelativeLayout>
-
-        </RelativeLayout>
+				<TextView
+						android:id="@+id/txtBalance"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/main_screen_title_balance"
+						android:textColor="@color/green"
+						android:textFontWeight="600"
+						android:textSize="20sp" />
 
 
-    </RelativeLayout>
+				<TextView
+						android:id="@+id/txtMyBalance"
+						android:layout_width="match_parent"
+						android:layout_height="33dp"
+						android:layout_below="@+id/txtBalance"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="5dp"
+						android:layout_marginEnd="5dp"
+						android:autoSizeTextType="uniform"
+						android:text="0 USD"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="600" />
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/mainWalletViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
-        app:layout_constraintVertical_bias="0.0">
+				<RelativeLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_below="@+id/txtMyBalance"
+						android:layout_marginTop="10dp">
 
-    </androidx.viewpager.widget.ViewPager>
+					<TextView
+							android:id="@+id/txtPrice"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="XCС price: 0.00"
+							android:textColor="@color/grey_txt_color"
+							android:textSize="13sp" />
 
+					<RelativeLayout
+							android:id="@+id/rel_course_trade"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_centerVertical="true"
+							android:layout_marginStart="10dp"
+							android:layout_toRightOf="@id/txtPrice"
+							android:background="@drawable/bcg_trade_shape"
+							android:backgroundTint="@color/green">
 
-    <RelativeLayout
-        android:id="@+id/rel_no_wallet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:background="@drawable/card_view_bcg_shape"
-        android:paddingStart="15dp"
-        android:paddingTop="15dp"
-        android:paddingEnd="15dp"
-        android:paddingBottom="25dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
+						<ImageView
+								android:id="@+id/img_polygon"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_centerVertical="true"
+								android:layout_marginStart="4dp"
+								android:layout_marginEnd="3dp"
+								android:src="@drawable/ic_polygon_up" />
 
-        <TextView
-            android:id="@+id/txtMyWallet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_screen_title_purse"
-            android:textColor="@color/green"
-            android:textFontWeight="600"
-            android:textSize="20sp" />
+						<TextView
+								android:id="@+id/txtTradePercent"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_centerVertical="true"
+								android:layout_marginEnd="8dp"
+								android:layout_toRightOf="@+id/img_polygon"
+								android:text="0.00%"
+								android:textColor="@color/white"
+								android:textSize="10sp" />
 
-        <RelativeLayout
-            android:id="@+id/rel_add_wallet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtMyWallet"
-            android:layout_marginTop="10dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground">
+					</RelativeLayout>
 
-            <ImageView
-                android:id="@+id/ic_plus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_plus" />
+				</RelativeLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="10dp"
-                android:layout_toRightOf="@+id/ic_plus"
-                android:text="@string/main_screen_purse_add_wallet"
-                android:textColor="@color/green"
-                android:textFontWeight="500"
-                android:textSize="18sp" />
-
-        </RelativeLayout>
+			</RelativeLayout>
 
 
-    </RelativeLayout>
+		</RelativeLayout>
 
-    <com.rd.PageIndicatorView
-        android:id="@+id/pageIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:piv_animationType="swap"
-        app:piv_count="1"
-        app:piv_radius="4dp"
-        app:piv_selectedColor="@color/selected_dot_indicator"
-        app:piv_unselectedColor="@color/unselected_dot_indicator" />
+		<androidx.viewpager.widget.ViewPager
+				android:id="@+id/mainWalletViewPager"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_marginBottom="10dp"
+				android:visibility="visible"
+				app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
+				app:layout_constraintVertical_bias="0.0">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+		</androidx.viewpager.widget.ViewPager>
+
+
+		<RelativeLayout
+				android:id="@+id/rel_no_wallet"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="15dp"
+				android:background="@drawable/card_view_bcg_shape"
+				android:paddingStart="15dp"
+				android:paddingTop="15dp"
+				android:paddingEnd="15dp"
+				android:paddingBottom="25dp"
+				android:visibility="gone"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
+
+			<TextView
+					android:id="@+id/txtMyWallet"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/main_screen_title_purse"
+					android:textColor="@color/green"
+					android:textFontWeight="600"
+					android:textSize="20sp" />
+
+			<RelativeLayout
+					android:id="@+id/rel_add_wallet"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_below="@+id/txtMyWallet"
+					android:layout_marginTop="10dp"
+					android:clickable="true"
+					android:focusable="true"
+					android:foreground="?android:attr/selectableItemBackground">
+
+				<ImageView
+						android:id="@+id/ic_plus"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:src="@drawable/ic_plus" />
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="17dp"
+						android:layout_marginTop="10dp"
+						android:layout_toRightOf="@+id/ic_plus"
+						android:text="@string/main_screen_purse_add_wallet"
+						android:textColor="@color/green"
+						android:textFontWeight="500"
+						android:textSize="18sp" />
+
+			</RelativeLayout>
+
+
+		</RelativeLayout>
+
+		<com.rd.PageIndicatorView
+				android:id="@+id/pageIndicator"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="15dp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:piv_animationType="swap"
+				app:piv_count="1"
+				app:piv_radius="4dp"
+				app:piv_selectedColor="@color/selected_dot_indicator"
+				app:piv_unselectedColor="@color/unselected_dot_indicator" />
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 

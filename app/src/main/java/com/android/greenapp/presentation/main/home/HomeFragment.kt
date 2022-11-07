@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,10 +33,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_send.*
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -111,6 +110,20 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		updateViewDetails()
 		initCurCryptoCourseUpdate()
 		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
+		initSwipeRefreshLayout()
+	}
+
+	private fun initSwipeRefreshLayout() {
+		binding.swipeRefresh.apply {
+			setOnRefreshListener {
+				homeFragmentViewModel.swipedRefreshLayout {
+					if (this@HomeFragment.isVisible) {
+						isRefreshing = false
+					}
+				}
+			}
+			setColorSchemeResources(R.color.green)
+		}
 	}
 
 
@@ -397,8 +410,13 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		curActivity().move2AllWalletFragment()
 	}
 
-	override fun impToken(fingerPrint: Long, main_puzzle_hash: String,address:String) {
-		curActivity().move2FragmentImportToken(fingerPrint, main_puzzle_hash,networkType="Chia Network", address = address)
+	override fun impToken(fingerPrint: Long, main_puzzle_hash: String, address: String) {
+		curActivity().move2FragmentImportToken(
+			fingerPrint,
+			main_puzzle_hash,
+			networkType = "Chia Network",
+			address = address
+		)
 	}
 
 	override fun onStart() {
