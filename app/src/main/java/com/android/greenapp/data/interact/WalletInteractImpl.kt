@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.TransactionDao
 import com.android.greenapp.data.local.WalletDao
+import com.android.greenapp.data.local.entity.TokenEntity
 import com.android.greenapp.data.local.entity.WalletEntity
 import com.android.greenapp.data.network.BlockChainService
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
@@ -124,19 +125,23 @@ class WalletInteractImpl @Inject constructor(
 		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
 		val hashListMutList = walletEntity.hashListImported.keys.toMutableList()
-		hashListMutList.remove("7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02")
-		hashListMutList.remove("6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589")
-		val usds = tokenDao.getTokenByCode("USDS")
-		if (usds.isPresent)
-			hashListMutList.add(0, usds.get().hash)
-		val gad = tokenDao.getTokenByCode("GAD")
-		if (gad.isPresent)
-			hashListMutList.add(
-				0,
-				gad.get().hash
-			)
+		val tokensDefault = tokenDao.getTokensDefaultOnScreen().map { it.hash }
+		val assetIds = mutableListOf<AssetIDWithPriority>()
+		for (hash in hashListMutList) {
+			val priority = if (tokensDefault.contains(hash)) {
+				if (hash == "GAD") 2
+				else 1
+			} else
+				0
+			assetIds.add(AssetIDWithPriority(hash, priority))
+		}
 
-		val hashList = hashListMutList.toSet()
+		val hashList = assetIds.sortedWith(object : Comparator<AssetIDWithPriority> {
+			override fun compare(p0: AssetIDWithPriority, p1: AssetIDWithPriority): Int {
+				return p1.priority - p0.priority
+			}
+		}).map { it.asset_id }
+
 		val tokenList = mutableListOf<TokenWallet>()
 		val amountChia = walletEntity.balance
 		val chiaAmountInUSD = prefsInteract.getCoursePriceDouble(
@@ -350,5 +355,7 @@ class WalletInteractImpl @Inject constructor(
 		return gson.fromJson(item, NetworkItem::class.java)
 	}
 
+
+	data class AssetIDWithPriority(val asset_id: String, val priority: Int)
 
 }

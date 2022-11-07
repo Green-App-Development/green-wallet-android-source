@@ -18,11 +18,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentVerificationWalletBinding
+import com.android.greenapp.domain.entity.Token
 import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
-import com.android.greenapp.presentation.custom.mnemonicsToString
+import com.android.greenapp.presentation.custom.convertListToStringWithSpace
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
@@ -73,6 +74,8 @@ class VerificationFragment : DaggerDialogFragment() {
 	lateinit var curSelectedTxtPlaceHolder: TextView
 
 	private var curSelectedTxtLocation = 0
+
+	private var defaultTokensOnMainScreen = mutableListOf<Token>()
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -129,6 +132,14 @@ class VerificationFragment : DaggerDialogFragment() {
 		setUpInitialValues()
 		registerClicks()
 		updateOptionsValuesSecondVersion()
+		initDefaultTokenMainScreen()
+	}
+
+	private fun initDefaultTokenMainScreen() {
+		lifecycleScope.launch {
+			defaultTokensOnMainScreen.clear()
+			defaultTokensOnMainScreen.addAll(newWalletViewModel.getTokenDefaultOnMainScreen())
+		}
 	}
 
 
@@ -202,8 +213,6 @@ class VerificationFragment : DaggerDialogFragment() {
 				val fingerPrint = arguments["fingerPrint"]!!.toString().toLong()
 				val address = arguments["address"]!!.toString()
 				val puzzle_hash = arguments["puzzle_hash"]!!.toString()
-				val puzzle_hash_gad = arguments["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"]!!.toString()
-				val puzzle_hash_usds = arguments["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"]!!.toString()
 				val newWallet = Wallet(
 					fingerPrint,
 					"",
@@ -215,8 +224,9 @@ class VerificationFragment : DaggerDialogFragment() {
 					0.0,
 					System.currentTimeMillis()
 				)
-				newWallet.hashListImported["7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02"] = puzzle_hash_gad
-				newWallet.hashListImported["6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589"] = puzzle_hash_usds
+				defaultTokensOnMainScreen.forEach {
+					newWallet.hashListImported[it.hash] = arguments[it.hash]!!.toString()
+				}
 				newWalletViewModel.createNewWallet(newWallet) {
 					dialogManager.hidePrevDialogs()
 					showCongratulateDialog()
@@ -232,10 +242,11 @@ class VerificationFragment : DaggerDialogFragment() {
 			(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
-		val mnemonicString = mnemonicsToString(mnemonics)
+		val mnemonicString = convertListToStringWithSpace(mnemonics)
 		val map = hashMapOf<String, Any>()
 		map["mnemonic"] = mnemonicString
 		map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
+		map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
 		methodChannel.invokeMethod("generateHash", map)
 	}
 

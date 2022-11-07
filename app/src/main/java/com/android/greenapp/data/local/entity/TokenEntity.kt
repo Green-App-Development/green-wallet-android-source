@@ -11,14 +11,15 @@ import com.android.greenapp.domain.entity.Token
 
 @Entity(tableName = "TokenEntity")
 data class TokenEntity(
-    @PrimaryKey(autoGenerate = false)
-    val code: String,
-    val name: String,
-    val hash: String,
-    val logo_url: String,
-    val price: Double = 0.0
+	@PrimaryKey(autoGenerate = false)
+	val code: String,
+	val name: String,
+	val hash: String,
+	val logo_url: String,
+	val price: Double = 0.0,
+	val default_tail: Int
 ) {
 
-    fun toToken(imported: Boolean) = Token(name, code, hash, logo_url, imported)
+	fun toToken(imported: Boolean) = Token(name, code, hash, logo_url, imported, default_tail)
 
 }

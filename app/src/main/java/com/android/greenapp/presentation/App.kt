@@ -12,6 +12,7 @@ import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
+import com.android.greenapp.presentation.custom.NotificationHelper
 import com.android.greenapp.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.android.greenapp.presentation.di.application.DaggerAppComponent
 import com.example.common.tools.VLog
@@ -47,6 +48,9 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var workerFactory: WorkerFactory
 
+	@Inject
+	lateinit var notificationHelper: NotificationHelper
+
 
 	var applicationIsAlive = false
 	var isUserUnBoardDed = true
@@ -78,11 +82,19 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		initWorkManager()
-		testingMethod()
+//		testingMethod()
 	}
 
 	private fun testingMethod() {
-
+		CoroutineScope(Dispatchers.IO).launch {
+			while (true) {
+				delay(10000)
+				notificationHelper.callGreenAppNotificationMessages(
+					"Testing notif",
+					System.currentTimeMillis()
+				)
+			}
+		}
 	}
 
 	private fun quickNavigationIfUserUnBoarded() {

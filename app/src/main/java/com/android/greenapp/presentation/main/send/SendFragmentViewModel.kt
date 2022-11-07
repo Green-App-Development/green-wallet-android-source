@@ -45,7 +45,8 @@ class SendFragmentViewModel @Inject constructor(
 		fingerPrint: Long,
 		code: String,
 		dest_puzzle_hash: String,
-		address:String
+		address:String,
+		fee:Double
 	) = blockChainInteract.push_tx(
 		spendBundle,
 		url,
@@ -54,7 +55,8 @@ class SendFragmentViewModel @Inject constructor(
 		fingerPrint,
 		code,
 		dest_puzzle_hash,
-		address
+		address,
+		fee
 	)
 
 	suspend fun checkIfAddressExistInDb(address: String) =

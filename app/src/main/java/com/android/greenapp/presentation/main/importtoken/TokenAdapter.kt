@@ -54,7 +54,7 @@ class TokenAdapter(
 
 		fun onBind(token: Token) {
 
-			if (token.code == "USDS" || token.code == "GAD") {
+			if (token.defaultTail == 1) {
 				homeSwitch.isChecked = true
 				homeSwitch.isEnabled = false
 			}

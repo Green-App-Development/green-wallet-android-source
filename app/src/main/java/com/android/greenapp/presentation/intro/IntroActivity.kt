@@ -26,6 +26,10 @@ class IntroActivity : BaseActivity() {
 
 	private val navController by lazy { findNavController(R.id.my_nav_host_fragment) }
 
+	companion object {
+		const val NOTIF_OTHER_KEY = "notif_other_key"
+	}
+
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	val introViewModel: IntroActViewModel by viewModels { viewModelFactory }
@@ -37,6 +41,12 @@ class IntroActivity : BaseActivity() {
 		setContentView(R.layout.activity_intro)
 		initStatusBarColorRegulation()
 		VLog.d("Application is Alive : ${(application as App).applicationIsAlive}")
+		checkingIntentFromPush()
+	}
+
+	private fun checkingIntentFromPush() {
+		val notifOther = intent?.extras?.getString(NOTIF_OTHER_KEY, "default_value")
+         VLog.d("Open with push notification : $notifOther")
 	}
 
 

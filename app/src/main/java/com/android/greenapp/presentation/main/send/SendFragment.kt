@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.*
@@ -488,7 +487,7 @@ class SendFragment : DaggerFragment() {
 		networkType: String,
 		fingerPrint: Long,
 		dest_puzzle_hash: String,
-		address:String
+		address: String
 	) {
 		sendTransJob?.cancel()
 		sendTransJob = lifecycleScope.launch {
@@ -501,7 +500,8 @@ class SendFragment : DaggerFragment() {
 					fingerPrint,
 					chosenTokenCode,
 					dest_puzzle_hash,
-					address = address
+					address = address,
+					getDoubleValueFromEdt(binding.edtEnterCommission)
 				)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
@@ -546,7 +546,7 @@ class SendFragment : DaggerFragment() {
 					10.0,
 					12.0
 				).toLong()).toLong()
-			val mnemonicString = mnemonicsToString(wallet.mnemonics)
+			val mnemonicString = convertListToStringWithSpace(wallet.mnemonics)
 			val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
 			val methodChannel = MethodChannel(
 				(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
@@ -593,7 +593,7 @@ class SendFragment : DaggerFragment() {
 		amount: Double,
 		networkType: String,
 		fingerPrint: Long,
-		address:String
+		address: String
 	) {
 		withContext(Dispatchers.Main) {
 			val methodChannel = MethodChannel(
@@ -652,27 +652,32 @@ class SendFragment : DaggerFragment() {
 
 	private fun showSuccessSendMoneyDialog() {
 		curActivity().apply {
-			dialogManager.showSuccessDialog(
-				this,
-				getStringResource(R.string.send_token_pop_up_succsess_title),
-				getStringResource(R.string.send_token_pop_up_succsess_description),
-				getStringResource(R.string.ready_btn)
-			) {
-				popBackStackOnce()
+			if (!this.isFinishing) {
+				dialogManager.showSuccessDialog(
+					this,
+					getStringResource(R.string.send_token_pop_up_succsess_title),
+					getStringResource(R.string.send_token_pop_up_succsess_description),
+					getStringResource(R.string.ready_btn)
+				) {
+					popBackStackOnce()
+				}
 			}
 		}
+
 	}
 
 	private fun showFailedSendingTransaction() {
 		dialogManager.hidePrevDialogs()
 		curActivity().apply {
-			dialogManager.showFailureDialog(
-				this,
-				getStringResource(R.string.pop_up_failed_error_title),
-				getStringResource(R.string.send_token_pop_up_transaction_fail_error_description),
-				getStringResource(R.string.pop_up_failed_error_return_btn)
-			) {
+			if (!this.isFinishing) {
+				dialogManager.showFailureDialog(
+					this,
+					getStringResource(R.string.pop_up_failed_error_title),
+					getStringResource(R.string.send_token_pop_up_transaction_fail_error_description),
+					getStringResource(R.string.pop_up_failed_error_return_btn)
+				) {
 
+				}
 			}
 		}
 	}

@@ -7,7 +7,8 @@ data class TokenDto(
 	val name: String,
 	val code: String,
 	val hash: String,
-	val logo_url: String?
+	val logo_url: String?,
+	val default_tail: Int
 ) {
-	fun toTokenEntity() = TokenEntity(code, name, hash, logo_url ?: "")
+	fun toTokenEntity() = TokenEntity(code, name, hash, logo_url ?: "", default_tail = default_tail)
 }

@@ -25,7 +25,8 @@ interface BlockChainInteract {
         fingerPrint:Long,
 		code:String,
 		dest_puzzle_hash:String,
-		address:String
+		address:String,
+		fee:Double
     ):Resource<String>
 
 

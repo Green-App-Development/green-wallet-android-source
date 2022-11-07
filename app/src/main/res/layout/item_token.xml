@@ -33,7 +33,7 @@
             android:text="Green App Development"
             android:textColor="@color/secondary_text_color"
             android:textFontWeight="500"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/txtTokenCode"
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="GAD"
             android:textColor="@color/greey"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 

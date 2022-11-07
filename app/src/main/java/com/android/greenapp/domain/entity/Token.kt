@@ -6,7 +6,8 @@ data class Token(
     val code: String,
     val hash: String,
     val logo_url: String,
-    var imported: Boolean
+    var imported: Boolean,
+	val defaultTail:Int
 ) {
     val price: Double = 0.0
 }

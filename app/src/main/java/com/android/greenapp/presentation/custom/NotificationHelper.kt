@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.os.bundleOf
 import com.android.greenapp.R
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.interact.PrefsInteract
@@ -41,7 +42,9 @@ class NotificationHelper @Inject constructor(
 		if (!isNotificationOn) {
 			return
 		}
+
 		val notifIntent = Intent(applicationContext, IntroActivity::class.java).apply {
+			putExtra(IntroActivity.NOTIF_OTHER_KEY,"notifOther")
 			flags = Intent.FLAG_ACTIVITY_NEW_TASK
 			action = Intent.ACTION_MAIN
 			addCategory(Intent.CATEGORY_LAUNCHER)

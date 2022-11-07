@@ -9,7 +9,9 @@ import com.android.greenapp.domain.entity.Token
 interface TokenInteract {
 
 
-    suspend fun getTokenListAndSearch(fingerPrint:Long,nameCode:String?): List<Token>
+    suspend fun getTokenListAndSearchForWallet(fingerPrint:Long, nameCode:String?): List<Token>
 
     suspend fun getTokenPriceByCode(code:String):Double
+
+    suspend fun getTokenListDefaultOnMainScreen():List<Token>
 }

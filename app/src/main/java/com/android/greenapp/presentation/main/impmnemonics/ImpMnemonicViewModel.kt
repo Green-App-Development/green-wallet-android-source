@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.PrefsInteract
+import com.android.greenapp.domain.interact.TokenInteract
 import com.android.greenapp.domain.interact.WalletInteract
 import com.android.greenapp.presentation.tools.Resource
 import kotlinx.coroutines.Job
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class ImpMnemonicViewModel @Inject constructor(
     private val prefs: PrefsInteract,
     private val blockChainInteract: BlockChainInteract,
-    private val walletInteract: WalletInteract
+    private val walletInteract: WalletInteract,
+	private val tokenInteract:TokenInteract
 ) : ViewModel() {
 
     private val _publicKeyAndPrivateKey =
@@ -36,5 +38,8 @@ class ImpMnemonicViewModel @Inject constructor(
 
     suspend fun checkIfMnemonicsExist(mnemonics: List<String>, networkType: String) =
         walletInteract.checkIfMnemonicsExistInDB(mnemonics, networkType)
+
+	suspend fun getTokenDefaultOnMainScreen() = tokenInteract.getTokenListDefaultOnMainScreen()
+
 
 }

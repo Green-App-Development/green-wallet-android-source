@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.entity.Wallet
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
+import com.android.greenapp.domain.interact.TokenInteract
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,22 +15,25 @@ import javax.inject.Inject
  */
 
 class NewWalletViewModel @Inject constructor(
-    private val blockChainInteract: BlockChainInteract,
-    private val greenAppInteract: GreenAppInteract
+	private val blockChainInteract: BlockChainInteract,
+	private val greenAppInteract: GreenAppInteract,
+	private val tokenInteract: TokenInteract
 ) :
-    ViewModel() {
+	ViewModel() {
 
-    fun createNewWallet(
-        wallet: Wallet,
-        callBack: () -> Unit
-    ) = viewModelScope.launch {
-        blockChainInteract.saveNewWallet(
-            wallet=wallet,
-           imported= false
-        )
-        callBack()
-    }
+	fun createNewWallet(
+		wallet: Wallet,
+		callBack: () -> Unit
+	) = viewModelScope.launch {
+		blockChainInteract.saveNewWallet(
+			wallet = wallet,
+			imported = false
+		)
+		callBack()
+	}
 
-    suspend fun getCoinDetails(coinCode: String) = greenAppInteract.getCoinDetails(coinCode)
+	suspend fun getTokenDefaultOnMainScreen() = tokenInteract.getTokenListDefaultOnMainScreen()
+
+	suspend fun getCoinDetails(coinCode: String) = greenAppInteract.getCoinDetails(coinCode)
 
 }

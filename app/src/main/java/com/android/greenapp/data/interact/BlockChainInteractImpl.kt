@@ -143,8 +143,10 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeStamp = jsRecord.get("timestamp").asLong
 					val height = jsRecord.get("confirmed_block_index").asLong
 					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp * 1000} trantime : ${tran.created_at_time}, CoinAmount : ${coinAmount} , TranCoinAmount : ${tran.amount}")
-					//Need to add time precision timeStamp * 1000 >= tran.created_at_time-1000*60*60 &&
-					if (coinAmount == tran.amount) {
+					if (coinAmount == tran.amount && timeStamp * 1000 >= convertTimeInMillisToAlmatyTime(
+							tran.created_at_time
+						)
+					) {
 						return height
 					}
 				}
@@ -164,7 +166,8 @@ class BlockChainInteractImpl @Inject constructor(
 		fingerPrint: Long,
 		code: String,
 		dest_puzzle_hash: String,
-		address: String
+		address: String,
+		fee: Double
 	): Resource<String> {
 
 		try {
@@ -201,7 +204,6 @@ class BlockChainInteractImpl @Inject constructor(
 			if (res.isSuccessful) {
 				val status = res.body()!!.status
 				if (status == "SUCCESS") {
-					//Temporary  Generate Fake Height
 					val trans = TransactionEntity(
 						UUID.randomUUID().toString(),
 						sendAmount,
@@ -211,7 +213,7 @@ class BlockChainInteractImpl @Inject constructor(
 						networkType,
 						dest_puzzle_hash,
 						address,
-						0.0,
+						fee,
 						code
 					)
 					VLog.d("Inserting transaction entity : $trans")
@@ -307,9 +309,9 @@ class BlockChainInteractImpl @Inject constructor(
 					)!!["puzzle_hash"] as String
 					val transExistByParentInfo =
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
-					val timeValidate = timeStamp * 1000 > convertTimeInMillisToAlmatyTime(wallet.savedTime)
+					val timeValidate =
+						timeStamp * 1000 > convertTimeInMillisToAlmatyTime(wallet.savedTime)
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
-
 					if (timeStamp * 1000 >= convertTimeInMillisToAlmatyTime(wallet.savedTime) && parent_puzzle_hash.substring(
 							2
 						) != puzzleHash && !transExistByParentInfo.isPresent

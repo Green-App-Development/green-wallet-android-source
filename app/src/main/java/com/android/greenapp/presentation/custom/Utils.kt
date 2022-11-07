@@ -195,11 +195,11 @@ fun trimNetwork(networkType: String): String {
 	return networkType.replace("Network", "")
 }
 
-fun mnemonicsToString(mnemonics: List<String>): String {
+fun convertListToStringWithSpace(listString: List<String>): String {
 	var str = ""
-	for (i in 0 until mnemonics.size) {
-		str += mnemonics[i]
-		if (i != mnemonics.size - 1)
+	for (i in 0 until listString.size) {
+		str += listString[i]
+		if (i != listString.size - 1)
 			str += " "
 	}
 	return str

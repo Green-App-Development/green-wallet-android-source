@@ -16,7 +16,7 @@ class TokenInteractImpl @Inject constructor(
 ) : TokenInteract {
 
 
-	override suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode: String?): List<Token> {
+	override suspend fun getTokenListAndSearchForWallet(fingerPrint: Long, nameCode: String?): List<Token> {
 		val walletEntity = walletDoa.getWalletByFingerPrint(fingerPrint)[0]
 
 		return tokenDao.getTokenListAndSearch(nameCode).map {
@@ -31,6 +31,9 @@ class TokenInteractImpl @Inject constructor(
 			return tokenOpt.get().price
 		return 0.0
 	}
+
+	override suspend fun getTokenListDefaultOnMainScreen(): List<Token> =
+		tokenDao.getTokensDefaultOnScreen().map { it.toToken(imported = false) }
 
 
 }

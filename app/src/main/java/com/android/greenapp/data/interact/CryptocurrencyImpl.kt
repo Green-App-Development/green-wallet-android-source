@@ -122,9 +122,9 @@ class CryptocurrencyImpl @Inject constructor(
 
 
 	override suspend fun getAllTails() {
-		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0)
+		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0, 0)
 		tokenDao.insertToken(chiaTokenEntity)
-		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0)
+		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0, 0)
 		tokenDao.insertToken(chivesTokenEntity)
 		try {
 			val res = greenAppService.getAllTails()
@@ -152,8 +152,8 @@ class CryptocurrencyImpl @Inject constructor(
 	}
 
 	override suspend fun getCourseCurrencyCoin(code: String): Double {
-		val optionalToken= tokenDao.getTokenByCode(code)
-		if(optionalToken.isPresent)
+		val optionalToken = tokenDao.getTokenByCode(code)
+		if (optionalToken.isPresent)
 			return optionalToken.get().price
 		return 0.0
 	}

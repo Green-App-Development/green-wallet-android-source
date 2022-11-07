@@ -21,7 +21,7 @@ class ImportTokenViewModel @Inject constructor(
     ViewModel() {
 
     suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode: String?) =
-        tokenInteract.getTokenListAndSearch(fingerPrint, nameCode)
+        tokenInteract.getTokenListAndSearchForWallet(fingerPrint, nameCode)
 
     private var importTokenJob: Job? = null
 
