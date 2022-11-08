@@ -292,6 +292,7 @@
 	<string name="notifications_withdrawn_from_wallet" />
 	<string name="push_notifications_incoming" />
 	<string name="push_notifications_outgoing" />
+	<string name="spendable_balance" />
 
 
 </resources>

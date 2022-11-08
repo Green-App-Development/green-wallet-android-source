@@ -264,8 +264,8 @@
 				android:layout_height="wrap_content">
 
 			<androidx.constraintlayout.widget.ConstraintLayout
-					android:layout_width="match_parent"
 					android:id="@+id/send_views_constraint"
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="30dp">
 
@@ -458,6 +458,15 @@
 							android:paddingBottom="25dp">
 
 						<TextView
+								android:id="@+id/txtSpendableBalanceAmount"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_marginBottom="7dp"
+								android:text="Spendable Balance"
+								android:textColor="@color/greey"
+								android:visibility="gone" />
+
+						<TextView
 								android:id="@+id/txtEnterAmount"
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
@@ -585,6 +594,15 @@
 							android:paddingBottom="25dp">
 
 						<TextView
+								android:id="@+id/txtSpendableBalanceCommission"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_marginBottom="5dp"
+								android:text="Spendable Balance"
+								android:textColor="@color/greey"
+								android:visibility="gone" />
+
+						<TextView
 								android:id="@+id/txtEnterCommission"
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
@@ -672,7 +690,6 @@
 						app:layout_constraintStart_toStartOf="@id/guideline15" />
 
 
-
 				<androidx.constraintlayout.widget.Guideline
 						android:id="@+id/guideline15"
 						android:layout_width="wrap_content"
@@ -690,15 +707,14 @@
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
 			<LinearLayout
+					android:id="@+id/temp_linear"
 					android:layout_width="match_parent"
 					android:layout_height="200dp"
-					android:id="@+id/temp_linear"
 					android:layout_below="@id/send_views_constraint"
 					android:orientation="vertical"
 					android:visibility="gone" />
 
 		</RelativeLayout>
-
 
 
 	</ScrollView>

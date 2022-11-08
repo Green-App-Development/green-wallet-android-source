@@ -20,8 +20,8 @@ class SendFragmentViewModel @Inject constructor(
 	private val blockChainInteract: BlockChainInteract,
 	private val addressInteract: AddressInteract,
 	private val greenAppInteract: GreenAppInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract,
-	private val tokenInteract: TokenInteract
+	private val tokenInteract: TokenInteract,
+	private val transactionInteract: TransactionInteract
 ) :
 	ViewModel() {
 
@@ -45,8 +45,8 @@ class SendFragmentViewModel @Inject constructor(
 		fingerPrint: Long,
 		code: String,
 		dest_puzzle_hash: String,
-		address:String,
-		fee:Double
+		address: String,
+		fee: Double
 	) = blockChainInteract.push_tx(
 		spendBundle,
 		url,
@@ -69,5 +69,8 @@ class SendFragmentViewModel @Inject constructor(
 	suspend fun getTokenPriceByCode(code: String) = tokenInteract.getTokenPriceByCode(code)
 
 	suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
+
+	suspend fun getMempoolTransactionsByAddressAndCode(address: String, code: String,networkType: String) =
+		transactionInteract.getMempoolTransactionsAmountByAddressAndToken(address, code, networkType = networkType)
 
 }

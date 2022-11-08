@@ -147,6 +147,47 @@ class SendFragment : DaggerFragment() {
 		VLog.d("OnViewCreated on send Fragment")
 	}
 
+	@SuppressLint("SetTextI18n")
+	private fun calculateSpendableBalance() {
+		lifecycleScope.launch {
+			val curSendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
+			val curWallet = walletAdapter.walletList[walletAdapter.selectedPosition]
+			withContext(Dispatchers.IO) {
+				val sentTokenMempoolAmounts =
+					viewModel.getMempoolTransactionsByAddressAndCode(
+						address = curWallet.address,
+						curSendingToken,
+						networkType = curWallet.networkType
+					)
+//				VLog.d("Address : ${curWallet.address} , SentToken : $curSendingToken  Amounts : ${sentTokenMempoolAmounts.toList()}")
+				withContext(Dispatchers.Main) {
+					val initialAmountToken =
+						curWallet.tokenWalletList[tokenAdapter.selectedPosition].amount
+					val initialAmountNetworkTypeToken =
+						curWallet.tokenWalletList[0].amount
+					val txtSpendableBalance =
+						curActivity().getStringResource(R.string.spendable_balance)
+					binding.apply {
+						txtSpendableBalanceAmount.setText(
+							"$txtSpendableBalance: ${
+								formattedDoubleAmountWithPrecision(
+									initialAmountToken - sentTokenMempoolAmounts[0]
+								)
+							}"
+						)
+						txtSpendableBalanceCommission.setText(
+							"$txtSpendableBalance: ${
+								formattedDoubleAmountWithPrecision(
+									initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
+								)
+							}"
+						)
+					}
+				}
+			}
+		}
+	}
+
 	private fun removeGADIfCurNetworkChives(networkType: String) {
 		if (isThisChivesNetwork(networkType)) {
 			binding.txtAmountInGAD.visibility = View.GONE
@@ -268,12 +309,14 @@ class SendFragment : DaggerFragment() {
 					tokendAdapterPosition = p2
 					updateAmounts(tokenWalletList[p2])
 					checkBtnEnabled(tokenWalletList[p2])
+					calculateSpendableBalance()
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
 
 				}
 			}
+
 	}
 
 	private fun checkBtnEnabled(tokenWallet: TokenWallet) {
@@ -354,6 +397,7 @@ class SendFragment : DaggerFragment() {
 			edtEnterAmount.setOnFocusChangeListener { view, focus ->
 				if (focus) {
 					txtEnterAmount.visibility = View.VISIBLE
+					txtSpendableBalanceAmount.visibility = View.VISIBLE
 					edtEnterAmount.hint = ""
 					view2.setBackgroundColor(curActivity().getColorResource(R.color.green))
 					txtShortNetworkType.apply {
@@ -367,6 +411,7 @@ class SendFragment : DaggerFragment() {
 						text = "-"
 						setTextColor(curActivity().getColorResource(R.color.txtShortNetworkType))
 					}
+					txtSpendableBalanceAmount.visibility = View.GONE
 				}
 				if (!focus) {
 					view2.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
@@ -376,6 +421,7 @@ class SendFragment : DaggerFragment() {
 			edtEnterCommission.setOnFocusChangeListener { view, focus ->
 				if (focus) {
 					txtEnterCommission.visibility = View.VISIBLE
+					txtSpendableBalanceCommission.visibility = View.VISIBLE
 					edtEnterCommission.hint = ""
 					view3.setBackgroundColor(curActivity().getColorResource(R.color.green))
 					enterCommissionToken.apply {
@@ -393,6 +439,7 @@ class SendFragment : DaggerFragment() {
 						setTextColor(curActivity().getColorResource(R.color.txtShortNetworkType))
 					}
 					txtRecommendedCommission.visibility = View.INVISIBLE
+					txtSpendableBalanceCommission.visibility = View.GONE
 				}
 				if (!focus) {
 					view3.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
@@ -878,12 +925,16 @@ class SendFragment : DaggerFragment() {
 	private fun checkAddressAlreadyExistInDB() {
 		addressAlreadyExist?.cancel()
 		addressAlreadyExist = lifecycleScope.launch {
-			val addressList = viewModel.checkIfAddressExistInDb(curSendAddressWallet)
-			VLog.d("AddressList by given address :  ${addressList.size}")
-			if (addressList.isNotEmpty()) {
-				txtAddressAlredyExistWarning.visibility = View.VISIBLE
-			} else {
-				txtAddressAlredyExistWarning.visibility = View.GONE
+			withContext(Dispatchers.IO) {
+				val addressList = viewModel.checkIfAddressExistInDb(curSendAddressWallet)
+				VLog.d("AddressList by given address :  ${addressList.size}")
+				withContext(Dispatchers.Main) {
+					if (addressList.isNotEmpty()) {
+						txtAddressAlredyExistWarning.visibility = View.VISIBLE
+					} else {
+						txtAddressAlredyExistWarning.visibility = View.GONE
+					}
+				}
 			}
 		}
 	}
@@ -896,9 +947,11 @@ class SendFragment : DaggerFragment() {
 			txtAddressDontExistWarning.visibility = View.VISIBLE
 			lifecycleScope.launch {
 				delay(2000)
-				edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-				txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
-				txtAddressDontExistWarning.visibility = View.GONE
+				if (!this@SendFragment.isVisible) {
+					edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
+					txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
+					txtAddressDontExistWarning.visibility = View.GONE
+				}
 			}
 		}
 	}

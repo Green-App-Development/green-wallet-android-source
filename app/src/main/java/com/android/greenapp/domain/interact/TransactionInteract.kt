@@ -30,5 +30,10 @@ interface TransactionInteract {
 		today: Long?
 	): kotlinx.coroutines.flow.Flow<List<Transaction>>
 
+	suspend fun getMempoolTransactionsAmountByAddressAndToken(
+		address: String,
+		token: String,
+		networkType: String
+	): DoubleArray
 
 }
