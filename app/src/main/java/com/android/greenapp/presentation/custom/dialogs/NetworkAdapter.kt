@@ -59,11 +59,11 @@ class NetworkAdapter(private val activity: Activity, val clicker: ChooseNetworkL
 
             if (item.lowercase().contains("chia")) {
                 imgNetwork.setImageDrawable(activity.getDrawableResource(R.drawable.ic_chia_white))
-                txtNetworkName.setText(trimNetwork(item))
+                txtNetworkName.setText(item)
                 txtNetworkNameShort.setText(getShortNetworkType(item))
             } else {
                 imgNetwork.setImageDrawable(activity.getDrawableResource(R.drawable.ic_chives_white))
-                txtNetworkName.setText(trimNetwork(item))
+                txtNetworkName.setText(item)
                 txtNetworkNameShort.setText(getShortNetworkType(item))
             }
 

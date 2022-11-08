@@ -65,8 +65,6 @@ class MainViewModel @Inject constructor(
 
 	suspend fun getNightModeIsOn() = prefs.getSettingBoolean(PrefsManager.NIGHT_MODE_ON, true)
 	suspend fun getPushNotifIsOn() = prefs.getSettingBoolean(PrefsManager.PUSH_NOTIF_IS_ON, true)
-	suspend fun getBalanceIsHidden() =
-		prefs.getSettingBoolean(PrefsManager.BALANCE_IS_HIDDEN, false)
 
 	suspend fun getLastVisitedValue() = prefs.getSettingLong(PrefsManager.LAST_VISITED, 0L)
 
