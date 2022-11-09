@@ -1,12 +1,14 @@
 package com.android.greenapp.presentation.main.send
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.entity.Address
 import com.android.greenapp.domain.interact.*
 import com.android.greenapp.presentation.tools.Resource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -72,5 +74,14 @@ class SendFragmentViewModel @Inject constructor(
 
 	suspend fun getMempoolTransactionsByAddressAndCode(address: String, code: String,networkType: String) =
 		transactionInteract.getMempoolTransactionsAmountByAddressAndToken(address, code, networkType = networkType)
+
+
+	fun swipedRefreshLayout(onFinished: () -> Unit) {
+		viewModelScope.launch {
+			blockChainInteract.updateBalanceAndTransactionsPeriodically()
+			onFinished()
+		}
+	}
+
 
 }

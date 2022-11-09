@@ -1,333 +1,340 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.greenapp.presentation.custom.OnlyVerticalSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/swipeRefresh"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/primary_app_background">
+		android:layout_height="match_parent">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@color/primary_app_background">
 
 
-	<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline50"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			app:layout_constraintGuide_percent="0.04" />
-
-
-	<TextView
-			android:id="@+id/textView4"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:letterSpacing="0.02"
-			android:text="@string/transactions_title"
-			android:textColor="@color/green"
-			android:textFontWeight="600"
-			android:textSize="25sp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/guideline50" />
-
-	<RelativeLayout
-			android:id="@+id/relativeLayout3"
-			android:layout_width="0dp"
-			android:layout_height="44dp"
-			android:layout_marginTop="20dp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/textView4">
-
-		<EditText
-				android:id="@+id/edtSearchTrans"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="16dp"
-				android:layout_marginEnd="5dp"
-				android:layout_toLeftOf="@+id/img_filter"
-				android:background="@drawable/bcg_edt_search_transaction"
-				android:drawableEnd="@drawable/ic_search"
-				android:hint="@string/search"
-				android:imeOptions="actionDone"
-				android:inputType="numberDecimal"
-				android:maxLines="1"
-				android:paddingStart="15dp"
-				android:paddingTop="9dp"
-				android:paddingEnd="12dp"
-				android:paddingBottom="9dp"
-				android:singleLine="true"
-				android:textSize="18sp"
-				app:layout_constraintStart_toStartOf="parent" />
-
-		<ImageView
-				android:id="@+id/img_filter"
+		<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline50"
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:layout_alignParentTop="true"
-				android:layout_alignParentEnd="true"
-				android:layout_alignParentBottom="true"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				app:layout_constraintGuide_percent="0.04" />
+
+
+		<TextView
+				android:id="@+id/textView4"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:letterSpacing="0.02"
+				android:text="@string/transactions_title"
+				android:textColor="@color/green"
+				android:textFontWeight="600"
+				android:textSize="25sp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="@+id/guideline50" />
+
+		<RelativeLayout
+				android:id="@+id/relativeLayout3"
+				android:layout_width="0dp"
+				android:layout_height="44dp"
+				android:layout_marginTop="20dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/textView4">
+
+			<EditText
+					android:id="@+id/edtSearchTrans"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="16dp"
+					android:layout_marginEnd="5dp"
+					android:layout_toLeftOf="@+id/img_filter"
+					android:background="@drawable/bcg_edt_search_transaction"
+					android:drawableEnd="@drawable/ic_search"
+					android:hint="@string/search"
+					android:imeOptions="actionDone"
+					android:inputType="numberDecimal"
+					android:maxLines="1"
+					android:paddingStart="15dp"
+					android:paddingTop="9dp"
+					android:paddingEnd="12dp"
+					android:paddingBottom="9dp"
+					android:singleLine="true"
+					android:textSize="18sp"
+					app:layout_constraintStart_toStartOf="parent" />
+
+			<ImageView
+					android:id="@+id/img_filter"
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_alignParentTop="true"
+					android:layout_alignParentEnd="true"
+					android:layout_alignParentBottom="true"
+					android:layout_marginEnd="15dp"
+					android:src="@drawable/ic_filter_reck_not_enabled" />
+
+		</RelativeLayout>
+
+
+		<RelativeLayout
+				android:id="@+id/relativeLayout4"
+				android:layout_width="200dp"
+				android:layout_height="0dp"
+				android:layout_marginTop="5dp"
 				android:layout_marginEnd="15dp"
-				android:src="@drawable/ic_filter_reck_not_enabled" />
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
 
-	</RelativeLayout>
+			<com.android.greenapp.presentation.custom.CustomSpinner
+					android:id="@+id/date_spinner"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:background="@drawable/selector_spinner_bcg_color" />
+
+		</RelativeLayout>
 
 
-	<RelativeLayout
-			android:id="@+id/relativeLayout4"
-			android:layout_width="200dp"
-			android:layout_height="0dp"
-			android:layout_marginTop="5dp"
-			android:layout_marginEnd="15dp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
-
-		<com.android.greenapp.presentation.custom.CustomSpinner
-				android:id="@+id/date_spinner"
-				android:layout_width="match_parent"
+		<RelativeLayout
+				android:layout_width="200dp"
 				android:layout_height="0dp"
-				android:background="@drawable/selector_spinner_bcg_color" />
+				android:layout_marginTop="5dp"
+				android:layout_marginEnd="20dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/rel_txt_network">
 
-	</RelativeLayout>
+			<com.android.greenapp.presentation.custom.CustomSpinner
+					android:id="@+id/network_spinner_trans"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:background="@drawable/selector_spinner_bcg_color" />
+
+		</RelativeLayout>
 
 
-	<RelativeLayout
-			android:layout_width="200dp"
-			android:layout_height="0dp"
-			android:layout_marginTop="5dp"
-			android:layout_marginEnd="20dp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/rel_txt_network">
+		<HorizontalScrollView
+				android:id="@+id/horizontal_sorting"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="15dp"
+				android:layout_marginTop="10dp"
+				android:layout_marginEnd="20dp"
+				android:orientation="horizontal"
+				android:scrollbars="none"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
 
-		<com.android.greenapp.presentation.custom.CustomSpinner
-				android:id="@+id/network_spinner_trans"
-				android:layout_width="match_parent"
+			<LinearLayout
+					android:id="@+id/linear_sorting_by_status"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:id="@+id/txtSortingAll"
+						android:layout_width="100dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_sorting_txt"
+						android:gravity="center_horizontal"
+						android:paddingTop="6dp"
+						android:paddingBottom="6dp"
+						android:tag="txtSortingAll"
+						android:text="@string/transactions_all"
+						android:textColor="@color/sorting_txt_category"
+						android:textFontWeight="600"
+						android:textSize="14sp" />
+
+				<TextView
+						android:id="@+id/txtIncoming"
+						android:layout_width="100dp"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:layout_marginEnd="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_sorting_txt"
+						android:gravity="center_horizontal"
+						android:paddingTop="6dp"
+						android:paddingBottom="6dp"
+						android:tag="Incoming"
+						android:text="@string/transactions_incoming"
+						android:textColor="@color/sorting_txt_category"
+						android:textFontWeight="600"
+						android:textSize="14sp" />
+
+				<TextView
+						android:id="@+id/txtOutgoing"
+						android:layout_width="100dp"
+						android:layout_height="wrap_content"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_sorting_txt"
+						android:gravity="center_horizontal"
+						android:paddingTop="6dp"
+						android:paddingBottom="6dp"
+						android:tag="Outgoing"
+						android:text="@string/incoming_outgoing"
+						android:textColor="@color/sorting_txt_category"
+						android:textFontWeight="500"
+						android:textSize="14sp" />
+
+				<TextView
+						android:id="@+id/txtInProgress"
+						android:layout_width="100dp"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:layout_marginEnd="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_sorting_txt"
+						android:gravity="center_horizontal"
+						android:paddingTop="6dp"
+						android:paddingBottom="6dp"
+						android:tag="InProgress"
+						android:text="@string/transactions_pendind"
+						android:textColor="@color/sorting_txt_category"
+						android:textFontWeight="500"
+						android:textSize="14sp" />
+
+				<RelativeLayout
+						android:id="@+id/dummy_view_place_holder"
+						android:layout_width="50dp"
+						android:layout_height="0dp"
+						android:layout_marginTop="10dp"
+						android:layout_marginEnd="15dp"
+						android:gravity="center_vertical"
+						android:paddingTop="6dp"
+						android:paddingBottom="6dp"
+						app:layout_constraintBottom_toBottomOf="@+id/linear_sorting"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+
+			</LinearLayout>
+
+
+		</HorizontalScrollView>
+
+		<androidx.appcompat.widget.LinearLayoutCompat
+				android:id="@+id/rel_txt_network"
+				android:layout_width="wrap_content"
 				android:layout_height="0dp"
-				android:background="@drawable/selector_spinner_bcg_color" />
+				android:layout_marginTop="10dp"
+				android:layout_marginEnd="15dp"
+				android:background="@color/primary_app_background"
+				android:gravity="center_vertical"
+				android:orientation="horizontal"
+				android:paddingStart="8dp"
+				android:paddingTop="6dp"
+				android:paddingEnd="0dp"
+				android:paddingBottom="6dp"
+				app:layout_constraintBottom_toBottomOf="@+id/horizontal_sorting"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
 
-	</RelativeLayout>
+			<ImageView
+					android:id="@+id/imgArrow"
+					android:layout_width="15dp"
+					android:layout_height="15dp"
+					android:layout_centerVertical="true"
+					android:layout_marginEnd="8dp"
+					android:layout_toStartOf="@+id/txtNetworkType"
+					android:src="@drawable/ic_arrow_downword" />
+
+			<TextView
+					android:id="@+id/txtNetworkType"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Chives TestNet"
+					android:textColor="@color/green"
+					android:textFontWeight="500"
+					android:textSize="15sp" />
 
 
-	<HorizontalScrollView
-			android:id="@+id/horizontal_sorting"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="15dp"
-			android:layout_marginTop="10dp"
-			android:layout_marginEnd="20dp"
-			android:orientation="horizontal"
-			android:scrollbars="none"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
+		</androidx.appcompat.widget.LinearLayoutCompat>
+
 
 		<LinearLayout
-				android:id="@+id/linear_sorting_by_status"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content">
+				android:id="@+id/root_transaction_item"
+				android:layout_width="match_parent"
+				android:layout_height="45dp"
+				android:layout_marginTop="22dp"
+				android:background="@color/bcg_transaction_prop"
+				android:orientation="horizontal"
+				android:weightSum="100"
+				app:layout_constraintTop_toBottomOf="@+id/horizontal_sorting">
 
 			<TextView
-					android:id="@+id/txtSortingAll"
-					android:layout_width="100dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:background="@drawable/bcg_sorting_txt"
-					android:gravity="center_horizontal"
-					android:paddingTop="6dp"
-					android:paddingBottom="6dp"
-					android:tag="txtSortingAll"
-					android:text="@string/transactions_all"
-					android:textColor="@color/sorting_txt_category"
-					android:textFontWeight="600"
-					android:textSize="14sp" />
-
-			<TextView
-					android:id="@+id/txtIncoming"
-					android:layout_width="100dp"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="5dp"
-					android:layout_marginEnd="5dp"
-					android:layout_weight="1"
-					android:background="@drawable/bcg_sorting_txt"
-					android:gravity="center_horizontal"
-					android:paddingTop="6dp"
-					android:paddingBottom="6dp"
-					android:tag="Incoming"
-					android:text="@string/transactions_incoming"
-					android:textColor="@color/sorting_txt_category"
-					android:textFontWeight="600"
-					android:textSize="14sp" />
-
-			<TextView
-					android:id="@+id/txtOutgoing"
-					android:layout_width="100dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:background="@drawable/bcg_sorting_txt"
-					android:gravity="center_horizontal"
-					android:paddingTop="6dp"
-					android:paddingBottom="6dp"
-					android:tag="Outgoing"
-					android:text="@string/incoming_outgoing"
-					android:textColor="@color/sorting_txt_category"
-					android:textFontWeight="500"
-					android:textSize="14sp" />
-
-			<TextView
-					android:id="@+id/txtInProgress"
-					android:layout_width="100dp"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="5dp"
-					android:layout_marginEnd="5dp"
-					android:layout_weight="1"
-					android:background="@drawable/bcg_sorting_txt"
-					android:gravity="center_horizontal"
-					android:paddingTop="6dp"
-					android:paddingBottom="6dp"
-					android:tag="InProgress"
-					android:text="@string/transactions_pendind"
-					android:textColor="@color/sorting_txt_category"
-					android:textFontWeight="500"
-					android:textSize="14sp" />
-
-			<RelativeLayout
-					android:id="@+id/dummy_view_place_holder"
-					android:layout_width="50dp"
-					android:layout_height="0dp"
-					android:layout_marginTop="10dp"
-					android:layout_marginEnd="15dp"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginStart="15dp"
+					android:layout_weight="30"
 					android:gravity="center_vertical"
-					android:paddingTop="6dp"
-					android:paddingBottom="6dp"
-					app:layout_constraintBottom_toBottomOf="@+id/linear_sorting"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+					android:text="@string/transactions_status"
+					android:textColor="@color/txt_trans_property"
+					android:textFontWeight="600"
+					android:textSize="15sp" />
+
+			<TextView
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_weight="30"
+					android:gravity="center_vertical"
+					android:text="@string/transactions_height"
+					android:textColor="@color/txt_trans_property"
+					android:textFontWeight="600"
+					android:textSize="15sp"
+					tools:ignore="RtlSymmetry" />
+
+			<TextView
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_weight="40"
+					android:gravity="center"
+					android:text="@string/transactions_amount"
+					android:textColor="@color/txt_trans_property"
+					android:textFontWeight="600"
+					android:textSize="15sp" />
+
 
 		</LinearLayout>
 
+		<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/rec_transaction_items"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:visibility="gone"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/root_transaction_item"
+				tools:listitem="@layout/item_transaction">
 
-	</HorizontalScrollView>
-
-	<androidx.appcompat.widget.LinearLayoutCompat
-			android:id="@+id/rel_txt_network"
-			android:layout_width="wrap_content"
-			android:layout_height="0dp"
-			android:layout_marginTop="10dp"
-			android:layout_marginEnd="15dp"
-			android:background="@color/primary_app_background"
-			android:gravity="center_vertical"
-			android:paddingTop="6dp"
-			android:paddingBottom="6dp"
-			android:paddingStart="8dp"
-			android:paddingEnd="0dp"
-			android:orientation="horizontal"
-			app:layout_constraintBottom_toBottomOf="@+id/horizontal_sorting"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
-
-		<ImageView
-				android:id="@+id/imgArrow"
-				android:layout_width="15dp"
-				android:layout_height="15dp"
-				android:layout_centerVertical="true"
-				android:layout_marginEnd="8dp"
-				android:layout_toStartOf="@+id/txtNetworkType"
-				android:src="@drawable/ic_arrow_downword" />
+		</androidx.recyclerview.widget.RecyclerView>
 
 		<TextView
-				android:id="@+id/txtNetworkType"
+				android:id="@+id/txt_no_trans"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:text="@string/no_transactions_yet"
+				android:textColor="@color/txt_no_trans"
+				android:textSize="16sp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toStartOf="@+id/guideline56"
+				app:layout_constraintStart_toStartOf="@+id/guideline55"
+				app:layout_constraintTop_toBottomOf="@+id/root_transaction_item" />
+
+		<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline55"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Chives TestNet"
-				android:textColor="@color/green"
-				android:textFontWeight="500"
-				android:textSize="15sp" />
+				android:orientation="vertical"
+				app:layout_constraintGuide_percent="0.15" />
 
+		<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline56"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				app:layout_constraintGuide_percent="0.85" />
 
-	</androidx.appcompat.widget.LinearLayoutCompat>
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
-
-	<LinearLayout
-			android:id="@+id/root_transaction_item"
-			android:layout_width="match_parent"
-			android:layout_height="45dp"
-			android:layout_marginTop="22dp"
-			android:background="@color/bcg_transaction_prop"
-			android:orientation="horizontal"
-			android:weightSum="100"
-			app:layout_constraintTop_toBottomOf="@+id/horizontal_sorting">
-
-		<TextView
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_marginStart="15dp"
-				android:layout_weight="30"
-				android:gravity="center_vertical"
-				android:text="@string/transactions_status"
-				android:textColor="@color/txt_trans_property"
-				android:textFontWeight="600"
-				android:textSize="15sp" />
-
-		<TextView
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="30"
-				android:gravity="center_vertical"
-				android:text="@string/transactions_height"
-				android:textColor="@color/txt_trans_property"
-				android:textFontWeight="600"
-				android:textSize="15sp"
-				tools:ignore="RtlSymmetry" />
-
-		<TextView
-				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="40"
-				android:gravity="center"
-				android:text="@string/transactions_amount"
-				android:textColor="@color/txt_trans_property"
-				android:textFontWeight="600"
-				android:textSize="15sp" />
-
-
-	</LinearLayout>
-
-	<androidx.recyclerview.widget.RecyclerView
-			android:id="@+id/rec_transaction_items"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:visibility="gone"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/root_transaction_item"
-			tools:listitem="@layout/item_transaction">
-
-	</androidx.recyclerview.widget.RecyclerView>
-
-	<TextView
-			android:id="@+id/txt_no_trans"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:gravity="center_horizontal"
-			android:text="@string/no_transactions_yet"
-			android:textColor="@color/txt_no_trans"
-			android:textSize="16sp"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toStartOf="@+id/guideline56"
-			app:layout_constraintStart_toStartOf="@+id/guideline55"
-			app:layout_constraintTop_toBottomOf="@+id/root_transaction_item" />
-
-	<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline55"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			app:layout_constraintGuide_percent="0.15" />
-
-	<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline56"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			app:layout_constraintGuide_percent="0.85" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.android.greenapp.presentation.custom.OnlyVerticalSwipeRefreshLayout>

@@ -1,6 +1,7 @@
 package com.android.greenapp.presentation.main.transaction
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.entity.Transaction
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.TransactionInteract
@@ -10,6 +11,7 @@ import com.example.common.tools.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -89,6 +91,16 @@ class TransactionsViewModel @Inject constructor(
 		)
 	}
 
+
+
 	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
+
+	fun swipedRefreshLayout(onFinished: () -> Unit) {
+		viewModelScope.launch {
+			blockChainInteract.updateBalanceAndTransactionsPeriodically()
+			onFinished()
+		}
+	}
+
 
 }

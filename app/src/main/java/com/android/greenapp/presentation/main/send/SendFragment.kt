@@ -145,6 +145,22 @@ class SendFragment : DaggerFragment() {
 		initMoveFocusToEnterAmount()
 		determineOneWalletShow()
 		VLog.d("OnViewCreated on send Fragment")
+		initSwipeRefreshLayout()
+	}
+
+
+	private fun initSwipeRefreshLayout() {
+		binding.swipeRefresh.apply {
+			setOnRefreshListener {
+				viewModel.swipedRefreshLayout {
+					if (this@SendFragment.isVisible) {
+						isRefreshing = false
+					}
+				}
+			}
+			setColorSchemeResources(R.color.green)
+
+		}
 	}
 
 	@SuppressLint("SetTextI18n")

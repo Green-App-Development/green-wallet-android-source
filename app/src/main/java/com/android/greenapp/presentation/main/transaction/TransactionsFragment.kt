@@ -106,6 +106,23 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		initTransactionItemAdapter()
 		sortingByHeightAndSum()
 		updateTransactions()
+		initSwipeRefreshLayout()
+	}
+
+
+
+	private fun initSwipeRefreshLayout() {
+		binding.swipeRefresh.apply {
+			setOnRefreshListener {
+				viewModel.swipedRefreshLayout {
+					if (this@TransactionsFragment.isVisible) {
+						isRefreshing = false
+					}
+				}
+			}
+			setColorSchemeResources(R.color.green)
+
+		}
 	}
 
 	private fun updateTransactions() {

@@ -163,7 +163,7 @@ class App : DaggerApplication() {
 			}
 			launch {
 				val nightMode =
-					prefs.getSettingBoolean(PrefsManager.NIGHT_MODE_ON, default = false)
+					prefs.getSettingBoolean(PrefsManager.NIGHT_MODE_ON, default = true)
 				withContext(Dispatchers.Main) {
 					AppCompatDelegate.setDefaultNightMode(if (nightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO)
 				}

@@ -375,8 +375,11 @@ class MainActivity : BaseActivity() {
 		navController.navigate(homeFragment)
 	}
 
-	fun move2TransactionsFragment(fingerPrint: Long = 0,address:String="") {
-		val bundle = bundleOf(TransactionsFragment.FINGER_PRINT_KEY to fingerPrint,TransactionsFragment.ADDRESS_KEY to address)
+	fun move2TransactionsFragment(fingerPrint: Long = 0, address: String = "") {
+		val bundle = bundleOf(
+			TransactionsFragment.FINGER_PRINT_KEY to fingerPrint,
+			TransactionsFragment.ADDRESS_KEY to address
+		)
 		binding.mainBottomNav.menu.findItem(transactions).isChecked = true
 		navController.navigate(transactionsFragment, bundle)
 	}
@@ -460,7 +463,7 @@ class MainActivity : BaseActivity() {
 		fingerPrint: Long,
 		main_puzzle_hash: String,
 		networkType: String = "Chia Network",
-		address:String
+		address: String
 	) {
 		val bundle = bundleOf(
 			ImportTokenFragment.FINGER_PRINT_KEY to fingerPrint,
@@ -646,7 +649,7 @@ class MainActivity : BaseActivity() {
 
 			val res = mainViewModel.getAvailableNetworkItems()
 
-			VLog.d("All NetworkItems List to create or import new wallet : $res")
+			VLog.d("All NetworkItems List to create or import new wallet : ${res.data?.toList()}")
 
 			when (res.state) {
 				Resource.State.SUCCESS -> {
