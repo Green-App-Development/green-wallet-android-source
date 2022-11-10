@@ -188,58 +188,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		}
 	}
 
-	private fun highlightingWordTermsOfUseSecondVersion() {
-		try {
-			val agreementText = binding.checkboxText.text.toString()
-			val curText = agreementText.split(' ')
-			VLog.d("Locale : ${Restring.locale}")
-			var length = 0
-			var countWords = if (Restring.locale.toString() == "ru") 2 else 3
-			for (i in curText.size - 1 downTo curText.size - countWords) {
-				length += curText[i].length
-			}
-			length += countWords - 1
-			val startingIndex = agreementText.length - length
-			VLog.d("Starting Index : $startingIndex")
-			val text = agreementText
-			val ss = SpannableString(text)
-			val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
-			val underlineSpan = UnderlineSpan()
-			val clickableSpan = object : ClickableSpan() {
-				override fun onClick(p0: View) {
-					VLog.d("Terms been clicked on impmnemonicsfragment")
-					curActivity().move2CoinsDetailsFragment(
-						curNetworkType,
-						forImportMnemonics = true
-					)
-				}
-			}
-			ss.setSpan(
-				fcsGreen,
-				startingIndex,
-				text.length,
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-			)
-			ss.setSpan(
-				underlineSpan,
-				startingIndex,
-				text.length,
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-			)
-			ss.setSpan(
-				clickableSpan,
-				startingIndex,
-				text.length,
-				Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-			)
-			binding.apply {
-				checkboxText.text = ss
-				checkboxText.movementMethod = LinkMovementMethod.getInstance()
-			}
-		} catch (ex: Exception) {
-			VLog.d("Exception occurred : ${ex.message}")
-		}
-	}
 
 	private fun getArrayOf12WordsFromLinear12(): Array<String> {
 		val array_12_words = Array(12) { "" }
@@ -400,7 +348,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			val walletExist = impMnemonicViewModel.checkIfMnemonicsExist(mnemonics, curNetworkType)
 			if (walletExist.isPresent && walletExist.get()) {
 				curActivity().apply {
-					if(!this.isFinishing) {
+					if (!this.isFinishing) {
 						dialogManager.showFailureDialog(
 							this,
 							getStringResource(R.string.pop_up_failed_error_title),
@@ -415,7 +363,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			}
 			dialogManager.showProgress(curActivity())
 			VLog.d("Mnemonics om import : $mnemonics")
-			curActivity().curMnemonicCode = Mnemonics.MnemonicCode(convertListToStringWithSpace(mnemonics))
+			curActivity().curMnemonicCode =
+				Mnemonics.MnemonicCode(convertListToStringWithSpace(mnemonics))
 			callingFlutterMethodToGenerateHash()
 			listenToMethodCallFromFlutter()
 		}
@@ -772,12 +721,15 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		linearLayout: LinearLayout
 	) {
 		VLog.d("LinearLayoutCont for 24 Words : ${linearLayout.childCount}")
+		var lastEdt: EditText? = null
 		var at = 0
 		try {
 			for (i in 0 until 12) {
 				val pairLayout = linearLayout.getChildAt(i)
 				val everyPair = pairLayout as LinearLayout
 				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
+				if (at < mnemonics.size)
+					lastEdt = leftEdt
 				if (leftEdt.text.toString().isEmpty() && at < mnemonics.size) {
 					leftEdt.setText(mnemonics[at++])
 				}
@@ -786,6 +738,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				val pairLayout = linearLayout.getChildAt(i)
 				val everyPair = pairLayout as LinearLayout
 				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
+				if (at < mnemonics.size)
+					lastEdt = rightEdt
 				if (rightEdt.text.toString().isEmpty() && at < mnemonics.size) {
 					rightEdt.setText(mnemonics[at++])
 				}
@@ -793,12 +747,14 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		} catch (ex: java.lang.Exception) {
 			VLog.d("Exception in filling edt with copied words : ${ex.message}")
 		}
+		lastEdt?.requestFocus()
 	}
 
 	private fun fillEdtWithCopiedMnemonics12Words(
 		mnemonics: List<String>,
 		linearLayout: LinearLayout
 	) {
+		var lastEdt: EditText? = null
 		var at = 0
 		try {
 			for (pairLayout in linearLayout.children) {
@@ -806,12 +762,17 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
 				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
 				leftEdt.setText(mnemonics[at])
+				if (at < mnemonics.size)
+					lastEdt = leftEdt
 				rightEdt.setText(mnemonics[at + 6])
+				if (at < mnemonics.size)
+					lastEdt = rightEdt
 				at++
 			}
 		} catch (ex: java.lang.Exception) {
 			VLog.d("Exception in filling edt with copied words : ${ex.message}")
 		}
+		lastEdt?.requestFocus()
 	}
 
 

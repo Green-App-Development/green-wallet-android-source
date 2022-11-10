@@ -34,4 +34,7 @@ interface TokenDao {
 	@Query("SELECT * FROM TokenEntity WHERE default_tail==1")
 	suspend fun getTokensDefaultOnScreen(): List<TokenEntity>
 
+	@Query("DELETE FROM TokenEntity")
+	suspend fun dropTokenTable()
+
 }

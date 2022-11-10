@@ -128,6 +128,8 @@ class CryptocurrencyImpl @Inject constructor(
 
 
 	override suspend fun getAllTails() {
+		tokenDao.dropTokenTable()
+		VLog.d("All Tokens After dropping it : ${tokenDao.getTokensDefaultOnScreen()}")
 		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0, 0)
 		tokenDao.insertToken(chiaTokenEntity)
 		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0, 0)
