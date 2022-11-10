@@ -159,7 +159,6 @@ class SendFragment : DaggerFragment() {
 				}
 			}
 			setColorSchemeResources(R.color.green)
-
 		}
 	}
 

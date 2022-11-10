@@ -1,16 +1,22 @@
 package com.android.greenapp.data.interact
 
+import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.entity.TokenEntity
 import com.android.greenapp.data.network.CryptocurrencyService
 import com.android.greenapp.data.network.GreenAppService
+import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
+import com.android.greenapp.data.preference.PrefsManager
+import com.android.greenapp.data.preference.PrefsManager.Companion.ALL_NETWORK_ITEMS_LIST
 import com.android.greenapp.domain.entity.CurrencyItem
 import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCurNetworkPrev24ChangeDouble
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
+import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.*
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.json.JSONObject
@@ -126,8 +132,12 @@ class CryptocurrencyImpl @Inject constructor(
 		tokenDao.insertToken(chiaTokenEntity)
 		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0, 0)
 		tokenDao.insertToken(chivesTokenEntity)
+		val jsonAllNetworkItemList = prefs.getObjectString(ALL_NETWORK_ITEMS_LIST)
+		val type = object : TypeToken<MutableList<NetworkItem>>() {}.type
+		val chiaName =
+			gson.fromJson<List<NetworkItem>>(jsonAllNetworkItemList, type)[0].name
 		try {
-			val res = greenAppService.getAllTails()
+			val res = greenAppService.getAllTails(chiaName)
 			if (res.isSuccessful) {
 
 				val baseResSuccess = res.body()!!.success

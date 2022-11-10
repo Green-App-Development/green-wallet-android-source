@@ -55,7 +55,5 @@ class WalletListViewModel @Inject constructor(
 
 	suspend fun decreaseHomeAddCounter() = prefs.decreaseHomeAddedCounter()
 
-	suspend fun getAvailableNetworkItems() =
-		greenAppInteract.getAllNetworkItemsListFromPrefs()
 
 }

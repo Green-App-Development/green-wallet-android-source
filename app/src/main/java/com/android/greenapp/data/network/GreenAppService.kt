@@ -65,7 +65,7 @@ interface GreenAppService {
 
 
     @GET("tails")
-    suspend fun getAllTails(@Query("blockchain") blockChain: String = "Chia Network"): Response<TokenBaseResponse>
+    suspend fun getAllTails(@Query("blockchain") blockChain: String): Response<TokenBaseResponse>
 
     @GET("tails/price")
     suspend fun getAllTailsPrice(): Response<JsonObject>

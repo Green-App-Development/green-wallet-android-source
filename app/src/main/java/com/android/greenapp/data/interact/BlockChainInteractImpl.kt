@@ -1,6 +1,8 @@
 package com.android.greenapp.data.interact
 
+import android.content.Context
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.TokenDao
@@ -23,8 +25,12 @@ import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
 import com.example.common.tools.convertDateFormatToMilliSeconds
+import com.example.common.tools.formattedTime
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.text.SimpleDateFormat
@@ -44,7 +50,8 @@ class BlockChainInteractImpl @Inject constructor(
 	private val gson: Gson,
 	private val tokenDao: TokenDao,
 	private val encryptor: AESEncryptor,
-	private val notificationHelper: NotificationHelper
+	private val notificationHelper: NotificationHelper,
+	private val context: Context
 ) :
 	BlockChainInteract {
 
@@ -143,9 +150,17 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeStamp = jsRecord.get("timestamp").asLong
 					val height = jsRecord.get("confirmed_block_index").asLong
 					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp * 1000} trantime : ${tran.created_at_time}, CoinAmount : ${coinAmount} , TranCoinAmount : ${tran.amount}")
-					if (coinAmount == tran.amount && timeStamp * 1000 >= convertTimeInMillisToAlmatyTime(
-							tran.created_at_time
-						)
+//					if (coinAmount == tran.amount) {
+//						withContext(Dispatchers.Main) {
+//							Toast.makeText(
+//								context,
+//								"C : ${formattedTime(timeStamp * 1000)} ,T : ${formattedTime(tran.created_at_time)}",
+//								Toast.LENGTH_SHORT
+//							).show()
+//						}
+//					}
+					if (coinAmount == tran.amount && timeStamp * 1000 >=
+						tran.created_at_time
 					) {
 						return height
 					}
@@ -171,6 +186,7 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 
 		try {
+			val timeBeforePushingTrans = System.currentTimeMillis() - 1000 * 60
 			VLog.d("Push method got called in data layer code : $networkType")
 			val curBlockChainService =
 				retrofitBuilder.baseUrl("$url/").build()
@@ -204,10 +220,11 @@ class BlockChainInteractImpl @Inject constructor(
 			if (res.isSuccessful) {
 				val status = res.body()!!.status
 				if (status == "SUCCESS") {
+					delay(1000)
 					val trans = TransactionEntity(
 						UUID.randomUUID().toString(),
 						sendAmount,
-						System.currentTimeMillis(),
+						timeBeforePushingTrans,
 						0,
 						Status.InProgress,
 						networkType,
@@ -312,7 +329,7 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeValidate =
 						timeStamp * 1000 > convertTimeInMillisToAlmatyTime(wallet.savedTime)
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
-					if (timeStamp * 1000 >= convertTimeInMillisToAlmatyTime(wallet.savedTime) && parent_puzzle_hash.substring(
+					if (timeStamp * 1000 >= wallet.savedTime && parent_puzzle_hash.substring(
 							2
 						) != puzzleHash && !transExistByParentInfo.isPresent
 					) {
@@ -446,7 +463,7 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
 					val timeValidate = timeStamp * 1000 > wallet.savedTime
 					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != wallet.sk
-					if (timeStamp * 1000 >= convertTimeInMillisToAlmatyTime(wallet.savedTime) && parent_puzzle_hash.substring(
+					if (timeStamp * 1000 >= wallet.savedTime && parent_puzzle_hash.substring(
 							2
 						) != wallet.sk && !transExistByParentInfo.isPresent
 					) {

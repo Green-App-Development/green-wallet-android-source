@@ -10,7 +10,7 @@ const val MORNING_STARTS_MINUTE = 6 * 60
 const val NOON_STARTS_MINUTE = 12 * 60
 const val EVENING_STARTS_MINUTE = 18 * 60
 
-const val BASE_URL_GREEN_APP = "https://greenapp.siterepository.ru/api/v1.0/"
+const val BASE_URL_GREEN_APP = "https://admin.green-app.io/api/v1.0/"
 const val BASE_URL_BLOCKCHAIN = "https://chia.blockchain-list.store/wallet/"
 
 const val BASE_URL_CRYPTO_CHIA = "https://api.huobi.pro/market/tickers"
