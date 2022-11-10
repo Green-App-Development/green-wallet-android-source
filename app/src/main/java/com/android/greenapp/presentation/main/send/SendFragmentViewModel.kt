@@ -23,7 +23,8 @@ class SendFragmentViewModel @Inject constructor(
 	private val addressInteract: AddressInteract,
 	private val greenAppInteract: GreenAppInteract,
 	private val tokenInteract: TokenInteract,
-	private val transactionInteract: TransactionInteract
+	private val transactionInteract: TransactionInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract
 ) :
 	ViewModel() {
 
@@ -79,6 +80,8 @@ class SendFragmentViewModel @Inject constructor(
 	fun swipedRefreshLayout(onFinished: () -> Unit) {
 		viewModelScope.launch {
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
+			cryptocurrencyInteract.getAllTails()
+			greenAppInteract.requestOtherNotifItems()
 			onFinished()
 		}
 	}

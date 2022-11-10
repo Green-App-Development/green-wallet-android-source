@@ -23,7 +23,8 @@ class HomeFragmentViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val walletInteract: WalletInteract,
 	private val cryptocurrencyInteract: CryptocurrencyInteract,
-	private val blockChainInteract: BlockChainInteract
+	private val blockChainInteract: BlockChainInteract,
+	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
 	private var updateTrans: Job? = null
@@ -91,9 +92,11 @@ class HomeFragmentViewModel @Inject constructor(
 		}
 	}
 
-	fun swipedRefreshLayout(onFinished: () -> Unit) {
+	fun swipedRefreshClicked(onFinished: () -> Unit) {
 		viewModelScope.launch {
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
+			cryptocurrencyInteract.getAllTails()
+			greenAppInteract.requestOtherNotifItems()
 			onFinished()
 		}
 	}

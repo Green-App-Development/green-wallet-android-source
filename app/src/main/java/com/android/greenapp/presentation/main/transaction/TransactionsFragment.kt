@@ -114,7 +114,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
-				viewModel.swipedRefreshLayout {
+				viewModel.swipedRefreshClicked {
 					if (this@TransactionsFragment.isVisible) {
 						isRefreshing = false
 					}

@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
-import com.example.common.tools.formattedTime
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -114,18 +112,9 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
-				homeFragmentViewModel.swipedRefreshLayout {
+				homeFragmentViewModel.swipedRefreshClicked {
 					if (this@HomeFragment.isVisible) {
 						isRefreshing = false
-						Toast.makeText(
-							curActivity(), "Time in Almaty relative with yours : ${
-								formattedTime(
-									convertTimeInMillisToAlmatyTime(
-										System.currentTimeMillis()
-									)
-								)
-							}", Toast.LENGTH_SHORT
-						).show()
 					}
 				}
 			}

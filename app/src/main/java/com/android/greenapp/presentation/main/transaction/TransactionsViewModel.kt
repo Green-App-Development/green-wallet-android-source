@@ -3,9 +3,7 @@ package com.android.greenapp.presentation.main.transaction
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.entity.Transaction
-import com.android.greenapp.domain.interact.BlockChainInteract
-import com.android.greenapp.domain.interact.TransactionInteract
-import com.android.greenapp.domain.interact.WalletInteract
+import com.android.greenapp.domain.interact.*
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.*
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +19,9 @@ import javax.inject.Inject
 class TransactionsViewModel @Inject constructor(
 	private val transactionInteract: TransactionInteract,
 	private val blockChainInteract: BlockChainInteract,
-	private val walletInteract: WalletInteract
+	private val walletInteract: WalletInteract,
+	private val greenAppInteract: GreenAppInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract
 ) :
 	ViewModel() {
 
@@ -95,9 +95,11 @@ class TransactionsViewModel @Inject constructor(
 
 	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
-	fun swipedRefreshLayout(onFinished: () -> Unit) {
+	fun swipedRefreshClicked(onFinished: () -> Unit) {
 		viewModelScope.launch {
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
+			cryptocurrencyInteract.getAllTails()
+			greenAppInteract.requestOtherNotifItems()
 			onFinished()
 		}
 	}
