@@ -325,36 +325,6 @@ class WalletInteractImpl @Inject constructor(
 		walletDao.updateChiaNetworkHashListImportedByAddress(address, hashListImported)
 	}
 
-	private suspend fun importNewToken(
-		hash: String,
-		curBlockChainService: BlockChainService
-	): Resource<String> {
-
-		val body = hashMapOf<String, Any>()
-		body["wallet_type"] = "cat_wallet"
-		body["mode"] = "existing"
-		body["asset_id"] = hash
-		val res = curBlockChainService.addNewToken(body)
-		if (res.isSuccessful) {
-			//Update wallet in db
-			val success = res.body()!!.success
-			if (success) {
-				return Resource.success("OK")
-			} else {
-				VLog.e("Success for adding new token is false from the server : ${res.body()!!.error}")
-			}
-		} else {
-			VLog.e("Request for importing new token is not success : ")
-		}
-		return Resource.error(Exception("Exception in adding importing token"))
-	}
-
-	private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {
-		val item = prefsInteract.getObjectString(getPreferenceKeyForNetworkItem(networkType))
-		if (item.isEmpty()) return null
-		return gson.fromJson(item, NetworkItem::class.java)
-	}
-
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)
 

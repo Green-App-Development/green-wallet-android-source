@@ -17,7 +17,8 @@ data class TokenEntity(
 	val hash: String,
 	val logo_url: String,
 	val price: Double = 0.0,
-	val default_tail: Int
+	val default_tail: Int,
+	var enabled: Boolean
 ) {
 
 	fun toToken(imported: Boolean) = Token(name, code, hash, logo_url, imported, default_tail)

@@ -10,5 +10,12 @@ data class TokenDto(
 	val logo_url: String?,
 	val default_tail: Int
 ) {
-	fun toTokenEntity() = TokenEntity(code, name, hash, logo_url ?: "", default_tail = default_tail)
+	fun toTokenEntity() = TokenEntity(
+		code,
+		name,
+		hash,
+		logo_url ?: "",
+		default_tail = default_tail,
+		enabled = true
+	)
 }

@@ -128,12 +128,18 @@ class CryptocurrencyImpl @Inject constructor(
 
 
 	override suspend fun getAllTails() {
-		tokenDao.dropTokenTable()
-		VLog.d("All Tokens After dropping it : ${tokenDao.getTokensDefaultOnScreen()}")
-		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0, 0)
+		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0, 0, true)
 		tokenDao.insertToken(chiaTokenEntity)
-		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0, 0)
+		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0, 0, true)
 		tokenDao.insertToken(chivesTokenEntity)
+
+		//make all tails enabled false
+		val existingTails = tokenDao.getTokenListAndSearch(null)
+		for (tail in existingTails) {
+			tail.enabled = false
+			tokenDao.insertToken(tail)
+		}
+
 		val jsonAllNetworkItemList = prefs.getObjectString(ALL_NETWORK_ITEMS_LIST)
 		val type = object : TypeToken<MutableList<NetworkItem>>() {}.type
 		val chiaName =
@@ -157,7 +163,6 @@ class CryptocurrencyImpl @Inject constructor(
 			} else {
 				VLog.d("Response is not successful getting tails: ${res.body()}")
 			}
-
 		} catch (ex: Exception) {
 			VLog.d("Exception in getting tail list  : $ex")
 		}

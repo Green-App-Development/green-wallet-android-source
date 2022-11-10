@@ -150,15 +150,6 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeStamp = jsRecord.get("timestamp").asLong
 					val height = jsRecord.get("confirmed_block_index").asLong
 					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp * 1000} trantime : ${tran.created_at_time}, CoinAmount : ${coinAmount} , TranCoinAmount : ${tran.amount}")
-//					if (coinAmount == tran.amount) {
-//						withContext(Dispatchers.Main) {
-//							Toast.makeText(
-//								context,
-//								"C : ${formattedTime(timeStamp * 1000)} ,T : ${formattedTime(tran.created_at_time)}",
-//								Toast.LENGTH_SHORT
-//							).show()
-//						}
-//					}
 					if (coinAmount == tran.amount && timeStamp * 1000 >=
 						tran.created_at_time
 					) {
@@ -220,7 +211,6 @@ class BlockChainInteractImpl @Inject constructor(
 			if (res.isSuccessful) {
 				val status = res.body()!!.status
 				if (status == "SUCCESS") {
-					delay(1000)
 					val trans = TransactionEntity(
 						UUID.randomUUID().toString(),
 						sendAmount,
