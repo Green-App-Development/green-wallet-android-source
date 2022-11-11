@@ -97,6 +97,7 @@ class HomeFragmentViewModel @Inject constructor(
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
 			cryptocurrencyInteract.getAllTails()
 			greenAppInteract.requestOtherNotifItems()
+			cryptocurrencyInteract.updateCourseCryptoInDb()
 			onFinished()
 		}
 	}

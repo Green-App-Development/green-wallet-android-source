@@ -83,7 +83,7 @@ class CryptocurrencyImpl @Inject constructor(
 		}
 	}
 
-	private suspend fun updateTokensPrice() {
+	suspend fun updateTokensPrice() {
 		try {
 			val res = greenAppService.getAllTailsPrice()
 			if (res.isSuccessful) {
@@ -91,7 +91,13 @@ class CryptocurrencyImpl @Inject constructor(
 					res.body()!!.asJsonObject.getAsJsonObject("result").getAsJsonArray("list")
 				for (tokenJson in tailPricesList) {
 					val tokenCode = tokenJson.asJsonObject["code"].asString
-					val tokenPrice = tokenJson.asJsonObject["price"].asDouble
+					var tokenPrice = 0.0
+					if (!JSONObject(tokenJson.toString()).isNull("price")) {
+						tokenPrice =
+							tokenJson.asJsonObject["price"].asString.toDoubleOrNull() ?: 0.0
+					}else {
+						VLog.d("Token property is null ")
+					}
 					tokenDao.updateTokenPrice(tokenPrice, tokenCode)
 				}
 
