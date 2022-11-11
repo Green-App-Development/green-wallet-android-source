@@ -19,7 +19,7 @@ interface TokenDao {
 	@Query("UPDATE TokenEntity SET price=:price WHERE code=:code")
 	suspend fun updateTokenPrice(price: Double, code: String): Int
 
-	@Query("SELECT * FROM TokenEntity WHERE  (:nameCode IS NULL OR name LIKE '%' ||  :nameCode || '%') OR  (:nameCode IS NULL OR code LIKE '%' || :nameCode || '%') AND enabled=:enabled")
+	@Query("SELECT * FROM TokenEntity WHERE  ((:nameCode IS NULL OR name LIKE '%' ||  :nameCode || '%') OR  (:nameCode IS NULL OR code LIKE '%' || :nameCode || '%')) AND enabled=:enabled")
 	suspend fun getTokenListAndSearch(nameCode: String?, enabled: Boolean = true): List<TokenEntity>
 
 	@Query("SELECT * FROM TokenEntity WHERE hash LIKE '%' || :hash  || '%'")

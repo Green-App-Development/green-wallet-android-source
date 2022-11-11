@@ -175,6 +175,8 @@ class WalletInteractImpl @Inject constructor(
 					token.hash
 				)
 				totalAmountInUSD += curTotalAmountInUSD
+				if (amount == 0.0 && !tokenOpt.get().enabled)
+					continue
 				tokenList.add(tokenWallet)
 			} else {
 				VLog.d("Given hash doesn't exist in tokens db : $hash")

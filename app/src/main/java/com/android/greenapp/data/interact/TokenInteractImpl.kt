@@ -16,12 +16,18 @@ class TokenInteractImpl @Inject constructor(
 ) : TokenInteract {
 
 
-	override suspend fun getTokenListAndSearchForWallet(fingerPrint: Long, nameCode: String?): List<Token> {
+	override suspend fun getTokenListAndSearchForWallet(
+		fingerPrint: Long,
+		nameCode: String?
+	): List<Token> {
 		val walletEntity = walletDoa.getWalletByFingerPrint(fingerPrint)[0]
 
 		return tokenDao.getTokenListAndSearch(nameCode).map {
 			val imported = walletEntity.hashListImported.containsKey(it.hash)
-			it.toToken(imported)
+			it.toToken(
+				imported,
+				if (!walletEntity.hashListImported.containsKey(it.hash)) 0 else it.default_tail
+			)
 		}.filter { !arrayOf("XCH", "XCC").contains(it.code) }
 	}
 
@@ -33,7 +39,7 @@ class TokenInteractImpl @Inject constructor(
 	}
 
 	override suspend fun getTokenListDefaultOnMainScreen(): List<Token> =
-		tokenDao.getTokensDefaultOnScreen().map { it.toToken(imported = false) }
+		tokenDao.getTokensDefaultOnScreen().map { it.toToken(imported = false, 1) }
 
 
 }

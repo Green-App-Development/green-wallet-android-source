@@ -21,6 +21,6 @@ data class TokenEntity(
 	var enabled: Boolean
 ) {
 
-	fun toToken(imported: Boolean) = Token(name, code, hash, logo_url, imported, default_tail)
+	fun toToken(imported: Boolean,default_tail:Int) = Token(name, code, hash, logo_url, imported, default_tail)
 
 }
