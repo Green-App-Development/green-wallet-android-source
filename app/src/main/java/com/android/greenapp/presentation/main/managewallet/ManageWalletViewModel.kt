@@ -2,10 +2,9 @@ package com.android.greenapp.presentation.main.managewallet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.WalletInteract
-import com.example.common.tools.VLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

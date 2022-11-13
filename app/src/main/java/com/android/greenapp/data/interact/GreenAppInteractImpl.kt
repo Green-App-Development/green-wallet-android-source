@@ -9,7 +9,7 @@ import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
 import com.android.greenapp.data.network.dto.greenapp.language.LanguageResponse
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
-import com.android.greenapp.domain.entity.CoinDetails
+import com.android.greenapp.domain.domainmodel.CoinDetails
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
@@ -40,7 +40,6 @@ class GreenAppInteractImpl @Inject constructor(
 	private val gson: Gson,
 	private val jsonHelper: JsonHelper,
 	private val notifOtherDao: NotifOtherDao,
-	private val tokenDao: TokenDao,
 	private val notifHelper: NotificationHelper
 ) :
 	GreenAppInteract {

@@ -1,4 +1,4 @@
-package com.android.greenapp.domain.entity.notification
+package com.android.greenapp.domain.domainmodel.notification
 
 /**
  * Created by bekjan on 31.05.2022.

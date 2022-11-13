@@ -7,14 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentImportTokenBinding
-import com.android.greenapp.domain.entity.Token
+import com.android.greenapp.domain.domainmodel.Token
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
@@ -23,10 +22,7 @@ import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.android.greenapp.presentation.viewBinding
-import com.android.greenapp.presentation.tools.Resource
-import com.android.greenapp.presentation.tools.getStringResource
 import com.example.common.tools.VLog
-import com.example.common.tools.getPrefixForAddressFromNetworkType
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Job

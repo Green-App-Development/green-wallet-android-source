@@ -1,14 +1,11 @@
 package com.android.greenapp.data.interact
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.android.greenapp.data.local.AddressDao
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.domain.interact.AddressInteract
 import com.example.common.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.*
 import javax.inject.Inject
 
 /**

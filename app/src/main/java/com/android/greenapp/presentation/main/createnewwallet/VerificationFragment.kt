@@ -18,8 +18,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentVerificationWalletBinding
-import com.android.greenapp.domain.entity.Token
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Token
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager

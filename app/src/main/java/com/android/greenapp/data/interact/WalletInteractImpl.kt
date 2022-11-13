@@ -5,20 +5,16 @@ import androidx.annotation.RequiresApi
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.TransactionDao
 import com.android.greenapp.data.local.WalletDao
-import com.android.greenapp.data.local.entity.TokenEntity
 import com.android.greenapp.data.local.entity.WalletEntity
-import com.android.greenapp.data.network.BlockChainService
-import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
-import com.android.greenapp.domain.entity.TokenWallet
-import com.android.greenapp.domain.entity.Wallet
-import com.android.greenapp.domain.entity.WalletWithTokens
+import com.android.greenapp.domain.domainmodel.TokenWallet
+import com.android.greenapp.domain.domainmodel.Wallet
+import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.domain.interact.WalletInteract
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.tools.NetworkType
-import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
@@ -176,8 +172,6 @@ class WalletInteractImpl @Inject constructor(
 					token.hash
 				)
 				totalAmountInUSD += curTotalAmountInUSD
-				if (amount == 0.0 && !tokenOpt.get().enabled)
-					continue
 				tokenList.add(tokenWallet)
 			} else {
 				VLog.d("Given hash doesn't exist in tokens db : $hash")

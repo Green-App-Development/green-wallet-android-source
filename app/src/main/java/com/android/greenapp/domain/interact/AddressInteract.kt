@@ -1,8 +1,7 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 
 /**
  * Created by bekjan on 06.06.2022.

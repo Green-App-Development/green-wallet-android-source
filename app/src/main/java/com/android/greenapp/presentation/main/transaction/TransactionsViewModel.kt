@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.main.transaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.domain.entity.Transaction
+import com.android.greenapp.domain.domainmodel.Transaction
 import com.android.greenapp.domain.interact.*
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.*

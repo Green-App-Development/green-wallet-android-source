@@ -1,6 +1,6 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.Token
+import com.android.greenapp.domain.domainmodel.Token
 
 /**
  * Created by bekjan on 12.07.2022.

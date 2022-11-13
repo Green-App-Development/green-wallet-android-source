@@ -1,8 +1,7 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.Transaction
+import com.android.greenapp.domain.domainmodel.Transaction
 import com.android.greenapp.presentation.tools.Status
-import java.util.concurrent.Flow
 
 /**
  * Created by bekjan on 17.06.2022.

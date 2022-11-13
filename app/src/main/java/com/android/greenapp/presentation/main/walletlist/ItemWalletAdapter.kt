@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.android.greenapp.presentation.tools.getStringResource

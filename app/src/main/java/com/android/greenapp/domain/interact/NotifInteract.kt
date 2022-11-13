@@ -1,6 +1,6 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.notification.NotifSection
+import com.android.greenapp.domain.domainmodel.notification.NotifSection
 import com.android.greenapp.presentation.tools.Status
 
 /**

@@ -10,10 +10,9 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.notification.NotificationItem
+import com.android.greenapp.domain.domainmodel.notification.NotificationItem
 import com.android.greenapp.presentation.custom.formattedDollarWithPrecision
 import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecision
-import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.android.greenapp.presentation.custom.trimNetwork
 import com.android.greenapp.presentation.tools.Status
 import com.android.greenapp.presentation.tools.getColorResource

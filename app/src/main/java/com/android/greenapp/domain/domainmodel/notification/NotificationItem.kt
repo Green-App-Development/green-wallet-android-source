@@ -1,4 +1,4 @@
-package com.android.greenapp.domain.entity.notification
+package com.android.greenapp.domain.domainmodel.notification
 
 import com.android.greenapp.presentation.tools.Status
 

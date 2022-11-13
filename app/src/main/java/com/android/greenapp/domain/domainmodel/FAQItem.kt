@@ -1,4 +1,4 @@
-package com.android.greenapp.domain.entity
+package com.android.greenapp.domain.domainmodel
 
 /**
  * Created by bekjan on 02.06.2022.

@@ -1,19 +1,15 @@
 package com.android.greenapp.data.interact
 
-import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.entity.TokenEntity
-import com.android.greenapp.data.network.CryptocurrencyService
 import com.android.greenapp.data.network.GreenAppService
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
-import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.data.preference.PrefsManager.Companion.ALL_NETWORK_ITEMS_LIST
-import com.android.greenapp.domain.entity.CurrencyItem
+import com.android.greenapp.domain.domainmodel.CurrencyItem
 import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCurNetworkPrev24ChangeDouble
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
-import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -27,7 +23,6 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class CryptocurrencyImpl @Inject constructor(
-	private val cryptocurrencyService: CryptocurrencyService,
 	private val prefs: PrefsInteract,
 	private val gson: Gson,
 	private val greenAppService: GreenAppService,

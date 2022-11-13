@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentManageWalletBetaBinding
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory

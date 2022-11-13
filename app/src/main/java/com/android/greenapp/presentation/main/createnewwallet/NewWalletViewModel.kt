@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.main.createnewwallet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.TokenInteract

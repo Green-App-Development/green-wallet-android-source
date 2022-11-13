@@ -1,6 +1,6 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.CurrencyItem
+import com.android.greenapp.domain.domainmodel.CurrencyItem
 import kotlinx.coroutines.flow.Flow
 
 /**

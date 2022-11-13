@@ -3,7 +3,7 @@ package com.android.greenapp.presentation.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.data.preference.PrefsManager
-import com.android.greenapp.domain.entity.CurrencyItem
+import com.android.greenapp.domain.domainmodel.CurrencyItem
 import com.android.greenapp.domain.interact.*
 import com.example.common.tools.VLog
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -95,9 +95,7 @@ class HomeFragmentViewModel @Inject constructor(
 	fun swipedRefreshClicked(onFinished: () -> Unit) {
 		viewModelScope.launch {
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
-			cryptocurrencyInteract.getAllTails()
 			greenAppInteract.requestOtherNotifItems()
-			cryptocurrencyInteract.updateCourseCryptoInDb()
 			onFinished()
 		}
 	}

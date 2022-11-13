@@ -10,9 +10,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.TokenWallet
-import com.android.greenapp.domain.entity.Wallet
-import com.android.greenapp.domain.entity.WalletWithTokens
+import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.example.common.tools.VLog
 
 /**

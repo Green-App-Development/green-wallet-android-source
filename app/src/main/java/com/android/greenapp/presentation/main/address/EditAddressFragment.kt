@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentAddressEditBinding
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.custom.EditTextLinesLimiter
@@ -26,7 +26,6 @@ import com.android.greenapp.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.item_address.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*

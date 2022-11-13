@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.main.send
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.domain.interact.*
 import com.android.greenapp.presentation.tools.Resource
 import kotlinx.coroutines.Job
@@ -18,73 +18,81 @@ import javax.inject.Inject
 
 
 class SendFragmentViewModel @Inject constructor(
-	private val walletInteract: WalletInteract,
-	private val blockChainInteract: BlockChainInteract,
-	private val addressInteract: AddressInteract,
-	private val greenAppInteract: GreenAppInteract,
-	private val tokenInteract: TokenInteract,
-	private val transactionInteract: TransactionInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract
+    private val walletInteract: WalletInteract,
+    private val blockChainInteract: BlockChainInteract,
+    private val addressInteract: AddressInteract,
+    private val greenAppInteract: GreenAppInteract,
+    private val tokenInteract: TokenInteract,
+    private val transactionInteract: TransactionInteract,
+    private val cryptocurrencyInteract: CryptocurrencyInteract,
+    private val spentCoinsInteract: SpentCoinsInteract
 ) :
-	ViewModel() {
+    ViewModel() {
 
-	private val _sendTransResponse = MutableStateFlow<Resource<String>>(Resource.loading())
-	val sendTransResponse = _sendTransResponse.asStateFlow()
-	private var sendTransJob: Job? = null
+    private val _sendTransResponse = MutableStateFlow<Resource<String>>(Resource.loading())
+    val sendTransResponse = _sendTransResponse.asStateFlow()
+    private var sendTransJob: Job? = null
 
-	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
-
-	suspend fun queryWalletList(type: String, fingerPrint: Long?) =
-		walletInteract.getWalletListByNetworkTypeFingerPrint(type, fingerPrint)
-
-	suspend fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
-		walletInteract.getWalletWithTokensByFingerPrintNetworkType(fingerPrint, type)
-
-	suspend fun push_transaction(
-		spendBundle: String,
-		url: String,
-		amount: Double,
-		networkType: String,
-		fingerPrint: Long,
-		code: String,
-		dest_puzzle_hash: String,
-		address: String,
-		fee: Double
-	) = blockChainInteract.push_tx(
-		spendBundle,
-		url,
-		amount,
-		networkType,
-		fingerPrint,
-		code,
-		dest_puzzle_hash,
-		address,
-		fee
-	)
-
-	suspend fun checkIfAddressExistInDb(address: String) =
-		addressInteract.checkIfAddressAlreadyExist(address = address)
-
-	suspend fun getCoinDetailsFeeCommission(code: String) =
-		greenAppInteract.getCoinDetails(code).fee_commission
+    suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
 
-	suspend fun getTokenPriceByCode(code: String) = tokenInteract.getTokenPriceByCode(code)
+    suspend fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
+        walletInteract.getWalletWithTokensByFingerPrintNetworkType(fingerPrint, type)
 
-	suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
+    suspend fun push_transaction(
+        spendBundle: String,
+        url: String,
+        amount: Double,
+        networkType: String,
+        fingerPrint: Long,
+        code: String,
+        dest_puzzle_hash: String,
+        address: String,
+        fee: Double,
+        spentCoinsJson: String,
+        spentCoinsToken: String
+    ) = blockChainInteract.push_tx(
+        spendBundle,
+        url,
+        amount,
+        networkType,
+        fingerPrint,
+        code,
+        dest_puzzle_hash,
+        address,
+        fee,
+        spentCoinsJson,
+        spentCoinsToken
+    )
 
-	suspend fun getMempoolTransactionsByAddressAndCode(address: String, code: String,networkType: String) =
-		transactionInteract.getMempoolTransactionsAmountByAddressAndToken(address, code, networkType = networkType)
+    suspend fun checkIfAddressExistInDb(address: String) =
+        addressInteract.checkIfAddressAlreadyExist(address = address)
+
+    suspend fun getCoinDetailsFeeCommission(code: String) =
+        greenAppInteract.getCoinDetails(code).fee_commission
 
 
-	fun swipedRefreshLayout(onFinished: () -> Unit) {
-		viewModelScope.launch {
-			blockChainInteract.updateBalanceAndTransactionsPeriodically()
-			cryptocurrencyInteract.getAllTails()
-			greenAppInteract.requestOtherNotifItems()
-			onFinished()
-		}
-	}
+    suspend fun getTokenPriceByCode(code: String) = tokenInteract.getTokenPriceByCode(code)
+
+    suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
+
+    suspend fun getSpentCoinsAmountsAddressCodeForSpendableBalance(
+        address: String,
+        tokenCode: String,
+        networkType: String
+    ) =
+        spentCoinsInteract.getSumSpentCoinsForSpendableBalance(networkType,address,tokenCode)
 
 
+    fun swipedRefreshLayout(onFinished: () -> Unit) {
+        viewModelScope.launch {
+            blockChainInteract.updateBalanceAndTransactionsPeriodically()
+            cryptocurrencyInteract.getAllTails()
+            greenAppInteract.requestOtherNotifItems()
+            onFinished()
+        }
+    }
+
+    suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
+        spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
 }

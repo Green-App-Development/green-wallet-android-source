@@ -1,7 +1,7 @@
 package com.android.greenapp.data.interact
 
 import com.android.greenapp.data.local.TransactionDao
-import com.android.greenapp.domain.entity.Transaction
+import com.android.greenapp.domain.domainmodel.Transaction
 import com.android.greenapp.domain.interact.TransactionInteract
 import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.android.greenapp.presentation.tools.Status

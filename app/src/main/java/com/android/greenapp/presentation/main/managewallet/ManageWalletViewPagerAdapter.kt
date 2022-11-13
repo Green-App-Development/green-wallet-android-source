@@ -11,7 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.viewpager.widget.PagerAdapter
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecision
 import com.android.greenapp.presentation.custom.getShortNetworkType

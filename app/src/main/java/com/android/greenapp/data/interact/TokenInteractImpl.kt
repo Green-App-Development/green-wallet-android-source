@@ -2,7 +2,7 @@ package com.android.greenapp.data.interact
 
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.WalletDao
-import com.android.greenapp.domain.entity.Token
+import com.android.greenapp.domain.domainmodel.Token
 import com.android.greenapp.domain.interact.TokenInteract
 import javax.inject.Inject
 

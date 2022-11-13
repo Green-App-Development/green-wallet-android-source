@@ -19,7 +19,7 @@ import androidx.viewpager.widget.ViewPager
 import com.android.greenapp.R
 import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.databinding.FragmentHomeBinding
-import com.android.greenapp.domain.entity.WalletWithTokens
+import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity

@@ -3,11 +3,9 @@ package com.android.greenapp.data.interact
 import com.android.greenapp.data.local.NotifOtherDao
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.TransactionDao
-import com.android.greenapp.domain.entity.notification.NotifSection
-import com.android.greenapp.domain.entity.notification.NotificationItem
+import com.android.greenapp.domain.domainmodel.notification.NotifSection
+import com.android.greenapp.domain.domainmodel.notification.NotificationItem
 import com.android.greenapp.domain.interact.NotifInteract
-import com.android.greenapp.domain.interact.PrefsInteract
-import com.android.greenapp.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.formattedDay
 import java.util.*
@@ -20,7 +18,6 @@ import javax.inject.Inject
 class NotifinteractImpl @Inject constructor(
 	private val transactionDao: TransactionDao,
 	private val notifOtherDao: NotifOtherDao,
-	private val prefsInteract: PrefsInteract,
 	private val tokenDAO: TokenDao
 ) :
 	NotifInteract {

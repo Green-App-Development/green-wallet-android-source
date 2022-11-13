@@ -44,5 +44,9 @@ abstract class InteractModule {
     @Binds
     abstract fun bindTokenInteractImpl(tokenInteractImpl: TokenInteractImpl): TokenInteract
 
+    @Binds
+    abstract fun bindSpentCoinsInteractImpl(spentCoinsInteract: SpentCoinsInteractImpl): SpentCoinsInteract
+
+
 
 }

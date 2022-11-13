@@ -11,7 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.FAQItem
+import com.android.greenapp.domain.domainmodel.FAQItem
 import com.example.common.tools.VLog
 
 /**

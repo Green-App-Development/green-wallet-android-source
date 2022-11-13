@@ -19,7 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentTransactionsBinding
-import com.android.greenapp.domain.entity.Transaction
+import com.android.greenapp.domain.domainmodel.Transaction
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity

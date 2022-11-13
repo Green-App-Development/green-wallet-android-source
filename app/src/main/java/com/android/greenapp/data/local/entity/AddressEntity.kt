@@ -3,7 +3,7 @@ package com.android.greenapp.data.local.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 
 /**
  * Created by bekjan on 06.06.2022.

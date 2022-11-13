@@ -1,4 +1,4 @@
-package com.android.greenapp.domain.entity
+package com.android.greenapp.domain.domainmodel
 
 import android.os.Parcelable
 import com.android.greenapp.data.local.entity.WalletEntity

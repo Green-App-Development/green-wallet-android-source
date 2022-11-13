@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.main.address
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.domain.interact.AddressInteract
 import com.example.common.tools.VLog
 import kotlinx.coroutines.Job

@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentAddressListBinding
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
@@ -21,7 +21,6 @@ import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 

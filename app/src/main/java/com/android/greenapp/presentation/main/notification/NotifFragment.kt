@@ -18,7 +18,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentNotificationBinding
-import com.android.greenapp.domain.entity.notification.NotificationItem
+import com.android.greenapp.domain.domainmodel.notification.NotificationItem
 import com.android.greenapp.presentation.custom.CustomSpinner
 import com.android.greenapp.presentation.custom.formattedDateForTransaction
 import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecision

@@ -22,7 +22,7 @@ import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
 import com.android.greenapp.R
 import com.android.greenapp.R.id.*
 import com.android.greenapp.databinding.ActivityMainBinding
-import com.android.greenapp.domain.entity.Address
+import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.BaseActivity
 import com.android.greenapp.presentation.custom.*

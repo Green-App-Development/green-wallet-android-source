@@ -1,6 +1,6 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.tools.Resource
 
 /**
@@ -26,7 +26,9 @@ interface BlockChainInteract {
 		code:String,
 		dest_puzzle_hash:String,
 		address:String,
-		fee:Double
+		fee:Double,
+        spentCoinsJson:String,
+        spentCoinsToken:String
     ):Resource<String>
 
 

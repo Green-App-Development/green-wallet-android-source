@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.data.network.dto.support.ListingPost
 import com.android.greenapp.data.network.dto.support.QuestionPost
-import com.android.greenapp.domain.entity.FAQItem
+import com.android.greenapp.domain.domainmodel.FAQItem
 import com.android.greenapp.domain.interact.SupportInteract
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
 import com.android.greenapp.presentation.tools.Resource

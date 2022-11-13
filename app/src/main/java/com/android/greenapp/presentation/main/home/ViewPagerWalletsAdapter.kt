@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.WalletWithTokens
+import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.hidePublicKey
 import com.android.greenapp.presentation.custom.trimNetwork

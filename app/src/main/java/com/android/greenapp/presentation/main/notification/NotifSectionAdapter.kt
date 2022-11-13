@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.notification.NotifSection
-import com.android.greenapp.domain.entity.notification.NotificationItem
+import com.android.greenapp.domain.domainmodel.notification.NotifSection
+import com.android.greenapp.domain.domainmodel.notification.NotificationItem
 import com.android.greenapp.presentation.custom.getTranslatedMonth
 import com.example.common.tools.formattedDateMonth
 import com.example.common.tools.formattedTodaysDate

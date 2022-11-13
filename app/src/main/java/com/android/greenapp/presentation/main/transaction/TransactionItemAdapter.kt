@@ -8,10 +8,9 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.Transaction
+import com.android.greenapp.domain.domainmodel.Transaction
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecision
-import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.Status
 import com.android.greenapp.presentation.tools.getColorResource

@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.main.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.domain.entity.notification.NotifSection
+import com.android.greenapp.domain.domainmodel.notification.NotifSection
 import com.android.greenapp.domain.interact.NotifInteract
 import com.android.greenapp.presentation.tools.Status
 import kotlinx.coroutines.Job

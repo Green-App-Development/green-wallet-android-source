@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentReceiveBinding
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
@@ -22,9 +22,7 @@ import com.android.greenapp.presentation.main.send.NetworkAdapter
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_address_edit.*
 import kotlinx.android.synthetic.main.fragment_receive.*
-import kotlinx.android.synthetic.main.item_address.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject

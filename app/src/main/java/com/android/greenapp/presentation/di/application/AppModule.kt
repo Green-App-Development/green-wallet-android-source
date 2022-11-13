@@ -37,7 +37,10 @@ class AppModule {
     fun provideNotifOtherDao(appDatabase: AppDatabase) = appDatabase.notifOtherDao
 
     @Provides
-    fun provideTokenDao(appDatabase:AppDatabase)= appDatabase.tokenDao
+    fun provideTokenDao(appDatabase: AppDatabase) = appDatabase.tokenDao
+
+    @Provides
+    fun provideSpentCoinsDao(appDatabase: AppDatabase) = appDatabase.spentCoinsDao
 
     @Provides
     fun provideHandler(): CoroutineExceptionHandler {
@@ -45,7 +48,6 @@ class AppModule {
             VLog.d("Caught Exception in coroutine : ${t.message}")
         }
     }
-
 
 
 }

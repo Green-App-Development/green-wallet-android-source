@@ -1,9 +1,8 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.domain.entity.Wallet
-import com.android.greenapp.domain.entity.WalletWithTokens
+import com.android.greenapp.domain.domainmodel.Wallet
+import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.presentation.tools.NetworkType
-import com.android.greenapp.presentation.tools.Resource
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 

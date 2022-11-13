@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.domain.entity.Token
+import com.android.greenapp.domain.domainmodel.Token
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 

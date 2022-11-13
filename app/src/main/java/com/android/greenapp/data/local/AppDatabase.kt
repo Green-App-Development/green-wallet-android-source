@@ -12,7 +12,7 @@ import com.android.greenapp.data.local.entity.*
 
 
 @Database(
-    entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class],
+    entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class, SpentCoinsEntity::class],
     version = 22,
     exportSchema = false
 )
@@ -23,7 +23,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val walletDao: WalletDao
     abstract val transactionDao: TransactionDao
     abstract val notifOtherDao: NotifOtherDao
-    abstract val tokenDao:TokenDao
+    abstract val tokenDao: TokenDao
+    abstract val spentCoinsDao: SpentCoinsDao
 
     companion object {
         const val APP_DB_NAME = "green_app_database_name"

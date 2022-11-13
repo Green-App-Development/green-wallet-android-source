@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
-import android.text.style.UnderlineSpan
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.*
@@ -22,7 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentImpmnemonicBinding
-import com.android.greenapp.domain.entity.Wallet
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.CustomEdtText
@@ -38,7 +35,6 @@ import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.example.common.tools.getPrefixForAddressFromNetworkType
 import dagger.android.support.DaggerDialogFragment
-import dev.b3nedikt.restring.Restring
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_impmnemonic.*
 import kotlinx.android.synthetic.main.fragment_impmnemonic.linearLayout12
@@ -50,7 +46,7 @@ import javax.inject.Inject
 import android.content.ClipboardManager
 import android.content.Context
 import android.text.*
-import com.android.greenapp.domain.entity.Token
+import com.android.greenapp.domain.domainmodel.Token
 
 
 /**

@@ -1,4 +1,4 @@
-package com.android.greenapp.domain.entity
+package com.android.greenapp.domain.domainmodel
 
 import com.android.greenapp.data.local.entity.TransactionEntity
 import com.android.greenapp.presentation.tools.Status

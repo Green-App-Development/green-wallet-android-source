@@ -2,7 +2,7 @@ package com.android.greenapp.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.android.greenapp.domain.entity.Token
+import com.android.greenapp.domain.domainmodel.Token
 
 /**
  * Created by bekjan on 12.07.2022.
