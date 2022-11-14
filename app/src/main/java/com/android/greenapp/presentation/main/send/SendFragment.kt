@@ -186,14 +186,14 @@ class SendFragment : DaggerFragment() {
                         txtSpendableBalanceAmount.setText(
                             "$txtSpendableBalance: ${
                                 formattedDoubleAmountWithPrecision(
-                                    initialAmountToken - sentTokenMempoolAmounts[0]
+									(initialAmountToken - sentTokenMempoolAmounts[0]).toDouble()
                                 )
                             }"
                         )
                         txtSpendableBalanceCommission.setText(
                             "$txtSpendableBalance: ${
                                 formattedDoubleAmountWithPrecision(
-                                    initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
+									(initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]).toDouble()
                                 )
                             }"
                         )
