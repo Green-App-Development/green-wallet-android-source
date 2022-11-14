@@ -81,7 +81,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			val incoming = it.getLong(FINGER_PRINT_KEY)
 			currentFingerPrint = if (incoming == 0L) null else incoming
 			curActivity().shouldGoBackHomeFragmentFromTransactions = currentFingerPrint == null
-			val address = it.getString(ADDRESS_KEY,"")
+			val address = it.getString(ADDRESS_KEY, "")
 			currentAddress = if (address == "") null else address
 		}
 		VLog.d("Got Incoming arguments For Transactions Fragment : $currentFingerPrint ")
@@ -110,7 +110,6 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	}
 
 
-
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
@@ -127,7 +126,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 	private fun updateTransactions() {
 		updateTransJob?.cancel()
-		updateTransJob = lifecycleScope.launch {
+		updateTransJob = lifecycleScope.launchWhenStarted {
 			viewModel.getAllQueriedFlowTransactionList(
 				currentAddress,
 				getCurSearchAmount(),
@@ -435,6 +434,11 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 				}"
 			findViewById<TextView>(R.id.edtHeightBlocks).text = "${transaction.confirmed_at_height}"
 		}
+	}
+
+	override fun onStop() {
+		super.onStop()
+		updateTransJob?.cancel()
 	}
 
 

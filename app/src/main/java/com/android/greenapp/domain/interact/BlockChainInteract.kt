@@ -1,5 +1,6 @@
 package com.android.greenapp.domain.interact
 
+import com.android.greenapp.data.local.entity.WalletEntity
 import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.tools.Resource
 
@@ -10,26 +11,28 @@ import com.android.greenapp.presentation.tools.Resource
 interface BlockChainInteract {
 
 
-    suspend fun saveNewWallet(
-        wallet: Wallet,
-        imported:Boolean
-    ):Resource<String>
+	suspend fun saveNewWallet(
+		wallet: Wallet,
+		imported: Boolean
+	): Resource<String>
 
-    suspend fun updateBalanceAndTransactionsPeriodically()
+	suspend fun updateBalanceAndTransactionsPeriodically()
 
-    suspend fun push_tx(
-        jsonSpendBundle:String,
-        url: String,
-        sendAmount:Double,
-        networkType: String,
-        fingerPrint:Long,
-		code:String,
-		dest_puzzle_hash:String,
-		address:String,
-		fee:Double,
-        spentCoinsJson:String,
-        spentCoinsToken:String
-    ):Resource<String>
+	suspend fun push_tx(
+		jsonSpendBundle: String,
+		url: String,
+		sendAmount: Double,
+		networkType: String,
+		fingerPrint: Long,
+		code: String,
+		dest_puzzle_hash: String,
+		address: String,
+		fee: Double,
+		spentCoinsJson: String,
+		spentCoinsToken: String
+	): Resource<String>
+
+	suspend fun updateTokenBalanceWithFullNode(wallet:WalletEntity)
 
 
 }

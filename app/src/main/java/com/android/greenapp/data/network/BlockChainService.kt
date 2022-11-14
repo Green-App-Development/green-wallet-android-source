@@ -1,5 +1,6 @@
 package com.android.greenapp.data.network
 
+import com.android.greenapp.data.network.dto.coins.CoinRecordResponse
 import com.android.greenapp.presentation.main.send.spend.SpenBunde
 import com.google.gson.JsonObject
 import retrofit2.Response
@@ -25,10 +26,12 @@ interface BlockChainService {
     suspend fun delete_all_keys(): Response<BaseResponse>
 
     @POST("get_coin_records_by_puzzle_hash")
+    suspend fun queryBalanceWithSorting(@Body body: HashMap<String, Any>): Response<CoinRecordResponse>
+
+    @POST("get_coin_records_by_puzzle_hash")
     suspend fun queryBalance(@Body body: HashMap<String, Any>): Response<JsonObject>
 
-
-    @POST("push_tx")
+	@POST("push_tx")
     suspend fun pushTransaction(@Body body: SpenBunde): Response<BaseResponse>
 
     @POST("get_coin_records_by_names")

@@ -21,6 +21,7 @@ import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
@@ -50,6 +51,8 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 	companion object {
 		const val SHOULD_BE_CLICKABLE_KEY = "should_be_clickable"
 	}
+
+	private var addressListJob: Job? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -88,7 +91,7 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 			layoutManager = LinearLayoutManager(curActivity())
 			adapter = addressAdapter
 		}
-		lifecycleScope.launchWhenStarted {
+		addressListJob = lifecycleScope.launchWhenStarted {
 			addressViewModel.address_items.collect {
 				it?.let {
 					VLog.d("Getting List of Addresses : $it")
@@ -146,6 +149,11 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 		intent.putExtra(Intent.EXTRA_TEXT, content)
 		requestSendingTextViaMessengers.launch(intent)
 
+	}
+
+	override fun onStop() {
+		super.onStop()
+		addressListJob?.cancel()
 	}
 
 	override fun onAddressClicked(address: String) {

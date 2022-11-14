@@ -32,10 +32,8 @@ class WalletInteractImpl @Inject constructor(
 	private val prefsInteract: PrefsInteract,
 	private val transactionDao: TransactionDao,
 	private val tokenDao: TokenDao,
-	private val blockChainInteract: BlockChainInteract,
-	private val retrofitBilder: Retrofit.Builder,
-	private val gson: Gson,
-	private val encryptor: AESEncryptor
+	private val encryptor: AESEncryptor,
+	private val blockChainInteract: BlockChainInteract
 ) : WalletInteract {
 
 	override fun getFlowOfWalletList(): Flow<List<Wallet>> {
@@ -314,14 +312,14 @@ class WalletInteractImpl @Inject constructor(
 	) {
 		val walletEntity = walletDao.getWalletByAddress(address)[0]
 		val hashListImported = walletEntity.hashListImported
-		if (add)
+		if (add) {
 			hashListImported[asset_id] = outer_puzzle_hash
-		else {
+			blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
+		} else {
 			hashListImported.remove(asset_id)
 		}
 		walletDao.updateChiaNetworkHashListImportedByAddress(address, hashListImported)
 	}
-
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)
 
