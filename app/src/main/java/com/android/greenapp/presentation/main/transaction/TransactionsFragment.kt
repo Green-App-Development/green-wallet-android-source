@@ -105,7 +105,6 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		initSortingByStatusClicks()
 		initTransactionItemAdapter()
 		sortingByHeightAndSum()
-		updateTransactions()
 		initSwipeRefreshLayout()
 	}
 
@@ -126,7 +125,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 	private fun updateTransactions() {
 		updateTransJob?.cancel()
-		updateTransJob = lifecycleScope.launchWhenStarted {
+		updateTransJob = lifecycleScope.launch {
 			viewModel.getAllQueriedFlowTransactionList(
 				currentAddress,
 				getCurSearchAmount(),
@@ -434,6 +433,11 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 				}"
 			findViewById<TextView>(R.id.edtHeightBlocks).text = "${transaction.confirmed_at_height}"
 		}
+	}
+
+	override fun onResume() {
+		super.onResume()
+		updateTransactions()
 	}
 
 	override fun onStop() {

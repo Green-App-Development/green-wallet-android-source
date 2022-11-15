@@ -35,7 +35,6 @@ class MainViewModel @Inject constructor(
 		updateCoinDetailsJob = viewModelScope.launch {
 			greenAppInteract.updateCoinDetails()
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
-			cryptocurrencyInteract.getAllTails()
 			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
 			if (curLangCode.isNotEmpty()) {
 				greenAppInteract.downloadLanguageTranslate(curLangCode)

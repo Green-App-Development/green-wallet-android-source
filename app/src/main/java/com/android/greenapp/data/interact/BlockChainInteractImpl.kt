@@ -6,7 +6,6 @@ import com.android.greenapp.data.local.*
 import com.android.greenapp.data.local.entity.TransactionEntity
 import com.android.greenapp.data.local.entity.WalletEntity
 import com.android.greenapp.data.network.BlockChainService
-import com.android.greenapp.data.network.dto.coins.CoinRecord
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.domainmodel.Wallet
@@ -14,10 +13,10 @@ import com.android.greenapp.domain.interact.BlockChainInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.domain.interact.SpentCoinsInteract
 import com.android.greenapp.presentation.custom.*
-import com.android.greenapp.presentation.main.send.spend.CoinDto
-import com.android.greenapp.presentation.main.send.spend.CoinSpend
-import com.android.greenapp.presentation.main.send.spend.SpenBunde
-import com.android.greenapp.presentation.main.send.spend.SpendBundle
+import com.android.greenapp.data.network.dto.spendbundle.CoinDto
+import com.android.greenapp.data.network.dto.spendbundle.CoinSpend
+import com.android.greenapp.data.network.dto.spendbundle.SpenBunde
+import com.android.greenapp.data.network.dto.spendbundle.SpendBundle
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
@@ -27,7 +26,6 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
-import kotlin.Comparator
 
 
 /**

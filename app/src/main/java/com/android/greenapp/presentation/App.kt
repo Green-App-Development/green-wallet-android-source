@@ -122,7 +122,7 @@ class App : DaggerApplication() {
 
 	fun updateBalanceEachPeriodically() {
 		updateBalanceJob?.cancel()
-		updateBalanceJob = CoroutineScope(Dispatchers.IO).launch {
+		updateBalanceJob = CoroutineScope(Dispatchers.IO + handler).launch {
 			while (true) {
 				VLog.d("Start requesting Balance Each Wallets Periodically:")
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
@@ -130,7 +130,9 @@ class App : DaggerApplication() {
 			}
 		}
 		updateCryptoJob?.cancel()
-		updateCryptoJob = CoroutineScope(Dispatchers.IO).launch {
+		updateCryptoJob = CoroutineScope(Dispatchers.IO + handler).launch {
+			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
+			cryptocurrencyInteract.getAllTails()
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()

@@ -1,4 +1,4 @@
-package com.android.greenapp.presentation.main.send.spend
+package com.android.greenapp.data.network.dto.spendbundle
 
 data class CoinSpend(
 	val coin: CoinDto,

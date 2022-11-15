@@ -24,9 +24,7 @@ import javax.inject.Inject
 
 class OnBoardViewModel @Inject constructor(
     private val prefs: PrefsInteract,
-    private val greenAppInteract: GreenAppInteract,
-    private val gson: Gson,
-    private val notificationHelper: NotificationHelper
+    private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
     private val _languageList =
