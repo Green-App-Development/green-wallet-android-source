@@ -82,8 +82,6 @@ class QuestionFragment : DaggerDialogFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		registerClicks()
 		initStatusBarColor()
-		//need to fix
-//        highLightWordsGreenInTermsProcessing()
 	}
 
 	private fun registerClicks() {
@@ -232,26 +230,6 @@ class QuestionFragment : DaggerDialogFragment() {
 		}
 	}
 
-
-	private fun highLightWordsGreenInTermsProcessing() {
-		lifecycleScope.launch(handler) {
-			val startEnd =
-				getStartingIndexWordCountToHighlightEndingIndex(
-					Restring.locale.toString()
-				)
-			val ss = SpannableString(binding.checkboxText.text.toString())
-			val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
-			val underlineSpan = UnderlineSpan()
-			ss.setSpan(fcsGreen, startEnd[0], startEnd[1], Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-			ss.setSpan(
-				underlineSpan,
-				startEnd[0],
-				startEnd[1],
-				Spanned.SPAN_INCLUSIVE_INCLUSIVE
-			)
-			binding.checkboxText.text = ss
-		}
-	}
 
 	override fun getTheme(): Int {
 		return R.style.DialogTheme

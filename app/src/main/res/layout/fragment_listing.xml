@@ -4,6 +4,7 @@
 		xmlns:tools="http://schemas.android.com/tools"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+		android:fitsSystemWindows="true"
 		android:background="@color/primary_app_background">
 
 
@@ -317,35 +318,36 @@
 
 			</LinearLayout>
 
-
-			<LinearLayout
-					android:id="@+id/linearAgree"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="20dp"
-					app:layout_constraintEnd_toStartOf="@+id/guideline13"
-					app:layout_constraintStart_toStartOf="@+id/guideline11"
-					app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
-
-				<CheckBox
-						android:id="@+id/checkboxAgree"
-						android:layout_width="30dp"
-						android:layout_height="26dp"
-						android:theme="@style/MyCheckBox" />
-
-				<TextView
-						android:id="@+id/checkboxText"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:clickable="false"
-						android:text="@string/personal_data_agreement_chekbox"
-						android:textColor="@color/secondary_text_color"
-						android:textFontWeight="500"
-						android:textSize="15sp" />
-
-			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
+
+
+	<LinearLayout
+			android:id="@+id/linearAgree"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			app:layout_constraintBottom_toTopOf="@+id/btnSend"
+			app:layout_constraintEnd_toStartOf="@+id/guideline13"
+			android:layout_marginBottom="5dp"
+			app:layout_constraintStart_toStartOf="@+id/guideline11">
+
+		<CheckBox
+				android:id="@+id/checkboxAgree"
+				android:layout_width="30dp"
+				android:layout_height="26dp"
+				android:theme="@style/MyCheckBox" />
+
+		<TextView
+				android:id="@+id/checkboxText"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:clickable="false"
+				android:text="@string/personal_data_agreement_chekbox"
+				android:textColor="@color/secondary_text_color"
+				android:textFontWeight="500"
+				android:textSize="15sp" />
+
+	</LinearLayout>
 
 	<com.google.android.material.button.MaterialButton
 			android:id="@+id/btnSend"
@@ -354,13 +356,13 @@
 			android:layout_height="62dp"
 			android:layout_marginStart="35dp"
 			android:layout_marginEnd="35dp"
+			android:layout_marginBottom="16dp"
 			android:background="@drawable/btn_background_draw"
 			android:enabled="false"
 			android:text="@string/main_screen_send_btn"
 			android:textAllCaps="false"
-			app:layout_constraintBottom_toTopOf="@+id/guideline15"
+			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.0"
 			app:layout_constraintStart_toStartOf="parent" />
 
 	<androidx.constraintlayout.widget.Guideline

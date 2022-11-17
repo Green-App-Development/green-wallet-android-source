@@ -113,14 +113,14 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 	private fun curActivity() = requireActivity() as MainActivity
 
 	override fun onDelete(itemAddress: Address) {
+
+
+
 		curActivity().apply {
-			dialogManager.showFailureDialog(
+			dialogManager.showWarningDialogLessImport(
 				this,
 				getStringResource(R.string.address_book_pop_up_delete_title),
-				getStringResource(R.string.address_book_pop_up_delete_description),
-				getStringResource(R.string.confirm_btn)
-			) {
-				curActivity().apply {
+				getStringResource(R.string.address_book_pop_up_delete_description), {
 					dialogManager.showSuccessDialog(
 						this,
 						getStringResource(R.string.adress_book_pop_up_removed_title),
@@ -130,6 +130,8 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 						addressViewModel.deleteAddressItem(itemAddress)
 					}
 				}
+			) {
+
 			}
 		}
 	}

@@ -18,12 +18,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/img_ic_imported_success"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_warning_deletion" />
+		<ImageView
+				android:id="@+id/img_ic_imported_success"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:src="@drawable/ic_warning_deletion" />
 
         <TextView
             android:id="@+id/txt_confirm_title"
@@ -53,20 +53,20 @@
             android:textFontWeight="500"
             android:textSize="17sp" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnCancel"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_below="@+id/txtConfirmDialogPhrase"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="27dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/btn_bcg_cancel"
-            android:text="@string/delet_wallet_warning_cancel_btn"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+		<androidx.appcompat.widget.AppCompatButton
+				android:id="@+id/btnCancel"
+				android:layout_width="match_parent"
+				android:layout_height="55dp"
+				android:layout_below="@+id/txtConfirmDialogPhrase"
+				android:layout_marginStart="40dp"
+				android:layout_marginTop="27dp"
+				android:layout_marginEnd="40dp"
+				android:background="@drawable/btn_bcg_cancel"
+				android:text="@string/delet_wallet_warning_cancel_btn"
+				android:textAllCaps="false"
+				android:textColor="@color/white"
+				android:textSize="15sp"
+				app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnConfirm"

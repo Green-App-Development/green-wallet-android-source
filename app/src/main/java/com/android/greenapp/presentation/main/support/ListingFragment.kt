@@ -87,6 +87,7 @@ class ListingFragment : DaggerDialogFragment() {
 		initStatusBarColor()
 		registerClicks()
 		initSpinnerBlockChain()
+
 	}
 
 
