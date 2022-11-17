@@ -17,5 +17,7 @@ data class BaseResponse(
     @SerializedName("error")
     val error: String?,
     @SerializedName("status")
-    var status:String?
+    var status:String?,
+	@SerializedName("error_code")
+	var error_code:Int?
 )

@@ -11,12 +11,15 @@ import com.android.greenapp.R
 import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
 import com.android.greenapp.databinding.FragmentLanguageBinding
 import com.android.greenapp.presentation.custom.DialogManager
+import com.android.greenapp.presentation.custom.ServerMaintenanceExceptions
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
+import com.android.greenapp.presentation.custom.manageExceptionDialogsForRest
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.onboard.OnBoardViewModel
 import com.android.greenapp.presentation.viewBinding
 import com.android.greenapp.presentation.tools.Resource
+import com.android.greenapp.presentation.tools.getStringResource
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.reword.Reword
@@ -24,6 +27,8 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 import javax.inject.Inject
 
@@ -33,167 +38,158 @@ import javax.inject.Inject
  */
 class LanguageFragment : DaggerFragment() {
 
-    private val binding: FragmentLanguageBinding by viewBinding(FragmentLanguageBinding::bind)
+	private val binding: FragmentLanguageBinding by viewBinding(FragmentLanguageBinding::bind)
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
-
-
-    @Inject
-    lateinit var dialogManager: DialogManager
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
 
-    private lateinit var langAdapter: LanguageAdapter
-
-    private val handler = CoroutineExceptionHandler { _, ex ->
-        VLog.e("Exception in getting languageItemList : ${ex.message}")
-    }
-
-    private var job: Job? = null
+	@Inject
+	lateinit var dialogManager: DialogManager
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+	private lateinit var langAdapter: LanguageAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_language, container, false)
-    }
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.e("Exception in getting languageItemList : ${ex.message}")
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initLangRecyclerView()
-        VLog.d("GreetingViewModel LanguageFragment on ViewCreated : $greetingViewModel")
-    }
-
-    private fun downLoadingLang() {
-        job = lifecycleScope.launch {
-            greetingViewModel.downloadingLang.collect {
-                it?.let {
-                    when (it.state) {
-                        Resource.State.ERROR -> {
-                            dialogManager.hidePrevDialogs()
-                            val error = it.error
-                            if (isExceptionBelongsToNoInternet(error!!)) {
-                                dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-                                    
-                                }
-                            } else {
-                                dialogManager.showServerErrorDialog(curActivity()) {
-
-                                }
-                            }
-                        }
-                        Resource.State.LOADING -> {
-
-                        }
-                        Resource.State.SUCCESS -> {
-                            dialogManager.hidePrevDialogs()
-                            updateView()
-                            curActivity().move2TermsFragment()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun updateView() {
-        val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
-        Reword.reword(rootView)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        VLog.d("On  Start on  Start Fragment")
-    }
+	private var job: Job? = null
 
 
-    override fun onResume() {
-        super.onResume()
-        VLog.d("On Resume on languageFragment")
-        greetingViewModel.getAllLanguageList(5)
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+	}
 
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return inflater.inflate(R.layout.fragment_language, container, false)
+	}
 
-    private fun initLangRecyclerView() {
-        langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
-            override fun onLanguageClicked(langItem: LanguageItem) {
-                greetingViewModel.downloadLanguage(langItem.code)
-                downLoadingLang()
-            }
-        }, curActivity())
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		initLangRecyclerView()
+		VLog.d("GreetingViewModel LanguageFragment on ViewCreated : $greetingViewModel")
+	}
 
-        binding.apply {
-            recViewLang.adapter = langAdapter
-            recViewLang.layoutManager = LinearLayoutManager(curActivity())
-        }
+	private fun downLoadingLang() {
+		job = lifecycleScope.launch {
+			greetingViewModel.downloadingLang.collect {
+				it?.let {
+					when (it.state) {
+						Resource.State.ERROR -> {
+							dialogManager.hidePrevDialogs()
+							val error = it.error
+							if (isExceptionBelongsToNoInternet(error!!)) {
+								dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
 
-        lifecycleScope.launch {
-            greetingViewModel.languageList.collect {
-                when (it.state) {
-                    Resource.State.LOADING -> {
-                        VLog.d("Loading Status to get LangList")
-                    }
-                    Resource.State.ERROR -> {
-                        VLog.d("Error status to get LangList")
-                        curActivity().apply {
-                            val errorType = it.error
-                            if (isExceptionBelongsToNoInternet(errorType!!)) {
-                                dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
+								}
+							} else {
+								dialogManager.showServerErrorDialog(curActivity()) {
 
-                                }
-                            } else {
-                                dialogManager.showServerErrorDialog(curActivity()) {
+								}
+							}
+						}
+						Resource.State.LOADING -> {
 
-                                }
-                            }
-                        }
-                    }
-                    Resource.State.SUCCESS -> {
-                        VLog.d("Success Status Language List : ${it.data}")
-                        langAdapter.updateLanguageList(it.data ?: mutableListOf())
-                        dialogManager.hidePrevDialogs()
-                    }
-                }
-            }
-        }
+						}
+						Resource.State.SUCCESS -> {
+							dialogManager.hidePrevDialogs()
+							updateView()
+							curActivity().move2TermsFragment()
+						}
+					}
+				}
+			}
+		}
+	}
 
-    }
+	private fun updateView() {
+		val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
+		Reword.reword(rootView)
+	}
 
-    private fun gettingStringKeysOnly(resHashMap: HashMap<String, String>) {
-        val strings = Array(10) { "" }
-        var cur = ""
-        var index = 0
-        var counter = 0
-        val onlyKeys = resHashMap.map { it.key }.toList().sorted()
-        for (key in onlyKeys) {
-            cur += "<string name=\"$key\"/>"
-            counter++
-            if (counter == 20) {
-                strings[index] = cur
-                index++
-                counter = 0
-                cur = ""
-            }
-        }
-        for (k in strings) {
-            VLog.d("Resource : $k")
-        }
-    }
-
-    private fun curActivity() = requireActivity() as OnBoardActivity
+	override fun onStart() {
+		super.onStart()
+		VLog.d("On  Start on  Start Fragment")
+	}
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        job?.cancel()
-    }
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On Resume on languageFragment")
+		greetingViewModel.getAllLanguageList(5)
+
+	}
+
+	private fun initLangRecyclerView() {
+		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
+			override fun onLanguageClicked(langItem: LanguageItem) {
+				greetingViewModel.downloadLanguage(langItem.code)
+				downLoadingLang()
+			}
+		}, curActivity())
+
+		binding.apply {
+			recViewLang.adapter = langAdapter
+			recViewLang.layoutManager = LinearLayoutManager(curActivity())
+		}
+
+		lifecycleScope.launch {
+			greetingViewModel.languageList.collect {
+				when (it.state) {
+					Resource.State.LOADING -> {
+						VLog.d("Loading Status to get LangList")
+					}
+					Resource.State.ERROR -> {
+						VLog.d("Error status to get LangList ")
+						curActivity().apply {
+							manageExceptionDialogsForRest(curActivity(), dialogManager, it.error)
+						}
+					}
+					Resource.State.SUCCESS -> {
+						VLog.d("Success Status Language List : ${it.data}")
+						langAdapter.updateLanguageList(it.data ?: mutableListOf())
+						dialogManager.hidePrevDialogs()
+					}
+				}
+			}
+		}
+
+	}
+
+	private fun gettingStringKeysOnly(resHashMap: HashMap<String, String>) {
+		val strings = Array(10) { "" }
+		var cur = ""
+		var index = 0
+		var counter = 0
+		val onlyKeys = resHashMap.map { it.key }.toList().sorted()
+		for (key in onlyKeys) {
+			cur += "<string name=\"$key\"/>"
+			counter++
+			if (counter == 20) {
+				strings[index] = cur
+				index++
+				counter = 0
+				cur = ""
+			}
+		}
+		for (k in strings) {
+			VLog.d("Resource : $k")
+		}
+	}
+
+	private fun curActivity() = requireActivity() as OnBoardActivity
+
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		job?.cancel()
+	}
 
 
 }

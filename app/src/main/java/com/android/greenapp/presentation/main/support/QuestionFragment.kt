@@ -24,6 +24,7 @@ import com.android.greenapp.databinding.FragmentQuestionBinding
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
+import com.android.greenapp.presentation.custom.manageExceptionDialogsForRest
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.Resource
@@ -157,16 +158,14 @@ class QuestionFragment : DaggerDialogFragment() {
 		questionJob?.cancel()
 		questionJob = lifecycleScope.launch {
 			binding.apply {
-				supportViewModel.postQuestion(
+				val res=supportViewModel.postQuestion(
 					QuestionPost(
 						edtEmail.text.toString(),
 						edtName.text.toString(),
 						edtQuestion.text.toString()
-					), 3
+					)
 				)
-			}
-			supportViewModel.postQuestion.collect { res ->
-				when (res?.state) {
+				when (res.state) {
 					Resource.State.SUCCESS -> {
 						curActivity().apply {
 							dialogManager.showSuccessDialog(
@@ -180,22 +179,7 @@ class QuestionFragment : DaggerDialogFragment() {
 						}
 					}
 					Resource.State.ERROR -> {
-						val error = res.error
-						if (isExceptionBelongsToNoInternet(error!!)) {
-							dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
-							}
-						} else {
-							curActivity().apply {
-								dialogManager.showFailureDialog(
-									this, getStringResource(R.string.pop_up_failed_error_title),
-									getStringResource(R.string.pop_up_failed_error_description),
-									getStringResource(R.string.pop_up_failed_error_return_btn)
-								) {
-
-								}
-							}
-						}
+						manageExceptionDialogsForRest(curActivity(), dialogManager, res.error)
 					}
 					Resource.State.LOADING -> {
 

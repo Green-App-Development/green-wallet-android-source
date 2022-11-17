@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Paint
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
@@ -149,6 +151,58 @@ class SendFragment : DaggerFragment() {
 		initSwipeRefreshLayout()
 	}
 
+	private fun initConstrainsAfterCommobasedOnToken() {
+		val sendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
+		val commissionToken = tokenAdapter.dataOptions[0]
+		val precisionAfterCommonToken = getTokenPrecisionAfterComoByTokenCode(sendingToken)
+		val precisionAfterCommonFee = getTokenPrecisionAfterComoByTokenCode(commissionToken)
+		val filterSendingAmountEdt = object : InputFilter {
+			override fun filter(
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Spanned?,
+				p4: Int,
+				p5: Int
+			): CharSequence {
+				if (p0 == null) return ""
+				val curText = binding.edtEnterAmount.text.toString()
+				val locComo = curText.indexOf('.')
+				if (locComo == -1)
+					return p0
+				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
+				if (digitsAfterComo >= precisionAfterCommonToken) {
+					return ""
+				}
+				return p0
+			}
+		}
+		val filterFeeAmountEdt = object : InputFilter {
+			override fun filter(
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Spanned?,
+				p4: Int,
+				p5: Int
+			): CharSequence {
+				if (p0 == null) return ""
+				val curText = binding.edtEnterCommission.text.toString()
+				val locComo = curText.indexOf('.')
+				if (locComo == -1)
+					return p0
+				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
+				if (digitsAfterComo >= precisionAfterCommonFee) {
+					return ""
+				}
+				return p0
+			}
+		}
+		binding.apply {
+			edtEnterAmount.filters = arrayOf(filterSendingAmountEdt)
+			edtEnterCommission.filters = arrayOf(filterFeeAmountEdt)
+		}
+	}
 
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
@@ -203,6 +257,7 @@ class SendFragment : DaggerFragment() {
 						)
 					}
 					checkBtnEnabledAfterTokenChanged()
+					initConstrainsAfterCommobasedOnToken()
 				}
 			}
 		}
@@ -610,7 +665,7 @@ class SendFragment : DaggerFragment() {
 				).toLong()
 			if (asset_id.isNotEmpty())
 				precision = 1000
-			val amount = (getDoubleValueFromEdt(binding.edtEnterAmount) * precision).toLong()
+			val amount = (Math.round(getDoubleValueFromEdt(binding.edtEnterAmount) * precision))
 			val fee =
 				(getDoubleValueFromEdt(binding.edtEnterCommission) * if (isThisChivesNetwork(wallet.networkType)) Math.pow(
 					10.0,
@@ -863,7 +918,6 @@ class SendFragment : DaggerFragment() {
 							hideAmountNotEnoughWarning()
 						}
 					}
-
 				}
 				enableBtnContinueTwoEdtsFilled()
 			}.onFailure {

@@ -23,10 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.data.network.dto.support.ListingPost
 import com.android.greenapp.databinding.FragmentListingBinding
-import com.android.greenapp.presentation.custom.AnimationManager
-import com.android.greenapp.presentation.custom.CustomSpinner
-import com.android.greenapp.presentation.custom.DialogManager
-import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
+import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.main.send.NetworkAdapter
@@ -90,22 +87,6 @@ class ListingFragment : DaggerDialogFragment() {
 		initStatusBarColor()
 		registerClicks()
 		initSpinnerBlockChain()
-//		highLightWordsGreenInTermsProcessing()
-	}
-
-	private fun highLightWordsGreenInTermsProcessing() {
-		lifecycleScope.launch(handler) {
-			val startEnd =
-				getStartingIndexWordCountToHighlightEndingIndex(
-					Restring.locale.toString()
-				)
-			val ss = SpannableString(binding.checkboxText.text.toString())
-			val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
-			val underlineSpan = UnderlineSpan()
-			ss.setSpan(fcsGreen, startEnd[0], startEnd[1], Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-			ss.setSpan(underlineSpan, startEnd[0], startEnd[1], Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-			binding.checkboxText.text = ss
-		}
 	}
 
 
@@ -273,44 +254,25 @@ class ListingFragment : DaggerDialogFragment() {
 			val listingPost = getListingPost()
 			listingJob?.cancel()
 			listingJob = lifecycleScope.launch {
-				viewModel.postListing(listingPost, 3)
-				viewModel.postListing.collect { res ->
-					when (res?.state) {
+				val res = viewModel.postListing(listingPost)
+				when (res.state) {
+					Resource.State.LOADING -> {
 
-						Resource.State.LOADING -> {
-
-						}
-						Resource.State.SUCCESS -> {
-							curActivity().apply {
-								dialogManager.showSuccessDialog(
-									this,
-									getStringResource(R.string.pop_up_sent_title),
-									getStringResource(R.string.pop_up_sent_a_question_description),
-									getStringResource(R.string.ready_btn)
-								) {
-									curActivity().popBackStackOnce()
-								}
+					}
+					Resource.State.SUCCESS -> {
+						curActivity().apply {
+							dialogManager.showSuccessDialog(
+								this,
+								getStringResource(R.string.pop_up_sent_title),
+								getStringResource(R.string.pop_up_sent_a_question_description),
+								getStringResource(R.string.ready_btn)
+							) {
+								curActivity().popBackStackOnce()
 							}
 						}
-						Resource.State.ERROR -> {
-
-							val errorType = res.error
-							if (isExceptionBelongsToNoInternet(errorType!!)) {
-								dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
-								}
-							} else {
-								curActivity().apply {
-									dialogManager.showFailureDialog(
-										this, getStringResource(R.string.pop_up_failed_error_title),
-										getStringResource(R.string.pop_up_failed_error_description),
-										getStringResource(R.string.pop_up_failed_error_return_btn)
-									) {
-
-									}
-								}
-							}
-						}
+					}
+					Resource.State.ERROR -> {
+						manageExceptionDialogsForRest(curActivity(), dialogManager, res.error)
 					}
 				}
 			}

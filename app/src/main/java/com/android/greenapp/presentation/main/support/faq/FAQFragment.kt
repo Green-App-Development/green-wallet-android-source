@@ -20,8 +20,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.android.greenapp.presentation.custom.ServerMaintenanceExceptions
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
+import com.android.greenapp.presentation.custom.manageExceptionDialogsForRest
+import com.android.greenapp.presentation.tools.getStringResource
 import kotlinx.coroutines.flow.collect
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 /**
@@ -87,16 +92,7 @@ class FAQFragment : DaggerDialogFragment() {
                         dialogManager.hidePrevDialogs()
                     }
                     Resource.State.ERROR -> {
-                        val errorType = res.error!!
-                        if (isExceptionBelongsToNoInternet(errorType)) {
-                            dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-                                
-                            }
-                        } else {
-                            dialogManager.showServerErrorDialog(curActivity()) {
-
-                            }
-                        }
+						manageExceptionDialogsForRest(curActivity(), dialogManager, res.error)
                     }
 
                     Resource.State.LOADING -> {

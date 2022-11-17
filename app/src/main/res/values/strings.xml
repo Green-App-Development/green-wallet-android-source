@@ -293,6 +293,8 @@
 	<string name="push_notifications_incoming" />
 	<string name="push_notifications_outgoing" />
 	<string name="spendable_balance" />
+	<string name="server_maintenance" />
+	<string name="ok_button" />
 
 
 </resources>

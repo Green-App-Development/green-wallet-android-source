@@ -24,12 +24,7 @@ import javax.inject.Inject
 class SupportViewModel @Inject constructor(private val supportInteract: SupportInteract) :
     ViewModel() {
 
-    private var _postQuestion = MutableStateFlow<Resource<String>?>(null)
-    var postQuestion: StateFlow<Resource<String>?> = _postQuestion.asStateFlow()
     private var job: Job? = null
-
-    private var _postListing = MutableStateFlow<Resource<String>?>(null)
-    var postListing: StateFlow<Resource<String>?> = _postListing.asStateFlow()
 
     private var _faqList = MutableStateFlow<Resource<List<FAQItem>>?>(null)
     var faqList = _faqList.asStateFlow()
@@ -50,36 +45,8 @@ class SupportViewModel @Inject constructor(private val supportInteract: SupportI
         }
     }
 
-    fun postListing(listing: ListingPost, times: Int) {
-        job?.cancel()
-        job = viewModelScope.launch {
-            val res = supportInteract.postListing(listing)
-            _postListing.emit(res)
-            if (res.state == Resource.State.ERROR && times != 0 && isExceptionBelongsToNoInternet(
-                    res.error!!
-                )
-            ) {
-                VLog.d("No internet exception in posting a listing : $times")
-                delay(2500)
-                postListing(listing, times - 1)
-            }
-        }
-    }
+    suspend fun postListing(listing: ListingPost) =supportInteract.postListing(listing)
 
-    fun postQuestion(question: QuestionPost, times: Int) {
-        job?.cancel()
-        job = viewModelScope.launch {
-            val res = supportInteract.postQuestion(question)
-            _postQuestion.emit(res)
-            if (res.state == Resource.State.ERROR && times != 0 && isExceptionBelongsToNoInternet(
-                    res.error!!
-                )
-            ) {
-                VLog.d("No internet exception in posting a question : $times")
-                delay(2500)
-                postQuestion(question, times - 1)
-            }
-        }
-    }
+   suspend fun postQuestion(question: QuestionPost):Resource<String> = supportInteract.postQuestion(question=question)
 
 }

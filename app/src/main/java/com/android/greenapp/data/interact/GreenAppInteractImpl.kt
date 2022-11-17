@@ -15,6 +15,7 @@ import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCoinDetail
 import com.android.greenapp.presentation.custom.getPreferenceKeyForNetworkItem
+import com.android.greenapp.presentation.custom.parseException
 import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
@@ -26,6 +27,7 @@ import dev.b3nedikt.restring.Restring
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -61,7 +63,9 @@ class GreenAppInteractImpl @Inject constructor(
 							langResponse.list
 						)
 					} else {
-						VLog.d("BaseResponse is not successful")
+						val error_code = baseResponse.error_code!!
+						VLog.d("BaseResponse is not successful in getting lang list code error : $error_code")
+						parseException(error_code)
 					}
 				} else {
 					VLog.d("BaseResponse is null")
@@ -203,13 +207,19 @@ class GreenAppInteractImpl @Inject constructor(
 			val res = greenAppService.getAgreementText(code)
 
 			if (res.isSuccessful) {
-
-				val agreementText = JSONObject(
-					res.body()!!.getAsJsonObject("result").toString()
-				).getString("agreement_text")
-				return Resource.success(agreementText)
+				val jsonResponse = JSONObject(res.body()!!.toString())
+				val success = jsonResponse.getBoolean("success")
+				if (success) {
+					val agreementText = JSONObject(
+						res.body()!!.getAsJsonObject("result").toString()
+					).getString("agreement_text")
+					return Resource.success(agreementText)
+				} else {
+					val error_code = jsonResponse.getInt("error_code")
+					parseException(error_code)
+				}
 			} else {
-				VLog.d("Response is not successful : ${res.body()}")
+				VLog.d("Response is not successful in getting agreement text : ${res.body()}")
 			}
 
 		} catch (ex: Exception) {

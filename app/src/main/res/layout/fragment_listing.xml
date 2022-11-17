@@ -50,292 +50,302 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/back_layout" />
 
-
-	<LinearLayout
-			android:id="@+id/linearLayout4"
+	<ScrollView
 			android:layout_width="0dp"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			android:background="@drawable/bcg_ask_question_detail"
-			android:orientation="vertical"
-			android:paddingStart="15dp"
-			android:paddingTop="20dp"
-			android:paddingEnd="15dp"
-			android:paddingBottom="25dp"
 			app:layout_constraintEnd_toStartOf="@+id/guideline13"
 			app:layout_constraintStart_toStartOf="@+id/guideline11"
 			app:layout_constraintTop_toBottomOf="@+id/textView">
 
-
-		<TextView
-				android:id="@+id/txtName"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/listing_request_name"
-				android:textColor="@color/green"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				android:visibility="invisible" />
-
-
-		<EditText
-				android:id="@+id/edtName"
+		<LinearLayout
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="3dp"
-				android:background="@android:color/transparent"
-				android:hint="@string/listing_request_name"
-				android:maxLines="1"
-				android:singleLine="true"
-				android:textColor="@color/secondary_text_color"
-				android:textColorHint="@color/inactive_grey_txt"
-				android:textSize="16sp" />
-
-		<View
-				android:id="@+id/view2"
-				android:layout_width="match_parent"
-				android:layout_height="1dp"
-				android:layout_marginTop="5dp"
-				android:background="@color/line_divider" />
-
-		<TextView
-				android:id="@+id/txtEmail"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="15dp"
-				android:text="@string/listing_request_e_mail"
-				android:textColor="@color/green"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				android:visibility="invisible" />
-
-
-		<EditText
-				android:id="@+id/edtEmail"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="3dp"
-				android:background="@android:color/transparent"
-				android:hint="@string/listing_request_e_mail"
-				android:maxLines="1"
-				android:singleLine="true"
-				android:textColor="@color/secondary_text_color"
-				android:textColorHint="@color/inactive_grey_txt"
-				android:textSize="16sp" />
-
-		<View
-				android:id="@+id/view3"
-				android:layout_width="match_parent"
-				android:layout_height="1dp"
-				android:layout_marginTop="5dp"
-				android:background="@color/line_divider" />
-
-		<TextView
-				android:id="@+id/txtAddressDontExistWarning"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="5dp"
-				android:text="@string/non_existent_adress_error"
-				android:textColor="@color/red_mnemonic"
-				android:textSize="16sp"
-				android:visibility="gone" />
-
-		<TextView
-				android:id="@+id/txtProjectName"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="15dp"
-				android:text="@string/listing_request_project_name"
-				android:textColor="@color/green"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				android:visibility="invisible" />
-
-
-		<EditText
-				android:id="@+id/edtProjectName"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="3dp"
-				android:background="@android:color/transparent"
-				android:hint="@string/listing_request_project_name"
-				android:maxLines="1"
-				android:singleLine="true"
-				android:textColor="@color/secondary_text_color"
-				android:textColorHint="@color/inactive_grey_txt"
-				android:textSize="16sp" />
-
-		<View
-				android:id="@+id/view4"
-				android:layout_width="match_parent"
-				android:layout_height="1dp"
-				android:layout_marginTop="5dp"
-				android:background="@color/line_divider" />
-
-
-		<TextView
-				android:id="@+id/txtDescriptionProject"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="15dp"
-				android:text="@string/listing_request_project_description"
-				android:textColor="@color/green"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				android:visibility="invisible" />
-
-
-		<EditText
-				android:id="@+id/edtDescriptionProject"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="3dp"
-				android:background="@android:color/transparent"
-				android:hint="@string/listing_request_project_description"
-				android:inputType="textMultiLine"
-				android:textColor="@color/secondary_text_color"
-				android:textColorHint="@color/inactive_grey_txt"
-				android:textSize="16sp" />
-
-		<View
-				android:id="@+id/view5"
-				android:layout_width="match_parent"
-				android:layout_height="1dp"
-				android:layout_marginTop="5dp"
-				android:background="@color/line_divider" />
-
-
-		<RelativeLayout
-				android:layout_width="match_parent"
+				android:orientation="vertical"
 				android:layout_height="wrap_content">
 
-			<TextView
-					android:id="@+id/txtBlockChain"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="15dp"
-					android:text="@string/listing_request_blockchain"
-					android:textColor="@color/green"
-					android:textFontWeight="400"
-					android:textSize="14sp"
-					android:visibility="invisible" />
-
-
-			<EditText
-					android:id="@+id/edtBlockChain"
+			<LinearLayout
+					android:id="@+id/linearLayout4"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
-					android:layout_below="@+id/txtBlockChain"
-					android:layout_marginTop="3dp"
-					android:layout_toLeftOf="@+id/img_arrow"
-					android:background="@android:color/transparent"
-					android:enabled="false"
-					android:hint="@string/listing_request_blockchain"
-					android:textColor="@color/secondary_text_color"
-					android:textColorHint="@color/inactive_grey_txt"
-					android:textSize="16sp" />
+					android:layout_marginTop="20dp"
+					android:background="@drawable/bcg_ask_question_detail"
+					android:orientation="vertical"
+					android:paddingStart="15dp"
+					android:paddingTop="20dp"
+					android:paddingEnd="15dp"
+					android:paddingBottom="25dp">
 
-			<View
-					android:id="@+id/view6"
-					android:layout_width="match_parent"
-					android:layout_height="1dp"
-					android:layout_below="@+id/edtBlockChain"
-					android:layout_marginTop="5dp"
-					android:background="@color/line_divider" />
 
-			<ImageView
-					android:id="@+id/img_arrow"
-					android:layout_width="24dp"
-					android:layout_height="24dp"
-					android:layout_below="@+id/txtBlockChain"
-					android:layout_alignParentEnd="true"
-					android:layout_marginTop="3dp"
-					android:clickable="true"
-					android:focusable="true"
-					android:foreground="?android:attr/selectableItemBackground"
-					android:src="@drawable/ic_arrow_downword" />
-
-			<RelativeLayout
-					android:layout_width="200dp"
-					android:layout_height="0dp"
-					android:layout_below="@id/img_arrow"
-					android:layout_alignParentEnd="true"
-					android:layout_marginTop="2dp">
-
-				<com.android.greenapp.presentation.custom.CustomSpinner
-						android:id="@+id/spinner_blockchain"
+				<TextView
+						android:id="@+id/txtName"
 						android:layout_width="wrap_content"
-						android:layout_height="0dp"
-						android:background="@drawable/selector_spinner_bcg_color"
-						android:dropDownVerticalOffset="5dp" />
-
-			</RelativeLayout>
-
-		</RelativeLayout>
-
-
-		<TextView
-				android:id="@+id/txtTwitter"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="15dp"
-				android:text="@string/listing_request_twitter"
-				android:textColor="@color/green"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				android:visibility="invisible" />
+						android:layout_height="wrap_content"
+						android:text="@string/listing_request_name"
+						android:textColor="@color/green"
+						android:textFontWeight="400"
+						android:textSize="14sp"
+						android:visibility="invisible" />
 
 
-		<EditText
-				android:id="@+id/edtTwitter"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="3dp"
-				android:background="@android:color/transparent"
-				android:hint="@string/listing_request_twitter"
-				android:maxLines="1"
-				android:singleLine="true"
-				android:textColor="@color/secondary_text_color"
-				android:textColorHint="@color/inactive_grey_txt"
-				android:textSize="16sp" />
+				<EditText
+						android:id="@+id/edtName"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:background="@android:color/transparent"
+						android:hint="@string/listing_request_name"
+						android:maxLines="1"
+						android:singleLine="true"
+						android:textColor="@color/secondary_text_color"
+						android:textColorHint="@color/inactive_grey_txt"
+						android:textSize="16sp" />
 
-		<View
-				android:id="@+id/view7"
-				android:layout_width="match_parent"
-				android:layout_height="1dp"
-				android:layout_marginTop="5dp"
-				android:background="@color/line_divider" />
+				<View
+						android:id="@+id/view2"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_marginTop="5dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtEmail"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="15dp"
+						android:text="@string/listing_request_e_mail"
+						android:textColor="@color/green"
+						android:textFontWeight="400"
+						android:textSize="14sp"
+						android:visibility="invisible" />
 
 
-	</LinearLayout>
+				<EditText
+						android:id="@+id/edtEmail"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:background="@android:color/transparent"
+						android:hint="@string/listing_request_e_mail"
+						android:maxLines="1"
+						android:singleLine="true"
+						android:textColor="@color/secondary_text_color"
+						android:textColorHint="@color/inactive_grey_txt"
+						android:textSize="16sp" />
+
+				<View
+						android:id="@+id/view3"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_marginTop="5dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtAddressDontExistWarning"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp"
+						android:text="@string/non_existent_adress_error"
+						android:textColor="@color/red_mnemonic"
+						android:textSize="16sp"
+						android:visibility="gone" />
+
+				<TextView
+						android:id="@+id/txtProjectName"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="15dp"
+						android:text="@string/listing_request_project_name"
+						android:textColor="@color/green"
+						android:textFontWeight="400"
+						android:textSize="14sp"
+						android:visibility="invisible" />
 
 
-	<LinearLayout
-			android:id="@+id/linearAgree"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			app:layout_constraintEnd_toStartOf="@+id/guideline13"
-			app:layout_constraintStart_toStartOf="@+id/guideline11"
-			app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+				<EditText
+						android:id="@+id/edtProjectName"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:background="@android:color/transparent"
+						android:hint="@string/listing_request_project_name"
+						android:maxLines="1"
+						android:singleLine="true"
+						android:textColor="@color/secondary_text_color"
+						android:textColorHint="@color/inactive_grey_txt"
+						android:textSize="16sp" />
 
-		<CheckBox
-				android:id="@+id/checkboxAgree"
-				android:layout_width="30dp"
-				android:layout_height="26dp"
-				android:theme="@style/MyCheckBox" />
+				<View
+						android:id="@+id/view4"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_marginTop="5dp"
+						android:background="@color/line_divider" />
 
-		<TextView
-				android:id="@+id/checkboxText"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:clickable="false"
-				android:text="@string/personal_data_agreement_chekbox"
-				android:textColor="@color/secondary_text_color"
-				android:textFontWeight="500"
-				android:textSize="15sp" />
 
-	</LinearLayout>
+				<TextView
+						android:id="@+id/txtDescriptionProject"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="15dp"
+						android:text="@string/listing_request_project_description"
+						android:textColor="@color/green"
+						android:textFontWeight="400"
+						android:textSize="14sp"
+						android:visibility="invisible" />
+
+
+				<EditText
+						android:id="@+id/edtDescriptionProject"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:background="@android:color/transparent"
+						android:hint="@string/listing_request_project_description"
+						android:inputType="textMultiLine"
+						android:textColor="@color/secondary_text_color"
+						android:textColorHint="@color/inactive_grey_txt"
+						android:textSize="16sp" />
+
+				<View
+						android:id="@+id/view5"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_marginTop="5dp"
+						android:background="@color/line_divider" />
+
+
+				<RelativeLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content">
+
+					<TextView
+							android:id="@+id/txtBlockChain"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="15dp"
+							android:text="@string/listing_request_blockchain"
+							android:textColor="@color/green"
+							android:textFontWeight="400"
+							android:textSize="14sp"
+							android:visibility="invisible" />
+
+
+					<EditText
+							android:id="@+id/edtBlockChain"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtBlockChain"
+							android:layout_marginTop="3dp"
+							android:layout_toLeftOf="@+id/img_arrow"
+							android:background="@android:color/transparent"
+							android:enabled="false"
+							android:hint="@string/listing_request_blockchain"
+							android:textColor="@color/secondary_text_color"
+							android:textColorHint="@color/inactive_grey_txt"
+							android:textSize="16sp" />
+
+					<View
+							android:id="@+id/view6"
+							android:layout_width="match_parent"
+							android:layout_height="1dp"
+							android:layout_below="@+id/edtBlockChain"
+							android:layout_marginTop="5dp"
+							android:background="@color/line_divider" />
+
+					<ImageView
+							android:id="@+id/img_arrow"
+							android:layout_width="24dp"
+							android:layout_height="24dp"
+							android:layout_below="@+id/txtBlockChain"
+							android:layout_alignParentEnd="true"
+							android:layout_marginTop="3dp"
+							android:clickable="true"
+							android:focusable="true"
+							android:foreground="?android:attr/selectableItemBackground"
+							android:src="@drawable/ic_arrow_downword" />
+
+					<RelativeLayout
+							android:layout_width="200dp"
+							android:layout_height="0dp"
+							android:layout_below="@id/img_arrow"
+							android:layout_alignParentEnd="true"
+							android:layout_marginTop="2dp">
+
+						<com.android.greenapp.presentation.custom.CustomSpinner
+								android:id="@+id/spinner_blockchain"
+								android:layout_width="wrap_content"
+								android:layout_height="0dp"
+								android:background="@drawable/selector_spinner_bcg_color"
+								android:dropDownVerticalOffset="5dp" />
+
+					</RelativeLayout>
+
+				</RelativeLayout>
+
+
+				<TextView
+						android:id="@+id/txtTwitter"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="15dp"
+						android:text="@string/listing_request_twitter"
+						android:textColor="@color/green"
+						android:textFontWeight="400"
+						android:textSize="14sp"
+						android:visibility="invisible" />
+
+
+				<EditText
+						android:id="@+id/edtTwitter"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="3dp"
+						android:background="@android:color/transparent"
+						android:hint="@string/listing_request_twitter"
+						android:maxLines="1"
+						android:singleLine="true"
+						android:textColor="@color/secondary_text_color"
+						android:textColorHint="@color/inactive_grey_txt"
+						android:textSize="16sp" />
+
+				<View
+						android:id="@+id/view7"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_marginTop="5dp"
+						android:background="@color/line_divider" />
+
+
+			</LinearLayout>
+
+
+			<LinearLayout
+					android:id="@+id/linearAgree"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="20dp"
+					app:layout_constraintEnd_toStartOf="@+id/guideline13"
+					app:layout_constraintStart_toStartOf="@+id/guideline11"
+					app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+
+				<CheckBox
+						android:id="@+id/checkboxAgree"
+						android:layout_width="30dp"
+						android:layout_height="26dp"
+						android:theme="@style/MyCheckBox" />
+
+				<TextView
+						android:id="@+id/checkboxText"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:clickable="false"
+						android:text="@string/personal_data_agreement_chekbox"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="500"
+						android:textSize="15sp" />
+
+			</LinearLayout>
+		</LinearLayout>
+	</ScrollView>
 
 	<com.google.android.material.button.MaterialButton
 			android:id="@+id/btnSend"

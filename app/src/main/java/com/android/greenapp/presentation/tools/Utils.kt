@@ -151,6 +151,14 @@ fun getTokenPrecisionByCode(code: String): Double {
 	}
 }
 
+fun getTokenPrecisionAfterComoByTokenCode(code: String): Int {
+	return when (code) {
+		"XCC" -> 8
+		"XCH" -> 12
+		else -> 3
+	}
+}
+
 
 
 
