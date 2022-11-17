@@ -151,7 +151,7 @@ class CryptocurrencyImpl @Inject constructor(
 
 				val baseResSuccess = res.body()!!.success
 				if (baseResSuccess) {
-					VLog.d("Received all tails inf on crypt: ${res.body()!!.result}")
+					VLog.d("Received all tails inf on crypto: ${res.body()!!.result}")
 					val tokenList = res.body()!!.result.list.map { it.toTokenEntity() }
 					VLog.d("TokenList on  : $tokenList")
 					tokenList.forEach {

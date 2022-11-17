@@ -258,6 +258,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
 				android:layout_marginBottom="10dp"
+				android:fillViewport="true"
 				app:layout_constraintBottom_toTopOf="@+id/btnContinue"
 				app:layout_constraintEnd_toStartOf="@+id/guideline9"
 				app:layout_constraintStart_toStartOf="@+id/guideline11"

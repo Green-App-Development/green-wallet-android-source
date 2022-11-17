@@ -101,7 +101,8 @@ class SendFragment : DaggerFragment() {
 
 
 	private var curSendAddressWallet: String = ""
-	private var availableAmount: Double = 0.0
+	private var spendableAmountToken: Double = 0.0
+	private var spendableAmountFee: Double = 0.0
 	private var chosenTokenCode: String = ""
 	private var walletAdapterPosition = 0
 	private var tokendAdapterPosition = 0
@@ -164,7 +165,7 @@ class SendFragment : DaggerFragment() {
 
 	@SuppressLint("SetTextI18n")
 	private fun calculateSpendableBalance() {
-		lifecycleScope.launch {
+		lifecycleScope.launch(handler) {
 			val curSendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 			val curWallet = walletAdapter.walletList[walletAdapter.selectedPosition]
 			withContext(Dispatchers.IO) {
@@ -182,22 +183,26 @@ class SendFragment : DaggerFragment() {
 						curWallet.tokenWalletList[0].amount
 					val txtSpendableBalance =
 						curActivity().getStringResource(R.string.spendable_balance)
+					spendableAmountToken = initialAmountToken - sentTokenMempoolAmounts[0]
+					spendableAmountFee =
+						initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
 					binding.apply {
 						txtSpendableBalanceAmount.setText(
 							"$txtSpendableBalance: ${
 								formattedDoubleAmountWithPrecision(
-									(initialAmountToken - sentTokenMempoolAmounts[0]).toDouble()
+									(initialAmountToken - sentTokenMempoolAmounts[0])
 								)
 							}"
 						)
 						txtSpendableBalanceCommission.setText(
 							"$txtSpendableBalance: ${
 								formattedDoubleAmountWithPrecision(
-									(initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]).toDouble()
+									(initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1])
 								)
 							}"
 						)
 					}
+					checkBtnEnabledAfterTokenChanged()
 				}
 			}
 		}
@@ -301,15 +306,7 @@ class SendFragment : DaggerFragment() {
 		txtHiddenPublicKey.text = hidePublicKey(wallet.fingerPrint)
 
 		updateTokensSpinner(wallet.tokenWalletList)
-		verifyAddressNotMatch(wallet.address)
-	}
-
-	private fun verifyAddressNotMatch(address: String) {
-		binding.edtAddressWallet.addTextChangedListener {
-			if (it == null)
-				return@addTextChangedListener
-			binding.btnContinue.isEnabled = it.toString() != address
-		}
+		verifySendingAddress(wallet.address)
 	}
 
 	private fun updateTokensSpinner(tokenWalletList: List<TokenWallet>) {
@@ -331,9 +328,8 @@ class SendFragment : DaggerFragment() {
 				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
 					tokenAdapter.selectedPosition = p2
 					tokendAdapterPosition = p2
-					updateAmounts(tokenWalletList[p2])
-					checkBtnEnabled(tokenWalletList[p2])
 					calculateSpendableBalance()
+					updateAmounts(tokenWalletList[p2])
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -343,19 +339,18 @@ class SendFragment : DaggerFragment() {
 
 	}
 
-	private fun checkBtnEnabled(tokenWallet: TokenWallet) {
-		val curAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull()
-		if (curAmount != null) {
-			val tokenAmount = tokenWallet.amount
-			if (tokenAmount < curAmount) {
+	private fun checkBtnEnabledAfterTokenChanged() {
+		val sendingAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull()
+		if (sendingAmount != null) {
+			if (sendingAmount > spendableAmountToken) {
 				twoEdtsFilled.remove(2)
 				showNotEnoughAmountWarning()
 			} else {
 				twoEdtsFilled.add(2)
 				hideAmountNotEnoughWarning()
-				val totalWithCommission = getCommissionAmount() + getEnteredAmount()
-				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getEnteredAmount()}")
-				if (totalWithCommission > curTokenWalletList[0].amount) {
+				val totalWithCommission = getCommissionAmount() + getSendingAmountForFee()
+				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getSendingAmountForFee()}")
+				if (totalWithCommission > spendableAmountFee) {
 					twoEdtsFilled.remove(2)
 					showNotEnoughAmountWarning()
 				} else {
@@ -373,7 +368,6 @@ class SendFragment : DaggerFragment() {
 			formattedDoubleAmountWithPrecision(tokenWallet.amount) + " ${tokenWallet.code}"
 		val formattedBalance = String.format("%.2f", tokenWallet.amountInUSD).replace(",", ".")
 		txtWalletAmountInUsd.text = "⁓$formattedBalance USD"
-		availableAmount = tokenWallet.amount
 		chosenTokenCode = tokenWallet.code
 		if (txtShortNetworkType.text.toString().length > 1) {
 			txtShortNetworkType.text = tokenWallet.code
@@ -472,6 +466,9 @@ class SendFragment : DaggerFragment() {
 
 
 			txtRecommendedCommission.setOnClickListener {
+				edtEnterCommission.setText(txtRecommendedCommission.text.toString().trim())
+			}
+			view3.setOnClickListener {
 				edtEnterCommission.setText(txtRecommendedCommission.text.toString().trim())
 			}
 
@@ -599,7 +596,7 @@ class SendFragment : DaggerFragment() {
 		dest_address: String
 	) {
 		genSpendBundleJob?.cancel()
-		genSpendBundleJob = lifecycleScope.launch {
+		genSpendBundleJob = lifecycleScope.launch(handler) {
 			val wallet = walletAdapter.walletList[walletAdapter.selectedPosition]
 			val asset_id = curTokenWalletList[tokenAdapter.selectedPosition].asset_id
 			val curCode = curTokenWalletList[tokenAdapter.selectedPosition].code
@@ -764,6 +761,10 @@ class SendFragment : DaggerFragment() {
 		}
 	}
 
+	private fun verifySendingAddress(address: String) {
+
+	}
+
 
 	private fun getQrCodeDecoded() {
 		lifecycleScope.launchWhenStarted {
@@ -820,6 +821,21 @@ class SendFragment : DaggerFragment() {
 			curActivity().move2AddressFragmentList(true)
 		}
 
+
+		binding.edtAddressWallet.addTextChangedListener {
+			if (it.isNullOrEmpty()) {
+				twoEdtsFilled.remove(1)
+			} else {
+				twoEdtsFilled.add(1)
+				txtEnterAddressWallet.visibility = View.VISIBLE
+				edtAddressWallet.hint = ""
+				line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
+				edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
+				txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
+			}
+			enableBtnContinueTwoEdtsFilled()
+		}
+
 		binding.edtEnterAmount.addTextChangedListener {
 			kotlin.runCatching {
 				if (it.isNullOrEmpty()) {
@@ -829,7 +845,7 @@ class SendFragment : DaggerFragment() {
 					getCommissionOfCurChosenCoin()
 					convertAmountToUSDGAD(it.toString().toDouble())
 					val enteredAmount = it.toString().toDouble()
-					if (enteredAmount > availableAmount) {
+					if (enteredAmount > spendableAmountToken) {
 						twoEdtsFilled.remove(2)
 						showNotEnoughAmountWarning()
 					} else {
@@ -839,7 +855,7 @@ class SendFragment : DaggerFragment() {
 						var totalWithCommission = getCommissionAmount()
 						if (tokenAdapter.selectedPosition == 0)
 							totalWithCommission += enteredAmount
-						if (totalWithCommission > curTokenWalletList[0].amount) {
+						if (totalWithCommission > spendableAmountFee) {
 							twoEdtsFilled.remove(2)
 							showNotEnoughAmountWarning()
 						} else {
@@ -857,12 +873,10 @@ class SendFragment : DaggerFragment() {
 
 		binding.edtEnterCommission.addTextChangedListener {
 			val commission = it.toString().toDoubleOrNull() ?: return@addTextChangedListener
-			val enteredAmount = getEnteredAmount()
+			val enteredAmount = getSendingAmountForFee()
 			VLog.d("CommissionsEdt : commission : $commission , EnteredAmount : $enteredAmount")
 			val total = commission + enteredAmount
-			val tokenXCAmount =
-				walletAdapter.walletList[walletAdapter.selectedPosition].tokenWalletList[0].amount
-			if (total > tokenXCAmount) {
+			if (total > spendableAmountFee) {
 				twoEdtsFilled.remove(2)
 				showNotEnoughAmountWarning()
 			} else {
@@ -872,17 +886,6 @@ class SendFragment : DaggerFragment() {
 			enableBtnContinueTwoEdtsFilled()
 		}
 
-		binding.edtAddressWallet.addTextChangedListener {
-			if (it.isNullOrEmpty()) {
-				twoEdtsFilled.remove(1)
-			} else {
-				twoEdtsFilled.add(1)
-				txtEnterAddressWallet.visibility = View.VISIBLE
-				edtAddressWallet.hint = ""
-				line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
-			}
-			enableBtnContinueTwoEdtsFilled()
-		}
 
 		binding.btnContinue.setOnClickListener {
 			if (connectionLiveData.isOnline) {
@@ -916,7 +919,9 @@ class SendFragment : DaggerFragment() {
 
 	}
 
-	private fun getEnteredAmount(): Double {
+	private fun getSendingAmountForFee(): Double {
+		if (!this@SendFragment::tokenAdapter.isInitialized)
+			return 0.0
 		val sendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 		if (sendingToken == "XCH" || sendingToken == "XCC")
 			return binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
@@ -929,7 +934,7 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun isPrecisionSatisfied(amount: Double?): Boolean {
-		if (amount == null) return false
+		if (amount == null || !this::tokenAdapter.isInitialized) return false
 		val precision =
 			getTokenPrecisionByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
 		return precision * amount >= 1.0
@@ -937,7 +942,7 @@ class SendFragment : DaggerFragment() {
 
 	@SuppressLint("SetTextI18n")
 	private fun convertAmountToUSDGAD(amount: Double) {
-		lifecycleScope.launch {
+		lifecycleScope.launch(handler) {
 			val amountInUSD =
 				amount * viewModel.getTokenPriceByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
 			binding.txtAmountInUSD.setText("⁓${formattedDollarWithPrecision(amountInUSD, 3)}")
@@ -1010,7 +1015,7 @@ class SendFragment : DaggerFragment() {
 				edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
 			//check only token first
 			if (tokenAdapter.selectedPosition != 0) {
-				if (enteredAmount > availableAmount)
+				if (enteredAmount > spendableAmountToken && this@SendFragment::tokenAdapter.isInitialized)
 					return tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 			}
 		}
