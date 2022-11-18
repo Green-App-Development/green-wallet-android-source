@@ -20,62 +20,61 @@ import retrofit2.http.Url
 interface GreenAppService {
 
 
-    @GET("localization/languages")
-    suspend fun getLanguageList(): Response<BaseResponse>
+	@GET("localization/languages")
+	suspend fun getLanguageList(): Response<BaseResponse>
 
 
-    @GET("localization/translate")
-    suspend fun getLanguageTranslate(
-        @Query("code") code: String,
-        @Query("version") version: String
-    ): ResponseBody
+	@GET("localization/translate")
+	suspend fun getLanguageTranslate(
+		@Query("code") code: String,
+		@Query("version") version: String
+	): ResponseBody
 
-    @GET("blockchains")
-    suspend fun getAvailableBlockChains(): Response<NetworkItemBaseResponse>
-
-
-    @GET("faq")
-    suspend fun getFAQQuestionAnswer(@Query("code") code: String): Response<JsonObject>
-
-    @POST("listing")
-    suspend fun postListing(
-        @Query("name") name: String,
-        @Query("email") email: String,
-        @Query("project_name") project_name: String,
-        @Query("description") description: String,
-        @Query("blockchain") blockchain: String,
-        @Query("twitter") twitter: String,
-    ): Response<BaseResponse>
+	@GET("blockchains")
+	suspend fun getAvailableBlockChains(): Response<NetworkItemBaseResponse>
 
 
-    @POST("support")
-    suspend fun postQuestion(
-        @Query("name") name: String,
-        @Query("email") email: String,
-        @Query("question") question: String
-    ): Response<BaseResponse>
+	@GET("faq")
+	suspend fun getFAQQuestionAnswer(@Query("code") code: String): Response<JsonObject>
+
+	@POST("listing")
+	suspend fun postListing(
+		@Query("name") name: String,
+		@Query("email") email: String,
+		@Query("project_name") project_name: String,
+		@Query("description") description: String,
+		@Query("blockchain") blockchain: String,
+		@Query("twitter") twitter: String,
+	): Response<BaseResponse>
 
 
-    @GET("notifications")
-    suspend fun getNotifOtherItems(@Query("code") code: String): Response<JsonObject>
+	@POST("support")
+	suspend fun postQuestion(
+		@Query("name") name: String,
+		@Query("email") email: String,
+		@Query("question") question: String
+	): Response<BaseResponse>
 
 
-    @GET("agreements")
-    suspend fun getAgreementText(@Query("code") code: String): Response<JsonObject>
+	@GET("notifications")
+	suspend fun getNotifOtherItems(@Query("code") code: String): Response<JsonObject>
 
 
-    @GET("tails")
-    suspend fun getAllTails(@Query("blockchain") blockChain: String): Response<TokenBaseResponse>
+	@GET("agreements")
+	suspend fun getAgreementText(@Query("code") code: String): Response<JsonObject>
 
-    @GET("tails/price")
-    suspend fun getAllTailsPrice(): Response<JsonObject>
 
-    @GET("coins")
-    suspend fun getCoinDetails(@Query("code") code: String): Response<JsonObject>
+	@GET("tails")
+	suspend fun getAllTails(@Query("blockchain") blockChain: String): Response<TokenBaseResponse>
 
-    @GET
-    suspend fun getUpdatedChiaChivesCourse(@Url url: String): Response<JsonObject>
+	@GET("tails/price")
+	suspend fun getAllTailsPrice(): Response<JsonObject>
 
+	@GET("coins")
+	suspend fun getCoinDetails(@Query("code") code: String): Response<JsonObject>
+
+	@GET
+	suspend fun getUpdatedChiaChivesCourse(@Url url: String): Response<JsonObject>
 
 
 }

@@ -251,7 +251,8 @@ class SendFragment : DaggerFragment() {
 					val bigDecimalSpendableAmount =
 						(BigDecimal("$initialAmountToken").subtract(BigDecimal("${sentTokenMempoolAmounts[0]}"))).toDouble()
 
-					var spendableAmountString = "$bigDecimalSpendableAmount"
+					var spendableAmountString =
+						formattedDoubleAmountWithPrecision(bigDecimalSpendableAmount)
 					if (Math.round(bigDecimalSpendableAmount)
 							.toDouble() == bigDecimalSpendableAmount
 					)

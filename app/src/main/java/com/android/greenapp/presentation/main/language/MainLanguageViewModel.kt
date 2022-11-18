@@ -40,16 +40,8 @@ class MainLanguageViewModel @Inject constructor(
     private var downloadJob: Job? = null
     private var langListJob: Job? = null
 
-    suspend fun getVersionRequest() = prefs.getSettingString(PrefsManager.VERSION_REQUEST, "")
 
-    fun downloadLanguage(langCode: String) {
-        downloadJob?.cancel()
-        downloadJob = viewModelScope.launch {
-            _downloadingLang.emit(Resource.loading())
-            val res = greenAppInteract.downloadLanguageTranslate(langCode = langCode)
-            _downloadingLang.emit(res)
-        }
-    }
+   suspend fun downloadLanguage(langCode: String)=greenAppInteract.downloadLanguageTranslate(langCode)
 
 
     fun getAllLanguageList(times:Int) {

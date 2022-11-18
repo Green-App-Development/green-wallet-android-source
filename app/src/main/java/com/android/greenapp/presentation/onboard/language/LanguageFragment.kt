@@ -129,8 +129,7 @@ class LanguageFragment : DaggerFragment() {
 	private fun initLangRecyclerView() {
 		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
 			override fun onLanguageClicked(langItem: LanguageItem) {
-				greetingViewModel.downloadLanguage(langItem.code)
-				downLoadingLang()
+				downloadingLang(langItem.code)
 			}
 		}, curActivity())
 
@@ -161,6 +160,25 @@ class LanguageFragment : DaggerFragment() {
 		}
 
 	}
+
+	private var jobDownloadingLang: Job? = null
+
+
+	private fun downloadingLang(code: String) {
+		jobDownloadingLang?.cancel()
+		jobDownloadingLang = lifecycleScope.launch {
+			val res = greetingViewModel.downloadLanguage(code)
+			when (res.state) {
+				Resource.State.ERROR -> {
+					manageExceptionDialogsForRest(curActivity(), dialogManager, res.error)
+				}
+				Resource.State.SUCCESS -> {
+					updateView()
+				}
+			}
+		}
+	}
+
 
 	private fun gettingStringKeysOnly(resHashMap: HashMap<String, String>) {
 		val strings = Array(10) { "" }

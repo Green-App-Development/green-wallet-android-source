@@ -93,6 +93,7 @@ class GreenAppInteractImpl @Inject constructor(
 		return Resource.error(Exception("Unknown result in downloading language list"))
 	}
 
+
 	override suspend fun downloadLanguageTranslate(langCode: String): Resource<String> {
 		try {
 			val response = greenAppService.getLanguageTranslate(
@@ -100,6 +101,9 @@ class GreenAppInteractImpl @Inject constructor(
 				prefs.getSettingString(PrefsManager.VERSION_REQUEST, "")
 			)
 			val resMap = convertResponseToHashMap(response)
+			VLog.d("ResMap on downloading lang by code : $resMap")
+			if (resMap["error_code"] == "1007")
+				parseException(1007)
 			val chooseLocale = Locale(langCode)
 			Restring.putStrings(chooseLocale, resMap)
 			Restring.locale = chooseLocale

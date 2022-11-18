@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
 import android.view.WindowInsetsController
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -86,6 +87,7 @@ class MainActivity : BaseActivity() {
 	private var networkItemsJob: Job? = null
 	var impMnemonicsFragmentView: View? = null
 	var sendCoinsFragmentView: View? = null
+	var listingFragmentView: View? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -620,6 +622,12 @@ class MainActivity : BaseActivity() {
 		if (sendCoinsFragmentView != null) {
 			val tempLinear = sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
 			tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
+		}
+		if (listingFragmentView != null) {
+			val linearAgree = listingFragmentView!!.findViewById<LinearLayout>(linearAgree)
+			val button = listingFragmentView!!.findViewById<Button>(btnSend)
+			button.visibility = if (visibility) View.GONE else View.VISIBLE
+			linearAgree.visibility = if (visibility) View.GONE else View.VISIBLE
 		}
 	}
 

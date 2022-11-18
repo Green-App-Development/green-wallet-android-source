@@ -79,6 +79,7 @@ class ListingFragment : DaggerDialogFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentListingBinding.inflate(layoutInflater)
+		curActivity().listingFragmentView = binding.root
 		return binding.root
 	}
 

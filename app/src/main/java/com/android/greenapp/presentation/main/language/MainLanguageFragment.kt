@@ -27,6 +27,7 @@ import com.google.gson.Gson
 import dagger.android.support.DaggerDialogFragment
 import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -86,7 +87,6 @@ class MainLanguageFragment : DaggerDialogFragment() {
 		registerClicks()
 		initLangRecyclerView()
 		initStatusBarColor()
-		downLoadingLang()
 	}
 
 	private fun initStatusBarColor() {
@@ -113,14 +113,12 @@ class MainLanguageFragment : DaggerDialogFragment() {
 				it?.let {
 					when (it.state) {
 						Resource.State.ERROR -> {
-							curActivity().apply {
-								val exceptionType = it.error
-								manageExceptionDialogsForRest(
-									curActivity(),
-									dialogManager,
-									exceptionType
-								)
-							}
+							val exceptionType = it.error
+							manageExceptionDialogsForRest(
+								curActivity(),
+								dialogManager,
+								exceptionType
+							)
 						}
 						Resource.State.LOADING -> {
 
@@ -138,7 +136,7 @@ class MainLanguageFragment : DaggerDialogFragment() {
 	private fun initLangRecyclerView() {
 		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
 			override fun onLanguageClicked(langItem: LanguageItem) {
-				mainLanguageViewModel.downloadLanguage(langItem.code)
+				downloadingLang(langItem.code)
 			}
 		}, curActivity())
 
@@ -165,6 +163,23 @@ class MainLanguageFragment : DaggerDialogFragment() {
 			}
 		}
 
+	}
+
+	private var jobDownloadingLang: Job? = null
+
+	private fun downloadingLang(code: String) {
+		jobDownloadingLang?.cancel()
+		jobDownloadingLang = lifecycleScope.launch {
+			val res = mainLanguageViewModel.downloadLanguage(code)
+			when (res.state) {
+				Resource.State.ERROR -> {
+					manageExceptionDialogsForRest(curActivity(), dialogManager, res.error)
+				}
+				Resource.State.SUCCESS -> {
+					updateView()
+				}
+			}
+		}
 	}
 
 	private fun updateView() {
