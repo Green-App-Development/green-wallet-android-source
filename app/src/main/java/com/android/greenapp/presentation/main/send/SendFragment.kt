@@ -49,6 +49,7 @@ import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
 import kotlinx.android.synthetic.main.fragment_send.network_spinner
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
@@ -204,13 +205,20 @@ class SendFragment : DaggerFragment() {
 		}
 	}
 
+	private var swipeJob: Job? = null
+
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
-				viewModel.swipedRefreshLayout {
-					if (this@SendFragment.isVisible) {
-						isRefreshing = false
+				swipeJob?.cancel()
+				swipeJob = lifecycleScope.launch {
+					val job = launch {
+						viewModel.swipedRefreshLayout {
+							VLog.d("Is refreshing false on send fragment :")
+						}
 					}
+					job.join()
+					isRefreshing = false
 				}
 			}
 			setColorSchemeResources(R.color.green)
@@ -240,20 +248,18 @@ class SendFragment : DaggerFragment() {
 					spendableAmountToken = initialAmountToken - sentTokenMempoolAmounts[0]
 					spendableAmountFee =
 						initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
+					val bigDecimalSpendableAmount =
+						BigDecimal("$initialAmountToken").subtract(BigDecimal("${sentTokenMempoolAmounts[0]}"))
+					val bigDecimalSpendableFee =
+						BigDecimal("${initialAmountNetworkTypeToken}").subtract(
+							BigDecimal("${sentTokenMempoolAmounts[1]}")
+						)
 					binding.apply {
 						txtSpendableBalanceAmount.setText(
-							"$txtSpendableBalance: ${
-								formattedDoubleAmountWithPrecision(
-									(initialAmountToken - sentTokenMempoolAmounts[0])
-								)
-							}"
+							"$txtSpendableBalance: $bigDecimalSpendableAmount"
 						)
 						txtSpendableBalanceCommission.setText(
-							"$txtSpendableBalance: ${
-								formattedDoubleAmountWithPrecision(
-									(initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1])
-								)
-							}"
+							"$txtSpendableBalance: $bigDecimalSpendableFee"
 						)
 					}
 					checkBtnEnabledAfterTokenChanged()
@@ -667,13 +673,18 @@ class SendFragment : DaggerFragment() {
 				precision = 1000
 			val amount = (Math.round(getDoubleValueFromEdt(binding.edtEnterAmount) * precision))
 			val fee =
-				(getDoubleValueFromEdt(binding.edtEnterCommission) * if (isThisChivesNetwork(wallet.networkType)) Math.pow(
-					10.0,
-					8.0
-				).toLong() else Math.pow(
-					10.0,
-					12.0
-				).toLong()).toLong()
+				Math.round(
+					getDoubleValueFromEdt(binding.edtEnterCommission) * if (isThisChivesNetwork(
+							wallet.networkType
+						)
+					) Math.pow(
+						10.0,
+						8.0
+					) else Math.pow(
+						10.0,
+						12.0
+					)
+				)
 			val mnemonicString = convertListToStringWithSpace(wallet.mnemonics)
 			val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
 			val alreadySpentCoins =
@@ -1178,6 +1189,8 @@ class SendFragment : DaggerFragment() {
 	override fun onStop() {
 		super.onStop()
 		VLog.d("SendFragment onStop")
+		sendTransJob?.cancel()
+		swipeJob?.cancel()
 	}
 
 
@@ -1205,7 +1218,6 @@ class SendFragment : DaggerFragment() {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		sendTransJob?.cancel()
 	}
 
 	private fun curActivity() = requireActivity() as MainActivity

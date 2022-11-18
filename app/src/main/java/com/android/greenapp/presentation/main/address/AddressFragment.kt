@@ -73,7 +73,6 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		registerClicks()
-		initRecAddressView()
 		searchFunctionality()
 	}
 
@@ -114,8 +113,6 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 
 	override fun onDelete(itemAddress: Address) {
 
-
-
 		curActivity().apply {
 			dialogManager.showWarningDialogLessImport(
 				this,
@@ -151,6 +148,13 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 		intent.putExtra(Intent.EXTRA_TEXT, content)
 		requestSendingTextViaMessengers.launch(intent)
 
+	}
+
+
+
+	override fun onResume() {
+		super.onResume()
+		initRecAddressView()
 	}
 
 	override fun onStop() {
