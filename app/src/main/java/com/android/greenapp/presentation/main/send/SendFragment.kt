@@ -258,9 +258,9 @@ class SendFragment : DaggerFragment() {
 					)
 						spendableAmountString = "${Math.round(bigDecimalSpendableAmount)}"
 					val bigDecimalSpendableFee =
-						BigDecimal("$initialAmountNetworkTypeToken").subtract(
+						formattedDoubleAmountWithPrecision((BigDecimal("$initialAmountNetworkTypeToken").subtract(
 							BigDecimal("${sentTokenMempoolAmounts[1]}")
-						)
+						)).toDouble())
 					binding.apply {
 						txtSpendableBalanceAmount.setText(
 							"$txtSpendableBalance: $spendableAmountString"
@@ -1210,7 +1210,7 @@ class SendFragment : DaggerFragment() {
 				} else
 					Toast.makeText(
 						curActivity(),
-						"Разрешение нету для камера",
+						curActivity().getStringResource(R.string.camera_permission_missing),
 						Toast.LENGTH_SHORT
 					)
 						.show()

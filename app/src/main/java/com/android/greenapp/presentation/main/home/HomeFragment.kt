@@ -54,7 +54,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	@Inject
 	lateinit var dialogMan: DialogManager
 
-	private var job: Job? = null
+	private var walletsJob: Job? = null
 	private var cryptoJob: Job? = null
 	private var networkItemsJob: Job? = null
 
@@ -152,11 +152,11 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	@RequiresApi(Build.VERSION_CODES.N)
 	private fun initWalletTokenAdapter() {
 		kotlin.runCatching {
-			job?.cancel()
-			job = lifecycleScope.launchWhenStarted {
+			walletsJob?.cancel()
+			walletsJob = lifecycleScope.launchWhenStarted {
 				homeFragmentViewModel.getHomeAddedWalletWithTokensFlow().collect {
 					for (wallet in it) {
-						VLog.d("Wallet from DB  ->  : ${wallet}")
+						VLog.d("Wallet from DB  ->  : $wallet")
 						for (tokenWallet in wallet.tokenWalletList) {
 							VLog.d("Token list : $tokenWallet")
 						}
@@ -433,13 +433,13 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 	override fun onStop() {
 		super.onStop()
+		walletsJob?.cancel()
 		VLog.d("On Stop on HomeFragment")
 	}
 
 	override fun onDestroyView() {
 		super.onDestroyView()
 		VLog.d("On DestroyView on HomeFragment")
-		job?.cancel()
 		cryptoJob?.cancel()
 	}
 

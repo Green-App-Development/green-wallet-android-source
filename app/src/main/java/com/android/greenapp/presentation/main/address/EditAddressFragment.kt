@@ -224,7 +224,7 @@ class EditAddressFragment : DaggerFragment() {
                 } else
                     Toast.makeText(
                         curActivity(),
-                        "Разрешение нету для камера",
+                        curActivity().getStringResource(R.string.camera_permission_missing),
                         Toast.LENGTH_SHORT
                     )
                         .show()

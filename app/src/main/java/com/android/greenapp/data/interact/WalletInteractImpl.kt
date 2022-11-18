@@ -17,8 +17,11 @@ import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.tools.NetworkType
 import com.example.common.tools.VLog
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
@@ -313,8 +316,10 @@ class WalletInteractImpl @Inject constructor(
 		val walletEntity = walletDao.getWalletByAddress(address)[0]
 		val hashListImported = walletEntity.hashListImported
 		if (add) {
-			hashListImported[asset_id] = outer_puzzle_hash
-			blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
+			CoroutineScope(Dispatchers.IO).launch {
+				hashListImported[asset_id] = outer_puzzle_hash
+				blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
+			}
 		} else {
 			hashListImported.remove(asset_id)
 		}

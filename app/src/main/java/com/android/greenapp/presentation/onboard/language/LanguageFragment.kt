@@ -76,38 +76,6 @@ class LanguageFragment : DaggerFragment() {
 		VLog.d("GreetingViewModel LanguageFragment on ViewCreated : $greetingViewModel")
 	}
 
-	private fun downLoadingLang() {
-		job = lifecycleScope.launch {
-			greetingViewModel.downloadingLang.collect {
-				it?.let {
-					when (it.state) {
-						Resource.State.ERROR -> {
-							dialogManager.hidePrevDialogs()
-							val error = it.error
-							if (isExceptionBelongsToNoInternet(error!!)) {
-								dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
-								}
-							} else {
-								dialogManager.showServerErrorDialog(curActivity()) {
-
-								}
-							}
-						}
-						Resource.State.LOADING -> {
-
-						}
-						Resource.State.SUCCESS -> {
-							dialogManager.hidePrevDialogs()
-							updateView()
-							curActivity().move2TermsFragment()
-						}
-					}
-				}
-			}
-		}
-	}
-
 	private fun updateView() {
 		val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
 		Reword.reword(rootView)
@@ -174,6 +142,7 @@ class LanguageFragment : DaggerFragment() {
 				}
 				Resource.State.SUCCESS -> {
 					updateView()
+					curActivity().move2TermsFragment()
 				}
 			}
 		}

@@ -17,5 +17,8 @@ interface CryptocurrencyInteract {
 
     suspend fun getCourseCurrencyCoin(code: String): Double
 
+    suspend fun updateTokensPrice()
+
+
 
 }
