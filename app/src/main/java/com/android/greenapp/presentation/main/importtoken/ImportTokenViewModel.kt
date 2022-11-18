@@ -3,6 +3,7 @@ package com.android.greenapp.presentation.main.importtoken
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.interact.BlockChainInteract
+import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.TokenInteract
 import com.android.greenapp.domain.interact.WalletInteract
 import kotlinx.coroutines.Job
@@ -14,22 +15,28 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class ImportTokenViewModel @Inject constructor(
-    private val tokenInteract: TokenInteract,
-    private val blockChainInteract: BlockChainInteract,
-    private val walletInteract: WalletInteract
+	private val tokenInteract: TokenInteract,
+	private val walletInteract: WalletInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract
 ) :
-    ViewModel() {
+	ViewModel() {
 
-    suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode: String?) =
-        tokenInteract.getTokenListAndSearchForWallet(fingerPrint, nameCode)
+	init {
+		viewModelScope.launch {
+			cryptocurrencyInteract.getAllTails()
+		}
+	}
 
-    private var importTokenJob: Job? = null
+	suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode: String?) =
+		tokenInteract.getTokenListAndSearchForWallet(fingerPrint, nameCode)
 
-    fun importToken(hash:String,address:String,add:Boolean,outer_puzzle_hash:String) {
-        importTokenJob?.cancel()
-        importTokenJob = viewModelScope.launch {
-            walletInteract.importTokenByAddress(address,add,hash, outer_puzzle_hash)
-        }
-    }
+	private var importTokenJob: Job? = null
+
+	fun importToken(hash: String, address: String, add: Boolean, outer_puzzle_hash: String) {
+		importTokenJob?.cancel()
+		importTokenJob = viewModelScope.launch {
+			walletInteract.importTokenByAddress(address, add, hash, outer_puzzle_hash)
+		}
+	}
 
 }

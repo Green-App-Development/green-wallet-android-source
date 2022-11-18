@@ -42,178 +42,153 @@ import javax.inject.Inject
 
 class MainLanguageFragment : DaggerDialogFragment() {
 
-    private val binding by viewBinding(FragmentMainlanguageBinding::bind)
+	private val binding by viewBinding(FragmentMainlanguageBinding::bind)
 
-    @Inject
-    lateinit var effect: AnimationManager
+	@Inject
+	lateinit var effect: AnimationManager
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val mainLanguageViewModel: MainLanguageViewModel by viewModels { viewModelFactory }
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val mainLanguageViewModel: MainLanguageViewModel by viewModels { viewModelFactory }
 
-    @Inject
-    lateinit var jsonHelper: JsonHelper
+	@Inject
+	lateinit var jsonHelper: JsonHelper
 
-    @Inject
-    lateinit var dialogManager: DialogManager
+	@Inject
+	lateinit var dialogManager: DialogManager
 
-    @Inject
-    lateinit var gson: Gson
+	@Inject
+	lateinit var gson: Gson
 
-    @Inject
-    lateinit var languageService: GreenAppService
+	@Inject
+	lateinit var languageService: GreenAppService
 
-    private lateinit var langAdapter: LanguageAdapter
+	private lateinit var langAdapter: LanguageAdapter
 
-    private val handler = CoroutineExceptionHandler { _, ex ->
-        VLog.e("Exception in getting languageItemList : ${ex.message}")
-    }
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.e("Exception in getting languageItemList : ${ex.message}")
+	}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+	}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_mainlanguage, container, false)
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return inflater.inflate(R.layout.fragment_mainlanguage, container, false)
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        registerClicks()
-        initLangRecyclerView()
-        initStatusBarColor()
-        downLoadingLang()
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		registerClicks()
+		initLangRecyclerView()
+		initStatusBarColor()
+		downLoadingLang()
+	}
 
-    private fun initStatusBarColor() {
-        dialog?.apply {
-            window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window?.statusBarColor = curActivity().getColorResource(R.color.primary_app_background)
-        }
-    }
+	private fun initStatusBarColor() {
+		dialog?.apply {
+			window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+			window?.statusBarColor = curActivity().getColorResource(R.color.primary_app_background)
+		}
+	}
 
-    private fun registerClicks() {
-        binding.apply {
+	private fun registerClicks() {
+		binding.apply {
 
-            backLayout.setOnClickListener {
-                curActivity().popBackStackOnce()
-            }
+			backLayout.setOnClickListener {
+				curActivity().popBackStackOnce()
+			}
 
 
-        }
-    }
+		}
+	}
 
-    private fun downLoadingLang() {
-        lifecycleScope.launch {
-            mainLanguageViewModel.downloadingLang.collect {
-                it?.let {
-                    when (it.state) {
-                        Resource.State.ERROR -> {
+	private fun downLoadingLang() {
+		lifecycleScope.launch {
+			mainLanguageViewModel.downloadingLang.collect {
+				it?.let {
+					when (it.state) {
+						Resource.State.ERROR -> {
 							curActivity().apply {
 								val exceptionType = it.error
-
-								when (exceptionType) {
-									is SocketTimeoutException -> {
-										dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
-										}
-									}
-									is UnknownHostException -> {
-										dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
-
-										}
-									}
-									is ServerMaintenanceExceptions -> {
-										curActivity().apply {
-											dialogMan.showFailureDialog(
-												this,
-												status = getStringResource(R.string.address_book_pop_up_delete_title),
-												description = getStringResource(R.string.server_maintenance),
-												action=getStringResource(R.string.ok_button)
-											) {
-
-											}
-										}
-									}
-									else -> {
-										dialogManager.showServerErrorDialog(curActivity()) {
-
-										}
-									}
-								}
+								manageExceptionDialogsForRest(
+									curActivity(),
+									dialogManager,
+									exceptionType
+								)
 							}
-                        }
-                        Resource.State.LOADING -> {
+						}
+						Resource.State.LOADING -> {
 
-                        }
-                        Resource.State.SUCCESS -> {
-                            dialogManager.hidePrevDialogs()
-                            updateView()
-                        }
-                    }
-                }
-            }
-        }
-    }
+						}
+						Resource.State.SUCCESS -> {
+							dialogManager.hidePrevDialogs()
+							updateView()
+						}
+					}
+				}
+			}
+		}
+	}
 
-    private fun initLangRecyclerView() {
-        langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
-            override fun onLanguageClicked(langItem: LanguageItem) {
-                mainLanguageViewModel.downloadLanguage(langItem.code)
-            }
-        }, curActivity())
+	private fun initLangRecyclerView() {
+		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
+			override fun onLanguageClicked(langItem: LanguageItem) {
+				mainLanguageViewModel.downloadLanguage(langItem.code)
+			}
+		}, curActivity())
 
-        binding.apply {
-            recViewLang.adapter = langAdapter
-            recViewLang.layoutManager = LinearLayoutManager(curActivity())
-        }
-        lifecycleScope.launch {
-            mainLanguageViewModel.languageList.collect {
-                when (it.state) {
-                    Resource.State.LOADING -> {
-                        VLog.d("Loading Status to get LangList")
-                    }
-                    Resource.State.ERROR -> {
-                        VLog.d("Error status to get LangList")
+		binding.apply {
+			recViewLang.adapter = langAdapter
+			recViewLang.layoutManager = LinearLayoutManager(curActivity())
+		}
+		lifecycleScope.launch {
+			mainLanguageViewModel.languageList.collect {
+				when (it.state) {
+					Resource.State.LOADING -> {
+						VLog.d("Loading Status to get LangList")
+					}
+					Resource.State.ERROR -> {
+						VLog.d("Error status to get LangList")
 						manageExceptionDialogsForRest(curActivity(), dialogManager, it.error)
-                    }
-                    Resource.State.SUCCESS -> {
-                        VLog.d("Success Status Language List : ${it.data}")
-                        langAdapter.updateLanguageList(it.data ?: mutableListOf())
-                        dialogManager.hidePrevDialogs()
-                    }
-                }
-            }
-        }
+					}
+					Resource.State.SUCCESS -> {
+						VLog.d("Success Status Language List : ${it.data}")
+						langAdapter.updateLanguageList(it.data ?: mutableListOf())
+						dialogManager.hidePrevDialogs()
+					}
+				}
+			}
+		}
 
-    }
+	}
 
-    private fun updateView() {
-        val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
-        Reword.reword(rootView)
-        Reword.reword(binding.root)
-        curActivity().onLanguageChanged()
-    }
+	private fun updateView() {
+		val rootView: View = curActivity().window.decorView.findViewById(android.R.id.content)
+		Reword.reword(rootView)
+		Reword.reword(binding.root)
+		curActivity().onLanguageChanged()
+	}
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        curActivity().onLanguageChanged()
-    }
+	override fun onDismiss(dialog: DialogInterface) {
+		super.onDismiss(dialog)
+		curActivity().onLanguageChanged()
+	}
 
-    override fun onResume() {
-        super.onResume()
-        mainLanguageViewModel.getAllLanguageList(5)
-    }
+	override fun onResume() {
+		super.onResume()
+		mainLanguageViewModel.getAllLanguageList(5)
+	}
 
 
-    override fun getTheme(): Int {
-        return R.style.DialogTheme
-    }
+	override fun getTheme(): Int {
+		return R.style.DialogTheme
+	}
 
-    private fun curActivity() = requireActivity() as MainActivity
+	private fun curActivity() = requireActivity() as MainActivity
 
 }

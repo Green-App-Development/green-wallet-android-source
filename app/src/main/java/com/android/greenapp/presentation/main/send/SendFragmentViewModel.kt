@@ -25,7 +25,8 @@ class SendFragmentViewModel @Inject constructor(
 	private val addressInteract: AddressInteract,
 	private val greenAppInteract: GreenAppInteract,
 	private val tokenInteract: TokenInteract,
-	private val spentCoinsInteract: SpentCoinsInteract
+	private val spentCoinsInteract: SpentCoinsInteract,
+	private val cryptoInteract: CryptocurrencyInteract
 ) :
 	ViewModel() {
 
@@ -84,12 +85,9 @@ class SendFragmentViewModel @Inject constructor(
 		spentCoinsInteract.getSumSpentCoinsForSpendableBalance(networkType, address, tokenCode)
 
 
-	fun swipedRefreshLayout(onFinished: () -> Unit) {
-		viewModelScope.launch {
-			blockChainInteract.updateBalanceAndTransactionsPeriodically()
-			greenAppInteract.requestOtherNotifItems()
-			onFinished()
-		}
+	suspend fun swipedRefreshLayout(onFinished: () -> Unit) {
+		blockChainInteract.updateBalanceAndTransactionsPeriodically()
+		greenAppInteract.requestOtherNotifItems()
 	}
 
 	suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =

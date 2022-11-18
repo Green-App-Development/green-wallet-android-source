@@ -1,6 +1,7 @@
 package com.android.greenapp.domain.interact
 
 import com.android.greenapp.domain.domainmodel.Token
+import com.android.greenapp.presentation.tools.Resource
 
 /**
  * Created by bekjan on 12.07.2022.
@@ -9,7 +10,7 @@ import com.android.greenapp.domain.domainmodel.Token
 interface TokenInteract {
 
 
-    suspend fun getTokenListAndSearchForWallet(fingerPrint:Long, nameCode:String?): List<Token>
+    suspend fun getTokenListAndSearchForWallet(fingerPrint:Long, nameCode:String?): Resource<List<Token>>
 
     suspend fun getTokenPriceByCode(code:String):Double
 

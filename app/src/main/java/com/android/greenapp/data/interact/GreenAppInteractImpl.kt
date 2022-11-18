@@ -48,7 +48,15 @@ class GreenAppInteractImpl @Inject constructor(
 
 	override suspend fun getAvailableLanguageList(): Resource<List<LanguageItem>> {
 		try {
+
+			val langListJson = prefs.getObjectString(PrefsManager.LANG_ITEMS_LIST)
+			if (langListJson.isNotEmpty()) {
+				val type = object : TypeToken<List<LanguageItem>>() {}.type
+				val langList = gson.fromJson<List<LanguageItem>>(langListJson, type)
+				return Resource.success(langList)
+			}
 			val response = greenAppService.getLanguageList()
+
 			if (response.isSuccessful) {
 				VLog.d("LanguageResponse : $response")
 				val baseResponse = response.body()
@@ -58,7 +66,12 @@ class GreenAppInteractImpl @Inject constructor(
 							baseResponse.result.toString(),
 							LanguageResponse::class.java
 						)
+
 						VLog.d("Got Lang List : ${langResponse.list}")
+						prefs.saveObjectString(
+							PrefsManager.LANG_ITEMS_LIST,
+							gson.toJson(langResponse.list)
+						)
 						return Resource.success(
 							langResponse.list
 						)
@@ -96,6 +109,7 @@ class GreenAppInteractImpl @Inject constructor(
 				PrefsManager.LANGUAGE_RESOURCE,
 				Converters.hashMapToString(resMap)
 			)
+			getAgreementsText()
 			response.close()
 			return Resource.success("OK")
 		} catch (ex: java.lang.Exception) {
@@ -203,6 +217,12 @@ class GreenAppInteractImpl @Inject constructor(
 
 	override suspend fun getAgreementsText(): Resource<String> {
 		try {
+
+			val agreementTextSaved = prefs.getSettingString(PrefsManager.AGREEMENT_TEXT, "")
+			if (agreementTextSaved.isNotEmpty()) {
+				return Resource.success(agreementTextSaved)
+			}
+
 			val code = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "ru")
 			val res = greenAppService.getAgreementText(code)
 
@@ -213,6 +233,7 @@ class GreenAppInteractImpl @Inject constructor(
 					val agreementText = JSONObject(
 						res.body()!!.getAsJsonObject("result").toString()
 					).getString("agreement_text")
+					prefs.saveSettingString(PrefsManager.AGREEMENT_TEXT, agreementText)
 					return Resource.success(agreementText)
 				} else {
 					val error_code = jsonResponse.getInt("error_code")

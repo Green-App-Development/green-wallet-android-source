@@ -18,13 +18,16 @@ import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.custom.AnimationManager
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.custom.hidePublicKey
+import com.android.greenapp.presentation.custom.manageExceptionDialogsForRest
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,7 +45,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 	lateinit var effect: AnimationManager
 
 	@Inject
-	lateinit var dialog: DialogManager
+	lateinit var dialogManager: DialogManager
 
 	private lateinit var tokenAdapter: TokenAdapter
 
@@ -55,18 +58,22 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 	lateinit var factory: ViewModelFactory
 	private val viewModel: ImportTokenViewModel by viewModels { factory }
 
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.d("Exception in setting importing token : $ex")
+	}
+
 
 	companion object {
 		const val FINGER_PRINT_KEY = "finger_print_key"
 		const val NETWORK_TYPE_KEY = "network_type_key"
 		const val MAIN_PUZZLE_HASH = "main_puzzle_hash"
-		const val ADDRESS_KEY="address_key"
+		const val ADDRESS_KEY = "address_key"
 	}
 
 	var curFingerPrint: Long? = null
 	var curNetworkType: String = ""
 	var curMainPuzzleHash: String = ""
-	var address:String=""
+	var address: String = ""
 
 
 	lateinit var methodChannel: MethodChannel
@@ -116,9 +123,17 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 
 	private fun searchTokenList(nameCode: String?) {
 		tokenSearchJob?.cancel()
-		tokenSearchJob = lifecycleScope.launch {
-			val list = viewModel.getTokenListAndSearch(curFingerPrint!!, nameCode)
-			tokenAdapter.updateTokenList(list)
+		tokenSearchJob = lifecycleScope.launch(handler) {
+			val res = viewModel.getTokenListAndSearch(curFingerPrint!!, nameCode)
+			when (res.state) {
+				Resource.State.SUCCESS ->
+					tokenAdapter.updateTokenList(res.data!!)
+				Resource.State.ERROR -> manageExceptionDialogsForRest(
+					curActivity(),
+					dialogManager = dialogManager,
+					res.error
+				)
+			}
 		}
 	}
 
@@ -172,7 +187,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 				if (method.method == "generate_outer_hash") {
 					val args = method.arguments as HashMap<*, *>
 					val outer_hash = args[token.hash]!!.toString()
-					viewModel.importToken(token.hash,address , added, outer_hash)
+					viewModel.importToken(token.hash, address, added, outer_hash)
 				}
 			}
 			methodChannel.invokeMethod("generatewrappedcatpuzzle", map)

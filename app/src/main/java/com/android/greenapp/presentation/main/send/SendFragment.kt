@@ -169,7 +169,7 @@ class SendFragment : DaggerFragment() {
 				if (p0 == null) return ""
 				val curText = binding.edtEnterAmount.text.toString()
 				val locComo = curText.indexOf('.')
-				if (locComo == -1)
+				if (locComo == -1 || locComo == 0)
 					return p0
 				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
 				if (digitsAfterComo >= precisionAfterCommonToken) {
@@ -190,7 +190,7 @@ class SendFragment : DaggerFragment() {
 				if (p0 == null) return ""
 				val curText = binding.edtEnterCommission.text.toString()
 				val locComo = curText.indexOf('.')
-				if (locComo == -1)
+				if (locComo == -1 || locComo == 0)
 					return p0
 				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
 				if (digitsAfterComo >= precisionAfterCommonFee) {
@@ -249,14 +249,20 @@ class SendFragment : DaggerFragment() {
 					spendableAmountFee =
 						initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
 					val bigDecimalSpendableAmount =
-						BigDecimal("$initialAmountToken").subtract(BigDecimal("${sentTokenMempoolAmounts[0]}"))
+						(BigDecimal("$initialAmountToken").subtract(BigDecimal("${sentTokenMempoolAmounts[0]}"))).toDouble()
+
+					var spendableAmountString = "$bigDecimalSpendableAmount"
+					if (Math.round(bigDecimalSpendableAmount)
+							.toDouble() == bigDecimalSpendableAmount
+					)
+						spendableAmountString = "${Math.round(bigDecimalSpendableAmount)}"
 					val bigDecimalSpendableFee =
-						BigDecimal("${initialAmountNetworkTypeToken}").subtract(
+						BigDecimal("$initialAmountNetworkTypeToken").subtract(
 							BigDecimal("${sentTokenMempoolAmounts[1]}")
 						)
 					binding.apply {
 						txtSpendableBalanceAmount.setText(
-							"$txtSpendableBalance: $bigDecimalSpendableAmount"
+							"$txtSpendableBalance: $spendableAmountString"
 						)
 						txtSpendableBalanceCommission.setText(
 							"$txtSpendableBalance: $bigDecimalSpendableFee"

@@ -2,6 +2,8 @@ package com.android.greenapp.data.interact
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.android.greenapp.data.local.FAQDao
+import com.android.greenapp.data.local.entity.FaqItemEntity
 import com.android.greenapp.data.network.GreenAppService
 import com.android.greenapp.data.network.dto.support.ListingPost
 import com.android.greenapp.data.network.dto.support.QuestionPost
@@ -12,7 +14,6 @@ import com.android.greenapp.domain.interact.SupportInteract
 import com.android.greenapp.presentation.custom.parseException
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
-import com.google.gson.Gson
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ import javax.inject.Inject
 class SupportInteractImpl @Inject constructor(
 	private val greenAppService: GreenAppService,
 	private val prefs: PrefsInteract,
-	private val gson: Gson
+	private val faqItemsDao: FAQDao
 ) :
 	SupportInteract {
 
@@ -29,6 +30,13 @@ class SupportInteractImpl @Inject constructor(
 		try {
 			val langCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "ru")
 			val res = greenAppService.getFAQQuestionAnswer(langCode)
+
+			val existingFaq = faqItemsDao.getAllFAQList(langCode)
+			VLog.d("Existing already saved faq : $existingFaq")
+			if (existingFaq.isNotEmpty()) {
+				return Resource.success(existingFaq.map { it.toFAQItem() })
+			}
+
 			if (res.isSuccessful) {
 				val jsonResponse = JSONObject(res.body()!!.toString())
 				val success = jsonResponse.getBoolean("success")
@@ -37,18 +45,19 @@ class SupportInteractImpl @Inject constructor(
 						res.body()!!.getAsJsonObject("result").getAsJsonObject("list").toString()
 					)
 
-					val faqItemList = mutableListOf<FAQItem>()
+					val faqItemList = mutableListOf<FaqItemEntity>()
 					jsonObject.keys().forEachRemaining {
 						val jsonArray = jsonObject.getJSONArray(it)
 						for (i in 0 until jsonArray.length()) {
 							val questionAnswer = jsonArray.get(i) as JSONObject
 							val question = questionAnswer.getString("question")
 							val answer = questionAnswer.getString("answer")
-							val faqItem = FAQItem(question, answer, expanded = false)
+							val faqItem = FaqItemEntity(question, answer, langCode)
 							faqItemList.add(faqItem)
 						}
 					}
-					return Resource.success(faqItemList)
+					faqItemsDao.insertFAQS(faqItemList)
+					return Resource.success(faqItemList.map { it.toFAQItem() })
 				} else {
 					val error_code = jsonResponse.getInt("error_code")
 					parseException(error_code)
@@ -85,9 +94,10 @@ class SupportInteractImpl @Inject constructor(
 
 					return Resource.success("OK")
 				} else {
+					val errorCode = res.body()!!.error_code
+					parseException(errorCode!!)
 					VLog.d("Base Response is no success")
 				}
-
 			} else {
 				VLog.d("Response is no success in posting listing : $res")
 			}
