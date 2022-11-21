@@ -171,7 +171,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
 				android:layout_marginBottom="10dp"
-				android:visibility="visible"
+				android:visibility="gone"
 				app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
@@ -185,13 +185,13 @@
 				android:id="@+id/rel_no_wallet"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:layout_margin="15dp"
+				android:layout_margin="10dp"
 				android:background="@drawable/card_view_bcg_shape"
 				android:paddingStart="15dp"
 				android:paddingTop="15dp"
 				android:paddingEnd="15dp"
 				android:paddingBottom="25dp"
-				android:visibility="gone"
+				android:visibility="visible"
 				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
 
 			<TextView

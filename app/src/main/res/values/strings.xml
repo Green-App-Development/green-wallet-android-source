@@ -59,7 +59,7 @@
 	<string name="address_book_edit_contact_name" />
 	<string name="address_book_edit_contact_title" />
 	<string name="address_book_pop_up_delete_description" />
-	<string name="address_book_pop_up_delete_title" />
+	<string name="address_book_pop_up_delete_title">Attention!</string>
 	<string name="address_book_title" />
 	<string name="address_book_wrong_adress_error" />
 	<string name="adress_book_edit_contact_pop_up_changed_description" />
@@ -293,8 +293,8 @@
 	<string name="push_notifications_incoming" />
 	<string name="push_notifications_outgoing" />
 	<string name="spendable_balance" />
-	<string name="server_maintenance" />
-	<string name="ok_button" />
+	<string name="server_maintenance">The server is undergoing maintenance, please try again later</string>
+	<string name="ok_button">OK</string>
 
 
 </resources>
