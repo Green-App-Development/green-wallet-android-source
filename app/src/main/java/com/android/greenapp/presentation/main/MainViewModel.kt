@@ -10,9 +10,7 @@ import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.domain.interact.WalletInteract
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,12 +44,12 @@ class MainViewModel @Inject constructor(
 	val show_data_wallet = _show_data_wallet.asStateFlow()
 	private val _money_send = MutableStateFlow(false)
 	val money_send_success = _money_send.asStateFlow()
-	private val _decodeQrCode = MutableStateFlow("")
-	val decodedQrCode: StateFlow<String> = _decodeQrCode
+	private val _decodeQrCode = MutableSharedFlow<String>()
+	val decodedQrCode: SharedFlow<String> = _decodeQrCode
 	private val _delete_wallet = MutableStateFlow(false)
 	val delete_wallet: StateFlow<Boolean> = _delete_wallet.asStateFlow()
-	private val _chosenAddress = MutableStateFlow("")
-	val chosenAddress: StateFlow<String> = _chosenAddress.asStateFlow()
+	private val _chosenAddress = MutableSharedFlow<String>()
+	val chosenAddress: SharedFlow<String> = _chosenAddress.asSharedFlow()
 
 
 	fun saveDecodeQrCode(code: String) {
@@ -134,7 +132,9 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun saveChosenAddress(address: String) {
-		_chosenAddress.value = address
+		viewModelScope.launch {
+			_chosenAddress.emit(address)
+		}
 	}
 
 	suspend fun getAvailableNetworkItems() =

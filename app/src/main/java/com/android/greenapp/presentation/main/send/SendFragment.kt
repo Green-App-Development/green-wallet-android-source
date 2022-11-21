@@ -427,7 +427,7 @@ class SendFragment : DaggerFragment() {
 					showNotEnoughAmountWarning()
 					if (tokenAdapter.selectedPosition == 0) {
 						notEnoughAmountWarningSending()
-					}else{
+					} else {
 						hideNotEnoughAmountWarningSending()
 					}
 				} else {
@@ -484,8 +484,6 @@ class SendFragment : DaggerFragment() {
 
 			edtAddressWallet.addTextChangedListener {
 				if (it == null) return@addTextChangedListener
-				if (!it.contains("."))
-					curSendAddressWallet = it.toString()
 			}
 
 
@@ -617,7 +615,7 @@ class SendFragment : DaggerFragment() {
 					VLog.d("Success entering the passcode : $it")
 					delay(500)
 					dialogManager.showProgress(curActivity())
-					initFlutterToGenerateSpendBundle(curSendAddressWallet)
+					initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
 					curActivity().mainViewModel.send_money_false()
 				}
 			}
@@ -793,12 +791,12 @@ class SendFragment : DaggerFragment() {
 	private suspend fun insertAddressEntityIfBoxChecked() {
 		if (binding.checkBoxAddAddress.isChecked) {
 			val name = binding.edtAddressName.text.toString()
-			val existAddress = viewModel.checkIfAddressExistInDb(curSendAddressWallet)
+			val existAddress = viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
 			if (existAddress.isEmpty())
 				viewModel.insertAddressEntity(
 					Address(
 						UUID.randomUUID().toString(),
-						curSendAddressWallet,
+						binding.edtAddressWallet.text.toString(),
 						name,
 						"",
 						System.currentTimeMillis()
@@ -853,7 +851,6 @@ class SendFragment : DaggerFragment() {
 			launch {
 				curActivity().mainViewModel.decodedQrCode.collect {
 					if (it.isNotEmpty()) {
-						curSendAddressWallet = it
 						binding.edtAddressWallet.setText(it)
 					}
 				}
@@ -861,7 +858,6 @@ class SendFragment : DaggerFragment() {
 			curActivity().mainViewModel.chosenAddress.collect { addres ->
 				VLog.d("Chosen Address from AddressFragment : $addres")
 				if (addres.isNotEmpty()) {
-					curSendAddressWallet = addres
 					binding.edtAddressWallet.setText(addres)
 				}
 			}
@@ -1063,7 +1059,7 @@ class SendFragment : DaggerFragment() {
 		addressAlreadyExist?.cancel()
 		addressAlreadyExist = lifecycleScope.launch {
 			withContext(Dispatchers.IO) {
-				val addressList = viewModel.checkIfAddressExistInDb(curSendAddressWallet)
+				val addressList = viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
 				VLog.d("AddressList by given address :  ${addressList.size}")
 				withContext(Dispatchers.Main) {
 					if (addressList.isNotEmpty()) {
