@@ -410,30 +410,29 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun checkBtnEnabledAfterTokenChanged() {
-		val sendingAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull()
-		if (sendingAmount != null) {
-			if (sendingAmount > spendableAmountToken) {
+		val sendingAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
+		if (sendingAmount > spendableAmountToken) {
+			twoEdtsFilled.remove(2)
+			showNotEnoughAmountWarning()
+			notEnoughAmountWarningSending()
+		} else {
+			twoEdtsFilled.add(2)
+			hideAmountNotEnoughWarning()
+			hideNotEnoughAmountWarningSending()
+			val totalWithCommission = getCommissionAmount() + getSendingAmountForFee()
+//				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getSendingAmountForFee()}")
+			if (totalWithCommission > spendableAmountFee) {
 				twoEdtsFilled.remove(2)
 				showNotEnoughAmountWarning()
-				notEnoughAmountWarningSending()
+				if (tokenAdapter.selectedPosition == 0) {
+					notEnoughAmountWarningSending()
+				} else {
+					hideNotEnoughAmountWarningSending()
+				}
 			} else {
 				twoEdtsFilled.add(2)
 				hideAmountNotEnoughWarning()
-				hideNotEnoughAmountWarningSending()
-				val totalWithCommission = getCommissionAmount() + getSendingAmountForFee()
-//				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getSendingAmountForFee()}")
-				if (totalWithCommission > spendableAmountFee) {
-					twoEdtsFilled.remove(2)
-					showNotEnoughAmountWarning()
-					if (tokenAdapter.selectedPosition == 0) {
-						notEnoughAmountWarningSending()
-					} else {
-						hideNotEnoughAmountWarningSending()
-					}
-				} else {
-					twoEdtsFilled.add(2)
-					hideAmountNotEnoughWarning()
-				}
+				hideNotEnoughAmountWarningFee()
 			}
 		}
 		enableBtnContinueTwoEdtsFilled()
@@ -791,7 +790,8 @@ class SendFragment : DaggerFragment() {
 	private suspend fun insertAddressEntityIfBoxChecked() {
 		if (binding.checkBoxAddAddress.isChecked) {
 			val name = binding.edtAddressName.text.toString()
-			val existAddress = viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
+			val existAddress =
+				viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
 			if (existAddress.isEmpty())
 				viewModel.insertAddressEntity(
 					Address(
@@ -1059,7 +1059,8 @@ class SendFragment : DaggerFragment() {
 		addressAlreadyExist?.cancel()
 		addressAlreadyExist = lifecycleScope.launch {
 			withContext(Dispatchers.IO) {
-				val addressList = viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
+				val addressList =
+					viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
 				VLog.d("AddressList by given address :  ${addressList.size}")
 				withContext(Dispatchers.Main) {
 					if (addressList.isNotEmpty()) {

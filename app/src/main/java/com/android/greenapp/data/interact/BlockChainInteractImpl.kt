@@ -138,7 +138,7 @@ class BlockChainInteractImpl @Inject constructor(
 			if (request.isSuccessful) {
 				val coinRecordsIncreasing =
 					request.body()!!.coin_records.sortedWith { p0, p1 -> if (p0.timestamp >= p1.timestamp) 1 else -1 }
-				VLog.d("CoinRecordsIncreasing to confirm incoming transaction : $coinRecordsIncreasing")
+//				VLog.d("CoinRecordsIncreasing to confirm incoming transaction : $coinRecordsIncreasing")
 				for (record in coinRecordsIncreasing) {
 					val coinAmount =
 						record.coin.amount / division

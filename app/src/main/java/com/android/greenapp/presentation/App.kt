@@ -1,5 +1,6 @@
 package com.android.greenapp.presentation
 
+import android.icu.util.TimeZone
 import android.os.Build
 import android.util.ArrayMap
 import androidx.annotation.RequiresApi
@@ -82,18 +83,13 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		initWorkManager()
-//		testingMethod()
+		testingMethod()
 	}
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.IO).launch {
-			while (true) {
-				delay(10000)
-				notificationHelper.callGreenAppNotificationMessages(
-					"Testing notif",
-					System.currentTimeMillis()
-				)
-			}
+			val timezone: java.util.TimeZone? = java.util.TimeZone.getDefault()
+			VLog.d("TimeZoneOffSet in milli : ${timezone?.rawOffset}")
 		}
 	}
 

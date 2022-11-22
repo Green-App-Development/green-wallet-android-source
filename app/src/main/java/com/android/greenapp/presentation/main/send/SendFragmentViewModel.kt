@@ -31,8 +31,6 @@ class SendFragmentViewModel @Inject constructor(
 	ViewModel() {
 
 	private val _sendTransResponse = MutableStateFlow<Resource<String>>(Resource.loading())
-	val sendTransResponse = _sendTransResponse.asStateFlow()
-	private var sendTransJob: Job? = null
 
 	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
