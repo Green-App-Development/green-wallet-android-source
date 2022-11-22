@@ -143,7 +143,7 @@ class BlockChainInteractImpl @Inject constructor(
 					val coinAmount =
 						record.coin.amount / division
 					val timeStamp = record.timestamp
-					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp} trantime : ${tran.created_at_time}, CoinAmount : $coinAmount , TranCoinAmount : ${tran.amount}")
+//					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp} trantime : ${tran.created_at_time}, CoinAmount : $coinAmount , TranCoinAmount : ${tran.amount}")
 					if (coinAmount == tran.amount && timeStamp * 1000 >=
 						tran.created_at_time
 					) {

@@ -83,8 +83,6 @@ interface WalletDao {
 		networkType: String
 	): Optional<WalletEntity>
 
-	@Query("SELECT * FROM WalletEntity WHERE homeAdded==0")
-	suspend fun getWalletListHomeIsNotAdded(): List<WalletEntity>
 
 	@Query("SELECT * FROM WalletEntity ORDER BY  homeAdded>0 DESC, homeAdded")
 	fun getWalletListHomeAddedFirstThenRemaining(): Flow<List<WalletEntity>>
@@ -113,5 +111,7 @@ interface WalletDao {
 	@Query("DELETE FROM WalletEntity WHERE address=:address")
 	suspend fun deleteWalletByAddress(address: String): Int
 
+	@Query("SELECT * FROM WalletEntity WHERE (address LIKE '%' || 'xch'  || '%') OR  (address LIKE  '%' || 'txch'  || '%') ")
+	suspend fun getWalletByNetworkTypeChia(): List<WalletEntity>
 
 }

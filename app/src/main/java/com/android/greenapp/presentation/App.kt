@@ -84,12 +84,14 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		testingMethod()
+
 	}
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.IO).launch {
 			val timezone: java.util.TimeZone? = java.util.TimeZone.getDefault()
 			VLog.d("TimeZoneOffSet in milli : ${timezone?.rawOffset}")
+
 		}
 	}
 
@@ -129,6 +131,7 @@ class App : DaggerApplication() {
 		updateCryptoJob = CoroutineScope(Dispatchers.IO + handler).launch {
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
 			cryptocurrencyInteract.getAllTails()
+			cryptocurrencyInteract.checkingDefaultWalletTails()
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()
@@ -176,6 +179,8 @@ class App : DaggerApplication() {
 	override fun onLowMemory() {
 		super.onLowMemory()
 	}
+
+	fun isFlutterEngineInitialized() = this::flutterEngine.isInitialized
 
 
 }

@@ -98,7 +98,6 @@ class TransactionsViewModel @Inject constructor(
 	fun swipedRefreshClicked(onFinished: () -> Unit) {
 		viewModelScope.launch {
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
-			cryptocurrencyInteract.getAllTails()
 			greenAppInteract.requestOtherNotifItems()
 			onFinished()
 		}

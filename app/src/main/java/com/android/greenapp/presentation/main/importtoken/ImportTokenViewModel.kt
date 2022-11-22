@@ -23,8 +23,8 @@ class ImportTokenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            cryptocurrencyInteract.getAllTails()
-            cryptocurrencyInteract.updateTokensPrice()
+//            cryptocurrencyInteract.getAllTails()
+//            cryptocurrencyInteract.updateTokensPrice()
         }
     }
 

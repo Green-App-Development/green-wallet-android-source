@@ -19,6 +19,8 @@ interface CryptocurrencyInteract {
 
     suspend fun updateTokensPrice()
 
+    suspend fun checkingDefaultWalletTails()
+
 
 
 }
