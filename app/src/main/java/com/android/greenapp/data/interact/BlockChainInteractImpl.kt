@@ -19,6 +19,7 @@ import com.android.greenapp.data.network.dto.spendbundle.CoinDto
 import com.android.greenapp.data.network.dto.spendbundle.CoinSpend
 import com.android.greenapp.data.network.dto.spendbundle.SpenBunde
 import com.android.greenapp.data.network.dto.spendbundle.SpendBundle
+import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.presentation.tools.Resource
 import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
@@ -44,7 +45,8 @@ class BlockChainInteractImpl @Inject constructor(
 	private val encryptor: AESEncryptor,
 	private val notificationHelper: NotificationHelper,
 	private val spentCoinsInteract: SpentCoinsInteract,
-	private val spentCoinsDao: SpentCoinsDao
+	private val spentCoinsDao: SpentCoinsDao,
+	private val greenAppInteract: GreenAppInteract
 ) :
 	BlockChainInteract {
 
@@ -55,7 +57,7 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 		val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
 		val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
-		val walletEntity = wallet.toWalletEntity(encMnemonics)
+		val walletEntity = wallet.toWalletEntity(encMnemonics, greenAppInteract.getServerTime())
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
 			updateWalletBalance(walletEntity)
@@ -68,18 +70,6 @@ class BlockChainInteractImpl @Inject constructor(
 		val item = prefs.getObjectString(getPreferenceKeyForNetworkItem(networkType))
 		if (item.isEmpty()) return null
 		return gson.fromJson(item, NetworkItem::class.java)
-	}
-
-	private suspend fun getEncryptedMnemonics(mnemonics: List<String>): String {
-		kotlin.runCatching {
-			val decMnemonicsStr = mnemonics.toString()
-			val secretKeySpec =
-				encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
-			return encryptor.encrypt(decMnemonicsStr, secretKeySpec!!)
-		}.onFailure {
-			VLog.d("Exception in encrypting mnemonics : ${it.message}")
-		}
-		return ""
 	}
 
 	override suspend fun updateBalanceAndTransactionsPeriodically() {
@@ -146,8 +136,8 @@ class BlockChainInteractImpl @Inject constructor(
 						record.coin.amount / division
 					val timeStamp = record.timestamp
 //					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp} trantime : ${tran.created_at_time}, CoinAmount : $coinAmount , TranCoinAmount : ${tran.amount}")
-					if (coinAmount == tran.amount && timeStamp * 1000 >=
-						tran.created_at_time
+					if (coinAmount == tran.amount && timeStamp >=
+						tran.created_at_time / 1000
 					) {
 						return record.confirmed_block_index.toLong()
 					}
@@ -174,7 +164,7 @@ class BlockChainInteractImpl @Inject constructor(
 		spentCoinsToken: String
 	): Resource<String> {
 		try {
-			val timeBeforePushingTrans = System.currentTimeMillis()
+			val timeBeforePushingTrans = greenAppInteract.getServerTime() - 60 * 1000
 			VLog.d("Push method got called in data layer code : $networkType")
 			val curBlockChainService =
 				retrofitBuilder.baseUrl("$url/").build()
@@ -336,7 +326,7 @@ class BlockChainInteractImpl @Inject constructor(
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
-							System.currentTimeMillis(),
+							greenAppInteract.getServerTime() - 60 * 1000,
 							height,
 							Status.Incoming,
 							wallet.networkType,
@@ -470,7 +460,7 @@ class BlockChainInteractImpl @Inject constructor(
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
-							System.currentTimeMillis(),
+							greenAppInteract.getServerTime() - 60 * 1000,
 							height,
 							Status.Incoming,
 							wallet.networkType,

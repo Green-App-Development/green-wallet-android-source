@@ -24,7 +24,7 @@ data class Wallet(
 
 	var balanceInUSD: Double = 0.0
 
-	fun toWalletEntity(encMnemonics: String) = WalletEntity(
+	fun toWalletEntity(encMnemonics: String,savedTime:Long) = WalletEntity(
 		fingerPrint,
 		privateKey,
 		sk,

@@ -11,6 +11,7 @@ import com.android.greenapp.domain.domainmodel.TokenWallet
 import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.domain.interact.BlockChainInteract
+import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.domain.interact.WalletInteract
 import com.android.greenapp.presentation.custom.*

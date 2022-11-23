@@ -132,7 +132,6 @@ class App : DaggerApplication() {
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
 			cryptocurrencyInteract.getAllTails()
 			cryptocurrencyInteract.checkingDefaultWalletTails()
-			greenAppInteract.getServerTime()
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()
