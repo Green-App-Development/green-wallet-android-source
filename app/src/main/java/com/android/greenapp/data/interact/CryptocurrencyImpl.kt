@@ -1,8 +1,6 @@
 package com.android.greenapp.data.interact
 
 import android.content.Context
-import androidx.test.core.app.ActivityScenario.launch
-import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.data.local.entity.TokenEntity
@@ -70,8 +68,14 @@ class CryptocurrencyImpl @Inject constructor(
 					getPreferenceKeyForCurStockNetworkDouble("Chives"),
 					chivesPrice
 				)
-				val chia24Hour = JSONObject(chia.toString()).getDouble("usd_24h_change")
-				val chives24Hour = JSONObject(chives.toString()).getDouble("usd_24h_change")
+				var chia24Hour = 0.0
+				if (!JSONObject(chia.toString()).isNull("usd_24h_change")) {
+					chia24Hour = JSONObject(chia.toString()).getDouble("usd_24h_change")
+				}
+				var chives24Hour = 0.0
+				if (!JSONObject(chives.toString()).isNull("usd_24h_change")) {
+					chives24Hour = JSONObject(chia.toString()).getDouble("usd_24h_change")
+				}
 				prefs.saveCoursePriceDouble(
 					getPreferenceKeyForCurNetworkPrev24ChangeDouble("Chia"),
 					chia24Hour
@@ -189,9 +193,18 @@ class CryptocurrencyImpl @Inject constructor(
 
 
 	override suspend fun getAllTails() {
-		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", 0.0, 0, true)
+
+		val exChiaToken = tokenDao.getTokenByCode("XCH")
+		var exChiaPrice = 0.0
+		if (exChiaToken.isPresent)
+			exChiaPrice = exChiaToken.get().price
+		val exChivesToken = tokenDao.getTokenByCode("XCC")
+		var exChivesPrice = 0.0
+		if (exChivesToken.isPresent)
+			exChivesPrice = exChivesToken.get().price
+		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", exChiaPrice, 0, true)
 		tokenDao.insertToken(chiaTokenEntity)
-		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", 0.0, 0, true)
+		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", exChivesPrice, 0, true)
 		tokenDao.insertToken(chivesTokenEntity)
 
 		//make all tails enabled false

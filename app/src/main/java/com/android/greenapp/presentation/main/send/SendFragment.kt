@@ -916,67 +916,18 @@ class SendFragment : DaggerFragment() {
 
 		binding.edtEnterAmount.addTextChangedListener {
 			kotlin.runCatching {
-				if (it.isNullOrEmpty()) {
-					twoEdtsFilled.remove(2)
-					convertAmountToUSDGAD(0.0)
-				} else {
-					convertAmountToUSDGAD(it.toString().toDouble())
-					val enteredAmount = it.toString().toDouble()
-					if (enteredAmount > spendableAmountToken) {
-						twoEdtsFilled.remove(2)
-						showNotEnoughAmountWarning()
-						notEnoughAmountWarningSending()
-					} else {
-						twoEdtsFilled.add(2)
-						hideAmountNotEnoughWarning()
-						hideNotEnoughAmountWarningSending()
-						var totalWithCommission = getCommissionAmount()
-						if (tokenAdapter.selectedPosition == 0)
-							totalWithCommission += enteredAmount
-
-						if (totalWithCommission > spendableAmountFee) {
-							twoEdtsFilled.remove(2)
-							showNotEnoughAmountWarning()
-							notEnoughAmountWarningTextFee()
-							if (tokenAdapter.selectedPosition == 0) {
-								notEnoughAmountWarningSending()
-							} else {
-								hideNotEnoughAmountWarningSending()
-							}
-						} else {
-							twoEdtsFilled.add(2)
-							hideAmountNotEnoughWarning()
-							hideNotEnoughAmountWarningSending()
-							hideNotEnoughAmountWarningFee()
-						}
-					}
-				}
-				enableBtnContinueTwoEdtsFilled()
+				initAmountNotEnoughWarnings()
 			}.onFailure {
 				VLog.d("Excepting entering amount into amount edts : ${it}")
 			}
 		}
 
 		binding.edtEnterCommission.addTextChangedListener {
-			val commission = it.toString().toDoubleOrNull() ?: return@addTextChangedListener
-			val enteredAmount = getSendingAmountForFee()
-			VLog.d("CommissionsEdt : commission : $commission , EnteredAmount : $enteredAmount")
-			val total = commission + enteredAmount
-			if (total > spendableAmountFee) {
-				twoEdtsFilled.remove(2)
-				showNotEnoughAmountWarning()
-				notEnoughAmountWarningTextFee()
-				if (tokenAdapter.selectedPosition == 0) {
-					notEnoughAmountWarningSending()
-				} else {
-					hideNotEnoughAmountWarningSending()
-				}
-			} else {
-				twoEdtsFilled.add(2)
-				hideAmountNotEnoughWarning()
-				hideNotEnoughAmountWarningFee()
+			kotlin.runCatching {
+				initAmountNotEnoughWarnings()
+			}.onFailure {
+
 			}
-			enableBtnContinueTwoEdtsFilled()
 		}
 
 
@@ -1044,6 +995,8 @@ class SendFragment : DaggerFragment() {
 			if (gadPrice != 0.0) {
 				convertedAmountGAD = amountInUSD / gadPrice
 			}
+			val tokenPrice =
+				viewModel.getTokenPriceByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
 			binding.txtAmountInGAD.setText(
 				"~${
 					formattedDollarWithPrecision(
@@ -1086,6 +1039,46 @@ class SendFragment : DaggerFragment() {
 					txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
 					txtAddressDontExistWarning.visibility = View.GONE
 				}
+			}
+		}
+	}
+
+	private fun initAmountNotEnoughWarnings() {
+		val amountSending = binding.edtEnterAmount.text.toString().toDoubleOrNull()
+		if (amountSending == null) {
+			hideNotEnoughAmountWarningSending()
+			hideAmountNotEnoughWarning()
+			convertAmountToUSDGAD(0.0)
+		}
+		val amountFee = binding.edtEnterCommission.text.toString().toDoubleOrNull()
+		if (amountFee == null) {
+			hideNotEnoughAmountWarningFee()
+			hideAmountNotEnoughWarning()
+		}
+		var isSendingAmountEnough = true
+		if (amountSending != null) {
+			convertAmountToUSDGAD(amountSending)
+			val total =
+				amountSending + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountFee ?: 0.0)
+			if (total > spendableAmountToken) {
+				showNotEnoughAmountWarning()
+				notEnoughAmountWarningSending()
+				isSendingAmountEnough = false
+			} else {
+				hideAmountNotEnoughWarning()
+				hideNotEnoughAmountWarningSending()
+			}
+		}
+		if (amountFee != null) {
+			val total =
+				amountFee + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountSending ?: 0.0)
+			if (total > spendableAmountFee) {
+				showNotEnoughAmountWarning()
+				notEnoughAmountWarningTextFee()
+			} else {
+				if (isSendingAmountEnough)
+					hideAmountNotEnoughWarning()
+				hideNotEnoughAmountWarningFee()
 			}
 		}
 	}
