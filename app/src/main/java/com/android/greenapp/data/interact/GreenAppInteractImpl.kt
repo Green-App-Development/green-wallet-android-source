@@ -311,6 +311,21 @@ class GreenAppInteractImpl @Inject constructor(
 		return coin
 	}
 
+	override suspend fun getServerTime(): Long {
+		try {
+			val res = greenAppService.getServerTime()
+			if (res.isSuccessful) {
+				val time = JSONObject(res.body()!!.toString()).getLong("result")
+				VLog.d("Got time from the server : $time")
+			} else {
+				VLog.d("Response is not success getting  server time :")
+			}
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Exception getting  server time : ${ex.message}")
+		}
+		return 0L
+	}
+
 
 	private suspend fun saveNetworkItemsToPrefs(items: List<NetworkItem>) {
 		for (network in items) {

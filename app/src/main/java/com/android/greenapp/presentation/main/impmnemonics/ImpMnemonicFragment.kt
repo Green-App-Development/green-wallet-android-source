@@ -667,10 +667,14 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 
 						override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 							if (p3 > 2 && p0 != null) {
-//								VLog.d("On Text Changed  from clipboard  : $p0")
+								VLog.d("On Text Changed  from clipboard  : $p0")
 								val mnemonics = p0.split(" ").toList()
 								if (edtText.text.toString() == mnemonics[0])
 									return
+								if (mnemonics.size == 1) {
+									edtText.setText(p0.toString())
+									return
+								}
 								if (binding.btn12Words.isChecked) {
 									fillEdtWithCopiedMnemonics12Words(
 										mnemonics,
@@ -757,12 +761,16 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				val everyPair = pairLayout as LinearLayout
 				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
 				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
-				leftEdt.setText(mnemonics[at])
-				if (at < mnemonics.size)
-					lastEdt = leftEdt
-				rightEdt.setText(mnemonics[at + 6])
-				if (at < mnemonics.size)
-					lastEdt = rightEdt
+				if (leftEdt.text.toString().isEmpty()) {
+					leftEdt.setText(mnemonics[at])
+					if (at < mnemonics.size)
+						lastEdt = leftEdt
+				}
+				if (rightEdt.text.toString().isEmpty()) {
+					rightEdt.setText(mnemonics[at + 6])
+					if (at < mnemonics.size)
+						lastEdt = rightEdt
+				}
 				at++
 			}
 		} catch (ex: java.lang.Exception) {

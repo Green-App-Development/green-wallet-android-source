@@ -77,4 +77,8 @@ interface GreenAppService {
 	suspend fun getUpdatedChiaChivesCourse(@Url url: String): Response<JsonObject>
 
 
+	@GET("server/time")
+	suspend fun getServerTime(): Response<JsonObject>
+
+
 }

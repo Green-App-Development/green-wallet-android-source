@@ -12,23 +12,25 @@ import com.android.greenapp.presentation.tools.Resource
 interface GreenAppInteract {
 
 
-    suspend fun getAvailableLanguageList(): Resource<List<LanguageItem>>
+	suspend fun getAvailableLanguageList(): Resource<List<LanguageItem>>
 
-    suspend fun downloadLanguageTranslate(langCode: String) : Resource<String>
+	suspend fun downloadLanguageTranslate(langCode: String): Resource<String>
 
-    suspend fun changeLanguageIsSavedBefore()
+	suspend fun changeLanguageIsSavedBefore()
 
-    suspend fun getAvailableNetworkItemsFromRestAndSave()
+	suspend fun getAvailableNetworkItemsFromRestAndSave()
 
-    suspend fun getAllNetworkItemsListFromPrefs(): Resource<List<NetworkItem>>
+	suspend fun getAllNetworkItemsListFromPrefs(): Resource<List<NetworkItem>>
 
-    suspend fun requestOtherNotifItems()
+	suspend fun requestOtherNotifItems()
 
-    suspend fun getAgreementsText(): Resource<String>
+	suspend fun getAgreementsText(): Resource<String>
 
-    suspend fun updateCoinDetails()
+	suspend fun updateCoinDetails()
 
-    suspend fun getCoinDetails(code: String): CoinDetails
+	suspend fun getCoinDetails(code: String): CoinDetails
+
+	suspend fun getServerTime(): Long
 
 
 }

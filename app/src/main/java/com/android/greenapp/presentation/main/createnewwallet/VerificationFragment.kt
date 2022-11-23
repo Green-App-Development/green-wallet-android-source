@@ -220,9 +220,9 @@ class VerificationFragment : DaggerDialogFragment() {
 					address,
 					mnemonics,
 					curNetworkType,
-					System.currentTimeMillis(),
+					home_id_added = System.currentTimeMillis(),
 					0.0,
-					System.currentTimeMillis()
+					savedTime = System.currentTimeMillis()
 				)
 				defaultTokensOnMainScreen.forEach {
 					newWallet.hashListImported[it.hash] = arguments[it.hash]!!.toString()
