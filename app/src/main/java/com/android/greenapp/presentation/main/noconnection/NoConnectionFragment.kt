@@ -32,7 +32,7 @@ class NoConnectionFragment : Fragment(R.layout.fragment_no_internet) {
 		binding.btnReConnectBtn.setOnClickListener {
 			kotlin.runCatching {
 				val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
-				startActivity(intent)
+				context?.startActivity(intent)
 			}.onFailure {
 				VLog.d("On failure calling network settings menu : $it  ")
 			}

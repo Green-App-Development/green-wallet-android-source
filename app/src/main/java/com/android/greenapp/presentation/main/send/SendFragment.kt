@@ -932,6 +932,11 @@ class SendFragment : DaggerFragment() {
 
 
 		binding.btnContinue.setOnClickListener {
+			if (sendingBtnWaitingJob != null && sendingBtnWaitingJob!!.isActive)
+				return@setOnClickListener
+			sendingBtnWaitingJob = lifecycleScope.launch {
+				delay(1000L)
+			}
 			if (connectionLiveData.isOnline) {
 				val addressWalletInValid = binding.edtAddressWallet.text.toString().isEmpty()
 				if (addressWalletInValid) {
@@ -962,6 +967,8 @@ class SendFragment : DaggerFragment() {
 		anim.animateArrowIconCustomSpinner(network_spinner, imgIconSpinner)
 
 	}
+
+	private var sendingBtnWaitingJob: Job? = null
 
 	private fun getSendingAmountForFee(): Double {
 		if (!this@SendFragment::tokenAdapter.isInitialized)
