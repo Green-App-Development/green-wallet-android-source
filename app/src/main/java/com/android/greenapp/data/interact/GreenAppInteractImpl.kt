@@ -165,8 +165,8 @@ class GreenAppInteractImpl @Inject constructor(
 			val convertedNetworkItems =
 				gson.fromJson<List<NetworkItem>>(jsonAllNetworkItemList, type)
 			return Resource.success(convertedNetworkItems)
-
 		}
+		getAvailableNetworkItemsFromRestAndSave()
 		return Resource.error(Exception("AllNetworkItemList is empty"))
 	}
 

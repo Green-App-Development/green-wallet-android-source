@@ -6,6 +6,7 @@ import com.android.greenapp.data.local.WalletDao
 import com.android.greenapp.data.local.entity.TokenEntity
 import com.android.greenapp.data.network.GreenAppService
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
+import com.android.greenapp.data.network.dto.greenapp.token.TokenDto
 import com.android.greenapp.data.preference.PrefsManager.Companion.ALL_NETWORK_ITEMS_LIST
 import com.android.greenapp.domain.domainmodel.CurrencyItem
 import com.android.greenapp.domain.interact.CryptocurrencyInteract
@@ -18,11 +19,9 @@ import com.example.common.tools.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -137,8 +136,10 @@ class CryptocurrencyImpl @Inject constructor(
 			for (wallet in chiaWallets) {
 				val hashListImported = wallet.hashListImported
 				VLog.d("HashListImported before : $hashListImported")
+				var needToWait = false
 				defaultTails.forEach { token ->
 					if (!hashListImported.containsKey(token.hash)) {
+						needToWait = true
 						val map = hashMapOf<String, String>()
 						map["puzzle_hash"] = wallet.sk
 						map["asset_id"] = token.hash
@@ -154,13 +155,14 @@ class CryptocurrencyImpl @Inject constructor(
 							methodChannel.invokeMethod("generatewrappedcatpuzzle", map)
 						}
 					}
+					if (needToWait)
+						delay(300)
+					VLog.d("HashListImported after : $hashListImported")
+					walletDao.updateChiaNetworkHashListImportedByAddress(
+						wallet.address,
+						hashListImported
+					)
 				}
-				delay(300)
-				VLog.d("HashListImported after : $hashListImported")
-				walletDao.updateChiaNetworkHashListImportedByAddress(
-					wallet.address,
-					hashListImported
-				)
 			}
 
 		} catch (ex: Exception) {
@@ -209,10 +211,8 @@ class CryptocurrencyImpl @Inject constructor(
 
 		//make all tails enabled false
 		val existingTails = tokenDao.getTokenListAndSearch(null)
-		for (tail in existingTails) {
-			tail.enabled = false
-			tokenDao.insertToken(tail)
-		}
+			.map { TokenDto(it.name, it.code, it.hash, it.logo_url, it.default_tail, "") }
+			.toMutableList()
 
 		val jsonAllNetworkItemList = prefs.getObjectString(ALL_NETWORK_ITEMS_LIST)
 		val type = object : TypeToken<MutableList<NetworkItem>>() {}.type
@@ -221,14 +221,25 @@ class CryptocurrencyImpl @Inject constructor(
 		try {
 			val res = greenAppService.getAllTails(chiaName)
 			if (res.isSuccessful) {
-
 				val baseResSuccess = res.body()!!.success
 				if (baseResSuccess) {
 //					VLog.d("Received all tails inf on crypto: ${res.body()!!.result}")
-					val tokenList = res.body()!!.result.list.map { it.toTokenEntity() }
-//					VLog.d("TokenList on  : $tokenList")
-					tokenList.forEach {
-						tokenDao.insertToken(it)
+					val tokenListRes = res.body()!!.result.list.map { it.toTokenEntity() }
+//					VLog.d("TokenList on  : $tokenListRes")
+					tokenListRes.forEach { tokenEntity ->
+						tokenDao.insertToken(tokenEntity)
+						val tokenDto = TokenDto(
+							tokenEntity.name,
+							tokenEntity.code,
+							tokenEntity.hash,
+							tokenEntity.logo_url,
+							tokenEntity.default_tail,
+							""
+						)
+						existingTails.remove(tokenDto)
+					}
+					existingTails.forEach {
+						tokenDao.updateTokenEnable(it.code, false)
 					}
 				} else {
 					VLog.d("Base Response is not successful getting tails: ${res.body()}")

@@ -247,6 +247,7 @@ class VerificationFragment : DaggerDialogFragment() {
 		map["mnemonic"] = mnemonicString
 		map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 		map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
+		VLog.d("Invoked method generate hash : $mnemonicString")
 		methodChannel.invokeMethod("generateHash", map)
 	}
 

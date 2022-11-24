@@ -18,8 +18,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val walletInteract: WalletInteract,
-	private val greenAppInteract: GreenAppInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract
+	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
 	init {

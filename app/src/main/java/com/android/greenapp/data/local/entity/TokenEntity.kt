@@ -11,14 +11,14 @@ import com.android.greenapp.domain.domainmodel.Token
 
 @Entity(tableName = "TokenEntity")
 data class TokenEntity(
-	@PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = false)
 	val code: String,
-	val name: String,
-	val hash: String,
-	val logo_url: String,
-	val price: Double = 0.0,
-	val default_tail: Int,
-	var enabled: Boolean
+    val name: String,
+    val hash: String,
+    val logo_url: String,
+    var price: Double = 0.0,
+    val default_tail: Int,
+    var enabled: Boolean
 ) {
 
 	fun toToken(imported: Boolean,default_tail:Int) = Token(name, code, hash, logo_url, imported, default_tail)

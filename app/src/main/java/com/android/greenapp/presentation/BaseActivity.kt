@@ -26,55 +26,56 @@ import javax.inject.Inject
  */
 open class BaseActivity : DaggerAppCompatActivity() {
 
-    private var appCompatDelegate: AppCompatDelegate? = null
+	private var appCompatDelegate: AppCompatDelegate? = null
 
-    @Inject
-    lateinit var connectionLiveData: ConnectionLiveData
+	@Inject
+	lateinit var connectionLiveData: ConnectionLiveData
 
-    @Inject
-    lateinit var dialogMan: DialogManager
+	@Inject
+	lateinit var dialogMan: DialogManager
 
-    @Inject
-    lateinit var greenInteract: GreenAppInteract
+	@Inject
+	lateinit var greenInteract: GreenAppInteract
 
-    @NonNull
-    override fun getDelegate(): AppCompatDelegate {
-        if (appCompatDelegate == null) {
-            appCompatDelegate = ViewPumpAppCompatDelegate(
-                super.getDelegate(),
-                this
-            ) { base: Context -> Restring.wrapContext(base) }
-        }
-        return appCompatDelegate as AppCompatDelegate
-    }
+	@NonNull
+	override fun getDelegate(): AppCompatDelegate {
+		if (appCompatDelegate == null) {
+			appCompatDelegate = ViewPumpAppCompatDelegate(
+				super.getDelegate(),
+				this
+			) { base: Context -> Restring.wrapContext(base) }
+		}
+		return appCompatDelegate as AppCompatDelegate
+	}
 
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(Restring.wrapContext(newBase))
-    }
+	override fun attachBaseContext(newBase: Context) {
+		super.attachBaseContext(Restring.wrapContext(newBase))
+	}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        monitoringConnection()
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		monitoringConnection()
+	}
 
-    private var langListJob: Job? = null
+	private var langListJob: Job? = null
 
-    private fun monitoringConnection() {
+	private fun monitoringConnection() {
 
-        connectionLiveData.observe(this) {
-            VLog.d("Has Internet Now : $it")
-            connectionLiveData.isOnline = it
-            if (it) {
-                dialogMan.dismissNoConnectionDialog()
-                langListJob?.cancel()
-                langListJob = lifecycleScope.launch {
-                    delay(250)
-                    greenInteract.getAvailableLanguageList()
-                }
-            }
-        }
+		connectionLiveData.observe(this) {
+			VLog.d("Has Internet Now : $it")
+			connectionLiveData.isOnline = it
+			if (it) {
+				dialogMan.dismissNoConnectionDialog()
+				langListJob?.cancel()
+				langListJob = lifecycleScope.launch {
+					greenInteract.getAvailableNetworkItemsFromRestAndSave()
+					delay(250)
+					greenInteract.getAvailableLanguageList()
+				}
+			}
+		}
 
-    }
+	}
 
 
 }

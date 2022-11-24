@@ -31,5 +31,8 @@ interface TokenDao {
 	@Query("SELECT * FROM TokenEntity WHERE default_tail==1")
 	suspend fun getTokensDefaultOnScreen(): List<TokenEntity>
 
+	@Query("UPDATE TokenEntity SET enabled=:enabled WHERE code=:code")
+	suspend fun updateTokenEnable(code: String, enabled: Boolean = false): Int
+
 
 }
