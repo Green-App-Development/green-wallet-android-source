@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(
 	private fun oneTimeRequestEachApplication() {
 		updateCoinDetailsJob?.cancel()
 		updateCoinDetailsJob = viewModelScope.launch {
-			greenAppInteract.updateCoinDetails()
+//			greenAppInteract.updateCoinDetails()
 			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
 			val curLangCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "")
 			if (curLangCode.isNotEmpty()) {

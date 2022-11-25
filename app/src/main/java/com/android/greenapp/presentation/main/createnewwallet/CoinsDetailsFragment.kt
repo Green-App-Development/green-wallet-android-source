@@ -29,6 +29,7 @@ import dagger.android.support.DaggerDialogFragment
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.restring.Restring
 import kotlinx.android.synthetic.main.fragment_coins_inf.*
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,6 +54,10 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 
 	@Inject
 	lateinit var dialogManager: DialogManager
+
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.d("Exception handler in coind details")
+	}
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -86,7 +91,7 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 	}
 
 	private fun initCoinViewDetails() {
-		lifecycleScope.launch {
+		lifecycleScope.launch(handler) {
 			val coinDetail = viewModel.getCoinDetails(getShortNetworkType(curNetworkType))
 
 			txtCoinDescription.text = coinDetail.description

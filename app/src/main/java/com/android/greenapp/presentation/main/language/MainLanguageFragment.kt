@@ -11,18 +11,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
 import com.android.greenapp.data.network.GreenAppService
-import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
 import com.android.greenapp.databinding.FragmentMainlanguageBinding
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
-import com.android.greenapp.presentation.onboard.language.LanguageAdapter
 import com.android.greenapp.presentation.main.MainActivity
-import com.android.greenapp.presentation.viewBinding
+import com.android.greenapp.presentation.onboard.language.LanguageAdapter
 import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
-import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getColorResource
-import com.android.greenapp.presentation.tools.getStringResource
+import com.android.greenapp.presentation.viewBinding
+import com.example.common.tools.VLog
 import com.google.gson.Gson
 import dagger.android.support.DaggerDialogFragment
 import dev.b3nedikt.reword.Reword
@@ -30,9 +29,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 /**

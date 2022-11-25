@@ -2,15 +2,13 @@ package com.android.greenapp.presentation.onboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
-import com.android.greenapp.presentation.custom.NotificationHelper
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 

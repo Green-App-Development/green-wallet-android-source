@@ -9,7 +9,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.android.greenapp.R
-import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
 import com.android.greenapp.presentation.tools.getDrawableResource
 
 /**

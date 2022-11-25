@@ -52,6 +52,9 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	lateinit var walletDao: WalletDao
 
 	@Inject
+	lateinit var connectionLiveData: ConnectionLiveData
+
+	@Inject
 	lateinit var dialogMan: DialogManager
 
 	private var walletsJob: Job? = null
@@ -112,9 +115,17 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
-				homeFragmentViewModel.swipedRefreshClicked {
-					if (this@HomeFragment.isVisible) {
-						isRefreshing = false
+				VLog.d("Is Online ${connectionLiveData.isOnline}")
+				if (connectionLiveData.isOnline) {
+					homeFragmentViewModel.swipedRefreshClicked {
+						if (this@HomeFragment.isVisible) {
+							isRefreshing = false
+						}
+					}
+				} else {
+					isRefreshing = false
+					dialogMan.showNoInternetTimeOutExceptionDialog(curActivity()) {
+
 					}
 				}
 			}
@@ -131,7 +142,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 				it?.let {
 					courseTradeUp(it.increased, it.percent)
 					curCourseChia = it.price
-					txtPrice.setText("${getShortNetworkType(it.network)} price: ${it.price} $")
+					txtPrice.setText("${getShortNetworkType(it.network)} price: ${formattedDoubleAmountWithPrecision(it.price)}$")
 					updateBalanceToDollarStr()
 				}
 			}

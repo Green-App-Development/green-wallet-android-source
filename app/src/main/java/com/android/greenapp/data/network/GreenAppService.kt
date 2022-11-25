@@ -3,6 +3,7 @@ package com.android.greenapp.data.network
 
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItemBaseResponse
 import com.android.greenapp.data.network.dto.greenapp.token.TokenBaseResponse
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageResponse
 import com.google.gson.JsonObject
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -21,7 +22,7 @@ interface GreenAppService {
 
 
 	@GET("localization/languages")
-	suspend fun getLanguageList(): Response<BaseResponse>
+	suspend fun getLanguageList(): Response<LanguageResponse>
 
 
 	@GET("localization/translate")

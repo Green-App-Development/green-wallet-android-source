@@ -828,38 +828,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 	}
 
 
-	private fun setFocusChangeListenerForEveryEdts(layout: LinearLayout) {
-		try {
-
-			for (pair in layout.children) {
-				val linear = pair as LinearLayout
-				for (edt in linear.children) {
-					edt as EditText
-					edt.setOnFocusChangeListener { _, hasFocus ->
-						if (hasFocus && duplicateWordsWithEdts.size != 0) {
-							val curValue = edt.text.trim().toString()
-							if (duplicateWordsWithEdts[curValue] != null) {
-								VLog.d(
-									"Duplicate Word Edts Exist with given value : ${
-										duplicateWordsWithEdts[curValue]!!
-									}"
-								)
-								val setEdts = duplicateWordsWithEdts[curValue]!!
-								setEdts.remove(edt)
-								if (setEdts.size == 1) {
-									makeEdtBcgGreen(setEdts)
-								}
-							}
-						}
-					}
-				}
-			}
-
-		} catch (ex: java.lang.Exception) {
-			VLog.d("Exception : in settingFocusChangeListener + ${ex}")
-		}
-	}
-
 
 	private fun checkingDuplicateMnemonicOrEmpty(layout: LinearLayout): String {
 		val seenMap = hashMapOf<String, EditText>()

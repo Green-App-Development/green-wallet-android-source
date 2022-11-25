@@ -66,9 +66,16 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	lateinit var viewModelFactory: ViewModelFactory
 	private val viewModel: TransactionsViewModel by viewModels { viewModelFactory }
 
+
+	@Inject
+	lateinit var connectionLiveData: ConnectionLiveData
+
 	private var prevClickedStatus: TextView? = null
 
 	private var updateTransJob: Job? = null
+
+	@Inject
+	lateinit var dialogManager: DialogManager
 
 	//XCC  chives
 	//XCH  chia
@@ -112,9 +119,16 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
-				viewModel.swipedRefreshClicked {
-					if (this@TransactionsFragment.isVisible) {
-						isRefreshing = false
+				if (connectionLiveData.isOnline) {
+					viewModel.swipedRefreshClicked {
+						if (this@TransactionsFragment.isVisible) {
+							isRefreshing = false
+						}
+					}
+				} else {
+					isRefreshing = false
+					dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
+
 					}
 				}
 			}

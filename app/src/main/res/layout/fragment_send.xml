@@ -681,6 +681,16 @@
 
 							</LinearLayout>
 
+							<TextView
+									android:id="@+id/txtNotEnoughFeeWarning"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginTop="10dp"
+									android:text="@string/send_token_insufficient_funds_error"
+									android:textColor="@color/red_mnemonic"
+									android:textSize="16sp"
+									android:visibility="gone" />
+
 						</LinearLayout>
 
 					</androidx.cardview.widget.CardView>

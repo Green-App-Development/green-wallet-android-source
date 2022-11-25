@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.domain.interact.BlockChainInteract
+import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.TokenInteract
 import kotlinx.coroutines.launch
@@ -17,9 +18,16 @@ import javax.inject.Inject
 class NewWalletViewModel @Inject constructor(
 	private val blockChainInteract: BlockChainInteract,
 	private val greenAppInteract: GreenAppInteract,
-	private val tokenInteract: TokenInteract
+	private val tokenInteract: TokenInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract
 ) :
 	ViewModel() {
+
+	init {
+		viewModelScope.launch {
+			cryptocurrencyInteract.getAllTails()
+		}
+	}
 
 	fun createNewWallet(
 		wallet: Wallet,

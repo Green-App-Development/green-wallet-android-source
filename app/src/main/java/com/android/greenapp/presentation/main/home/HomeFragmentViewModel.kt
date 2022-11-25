@@ -1,10 +1,13 @@
 package com.android.greenapp.presentation.main.home
 
+import android.app.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.domainmodel.CurrencyItem
 import com.android.greenapp.domain.interact.*
+import com.android.greenapp.presentation.custom.ConnectionLiveData
+import com.android.greenapp.presentation.custom.DialogManager
 import com.example.common.tools.VLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -24,7 +27,9 @@ class HomeFragmentViewModel @Inject constructor(
 	private val walletInteract: WalletInteract,
 	private val cryptocurrencyInteract: CryptocurrencyInteract,
 	private val blockChainInteract: BlockChainInteract,
-	private val greenAppInteract: GreenAppInteract
+	private val greenAppInteract: GreenAppInteract,
+	private val connectionLiveData: ConnectionLiveData,
+	private val dialogManager: DialogManager
 ) : ViewModel() {
 
 	private var updateTrans: Job? = null

@@ -15,56 +15,56 @@ import javax.inject.Inject
 @AppScope
 class ConnectionLiveData @Inject constructor(context: Context) : LiveData<Boolean>() {
 
-    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
-    private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-    private val validNetworks: MutableSet<Network> = HashSet()
+	private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+	private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+	private val validNetworks: MutableSet<Network> = HashSet()
 
-    var isOnline = true
+	var isOnline = false
 
-    private fun checkValidNetworks() {
-        postValue(validNetworks.size > 0)
-    }
+	private fun checkValidNetworks() {
+		postValue(validNetworks.size > 0)
+	}
 
-    override fun onActive() {
-        networkCallback = createNetworkCallback()
-        val networkRequest = NetworkRequest.Builder()
-            .addCapability(NET_CAPABILITY_INTERNET)
-            .build()
-        cm.registerNetworkCallback(networkRequest, networkCallback)
-    }
+	override fun onActive() {
+		networkCallback = createNetworkCallback()
+		val networkRequest = NetworkRequest.Builder()
+			.addCapability(NET_CAPABILITY_INTERNET)
+			.build()
+		cm.registerNetworkCallback(networkRequest, networkCallback)
+	}
 
-    override fun onInactive() {
-        cm.unregisterNetworkCallback(networkCallback)
-    }
+	override fun onInactive() {
+		cm.unregisterNetworkCallback(networkCallback)
+	}
 
-    private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
+	private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
 
-        /*
-          Called when a network is detected. If that network has internet, save it in the Set.
-          Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onAvailable(android.net.Network)
-         */
-        override fun onAvailable(network: Network) {
-            VLog.d("onAvailable: ${network}")
-            val networkCapabilities = cm.getNetworkCapabilities(network)
-            val hasInternetCapability = networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET)
-            VLog.d("onAvailable: ${network}, $hasInternetCapability")
-            if (hasInternetCapability == true) {
-                // check if this network actually has internet
-                validNetworks.add(network)
-            }
-            checkValidNetworks()
-        }
+		/*
+		  Called when a network is detected. If that network has internet, save it in the Set.
+		  Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onAvailable(android.net.Network)
+		 */
+		override fun onAvailable(network: Network) {
+			VLog.d("onAvailable: ${network}")
+			val networkCapabilities = cm.getNetworkCapabilities(network)
+			val hasInternetCapability = networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET)
+			VLog.d("onAvailable: ${network}, $hasInternetCapability")
+			if (hasInternetCapability == true) {
+				// check if this network actually has internet
+				validNetworks.add(network)
+			}
+			checkValidNetworks()
+		}
 
-        /*
-          If the callback was registered with registerNetworkCallback() it will be called for each network which no longer satisfies the criteria of the callback.
-          Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onLost(android.net.Network)
-         */
-        override fun onLost(network: Network) {
-            VLog.d("onLost: ${network}")
-            validNetworks.remove(network)
-            checkValidNetworks()
-        }
+		/*
+		  If the callback was registered with registerNetworkCallback() it will be called for each network which no longer satisfies the criteria of the callback.
+		  Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onLost(android.net.Network)
+		 */
+		override fun onLost(network: Network) {
+			VLog.d("onLost: ${network}")
+			validNetworks.remove(network)
+			checkValidNetworks()
+		}
 
-    }
+	}
 
 }

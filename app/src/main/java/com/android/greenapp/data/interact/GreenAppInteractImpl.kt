@@ -2,11 +2,9 @@ package com.android.greenapp.data.interact
 
 import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.NotifOtherDao
-import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.entity.NotifOtherEntity
 import com.android.greenapp.data.network.GreenAppService
-import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
-import com.android.greenapp.data.network.dto.greenapp.language.LanguageResponse
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.domainmodel.CoinDetails
@@ -27,7 +25,6 @@ import dev.b3nedikt.restring.Restring
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -58,22 +55,17 @@ class GreenAppInteractImpl @Inject constructor(
 			val response = greenAppService.getLanguageList()
 
 			if (response.isSuccessful) {
-				VLog.d("LanguageResponse : $response")
+				VLog.d("LanguageResponse : ${response.body()}")
 				val baseResponse = response.body()
 				if (baseResponse != null) {
 					if (baseResponse.success) {
-						val langResponse = gson.fromJson(
-							baseResponse.result.toString(),
-							LanguageResponse::class.java
-						)
 
-						VLog.d("Got Lang List : ${langResponse.list}")
 						prefs.saveObjectString(
 							PrefsManager.LANG_ITEMS_LIST,
-							gson.toJson(langResponse.list)
+							gson.toJson(baseResponse.result!!.list)
 						)
 						return Resource.success(
-							langResponse.list
+							baseResponse.result!!.list
 						)
 					} else {
 						val error_code = baseResponse.error_code!!
@@ -102,8 +94,10 @@ class GreenAppInteractImpl @Inject constructor(
 			)
 			val resMap = convertResponseToHashMap(response)
 			VLog.d("ResMap on downloading lang by code : $resMap")
-			if (resMap["error_code"] == "1007")
-				parseException(1007)
+			if (resMap["error_code"] == "1007" || resMap["success"].toString() == "false") {
+				val errorCode = resMap["error_code"]!!
+				parseException(errorCode.toInt())
+			}
 			val chooseLocale = Locale(langCode)
 			Restring.putStrings(chooseLocale, resMap)
 			Restring.locale = chooseLocale

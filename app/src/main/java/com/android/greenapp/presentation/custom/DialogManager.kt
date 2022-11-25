@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.provider.Settings
+import android.provider.Settings.ACTION_SETTINGS
 import android.provider.Settings.ACTION_WIRELESS_SETTINGS
 import android.view.WindowManager
 import android.widget.Button
@@ -36,6 +37,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		status: String,
 		description: String,
 		action: String,
+		isDialogOutsideTouchable: Boolean = true,
 		callback: () -> Unit
 	) {
 		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
@@ -58,6 +60,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		successDialog?.dismiss()
 		noConnectionDialog?.dismiss()
 		successDialog = dialog
+		dialog.setCanceledOnTouchOutside(isDialogOutsideTouchable)
 		dialog.show()
 	}
 
@@ -236,8 +239,8 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		dialog.setContentView(view)
 		view.findViewById<Button>(R.id.btnReConnectBtn).setOnClickListener {
 			kotlin.runCatching {
-				val intent = Intent(ACTION_WIRELESS_SETTINGS)
-				activity.startActivity(intent);
+				val intent = Intent(ACTION_SETTINGS)
+				activity.startActivity(intent)
 			}.onFailure {
 				VLog.d("On failure calling network settings menu : $it  ")
 			}

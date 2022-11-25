@@ -169,7 +169,8 @@ class SendFragment : DaggerFragment() {
 				if (p0 == null) return ""
 				val curText = binding.edtEnterAmount.text.toString()
 				val locComo = curText.indexOf('.')
-				if (locComo == -1 || locComo == 0)
+				val cursor = binding.edtEnterAmount.selectionStart
+				if (locComo == -1 || locComo == 0 || cursor <= locComo)
 					return p0
 				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
 				if (digitsAfterComo >= precisionAfterCommonToken) {
@@ -210,15 +211,22 @@ class SendFragment : DaggerFragment() {
 	private fun initSwipeRefreshLayout() {
 		binding.swipeRefresh.apply {
 			setOnRefreshListener {
-				swipeJob?.cancel()
-				swipeJob = lifecycleScope.launch {
-					val job = launch {
-						viewModel.swipedRefreshLayout {
-							VLog.d("Is refreshing false on send fragment :")
+				if (connectionLiveData.isOnline) {
+					swipeJob?.cancel()
+					swipeJob = lifecycleScope.launch {
+						val job = launch {
+							viewModel.swipedRefreshLayout {
+								VLog.d("Is refreshing false on send fragment :")
+							}
 						}
+						job.join()
+						isRefreshing = false
 					}
-					job.join()
+				} else {
 					isRefreshing = false
+					dialogManager.showNoInternetTimeOutExceptionDialog(curActivity()) {
+
+					}
 				}
 			}
 			setColorSchemeResources(R.color.green)
@@ -410,11 +418,15 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun checkBtnEnabledAfterTokenChanged() {
+		checkingPrecisionsForEnterAmount()
 		val sendingAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
 		if (sendingAmount > spendableAmountToken) {
 			twoEdtsFilled.remove(2)
 			showNotEnoughAmountWarning()
 			notEnoughAmountWarningSending()
+		} else if (sendingAmount == 0.0) {
+			twoEdtsFilled.remove(2)
+			hideAmountNotEnoughWarning()
 		} else {
 			twoEdtsFilled.add(2)
 			hideAmountNotEnoughWarning()
@@ -436,6 +448,32 @@ class SendFragment : DaggerFragment() {
 			}
 		}
 		enableBtnContinueTwoEdtsFilled()
+	}
+
+	private fun checkingPrecisionsForEnterAmount() {
+		if (tokenAdapter.selectedPosition != 0) {
+			val builder = StringBuilder()
+			val curText = binding.edtEnterAmount.text.toString()
+			var at = 0
+			while (at < curText.length && curText[at] != '.') {
+				builder.append(curText[at])
+				at++
+			}
+			if (at != curText.length) {
+				builder.append(curText[at++])
+				val till = Math.min(curText.length, at + 3)
+				while (at < till) {
+					builder.append(curText[at])
+					at++
+				}
+			}
+			if (builder.toString() != curText) {
+				binding.edtEnterAmount.apply {
+					setText(builder.toString())
+					setSelection(builder.toString().length)
+				}
+			}
+		}
 	}
 
 	@SuppressLint("SetTextI18n")
@@ -816,7 +854,8 @@ class SendFragment : DaggerFragment() {
 					this,
 					getStringResource(R.string.send_token_pop_up_succsess_title),
 					getStringResource(R.string.send_token_pop_up_succsess_description),
-					getStringResource(R.string.ready_btn)
+					getStringResource(R.string.ready_btn),
+					isDialogOutsideTouchable = false
 				) {
 					popBackStackOnce()
 				}
@@ -1052,42 +1091,53 @@ class SendFragment : DaggerFragment() {
 
 	private fun initAmountNotEnoughWarnings() {
 		val amountSending = binding.edtEnterAmount.text.toString().toDoubleOrNull()
-		if (amountSending == null) {
+		if (amountSending == null || amountSending == 0.0) {
+			twoEdtsFilled.remove(2)
 			hideNotEnoughAmountWarningSending()
 			hideAmountNotEnoughWarning()
 			convertAmountToUSDGAD(0.0)
 		}
 		val amountFee = binding.edtEnterCommission.text.toString().toDoubleOrNull()
-		if (amountFee == null) {
+		if (amountFee == null || amountFee == 0.0) {
 			hideNotEnoughAmountWarningFee()
 			hideAmountNotEnoughWarning()
+			hideNotEnoughAmountFee()
 		}
 		var isSendingAmountEnough = true
-		if (amountSending != null) {
+		if (amountSending != null && amountSending != 0.0) {
 			convertAmountToUSDGAD(amountSending)
 			val total =
 				amountSending + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountFee ?: 0.0)
 			if (total > spendableAmountToken) {
+				twoEdtsFilled.remove(2)
 				showNotEnoughAmountWarning()
 				notEnoughAmountWarningSending()
 				isSendingAmountEnough = false
 			} else {
+				twoEdtsFilled.add(2)
 				hideAmountNotEnoughWarning()
 				hideNotEnoughAmountWarningSending()
 			}
 		}
-		if (amountFee != null) {
+		if (amountFee != null && amountFee != 0.0) {
 			val total =
 				amountFee + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountSending ?: 0.0)
 			if (total > spendableAmountFee) {
-				showNotEnoughAmountWarning()
+				twoEdtsFilled.remove(2)
 				notEnoughAmountWarningTextFee()
+				showNotEnoughAmountFee()
+				if (tokenAdapter.selectedPosition == 0) {
+					showNotEnoughAmountWarning()
+					notEnoughAmountWarningSending()
+				}
 			} else {
 				if (isSendingAmountEnough)
 					hideAmountNotEnoughWarning()
 				hideNotEnoughAmountWarningFee()
+				hideNotEnoughAmountFee()
 			}
 		}
+		enableBtnContinueTwoEdtsFilled()
 	}
 
 	private fun showNotEnoughAmountWarning() {
@@ -1127,6 +1177,22 @@ class SendFragment : DaggerFragment() {
 			edtEnterCommission.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
 			txtEnterCommission.setTextColor(curActivity().getColorResource(R.color.green))
 		}
+	}
+
+	private fun showNotEnoughAmountFee() {
+		if (!this@SendFragment::tokenAdapter.isInitialized)
+			return
+		binding.apply {
+			val token = tokenAdapter.dataOptions[0]
+			val text =
+				curActivity().getStringResource(R.string.send_token_insufficient_funds_error) + " $token"
+			txtNotEnoughFeeWarning.text = text
+			txtNotEnoughFeeWarning.visibility = View.VISIBLE
+		}
+	}
+
+	private fun hideNotEnoughAmountFee() {
+		txtNotEnoughFeeWarning.visibility = View.GONE
 	}
 
 	private fun getTokenTypeThatIsNotEnough(): String {

@@ -25,6 +25,8 @@ import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
@@ -50,6 +52,8 @@ class BlockChainInteractImpl @Inject constructor(
 ) :
 	BlockChainInteract {
 
+	private val mutexUpdateBalance = Mutex()
+
 	@RequiresApi(Build.VERSION_CODES.N)
 	override suspend fun saveNewWallet(
 		wallet: Wallet,
@@ -73,11 +77,13 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	override suspend fun updateBalanceAndTransactionsPeriodically() {
-		val walletListDb = walletDao.getAllWalletList()
-		for (wallet in walletListDb) {
-			updateWalletBalance(wallet)
-			updateTokenBalanceWithFullNode(wallet)
-			updateInProgressTransactions()
+		mutexUpdateBalance.withLock {
+			val walletListDb = walletDao.getAllWalletList()
+			for (wallet in walletListDb) {
+				updateWalletBalance(wallet)
+				updateTokenBalanceWithFullNode(wallet)
+				updateInProgressTransactions()
+			}
 		}
 	}
 
@@ -210,7 +216,7 @@ class BlockChainInteractImpl @Inject constructor(
 						fee,
 						code
 					)
-					VLog.d("Inserting transaction entity : $trans")
+					VLog.d("Inserting transaction entity : $trans and coinJson $spentCoinsJson and coinToken : $spentCoinsToken")
 					transactionDao.insertTransaction(trans)
 					spentCoinsInteract.insertSpentCoinsJson(
 						spentCoinsJson,

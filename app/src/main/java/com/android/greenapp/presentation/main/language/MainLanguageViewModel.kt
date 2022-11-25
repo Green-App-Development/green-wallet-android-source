@@ -2,8 +2,7 @@ package com.android.greenapp.presentation.main.language
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.data.network.dto.greenapp.language.LanguageItem
-import com.android.greenapp.data.preference.PrefsManager
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
@@ -23,7 +22,6 @@ import javax.inject.Inject
  * email: bekjan.omirzak98@gmail.com
  */
 class MainLanguageViewModel @Inject constructor(
-    private val prefs: PrefsInteract,
     private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
