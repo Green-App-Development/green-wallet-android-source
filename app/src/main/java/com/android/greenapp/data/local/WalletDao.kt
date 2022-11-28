@@ -44,6 +44,13 @@ interface WalletDao {
 		fingerPrint: Long?
 	): List<WalletEntity>
 
+
+	@Query("SELECT * FROM WalletEntity WHERE networkType=:networkType AND (:fingerPrint IS NULL OR fingerPrint=:fingerPrint)")
+	fun getWalletListByNetworkTypeAndFingerPrintFlow(
+		networkType: String,
+		fingerPrint: Long?
+	): Flow<List<WalletEntity>>
+
 	@Query("SELECT * FROM WalletEntity WHERE networkType=:networkType ORDER BY RANDOM() LIMIT 1")
 	suspend fun getRandomWalletByNetworkType(networkType: NetworkType): List<WalletEntity>
 
@@ -85,7 +92,11 @@ interface WalletDao {
 
 
 	@Query("SELECT * FROM WalletEntity ORDER BY  homeAdded>0 DESC, homeAdded")
-	fun getWalletListHomeAddedFirstThenRemaining(): Flow<List<WalletEntity>>
+	fun getWalletListHomeAddedFirstThenRemainingFlow(): Flow<List<WalletEntity>>
+
+
+	@Query("SELECT * FROM WalletEntity ORDER BY  homeAdded>0 DESC, homeAdded")
+	suspend fun getWalletListHomeAddedFirstThenRemaining(): List<WalletEntity>
 
 
 	@Query("UPDATE WalletEntity SET hashWithAmount=:hashWithAmount WHERE address=:address")

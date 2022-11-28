@@ -88,11 +88,7 @@ class App : DaggerApplication() {
 	}
 
 	private fun testingMethod() {
-		CoroutineScope(Dispatchers.IO).launch {
-			val timezone: java.util.TimeZone? = java.util.TimeZone.getDefault()
-			VLog.d("TimeZoneOffSet in milli : ${timezone?.rawOffset}")
 
-		}
 	}
 
 	private fun quickNavigationIfUserUnBoarded() {

@@ -33,7 +33,7 @@ class WalletListViewModel @Inject constructor(
 
 	}
 
-	fun getAllWalletListFirstHomeIsAddedThenRemain() =
+	suspend fun getAllWalletListFirstHomeIsAddedThenRemain() =
 		walletInteract.getAllWalletListFirstHomeIsAddedThenRemain()
 
 	fun deleteWallet(wallet: Wallet) {

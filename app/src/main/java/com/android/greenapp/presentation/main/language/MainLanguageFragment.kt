@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
 import com.android.greenapp.data.network.GreenAppService
-import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItemDto
 import com.android.greenapp.databinding.FragmentMainlanguageBinding
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
@@ -131,7 +131,7 @@ class MainLanguageFragment : DaggerDialogFragment() {
 
 	private fun initLangRecyclerView() {
 		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
-			override fun onLanguageClicked(langItem: LanguageItem) {
+			override fun onLanguageClicked(langItem: LanguageItemDto) {
 				downloadingLang(langItem.code)
 			}
 		}, curActivity())

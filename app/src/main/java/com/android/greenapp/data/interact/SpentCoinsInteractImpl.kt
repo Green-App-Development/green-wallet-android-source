@@ -7,6 +7,7 @@ import com.android.greenapp.domain.interact.SpentCoinsInteract
 import com.android.greenapp.presentation.custom.getShortNetworkType
 import com.example.common.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
+import kotlinx.coroutines.flow.*
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
@@ -64,21 +65,26 @@ class SpentCoinsInteractImpl @Inject constructor(private val spentCoinsDao: Spen
 		return spentCoins.toList()
 	}
 
-	override suspend fun getSumSpentCoinsForSpendableBalance(
+	override fun getSumSpentCoinsForSpendableBalance(
 		networkType: String,
 		address: String,
 		tokenCode: String
-	): DoubleArray {
-		val tokenAmount =
-			spentCoinsDao.getSpentCoinsByAddressCode(address, tokenCode).map { it.amount }.sum()
+	): Flow<DoubleArray> {
+		val tokenAmountFlow =
+			spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, tokenCode)
+				.map { list -> list.map { it.amount }.sum() }
 		val feeTokenCode = getShortNetworkType(networkType)
 		if (tokenCode == feeTokenCode) {
-			return doubleArrayOf(tokenAmount, tokenAmount)
+			return tokenAmountFlow.map {
+				doubleArrayOf(it, it)
+			}
 		}
-		val feeAmount =
-			spentCoinsDao.getSpentCoinsByAddressCode(address, feeTokenCode).map { it.amount }.sum()
-		VLog.d("TokenAmount : $tokenAmount and FeeAmount : $feeAmount")
-		return doubleArrayOf(tokenAmount, feeAmount)
+		val feeAmountFlow =
+			spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, feeTokenCode)
+				.map { list -> list.map { it.amount }.sum() }
+		VLog.d("TokenAmount : $tokenAmountFlow and FeeAmount : $feeAmountFlow")
+
+		return tokenAmountFlow.combine(feeAmountFlow) { token, fee -> doubleArrayOf(token, fee) }
 	}
 
 

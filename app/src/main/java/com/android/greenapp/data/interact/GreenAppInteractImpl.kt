@@ -4,7 +4,7 @@ import com.android.greenapp.data.local.Converters
 import com.android.greenapp.data.local.NotifOtherDao
 import com.android.greenapp.data.local.entity.NotifOtherEntity
 import com.android.greenapp.data.network.GreenAppService
-import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItemDto
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.domainmodel.CoinDetails
@@ -43,13 +43,13 @@ class GreenAppInteractImpl @Inject constructor(
 ) :
 	GreenAppInteract {
 
-	override suspend fun getAvailableLanguageList(): Resource<List<LanguageItem>> {
+	override suspend fun getAvailableLanguageList(): Resource<List<LanguageItemDto>> {
 		try {
 
 			val langListJson = prefs.getObjectString(PrefsManager.LANG_ITEMS_LIST)
 			if (langListJson.isNotEmpty()) {
-				val type = object : TypeToken<List<LanguageItem>>() {}.type
-				val langList = gson.fromJson<List<LanguageItem>>(langListJson, type)
+				val type = object : TypeToken<List<LanguageItemDto>>() {}.type
+				val langList = gson.fromJson<List<LanguageItemDto>>(langListJson, type)
 				return Resource.success(langList)
 			}
 			val response = greenAppService.getLanguageList()
@@ -301,6 +301,7 @@ class GreenAppInteractImpl @Inject constructor(
 
 	override suspend fun getCoinDetails(code: String): CoinDetails {
 		val coinDetailsJson = prefs.getObjectString(getPreferenceKeyForCoinDetail(code))
+		VLog.d("Getting coin details by code : $code : $coinDetailsJson")
 		val coin = gson.fromJson(coinDetailsJson, CoinDetails::class.java)
 		return coin
 	}

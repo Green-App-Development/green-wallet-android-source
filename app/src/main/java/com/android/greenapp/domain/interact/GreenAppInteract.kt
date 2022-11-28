@@ -1,6 +1,6 @@
 package com.android.greenapp.domain.interact
 
-import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItemDto
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.domain.domainmodel.CoinDetails
 import com.android.greenapp.presentation.tools.Resource
@@ -12,7 +12,7 @@ import com.android.greenapp.presentation.tools.Resource
 interface GreenAppInteract {
 
 
-	suspend fun getAvailableLanguageList(): Resource<List<LanguageItem>>
+	suspend fun getAvailableLanguageList(): Resource<List<LanguageItemDto>>
 
 	suspend fun downloadLanguageTranslate(langCode: String): Resource<String>
 

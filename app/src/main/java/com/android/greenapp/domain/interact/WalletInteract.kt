@@ -38,12 +38,21 @@ interface WalletInteract {
 		networkType: String
 	): Optional<Boolean>
 
-	fun getAllWalletListFirstHomeIsAddedThenRemain(): Flow<List<Wallet>>
+	fun getAllWalletListFirstHomeIsAddedThenRemainFlow(): Flow<List<Wallet>>
+
+
+	suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet>
 
 	suspend fun getWalletWithTokensByFingerPrintNetworkType(
 		fingerPrint: Long?,
 		networkType: String
 	): List<WalletWithTokens>
+
+
+	fun getWalletWithTokensByFingerPrintNetworkTypeFlow(
+		fingerPrint: Long?,
+		networkType: String
+	): Flow<List<WalletWithTokens>>
 
 	suspend fun importTokenByFingerPrint(
 		fingerPrint: Long,

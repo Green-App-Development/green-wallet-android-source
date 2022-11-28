@@ -22,6 +22,7 @@ import com.budiyev.android.codescanner.ScanMode
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,100 +32,101 @@ import javax.inject.Inject
  */
 class ScannerFragment : DaggerFragment() {
 
-    private val binding by viewBinding(FragmentScannerBinding::bind)
-    private lateinit var codeScanner: CodeScanner
+	private val binding by viewBinding(FragmentScannerBinding::bind)
+	private lateinit var codeScanner: CodeScanner
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val sendFragmentViewModel: SendFragmentViewModel by viewModels { viewModelFactory }
-
-
-    companion object {
-        const val FINGERPRINT_KEY = "finger_print_key"
-        const val NETWORK_TYPE_KEY = "network_type_key"
-    }
-
-    private var curFingerPrint: Long? = null
-    private var curNetworkType: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            curFingerPrint = it.getLong(FINGERPRINT_KEY)
-            if (it.getString(NETWORK_TYPE_KEY) != null) {
-                curNetworkType = it.getString(NETWORK_TYPE_KEY)
-            }
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_scanner, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        codeScanner()
-        registerBtnListener()
-    }
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val sendFragmentViewModel: SendFragmentViewModel by viewModels { viewModelFactory }
 
 
-    private fun registerBtnListener() {
-        binding.backLayout.setOnClickListener {
-            it.startAnimation(animFadeInBackBtn)
-            curActivity().popBackStackOnce()
-        }
+	companion object {
+		const val FINGERPRINT_KEY = "finger_print_key"
+		const val NETWORK_TYPE_KEY = "network_type_key"
+	}
 
-    }
+	private var curFingerPrint: Long? = null
+	private var curNetworkType: String? = null
 
-    private fun codeScanner() {
-        codeScanner = CodeScanner(curActivity(), binding.scannerView)
-        codeScanner.apply {
-            camera = CodeScanner.CAMERA_BACK
-            formats = CodeScanner.ALL_FORMATS
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		arguments?.let {
+			curFingerPrint = it.getLong(FINGERPRINT_KEY)
+			if (it.getString(NETWORK_TYPE_KEY) != null) {
+				curNetworkType = it.getString(NETWORK_TYPE_KEY)
+			}
+		}
+	}
 
-            autoFocusMode = AutoFocusMode.SAFE
-            scanMode = ScanMode.SINGLE
-            isAutoFocusEnabled = true
-            isFlashEnabled = false
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View? {
+		return inflater.inflate(R.layout.fragment_scanner, container, false)
+	}
 
-            decodeCallback = DecodeCallback {
-                if (it.text.isNotEmpty()) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        curActivity().mainViewModel.saveDecodeQrCode(it.text)
-                        determineDirection()
-                    }
-                }
-            }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		codeScanner()
+		registerBtnListener()
+	}
 
-            errorCallback = ErrorCallback {
-                VLog.d("Code is not valid : ${it.message}")
-            }
 
-        }
-        codeScanner.startPreview()
+	private fun registerBtnListener() {
+		binding.backLayout.setOnClickListener {
+			it.startAnimation(animFadeInBackBtn)
+			curActivity().popBackStackOnce()
+		}
 
-    }
+	}
 
-    private fun determineDirection() {
-        if (curFingerPrint == null || curNetworkType == null)
-            curActivity().popBackStackOnce()
-        else {
-            curActivity().move2SendFragment(
-                curNetworkType!!,
-                curFingerPrint,
-                shouldQRCleared = false
-            )
-        }
-    }
+	private fun codeScanner() {
+		codeScanner = CodeScanner(curActivity(), binding.scannerView)
+		codeScanner.apply {
+			camera = CodeScanner.CAMERA_BACK
+			formats = CodeScanner.ALL_FORMATS
 
-    private val animFadeInBackBtn: Animation by lazy {
-        AnimationUtils.loadAnimation(requireContext(), R.anim.btn_effect)
-    }
+			autoFocusMode = AutoFocusMode.SAFE
+			scanMode = ScanMode.SINGLE
+			isAutoFocusEnabled = true
+			isFlashEnabled = false
 
-    private fun curActivity() = requireActivity() as MainActivity
+			decodeCallback = DecodeCallback {
+				if (it.text.isNotEmpty()) {
+					lifecycleScope.launch(Dispatchers.Main) {
+						determineDirection()
+						delay(100)
+						curActivity().mainViewModel.saveDecodeQrCode(it.text)
+					}
+				}
+			}
+
+			errorCallback = ErrorCallback {
+				VLog.d("Code is not valid : ${it.message}")
+			}
+
+		}
+		codeScanner.startPreview()
+
+	}
+
+	private fun determineDirection() {
+		if (curFingerPrint == null || curNetworkType == null)
+			curActivity().popBackStackOnce()
+		else {
+			curActivity().move2SendFragment(
+				curNetworkType!!,
+				curFingerPrint,
+				shouldQRCleared = false
+			)
+		}
+	}
+
+	private val animFadeInBackBtn: Animation by lazy {
+		AnimationUtils.loadAnimation(requireContext(), R.anim.btn_effect)
+	}
+
+	private fun curActivity() = requireActivity() as MainActivity
 
 }

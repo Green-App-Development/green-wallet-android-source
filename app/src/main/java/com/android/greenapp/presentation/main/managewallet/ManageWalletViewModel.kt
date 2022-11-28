@@ -22,7 +22,7 @@ class ManageWalletViewModel @Inject constructor(
 	ViewModel() {
 
 	fun getFlowAllWalletListFirstHomeIsAddedThenRemain() =
-		walletInteract.getAllWalletListFirstHomeIsAddedThenRemain()
+		walletInteract.getAllWalletListFirstHomeIsAddedThenRemainFlow()
 
 	suspend fun getAllWalletList() = walletInteract.getAllWalletList()
 

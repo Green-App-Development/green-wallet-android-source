@@ -52,7 +52,7 @@ class AllWalletListFragment : DaggerFragment(),
 	private val handler = CoroutineExceptionHandler { _, ex ->
 		VLog.d("Caught Exception from Coroutine Scope : ${ex.message}")
 	}
-	private var job: Job? = null
+	private var listJob: Job? = null
 	private var enterPasswordJob: Job? = null
 	private var networkTypesJob: Job? = null
 	private var job5Seconds: Job? = null
@@ -90,14 +90,10 @@ class AllWalletListFragment : DaggerFragment(),
 			adapter = walletListAdapter
 		}
 		walletListAdapter.settingDetailLayoutListener(this)
-
-		job = lifecycleScope.launch {
-			viewModel.getAllWalletListFirstHomeIsAddedThenRemain().collect {
-				it.let {
-					VLog.d("Incoming wallet list : $it")
-					walletListAdapter.walletList(it)
-				}
-			}
+		listJob?.cancel()
+		listJob = lifecycleScope.launch {
+			val res = viewModel.getAllWalletListFirstHomeIsAddedThenRemain()
+			walletListAdapter.walletList(res)
 		}
 
 	}
@@ -219,6 +215,7 @@ class AllWalletListFragment : DaggerFragment(),
 
 						}
 					}
+					initWalletRecView()
 					curActivity().mainViewModel.deleteWalletFalse()
 				} else {
 					VLog.d("DeleteWallet became false")
@@ -237,7 +234,7 @@ class AllWalletListFragment : DaggerFragment(),
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		job?.cancel()
+		listJob?.cancel()
 	}
 
 

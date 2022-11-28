@@ -2,7 +2,7 @@ package com.android.greenapp.presentation.main.language
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItemDto
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.isExceptionBelongsToNoInternet
@@ -26,8 +26,8 @@ class MainLanguageViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _languageList =
-        MutableStateFlow<Resource<List<LanguageItem>>>(Resource.loading())
-    val languageList: StateFlow<Resource<List<LanguageItem>>> = _languageList
+        MutableStateFlow<Resource<List<LanguageItemDto>>>(Resource.loading())
+    val languageList: StateFlow<Resource<List<LanguageItemDto>>> = _languageList
 
     private val _downloadingLang = MutableStateFlow<Resource<String>?>(null)
     val downloadingLang = _downloadingLang.asStateFlow()

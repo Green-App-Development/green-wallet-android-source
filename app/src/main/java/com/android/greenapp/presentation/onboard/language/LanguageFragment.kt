@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
-import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItem
+import com.android.greenapp.data.network.dto.greenapp.lang.LanguageItemDto
 import com.android.greenapp.databinding.FragmentLanguageBinding
 import com.android.greenapp.presentation.custom.DialogManager
 import com.android.greenapp.presentation.custom.manageExceptionDialogsForRest
@@ -91,7 +91,7 @@ class LanguageFragment : DaggerFragment() {
 
 	private fun initLangRecyclerView() {
 		langAdapter = LanguageAdapter(object : LanguageAdapter.LanguageClicker {
-			override fun onLanguageClicked(langItem: LanguageItem) {
+			override fun onLanguageClicked(langItem: LanguageItemDto) {
 				downloadingLang(langItem.code)
 			}
 		}, curActivity())

@@ -6,32 +6,33 @@
     android:layout_height="match_parent"
     android:background="@color/primary_app_background">
 
-    <LinearLayout
-        android:id="@+id/linearAgree"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnContinue"
-        app:layout_constraintEnd_toEndOf="@+id/btnContinue"
-        app:layout_constraintStart_toStartOf="@+id/guideline11">
+	<LinearLayout
+			android:id="@+id/linearAgree"
+			android:layout_width="0dp"
+			android:layout_height="35dp"
+			android:layout_marginBottom="8dp"
+			app:layout_constraintBottom_toTopOf="@+id/btnContinue"
+			app:layout_constraintEnd_toEndOf="@+id/btnContinue"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintStart_toStartOf="@+id/guideline11">
 
-        <CheckBox
-            android:id="@+id/checkboxAgree"
-            android:layout_width="30dp"
-            android:layout_height="26dp" />
+		<CheckBox
+				android:id="@+id/checkboxAgree"
+				android:layout_width="30dp"
+				android:layout_height="26dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoSizeTextType="uniform"
-            android:clickable="false"
-            android:id="@+id/checkboxText"
-            android:text="@string/agreement_with_terms_of_use_chekbox"
-            android:textColor="@color/secondary_text_color" />
+		<TextView
+				android:id="@+id/checkboxText"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:autoSizeTextType="uniform"
+				android:clickable="false"
+				android:text="@string/agreement_with_terms_of_use_chekbox"
+				android:textColor="@color/secondary_text_color" />
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <LinearLayout
+	<LinearLayout
         android:id="@+id/back_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,7 +77,7 @@
         android:id="@+id/txtTerms"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:scrollbars="vertical"
         android:text="@string/terms_of_use_text"
         android:textColor="@color/secondary_text_color"

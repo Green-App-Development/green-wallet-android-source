@@ -180,5 +180,8 @@ dependencies {
 
 	implementation 'com.reginald.swiperefresh:library:1.1.2'
 
+	implementation("io.coil-kt:coil:1.3.2")
+	implementation("io.coil-kt:coil-svg:0.12.0")
+
 
 }

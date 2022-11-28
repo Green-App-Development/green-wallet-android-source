@@ -49,6 +49,7 @@ import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
 import kotlinx.android.synthetic.main.fragment_send.network_spinner
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import java.math.BigDecimal
 import java.util.*
 import javax.inject.Inject
@@ -233,54 +234,65 @@ class SendFragment : DaggerFragment() {
 		}
 	}
 
+	private var spendableBalanceJob: Job? = null
+
 	@SuppressLint("SetTextI18n")
 	private fun calculateSpendableBalance() {
-		lifecycleScope.launch(handler) {
+		spendableBalanceJob?.cancel()
+		spendableBalanceJob = lifecycleScope.launch(handler) {
 			val curSendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 			val curWallet = walletAdapter.walletList[walletAdapter.selectedPosition]
 			withContext(Dispatchers.IO) {
-				val sentTokenMempoolAmounts =
-					viewModel.getSpentCoinsAmountsAddressCodeForSpendableBalance(
-						address = curWallet.address,
-						tokenCode = curSendingToken,
-						networkType = curWallet.networkType
-					)
+				viewModel.getSpentCoinsAmountsAddressCodeForSpendableBalance(
+					address = curWallet.address,
+					tokenCode = curSendingToken,
+					networkType = curWallet.networkType
+				).collectLatest { sentTokenMempoolAmounts: DoubleArray ->
 //				VLog.d("Address : ${curWallet.address} , SentToken : $curSendingToken  Amounts : ${sentTokenMempoolAmounts.toList()}")
-				withContext(Dispatchers.Main) {
-					val initialAmountToken =
-						curWallet.tokenWalletList[tokenAdapter.selectedPosition].amount
-					val initialAmountNetworkTypeToken =
-						curWallet.tokenWalletList[0].amount
-					val txtSpendableBalance =
-						curActivity().getStringResource(R.string.spendable_balance)
-					spendableAmountToken = initialAmountToken - sentTokenMempoolAmounts[0]
-					spendableAmountFee =
-						initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
-					val bigDecimalSpendableAmount =
-						(BigDecimal("$initialAmountToken").subtract(BigDecimal("${sentTokenMempoolAmounts[0]}"))).toDouble()
+					withContext(Dispatchers.Main) {
+						val initialAmountToken =
+							curWallet.tokenWalletList[tokenAdapter.selectedPosition].amount
+						val initialAmountNetworkTypeToken =
+							curWallet.tokenWalletList[0].amount
+						val txtSpendableBalance =
+							curActivity().getStringResource(R.string.spendable_balance)
+						spendableAmountToken = initialAmountToken - sentTokenMempoolAmounts[0]
+						if (spendableAmountToken < 0.0)
+							spendableAmountToken = 0.0
+						spendableAmountFee =
+							initialAmountNetworkTypeToken - sentTokenMempoolAmounts[1]
+						if (spendableAmountFee < 0.0)
+							spendableAmountFee = 0.0
+						var bigDecimalSpendableAmount =
+							(BigDecimal("$initialAmountToken").subtract(BigDecimal("${sentTokenMempoolAmounts[0]}"))).toDouble()
+						if (bigDecimalSpendableAmount < 0.0)
+							bigDecimalSpendableAmount = 0.0
+						var spendableAmountString =
+							formattedDoubleAmountWithPrecision(bigDecimalSpendableAmount)
 
-					var spendableAmountString =
-						formattedDoubleAmountWithPrecision(bigDecimalSpendableAmount)
-					if (Math.round(bigDecimalSpendableAmount)
-							.toDouble() == bigDecimalSpendableAmount
-					)
-						spendableAmountString = "${Math.round(bigDecimalSpendableAmount)}"
-					val bigDecimalSpendableFee =
-						formattedDoubleAmountWithPrecision(
-							(BigDecimal("$initialAmountNetworkTypeToken").subtract(
-								BigDecimal("${sentTokenMempoolAmounts[1]}")
-							)).toDouble()
+						if (Math.round(bigDecimalSpendableAmount)
+								.toDouble() == bigDecimalSpendableAmount || bigDecimalSpendableAmount == 0.0
 						)
-					binding.apply {
-						txtSpendableBalanceAmount.setText(
-							"$txtSpendableBalance: $spendableAmountString"
-						)
-						txtSpendableBalanceCommission.setText(
-							"$txtSpendableBalance: $bigDecimalSpendableFee"
-						)
+							spendableAmountString = "${Math.round(bigDecimalSpendableAmount)}"
+
+						val bigDecimalSpendableFee =
+							formattedDoubleAmountWithPrecision(
+								(BigDecimal("$initialAmountNetworkTypeToken").subtract(
+									BigDecimal("${sentTokenMempoolAmounts[1]}")
+								)).toDouble()
+							)
+
+						binding.apply {
+							txtSpendableBalanceAmount.setText(
+								"$txtSpendableBalance: $spendableAmountString"
+							)
+							txtSpendableBalanceCommission.setText(
+								"$txtSpendableBalance: $bigDecimalSpendableFee"
+							)
+						}
+						initAmountNotEnoughWarnings()
+						initConstrainsAfterCommobasedOnToken()
 					}
-					checkBtnEnabledAfterTokenChanged()
-					initConstrainsAfterCommobasedOnToken()
 				}
 			}
 		}
@@ -333,34 +345,36 @@ class SendFragment : DaggerFragment() {
 		updateJob?.cancel()
 		updateJob = lifecycleScope.launch {
 
-			val walletTokenList = viewModel.queryWalletWithTokensList(type, fingerPrint)
+			viewModel.queryWalletWithTokensList(type, fingerPrint)
+				.collectLatest { walletTokenList ->
 
-			for (walletWithToken in walletTokenList) {
-				VLog.d("Wallet Token on SendFragment : $walletWithToken ")
-			}
-
-			walletAdapter = WalletListAdapter(curActivity(), walletTokenList)
-			binding.walletSpinner.adapter = walletAdapter
-			if (walletAdapterPosition < walletTokenList.size)
-				binding.walletSpinner.setSelection(walletAdapterPosition)
-			binding.walletSpinner.onItemSelectedListener =
-				object : AdapterView.OnItemSelectedListener {
-					override fun onItemSelected(
-						p0: AdapterView<*>?,
-						p1: View?,
-						p2: Int,
-						p3: Long
-					) {
-						VLog.d("Select In Wallet Adapter : $p2")
-						walletAdapter.selectedPosition = p2
-						walletAdapterPosition = p2
-						initCurWalletDetails(walletAdapter.walletList[p2])
+					for (walletWithToken in walletTokenList) {
+						VLog.d("Wallet Token on SendFragment : $walletWithToken ")
 					}
 
-					override fun onNothingSelected(p0: AdapterView<*>?) {
+					walletAdapter = WalletListAdapter(curActivity(), walletTokenList)
+					binding.walletSpinner.adapter = walletAdapter
+					if (walletAdapterPosition < walletTokenList.size)
+						binding.walletSpinner.setSelection(walletAdapterPosition)
+					binding.walletSpinner.onItemSelectedListener =
+						object : AdapterView.OnItemSelectedListener {
+							override fun onItemSelected(
+								p0: AdapterView<*>?,
+								p1: View?,
+								p2: Int,
+								p3: Long
+							) {
+								VLog.d("Select In Wallet Adapter : $p2")
+								walletAdapter.selectedPosition = p2
+								walletAdapterPosition = p2
+								initCurWalletDetails(walletAdapter.walletList[p2])
+							}
 
-					}
+							override fun onNothingSelected(p0: AdapterView<*>?) {
 
+							}
+
+						}
 				}
 		}
 	}
@@ -427,7 +441,7 @@ class SendFragment : DaggerFragment() {
 		} else if (sendingAmount == 0.0) {
 			twoEdtsFilled.remove(2)
 			hideAmountNotEnoughWarning()
-		} else {
+		}else {
 			twoEdtsFilled.add(2)
 			hideAmountNotEnoughWarning()
 			hideNotEnoughAmountWarningSending()
@@ -435,7 +449,6 @@ class SendFragment : DaggerFragment() {
 //				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getSendingAmountForFee()}")
 			if (totalWithCommission > spendableAmountFee) {
 				twoEdtsFilled.remove(2)
-				showNotEnoughAmountWarning()
 				if (tokenAdapter.selectedPosition == 0) {
 					notEnoughAmountWarningSending()
 				} else {
@@ -443,7 +456,7 @@ class SendFragment : DaggerFragment() {
 				}
 			} else {
 				twoEdtsFilled.add(2)
-				hideAmountNotEnoughWarning()
+				hideNotEnoughAmountFee()
 				hideNotEnoughAmountWarningFee()
 			}
 		}

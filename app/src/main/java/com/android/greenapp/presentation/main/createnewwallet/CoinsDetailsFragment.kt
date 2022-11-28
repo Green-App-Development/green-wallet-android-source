@@ -56,7 +56,7 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 	lateinit var dialogManager: DialogManager
 
 	private val handler = CoroutineExceptionHandler { _, ex ->
-		VLog.d("Exception handler in coind details")
+		VLog.d("Exception handler in coind details : ${ex.message}")
 	}
 
 	override fun onCreateView(

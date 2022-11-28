@@ -26,17 +26,15 @@ class SendFragmentViewModel @Inject constructor(
 	private val greenAppInteract: GreenAppInteract,
 	private val tokenInteract: TokenInteract,
 	private val spentCoinsInteract: SpentCoinsInteract,
-	private val cryptoInteract: CryptocurrencyInteract
 ) :
 	ViewModel() {
 
-	private val _sendTransResponse = MutableStateFlow<Resource<String>>(Resource.loading())
 
 	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
 
-	suspend fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
-		walletInteract.getWalletWithTokensByFingerPrintNetworkType(fingerPrint, type)
+	fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
+		walletInteract.getWalletWithTokensByFingerPrintNetworkTypeFlow(fingerPrint, type)
 
 	suspend fun push_transaction(
 		spendBundle: String,
@@ -75,7 +73,7 @@ class SendFragmentViewModel @Inject constructor(
 
 	suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
 
-	suspend fun getSpentCoinsAmountsAddressCodeForSpendableBalance(
+	fun getSpentCoinsAmountsAddressCodeForSpendableBalance(
 		address: String,
 		tokenCode: String,
 		networkType: String

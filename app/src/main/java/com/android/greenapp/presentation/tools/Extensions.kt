@@ -8,7 +8,12 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 
 /**
  * Created by bekjan on 27.04.2022.
@@ -116,6 +121,22 @@ fun Activity.pxToDp(px: Int): Int {
 }
 
 fun Activity.getResourceAnimation(resId: Int) = AnimationUtils.loadAnimation(this, resId)
+
+
+fun ImageView.loadSvg(url: String) {
+	val imageLoader = ImageLoader.Builder(this.context)
+		.componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+		.build()
+
+	val request = ImageRequest.Builder(this.context)
+		.crossfade(true)
+		.crossfade(500)
+		.data(url)
+		.target(this)
+		.build()
+
+	imageLoader.enqueue(request)
+}
 
 
 

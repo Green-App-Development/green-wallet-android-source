@@ -11,19 +11,16 @@ import com.android.greenapp.domain.domainmodel.TokenWallet
 import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.domain.interact.BlockChainInteract
-import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.domain.interact.WalletInteract
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.tools.NetworkType
 import com.example.common.tools.VLog
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
 
@@ -272,15 +269,21 @@ class WalletInteractImpl @Inject constructor(
 		return Optional.of(false)
 	}
 
-	override fun getAllWalletListFirstHomeIsAddedThenRemain(): Flow<List<Wallet>> {
+	override fun getAllWalletListFirstHomeIsAddedThenRemainFlow(): Flow<List<Wallet>> {
 		val homeAddedWalletList =
-			walletDao.getWalletListHomeAddedFirstThenRemaining().map { walletEntityList ->
+			walletDao.getWalletListHomeAddedFirstThenRemainingFlow().map { walletEntityList ->
 				VLog.d("WalletList Changed for On Manage Fragment : $walletEntityList")
 				walletEntityList.map {
 					convertWalletEntityToWallet(it)
 				}
 			}
 		return homeAddedWalletList
+	}
+
+	override suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet> {
+		return walletDao.getWalletListHomeAddedFirstThenRemaining().map { walletEntity ->
+			convertWalletEntityToWallet(walletEntity)
+		}
 	}
 
 	override suspend fun getWalletWithTokensByFingerPrintNetworkType(
@@ -292,6 +295,13 @@ class WalletInteractImpl @Inject constructor(
 				convertWalletEntityToWalletWithTokens(it)
 			}
 		return walletTokenList
+	}
+
+	override fun getWalletWithTokensByFingerPrintNetworkTypeFlow(
+		fingerPrint: Long?,
+		networkType: String
+	): Flow<List<WalletWithTokens>> {
+		return walletDao.getWalletListByNetworkTypeAndFingerPrintFlow(networkType,fingerPrint).map { list -> list.map { convertWalletEntityToWalletWithTokens(it) } }
 	}
 
 	override suspend fun importTokenByFingerPrint(
