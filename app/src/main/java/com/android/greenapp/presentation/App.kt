@@ -16,6 +16,7 @@ import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
 import com.android.greenapp.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.android.greenapp.presentation.di.application.DaggerAppComponent
+import com.android.greenapp.presentation.tools.SYNC_WORK_TAG
 import com.example.common.tools.VLog
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
@@ -82,9 +83,13 @@ class App : DaggerApplication() {
 			this,
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
-		initWorkManager()
+		cancelWorkManager()
 		testingMethod()
 
+	}
+
+	private fun cancelWorkManager() {
+		WorkManager.getInstance(this).cancelAllWorkByTag(SYNC_WORK_TAG)
 	}
 
 	private fun testingMethod() {
@@ -135,19 +140,6 @@ class App : DaggerApplication() {
 				delay(1000L * 60)
 			}
 		}
-	}
-
-	private fun initWorkManager() {
-		val constraints =
-			Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-		val periodicWorkRequest =
-			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(1000, TimeUnit.MILLISECONDS)
-				.setConstraints(constraints)
-		WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-			"syncWorker",
-			ExistingPeriodicWorkPolicy.REPLACE,
-			periodicWorkRequest.build()
-		)
 	}
 
 

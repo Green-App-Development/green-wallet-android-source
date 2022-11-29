@@ -65,7 +65,7 @@ class GreenAppInteractImpl @Inject constructor(
 							gson.toJson(baseResponse.result!!.list)
 						)
 						return Resource.success(
-							baseResponse.result!!.list
+							baseResponse.result.list
 						)
 					} else {
 						val error_code = baseResponse.error_code!!
@@ -177,6 +177,7 @@ class GreenAppInteractImpl @Inject constructor(
 
 			val appInstallTimeInZulu = convertAppInstallTimeInMillisInZuluTime(prefs)
 			if (res.isSuccessful) {
+
 
 				val otherNotifItemsJsonArray = JSONArray(
 					res.body()!!.getAsJsonObject("result").getAsJsonArray("list").toString()
