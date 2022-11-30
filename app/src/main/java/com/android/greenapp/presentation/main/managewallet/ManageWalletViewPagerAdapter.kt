@@ -74,6 +74,11 @@ class ManageWalletViewPagerAdapter(
 				adapterListener.imgCopyClicked(getMnemonicsString(mnemonics))
 			}
 
+//			findViewById<ImageView>(R.id.icSettings).setOnClickListener {
+////				val wallet = walletList[position]
+////				adapterListener.settingsClicked(wallet.fingerPrint,wallet.address)
+//			}
+
 		}
 
 		container.addView(manageWaleltView)
@@ -130,7 +135,9 @@ class ManageWalletViewPagerAdapter(
 	interface ManageWalletAdapterListener {
 		fun showDataClicked()
 		fun imgCopyClicked(data: String)
+		fun settingsClicked(fingerPrint:Long,address:String)
 	}
+
 
 
 }

@@ -133,12 +133,6 @@ class ManageWalletFragment : DaggerFragment(),
 				curActivity().move2TransactionsFragment(wallet.fingerPrint, wallet.address)
 			}
 
-			icSettings.setOnClickListener {
-				it.preventDoubleClick()
-				val wallet = manageWalletAdapter.walletList[manageWalletViewPager.currentItem]
-				curActivity().move2WalletSettings(wallet.fingerPrint, wallet.address)
-			}
-
 		}
 	}
 
@@ -318,6 +312,9 @@ class ManageWalletFragment : DaggerFragment(),
 		}
 	}
 
+	override fun settingsClicked(fingerPrint: Long, address: String) {
+		curActivity().move2WalletSettings(fingerPrint, address)
+	}
 
 	private val requestPermissions =
 		registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { it ->

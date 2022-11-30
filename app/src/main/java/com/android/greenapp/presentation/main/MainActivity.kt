@@ -712,7 +712,7 @@ class MainActivity : BaseActivity() {
 	}
 
 	fun move2WalletSettings(fingerPrint: Long, address: String) {
-
+		navController.navigate(walletSettings)
 	}
 
 

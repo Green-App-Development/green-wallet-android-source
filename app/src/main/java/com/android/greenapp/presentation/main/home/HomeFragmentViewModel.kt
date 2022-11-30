@@ -27,9 +27,7 @@ class HomeFragmentViewModel @Inject constructor(
 	private val walletInteract: WalletInteract,
 	private val cryptocurrencyInteract: CryptocurrencyInteract,
 	private val blockChainInteract: BlockChainInteract,
-	private val greenAppInteract: GreenAppInteract,
-	private val connectionLiveData: ConnectionLiveData,
-	private val dialogManager: DialogManager
+	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
 	private var updateTrans: Job? = null
