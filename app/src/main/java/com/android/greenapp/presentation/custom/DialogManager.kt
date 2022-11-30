@@ -324,15 +324,34 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 
 
 	fun showQuestionDetailsDialog(
+		activity: Activity,
 		status: String,
 		description: String,
 		action: String,
 		okay: () -> Unit
 	) {
 
-
-
-
+		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
+		dialog.setContentView(R.layout.dialog_question)
+		val width = activity.resources.displayMetrics.widthPixels
+		dialog.window?.setLayout(
+			width,
+			WindowManager.LayoutParams.WRAP_CONTENT
+		)
+		dialog.apply {
+			findViewById<TextView>(R.id.txtStatus).text = status
+			findViewById<TextView>(R.id.txtDescription).text = description
+			val btnAction = findViewById<Button>(R.id.btnAction)
+			btnAction.text = action
+			btnAction.setOnClickListener {
+				okay()
+				dialog.dismiss()
+			}
+		}
+		successDialog?.dismiss()
+		noConnectionDialog?.dismiss()
+		successDialog = dialog
+		dialog.show()
 	}
 
 

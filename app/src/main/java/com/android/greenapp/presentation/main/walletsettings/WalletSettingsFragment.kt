@@ -72,6 +72,30 @@ class WalletSettingsFragment : DaggerFragment() {
 			)
 		}
 
+		icQuestionMarkNonObserver.setOnClickListener {
+			dialog.showQuestionDetailsDialog(
+				curActivity(),
+				"Derivation Index",
+				"The derivation index sets the range of wallet addresses that the wallet scans the blockchain for. This number is generally higher if you have a lot of transactions or canceled offers for XCH, CATs, or NFTs. If you believe your balance is incorrect because it’s missing coins, then increasing the derivation index could help the wallet include the missing coins in the balance total.\u2028\n" +
+						"Use this setting if, after importing mnemonics from Goby, Nucle, Arbor wallets, the balance of the wallet is displayed incorrectly\n",
+				"Okay"
+			) {
+
+			}
+		}
+
+		icQuestionMarkObserver.setOnClickListener {
+			dialog.showQuestionDetailsDialog(
+				curActivity(),
+				"Derivation Index",
+				"The derivation index sets the range of wallet addresses that the wallet scans the blockchain for. This number is generally higher if you have a lot of transactions or canceled offers for XCH, CATs, or NFTs. If you believe your balance is incorrect because it’s missing coins, then increasing the derivation index could help the wallet include the missing coins in the balance total.\u2028\n" +
+						"Use this setting if, after importing mnemonics from Goby, Nucle, Arbor wallets, the balance of the wallet is displayed incorrectly\n",
+				"Okay"
+			) {
+
+			}
+		}
+
 
 	}
 
