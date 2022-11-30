@@ -64,12 +64,4 @@ class LanguageAdapter(
 		fun onLanguageClicked(langItem: LanguageItemDto)
 	}
 
-	private fun getFlagResource(langCode: String): Int {
-		return when (langCode) {
-			"ru" -> R.drawable.ic_flag_ru
-			"en" -> R.drawable.ic_flag_eng
-			else -> R.drawable.ic_flag_german
-		}
-	}
-
 }

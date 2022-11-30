@@ -19,7 +19,9 @@ data class Wallet(
 	val networkType: String,
 	var home_id_added: Long,
 	var balance: Double,
-	var savedTime: Long
+	var savedTime: Long,
+	val observerHash:Int,
+	val nonObserverHash:Int
 ) : Parcelable {
 
 	var balanceInUSD: Double = 0.0
