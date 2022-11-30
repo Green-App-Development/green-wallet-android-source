@@ -15,6 +15,7 @@ import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getColorResource
+import com.android.greenapp.presentation.tools.preventDoubleClick
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -81,15 +82,18 @@ class AllSettingsFragment : DaggerDialogFragment() {
         binding.apply {
 
             relChangeLanguage.setOnClickListener {
+				it.preventDoubleClick()
                 curActivity().move2MainLanguageFragment()
             }
 
             relAboutApp.setOnClickListener {
-                curActivity().move2AboutApp()
+				it.preventDoubleClick()
+				curActivity().move2AboutApp()
             }
 
             backLayout.setOnClickListener {
-                curActivity().popBackStackOnce()
+				it.preventDoubleClick()
+				curActivity().popBackStackOnce()
             }
 
             btnRadioGroupMode.setOnCheckedChangeListener { p0, p1 ->
@@ -110,11 +114,13 @@ class AllSettingsFragment : DaggerDialogFragment() {
             }
 
             relSupportCall.setOnClickListener {
-                curActivity().move2SupportFragmentFromAllSettingsDialog()
+				it.preventDoubleClick()
+				curActivity().move2SupportFragmentFromAllSettingsDialog()
             }
 
             relNotif.setOnClickListener {
-                curActivity().move2NotificationFragment()
+				it.preventDoubleClick()
+				curActivity().move2NotificationFragment()
             }
 
         }

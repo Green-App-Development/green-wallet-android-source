@@ -1,8 +1,6 @@
 package com.android.greenapp.presentation
 
-import android.icu.util.TimeZone
 import android.os.Build
-import android.util.ArrayMap
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
@@ -14,7 +12,6 @@ import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
-import com.android.greenapp.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.android.greenapp.presentation.di.application.DaggerAppComponent
 import com.android.greenapp.presentation.tools.SYNC_WORK_TAG
 import com.example.common.tools.VLog
@@ -28,7 +25,6 @@ import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 

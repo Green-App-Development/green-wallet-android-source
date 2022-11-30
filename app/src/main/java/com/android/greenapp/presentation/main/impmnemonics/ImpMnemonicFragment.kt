@@ -668,7 +668,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 						override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 							if (p3 > 2 && p0 != null) {
 								VLog.d("On Text Changed  from clipboard  : $p0")
-								val mnemonics = p0.split(" ").toList()
+								val mnemonics = p0.split(Regex("\\s+")).toList()
 								if (edtText.text.toString() == mnemonics[0])
 									return
 								if (mnemonics.size == 1) {
@@ -826,7 +826,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			)
 		}
 	}
-
 
 
 	private fun checkingDuplicateMnemonicOrEmpty(layout: LinearLayout): String {

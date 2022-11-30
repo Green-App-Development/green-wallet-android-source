@@ -138,5 +138,9 @@ fun ImageView.loadSvg(url: String) {
 	imageLoader.enqueue(request)
 }
 
+fun View.preventDoubleClick() {
+	isEnabled = false
+	postDelayed({ isEnabled = true }, 1000)
+}
 
 

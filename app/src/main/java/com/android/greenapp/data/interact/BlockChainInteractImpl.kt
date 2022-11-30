@@ -25,8 +25,10 @@ import com.android.greenapp.presentation.tools.Status
 import com.example.common.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
@@ -48,7 +50,8 @@ class BlockChainInteractImpl @Inject constructor(
 	private val notificationHelper: NotificationHelper,
 	private val spentCoinsInteract: SpentCoinsInteract,
 	private val spentCoinsDao: SpentCoinsDao,
-	private val greenAppInteract: GreenAppInteract
+	private val greenAppInteract: GreenAppInteract,
+	private val context: Context
 ) :
 	BlockChainInteract {
 
@@ -231,6 +234,10 @@ class BlockChainInteractImpl @Inject constructor(
 						address
 					)
 					return Resource.success("OK")
+				}
+			} else {
+				withContext(Dispatchers.Main) {
+					Toast.makeText(context, "Error: ${res.body()}", Toast.LENGTH_SHORT).show()
 				}
 			}
 		} catch (ex: Exception) {

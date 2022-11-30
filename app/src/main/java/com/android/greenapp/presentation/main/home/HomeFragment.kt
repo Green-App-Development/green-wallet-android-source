@@ -23,6 +23,7 @@ import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
+import com.android.greenapp.presentation.tools.preventDoubleClick
 import com.android.greenapp.presentation.viewBinding
 import com.example.common.tools.VLog
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -237,6 +238,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		}
 
 		img_three_dots.setOnClickListener {
+			it.preventDoubleClick()
 //            it.startAnimation(effect.getAnimation())
 			showBottomSheetDialogSettings()
 
@@ -352,14 +354,17 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			})
 
 		dialog.findViewById<RelativeLayout>(R.id.relNotif).setOnClickListener {
+			it.preventDoubleClick()
 			curActivity().move2NotificationFragment()
 		}
 
 		dialog.findViewById<RelativeLayout>(R.id.relSupportCall).setOnClickListener {
+			it.preventDoubleClick()
 			curActivity().move2SupportFragmentFromBtmDialog()
 		}
 
 		dialog.findViewById<RelativeLayout>(R.id.relAllSettings).setOnClickListener {
+			it.preventDoubleClick()
 			curActivity().move2AllSettingsFragment()
 		}
 
