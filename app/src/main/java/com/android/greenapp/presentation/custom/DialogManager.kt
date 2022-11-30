@@ -3,9 +3,7 @@ package com.android.greenapp.presentation.custom
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
-import android.provider.Settings
 import android.provider.Settings.ACTION_SETTINGS
-import android.provider.Settings.ACTION_WIRELESS_SETTINGS
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
@@ -15,7 +13,6 @@ import com.android.greenapp.presentation.tools.getColorResource
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getStringResource
 import javax.inject.Inject
-import androidx.core.content.ContextCompat.startActivity
 
 
 /**
@@ -254,7 +251,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		dialog.show()
 	}
 
-	fun showWarningDialogLessImport(
+	fun showWarningDialogAddress(
 		activity: Activity,
 		status: String,
 		statement: String,
@@ -286,6 +283,54 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		failureDialog?.dismiss()
 		failureDialog = dialog
 		dialog.show()
+
+	}
+
+
+	fun showAssuranceDialogDefaultSetting(
+		activity: Activity,
+		status: String,
+		statement: String,
+		btnYes: () -> Unit,
+		btnNo: () -> Unit
+	) {
+		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
+		dialog.setContentView(R.layout.dialog_default_setting)
+		val width = activity.resources.displayMetrics.widthPixels
+		dialog.window?.setLayout(
+			width,
+			WindowManager.LayoutParams.WRAP_CONTENT
+		)
+
+		dialog.findViewById<TextView>(R.id.txt_confirm_title).text = status
+		dialog.findViewById<TextView>(R.id.txtConfirmDialogPhrase).text = statement
+
+		val btnCancel = dialog.findViewById<Button>(R.id.btnNo)
+
+		btnCancel.setOnClickListener {
+			dialog.dismiss()
+			btnNo()
+		}
+
+		val btnConfirm = dialog.findViewById<Button>(R.id.btnYes)
+
+		btnConfirm.setOnClickListener {
+			dialog.dismiss()
+			btnYes()
+		}
+
+		dialog.show()
+	}
+
+
+	fun showQuestionDetailsDialog(
+		status: String,
+		description: String,
+		action: String,
+		okay: () -> Unit
+	) {
+
+
 
 
 	}

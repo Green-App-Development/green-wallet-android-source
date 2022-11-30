@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/walletSettings">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -236,5 +236,11 @@
         android:label="btmDialog"
         tools:layout="@layout/dialog_add_wallet" />
 
+	<fragment
+		android:id="@+id/walletSettings"
+		android:name="com.android.greenapp.presentation.main.walletsettings.WalletSettingsFragment"
+		android:label="WalletSettings"
+		tools:layout="@layout/fragment_wallet_settings"
+		/>
 
 </navigation>

@@ -1,9 +1,355 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:background="@color/primary_app_background">
 
 
+	<LinearLayout
+			android:id="@+id/back_layout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:clickable="true"
+			android:focusable="true"
+			android:foreground="?android:attr/selectableItemBackground"
+			android:orientation="horizontal"
+			app:layout_constraintStart_toStartOf="@+id/guideline11"
+			app:layout_constraintTop_toTopOf="@+id/guideline8">
 
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:gravity="center_vertical"
+				android:src="@drawable/back_arrow_ic" />
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:text="@string/back_btn"
+				android:textColor="@color/greey"
+				android:textFontWeight="500"
+				android:textSize="18sp" />
+
+	</LinearLayout>
+
+	<TextView
+			android:id="@+id/txtWalletSettings"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="15dp"
+			android:gravity="center_horizontal"
+			android:text="Wallet Settings"
+			android:textColor="@color/green"
+			android:textFontWeight="600"
+			android:textSize="25sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/back_layout" />
+
+
+	<TextView
+			android:id="@+id/networkFingerPrint"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:text="Chia  ******5630"
+			android:textColor="@color/grey_txt_color"
+			android:textSize="13sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/txtWalletSettings" />
+
+
+	<LinearLayout
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="25dp"
+			android:orientation="vertical"
+			android:padding="10dp"
+			app:layout_constraintEnd_toStartOf="@+id/guideline13"
+			app:layout_constraintStart_toStartOf="@+id/guideline11"
+			app:layout_constraintTop_toBottomOf="@+id/networkFingerPrint">
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:id="@+id/txtObserverDerivation"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginEnd="10dp"
+						android:layout_toStartOf="@+id/ic_question_mark_observer"
+						android:text="Derivation Index m/12381/8444/2/0"
+						android:textColor="@color/green"
+						android:textFontWeight="500"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/txtObserver"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_below="@+id/txtObserverDerivation"
+						android:layout_marginEnd="10dp"
+						android:layout_toStartOf="@+id/ic_question_mark_observer"
+						android:text="Observer - to import from the official wallet"
+						android:textColor="@color/grey_txt_color"
+						android:textSize="13sp" />
+
+				<ImageView
+						android:id="@+id/ic_question_mark_observer"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentTop="true"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="5dp"
+						android:src="@drawable/ic_question_mark" />
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+						android:id="@+id/linearSend"
+						android:layout_width="match_parent"
+						android:layout_height="100dp"
+						android:layout_below="@+id/txtObserver"
+						android:layout_marginTop="11dp"
+						android:background="@drawable/bcg_progress_bar"
+						android:foreground="?android:attr/selectableItemBackground"
+						android:orientation="vertical"
+						android:padding="10dp">
+
+					<TextView
+							android:id="@+id/txtObserverPercent"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_centerHorizontal="true"
+							android:text="100"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="500"
+							android:textSize="16sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="parent" />
+
+
+					<androidx.appcompat.widget.AppCompatSeekBar
+							android:id="@+id/seekBarObserver"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="10dp"
+							android:maxHeight="2dp"
+							android:minHeight="2dp"
+							android:progress="50"
+							android:progressDrawable="@drawable/track_bcg_seekbar"
+							android:splitTrack="false"
+							android:thumb="@drawable/ic_thumb_seekbar"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/txtObserverPercent" />
+
+					<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="min"
+							android:textColor="@color/grey_txt_color"
+							android:textSize="13sp"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/seekBarObserver" />
+
+					<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="max"
+							android:textColor="@color/grey_txt_color"
+							android:textSize="13sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/seekBarObserver" />
+
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+			</RelativeLayout>
+
+		</LinearLayout>
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="10dp"
+				android:orientation="vertical">
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:id="@+id/txtNonObserverDerivation"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginEnd="10dp"
+						android:layout_toStartOf="@+id/ic_question_mark_non_observer"
+						android:text="Derivation Index m/12381n/8444n/2n/0n"
+						android:textColor="@color/green"
+						android:textFontWeight="500"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/txtNonObserver"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_below="@+id/txtNonObserverDerivation"
+						android:layout_marginEnd="10dp"
+						android:layout_toStartOf="@+id/ic_question_mark_non_observer"
+						android:text="Non-observer - to import balance from Nucle, Arbor, Goby wallets"
+						android:textColor="@color/grey_txt_color"
+						android:textSize="13sp" />
+
+				<ImageView
+						android:id="@+id/ic_question_mark_non_observer"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentTop="true"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="5dp"
+						android:src="@drawable/ic_question_mark" />
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+						android:id="@+id/linearNonObserver"
+						android:layout_width="match_parent"
+						android:layout_height="100dp"
+						android:layout_below="@+id/txtNonObserver"
+						android:layout_marginTop="11dp"
+						android:background="@drawable/bcg_progress_bar"
+						android:foreground="?android:attr/selectableItemBackground"
+						android:orientation="vertical"
+						android:padding="10dp">
+
+					<TextView
+							android:id="@+id/txtNonObserverPercent"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_centerHorizontal="true"
+							android:text="100"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="500"
+							android:textSize="16sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="parent" />
+
+
+					<androidx.appcompat.widget.AppCompatSeekBar
+							android:id="@+id/seekBarNonObserver"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="10dp"
+							android:maxHeight="2dp"
+							android:minHeight="2dp"
+							android:progress="50"
+							android:progressDrawable="@drawable/track_bcg_seekbar"
+							android:splitTrack="false"
+							android:thumb="@drawable/ic_thumb_seekbar"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/txtNonObserverPercent" />
+
+					<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="min"
+							android:textColor="@color/grey_txt_color"
+							android:textSize="13sp"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/seekBarNonObserver" />
+
+					<TextView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="max"
+							android:textColor="@color/grey_txt_color"
+							android:textSize="13sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/seekBarNonObserver" />
+
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+			</RelativeLayout>
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+
+	<com.google.android.material.button.MaterialButton
+			android:id="@+id/btnSaveSettings"
+			style="@style/Widget.AppTheme.MaterialButton"
+			android:layout_width="0dp"
+			android:layout_height="62dp"
+			android:layout_marginStart="35dp"
+			android:layout_marginEnd="35dp"
+			android:layout_marginBottom="10dp"
+			android:background="@drawable/btn_background_draw"
+			android:enabled="true"
+			android:text="Save Settings"
+			android:textAllCaps="false"
+			app:layout_constraintBottom_toTopOf="@+id/txtDefaultSettings"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintStart_toStartOf="parent" />
+
+
+	<TextView
+			android:id="@+id/txtDefaultSettings"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:clickable="true"
+			android:focusable="true"
+			android:foreground="?android:attr/selectableItemBackground"
+			android:text="Defaut Settings"
+			android:textColor="@color/red_mnemonic"
+			android:textFontWeight="500"
+			android:textSize="16sp"
+			app:layout_constraintBottom_toTopOf="@+id/guideline15"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent" />
+
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline15"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.98" />
+
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline11"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.03" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline13"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.97" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline8"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.03" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -92,5 +92,11 @@
 		<item name="colorControlActivated">@color/green</item> <!-- activated color change as you wish -->
 	</style>
 
+	<style name="MySeekBar" parent="Widget.AppCompat.SeekBar">
+		<item name="android:progressBackgroundTint">@color/green</item>
+		<item name="android:progressTint">#388e3c</item>
+		<item name="android:thumbTint">#c51162</item>
+	</style>
+
 
 </resources>

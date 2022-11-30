@@ -35,6 +35,7 @@ import com.android.greenapp.presentation.main.support.SupportFragment
 import com.android.greenapp.presentation.main.support.faq.FAQFragment
 import com.android.greenapp.presentation.main.transaction.TransactionsFragment
 import com.android.greenapp.presentation.main.walletlist.AllWalletListFragment
+import com.android.greenapp.presentation.main.walletsettings.WalletSettingsFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -42,108 +43,110 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class InjectorBuildersModule {
 
-    @ContributesAndroidInjector
-    abstract fun injectGreetingActivity(): OnBoardActivity
+	@ContributesAndroidInjector
+	abstract fun injectGreetingActivity(): OnBoardActivity
 
-    @ContributesAndroidInjector
-    abstract fun injectIntroLanguageFragment(): LanguageFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntroLanguageFragment(): LanguageFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectThemeFragment(): IconFragment
+	@ContributesAndroidInjector
+	abstract fun injectThemeFragment(): IconFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectSetPasswordFragment(): SetPasswordFragment
+	@ContributesAndroidInjector
+	abstract fun injectSetPasswordFragment(): SetPasswordFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectEntPasswordFragment(): AuthFragmentIntro
+	@ContributesAndroidInjector
+	abstract fun injectEntPasswordFragment(): AuthFragmentIntro
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoIntroActivity(): IntroActivity
+	@ContributesAndroidInjector
+	abstract fun injectIntoIntroActivity(): IntroActivity
 
-    @ContributesAndroidInjector
-    abstract fun injectWalletFragment(): HomeFragment
+	@ContributesAndroidInjector
+	abstract fun injectWalletFragment(): HomeFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoMainActivity(): MainActivity
+	@ContributesAndroidInjector
+	abstract fun injectIntoMainActivity(): MainActivity
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoImpMnemonic(): ImpMnemonicFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoImpMnemonic(): ImpMnemonicFragment
 
-    @ContributesAndroidInjector()
-    abstract fun injectIntoSettingDialog(): Dialog
+	@ContributesAndroidInjector()
+	abstract fun injectIntoSettingDialog(): Dialog
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoReceiveFragment(): ReceiveFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoReceiveFragment(): ReceiveFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoSendFragment(): SendFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoSendFragment(): SendFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoScannerFragment(): ScannerFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoScannerFragment(): ScannerFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoSaveMnemonicsFragment(): SaveMnemonicsFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoSaveMnemonicsFragment(): SaveMnemonicsFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoVerificationFragment(): VerificationFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoVerificationFragment(): VerificationFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoActivesFragment(): AllWalletListFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoActivesFragment(): AllWalletListFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoEntPasscodeFragment(): EnterPasscodeFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoEntPasscodeFragment(): EnterPasscodeFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoManageWalletFragment(): ManageWalletFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoManageWalletFragment(): ManageWalletFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoCoinsDetailFragment(): CoinsDetailsFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoCoinsDetailFragment(): CoinsDetailsFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoImportTokenFragment(): ImportTokenFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoImportTokenFragment(): ImportTokenFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoSupportFragment(): SupportFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoSupportFragment(): SupportFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoAllSettingsFragment(): AllSettingsFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoAllSettingsFragment(): AllSettingsFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectMainLanguageFragment(): MainLanguageFragment
+	@ContributesAndroidInjector
+	abstract fun injectMainLanguageFragment(): MainLanguageFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoAboutFragment(): AboutAppFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoAboutFragment(): AboutAppFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoTransactionFragment(): TransactionsFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoTransactionFragment(): TransactionsFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoAuthenticateFragment(): AuthenticateFragmentMain
+	@ContributesAndroidInjector
+	abstract fun injectIntoAuthenticateFragment(): AuthenticateFragmentMain
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoAddressFragment(): AddressFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoAddressFragment(): AddressFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoAddAddressFragment(): EditAddressFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoAddAddressFragment(): EditAddressFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoCreatingWalletFragment(): ProgressCreatingWalletFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoCreatingWalletFragment(): ProgressCreatingWalletFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoNotificationFragment(): NotifFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoNotificationFragment(): NotifFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoFAQFragment(): FAQFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoFAQFragment(): FAQFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoAskQuestionFragment(): QuestionFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoAskQuestionFragment(): QuestionFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectIntoListingFragment(): ListingFragment
+	@ContributesAndroidInjector
+	abstract fun injectIntoListingFragment(): ListingFragment
 
-    @ContributesAndroidInjector
-    abstract fun injectTermsFragment(): TermsFragment
+	@ContributesAndroidInjector
+	abstract fun injectTermsFragment(): TermsFragment
 
+	@ContributesAndroidInjector
+	abstract fun injectWalletSettingsFragment(): WalletSettingsFragment
 
 
 }

@@ -114,7 +114,7 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 	override fun onDelete(itemAddress: Address) {
 
 		curActivity().apply {
-			dialogManager.showWarningDialogLessImport(
+			dialogManager.showWarningDialogAddress(
 				this,
 				getStringResource(R.string.address_book_pop_up_delete_title),
 				getStringResource(R.string.address_book_pop_up_delete_description), {

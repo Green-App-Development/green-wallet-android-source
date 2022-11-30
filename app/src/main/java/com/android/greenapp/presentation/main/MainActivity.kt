@@ -191,6 +191,10 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+				walletSettings -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
 				importTokenFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
@@ -343,7 +347,8 @@ class MainActivity : BaseActivity() {
 					aboutAppFragment,
 					addAddressFragment,
 					notificationFragment,
-					noConnectionFragment
+					noConnectionFragment,
+					walletSettings
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -704,6 +709,10 @@ class MainActivity : BaseActivity() {
 			delay(100)
 			move2NewOrImportWallet(curChosenNetworkTypePosForBackImport)
 		}
+	}
+
+	fun move2WalletSettings(fingerPrint: Long, address: String) {
+
 	}
 
 
