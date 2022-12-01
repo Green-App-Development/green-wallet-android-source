@@ -11,34 +11,14 @@ import com.google.gson.reflect.TypeToken
  */
 object Converters {
 
-    fun listToJson(value: List<String>) = Gson().toJson(value)
 
+	@TypeConverter
+	fun convertListToJsonString(value: List<String>) = Gson().toJson(value)
 
-    fun jsonToList(value: String): List<String> {
+	@TypeConverter
+	fun convertJsonToList(value: String): List<String> {
         val type = object : TypeToken<List<String>>() {}.type
         return Gson().fromJson(value, type)
-    }
-
-    @TypeConverter
-    fun convertStringToMutableList(jsonList: String): MutableList<String> {
-        val type = object : TypeToken<MutableList<String>>() {}.type
-        return Gson().fromJson(jsonList, type)
-    }
-
-    @TypeConverter
-    fun convertMutableListToJsonString(list: MutableList<String>): String {
-        return Gson().toJson(list)
-    }
-
-    @TypeConverter
-    fun convertMutableSetToJsonString(list: MutableSet<String>): String {
-        return Gson().toJson(list)
-    }
-
-    @TypeConverter
-    fun convertJsonStringToSetOfHash(jsonSet: String): MutableSet<String> {
-        val type = object : TypeToken<MutableSet<String>>() {}.type
-        return Gson().fromJson(jsonSet, type)
     }
 
     @TypeConverter
@@ -47,7 +27,7 @@ object Converters {
     }
 
 	@TypeConverter
-    fun convertHashListImportedToJson(hashListImported: HashMap<String, String>): String {
+    fun convertHashListImportedToJson(hashListImported: HashMap<String, List<String>>): String {
         return Gson().toJson(hashListImported)
     }
 
@@ -58,21 +38,9 @@ object Converters {
     }
 
 	@TypeConverter
-    fun convertJsonToHashListImported(hashListImported: String): HashMap<String, String> {
-        val type = object : TypeToken<HashMap<String, String>>() {}.type
+    fun convertJsonToHashListImported(hashListImported: String): HashMap<String, List<String>> {
+        val type = object : TypeToken<HashMap<String, List<String>>>() {}.type
         return Gson().fromJson(hashListImported, type)
-    }
-
-
-    @TypeConverter
-    fun convertJsonToHashWithID(hashWithAmount: String): HashMap<String, Int> {
-        val type = object : TypeToken<HashMap<String, Int>>() {}.type
-        return Gson().fromJson(hashWithAmount, type)
-    }
-
-    @TypeConverter
-    fun convertHashWithIDToString(hashWithId: HashMap<String, Int>): String {
-        return Gson().toJson(hashWithId)
     }
 
 

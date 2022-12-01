@@ -13,32 +13,34 @@ import kotlinx.android.parcel.Parcelize
 data class Wallet(
 	val fingerPrint: Long,
 	val privateKey: String,
-	val sk: String,
+	val puzzle_hashes: List<String>,
 	val address: String,
 	val mnemonics: List<String>,
 	val networkType: String,
 	var home_id_added: Long,
 	var balance: Double,
 	var savedTime: Long,
-	val observerHash:Int,
-	val nonObserverHash:Int
+	val observerHash: Int,
+	val nonObserverHash: Int,
+	val hashListImported: HashMap<String, List<String>> = hashMapOf()
 ) : Parcelable {
 
 	var balanceInUSD: Double = 0.0
 
-	fun toWalletEntity(encMnemonics: String,savedTime:Long) = WalletEntity(
+	fun toWalletEntity(encMnemonics: String, savedTime: Long) = WalletEntity(
 		fingerPrint,
 		privateKey,
-		sk,
+		puzzle_hashes,
 		address,
 		encMnemonics,
 		networkType,
 		home_id_added,
 		balance,
 		savedTime = savedTime,
-		hashListImported = hashListImported
+		hashListImported = hashListImported,
+		observer_hash = observerHash,
+		non_observer_hash = nonObserverHash
 	)
 
-	val hashListImported= hashMapOf<String,String>()
 
 }

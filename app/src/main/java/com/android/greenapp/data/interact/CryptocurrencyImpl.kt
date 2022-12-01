@@ -141,14 +141,15 @@ class CryptocurrencyImpl @Inject constructor(
 					if (!hashListImported.containsKey(token.hash)) {
 						needToWait = true
 						val map = hashMapOf<String, String>()
-						map["puzzle_hash"] = wallet.sk
+						//temporary
+						map["puzzle_hash"] = wallet.puzzle_hashes.toString()
 						map["asset_id"] = token.hash
 						withContext(Dispatchers.Main) {
 							methodChannel.setMethodCallHandler { method, calLBack ->
 								if (method.method == "generate_outer_hash") {
 									val args = method.arguments as HashMap<*, *>
 									val outer_hash = args[token.hash]!!.toString()
-									hashListImported[token.hash] = outer_hash
+									hashListImported[token.hash] = listOf(outer_hash)
 									VLog.d("Address new hash to wallet : $outer_hash  imported : $hashListImported")
 								}
 							}

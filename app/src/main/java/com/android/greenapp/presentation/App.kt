@@ -80,7 +80,7 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		cancelWorkManager()
-		testingMethod()
+//		testingMethod()
 
 	}
 
@@ -89,6 +89,15 @@ class App : DaggerApplication() {
 	}
 
 	private fun testingMethod() {
+		CoroutineScope(Dispatchers.IO).launch {
+			while (true) {
+				notificationHelper.callGreenAppNotificationMessages(
+					"I am here to help you",
+					System.currentTimeMillis()
+				)
+				delay(60000)
+			}
+		}
 
 	}
 

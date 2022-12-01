@@ -77,13 +77,6 @@ interface WalletDao {
 	): Int
 
 
-	@Query("UPDATE WalletEntity SET hashListImported=:hashListImportedNew WHERE fingerPrint=:fingerPrint")
-	suspend fun updateChiaNetworkHashListImportedByFingerPrint(
-		fingerPrint: Long,
-		hashListImportedNew: HashMap<String, String>
-	): Int
-
-
 	@Query("SELECT * FROM WalletEntity WHERE mnemonics=:encMnemonics AND networkType=:networkType")
 	suspend fun checkIfEncMnemonicsExistInDB(
 		encMnemonics: String,
@@ -109,7 +102,7 @@ interface WalletDao {
 	@Query("UPDATE WalletEntity SET hashListImported=:hashListImportedNew WHERE address=:address")
 	suspend fun updateChiaNetworkHashListImportedByAddress(
 		address: String,
-		hashListImportedNew: HashMap<String, String>
+		hashListImportedNew: HashMap<String, List<String>>
 	): Int
 
 
@@ -124,5 +117,21 @@ interface WalletDao {
 
 	@Query("SELECT * FROM WalletEntity WHERE (address LIKE '%' || 'xch'  || '%') OR  (address LIKE  '%' || 'txch'  || '%') ")
 	suspend fun getWalletByNetworkTypeChia(): List<WalletEntity>
+
+	@Query("UPDATE WalletEntity SET puzzle_hashes=:puzzle_hashes WHERE address=:address")
+	suspend fun updateWalletMainPuzzleHashesByAddress(
+		puzzle_hashes: List<String>,
+		address: String
+	): Int
+
+	@Query("UPDATE WalletEntity SET hashListImported=:hashListImportedNew WHERE address=:address")
+	suspend fun updateWalletTokenPuzzleHashesByAddress(
+		hashListImportedNew: HashMap<String, List<String>>,
+		address: String
+	): Int
+
+	@Query("UPDATE WalletEntity SET observer_hash=:observer,non_observer_hash=:nonObserver WHERE address=:address")
+	suspend fun updateObserverHashCount(address: String, observer: Int, nonObserver: Int): Int
+
 
 }

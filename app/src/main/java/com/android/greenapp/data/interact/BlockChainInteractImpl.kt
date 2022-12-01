@@ -258,22 +258,20 @@ class BlockChainInteractImpl @Inject constructor(
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
-			for ((asset_id, puzzle_hash) in wallet.hashListImported) {
+			for ((asset_id, puzzle_hashes) in wallet.hashListImported) {
 				val body = hashMapOf<String, Any>()
-				body["puzzle_hash"] =
-					puzzle_hash
+				body["puzzle_hashes"] =
+					puzzle_hashes
 				body["include_spent_coins"] = false
 				val division = 1000.0
 				var balance = 0L
 				val prevAmount = wallet.hashWithAmount[asset_id] ?: 0.0
-				val request = curBlockChainService.queryBalance(body)
+				val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 				if (request.isSuccessful) {
-					val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
+					val coinRecordsJsonArray = request.body()!!.coin_records
 					for (coin in coinRecordsJsonArray) {
-						val jsCoin = coin.asJsonObject
-						val curAmount =
-							jsCoin.get("coin").asJsonObject.get("amount").asLong
-						val spent = jsCoin.get("spent").asBoolean
+						val curAmount = coin.coin.amount
+						val spent = coin.spent
 						if (!spent)
 							balance += curAmount
 					}
@@ -282,7 +280,7 @@ class BlockChainInteractImpl @Inject constructor(
 				hashWithAmount[asset_id] = newAmount
 				if (newAmount != prevAmount) {
 					getIncomingTransactionNotifForToken(
-						puzzle_hash,
+						puzzle_hashes,
 						wallet,
 						curBlockChainService,
 						asset_id
@@ -298,44 +296,39 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	private suspend fun getIncomingTransactionNotifForToken(
-		puzzleHash: String,
+		puzzleHashes: List<String>,
 		wallet: WalletEntity,
 		curBlockChainService: BlockChainService,
 		assetId: String
 	) {
 		try {
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hash"] =
-				puzzleHash
+			body["puzzle_hashes"] =
+				puzzleHashes
 			body["include_spent_coins"] = false
 			val division = 1000.0
 			val code = tokenDao.getTokenByHash(assetId).get().code
-			val request = curBlockChainService.queryBalance(body)
+			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			if (request.isSuccessful) {
-				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
+				val coinRecordsJsonArray = request.body()!!.coin_records
 				for (record in coinRecordsJsonArray) {
-					val jsRecord = record.asJsonObject
-					val coinAmount =
-						jsRecord.get("coin").asJsonObject.get("amount").asLong
-					val spent = jsRecord.get("spent").asBoolean
-					val timeStamp = jsRecord.get("timestamp").asLong
-					val height = jsRecord.get("confirmed_block_index").asLong
-					val parent_coin_info =
-						jsRecord.get("coin").asJsonObject.get("parent_coin_info").asString
+					val coinAmount = record.coin.amount
+					val timeStamp = record.timestamp
+					val height = record.confirmed_block_index
+					val parent_coin_info = record.coin.parent_coin_info
 					val parent_puzzle_hash = getParentCoinsSpentAmountAndHashValue(
 						parent_coin_info,
 						curBlockChainService
 					)!!["puzzle_hash"] as String
 					val transExistByParentInfo =
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
-					val timeValidate =
-						timeStamp * 1000 > convertTimeInMillisToAlmatyTime(wallet.savedTime)
-					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != puzzleHash
-					if (timeStamp * 1000 >= wallet.savedTime && parent_puzzle_hash.substring(
-							2
-						) != puzzleHash && !transExistByParentInfo.isPresent
+					if (timeStamp * 1000 >= wallet.savedTime && !puzzleHashes.contains(
+							parent_puzzle_hash.substring(
+								2
+							)
+						) && !transExistByParentInfo.isPresent
 					) {
-						VLog.d("Actual timeStamp of incoming coin record : $timeStamp and walletCreatedTime : ${wallet.savedTime}")
+//						VLog.d("Actual timeStamp of incoming coin record : $timeStamp and walletCreatedTime : ${wallet.savedTime}")
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
@@ -363,8 +356,8 @@ class BlockChainInteractImpl @Inject constructor(
 						VLog.d("Inserting New Incoming Transaction Token  : $transEntity")
 						transactionDao.insertTransaction(transEntity)
 					} else {
-						VLog.d("Current incoming transactions Token is already saved or can't be saved : $jsRecord and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
-						VLog.d("Validate time for transactions Token : $timeValidate , match parent puzzle hash match : $parent_puzzle_hash_match")
+						VLog.d("Current incoming transactions Token is already saved or can't be saved : $record and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
+//						VLog.d("Validate time for transactions Token : $timeValidate , match parent puzzle hash match : $parent_puzzle_hash_match")
 					}
 				}
 
@@ -385,8 +378,8 @@ class BlockChainInteractImpl @Inject constructor(
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hash"] =
-				wallet.sk
+			body["puzzle_hashes"] =
+				wallet.puzzle_hashes
 			body["include_spent_coins"] = false
 			val division =
 				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
@@ -397,14 +390,11 @@ class BlockChainInteractImpl @Inject constructor(
 					12.0
 				)
 			var balance = 0L
-			val request = curBlockChainService.queryBalance(body)
+			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			if (request.isSuccessful) {
-				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
-				for (coin in coinRecordsJsonArray) {
-					val jsCoin = coin.asJsonObject
-					val curAmount =
-						jsCoin.get("coin").asJsonObject.get("amount").asLong
-					val spent = jsCoin.get("spent").asBoolean
+				for (coin in request.body()!!.coin_records) {
+					val curAmount = coin.coin.amount
+					val spent = coin.spent
 					if (!spent)
 						balance += curAmount
 				}
@@ -434,8 +424,8 @@ class BlockChainInteractImpl @Inject constructor(
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hash"] =
-				wallet.sk
+			body["puzzle_hashes"] =
+				wallet.puzzle_hashes
 			body["include_spent_coins"] = false
 			val division =
 				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
@@ -445,29 +435,25 @@ class BlockChainInteractImpl @Inject constructor(
 					10.0,
 					12.0
 				)
-			val request = curBlockChainService.queryBalance(body)
+			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			if (request.isSuccessful) {
-				val coinRecordsJsonArray = request.body()!!["coin_records"].asJsonArray
+				val coinRecordsJsonArray = request.body()!!.coin_records
 				for (record in coinRecordsJsonArray) {
-					val jsRecord = record.asJsonObject
-					val coinAmount =
-						jsRecord.get("coin").asJsonObject.get("amount").asLong
-					val spent = jsRecord.get("spent").asBoolean
-					val timeStamp = jsRecord.get("timestamp").asLong
-					val height = jsRecord.get("confirmed_block_index").asLong
-					val parent_coin_info =
-						jsRecord.get("coin").asJsonObject.get("parent_coin_info").asString
+					val coinAmount = record.coin.amount
+					val timeStamp = record.timestamp
+					val height = record.confirmed_block_index
+					val parent_coin_info = record.coin.parent_coin_info
 					val parent_puzzle_hash = getParentCoinsSpentAmountAndHashValue(
 						parent_coin_info,
 						curBlockChainService
 					)!!["puzzle_hash"] as String
 					val transExistByParentInfo =
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
-					val timeValidate = timeStamp * 1000 > wallet.savedTime
-					val parent_puzzle_hash_match = parent_puzzle_hash.substring(2) != wallet.sk
-					if (timeStamp * 1000 >= wallet.savedTime && parent_puzzle_hash.substring(
-							2
-						) != wallet.sk && !transExistByParentInfo.isPresent
+					if (timeStamp * 1000 >= wallet.savedTime && !wallet.puzzle_hashes.contains(
+							parent_puzzle_hash.substring(
+								2
+							)
+						) && !transExistByParentInfo.isPresent
 					) {
 						VLog.d("Actual timeStamp of incoming coin record : $timeStamp and walletCreatedTime : ${wallet.savedTime}")
 						val transEntity = TransactionEntity(
@@ -497,8 +483,7 @@ class BlockChainInteractImpl @Inject constructor(
 						VLog.d("Inserting New Incoming Transaction  : $transEntity")
 						transactionDao.insertTransaction(transEntity)
 					} else {
-						VLog.d("Current incoming transactions is already saved or can't be saved : $jsRecord and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
-						VLog.d("Validate time for transactions : $timeValidate , match parent puzzle hash match : $parent_puzzle_hash_match")
+						VLog.d("Current incoming transactions is already saved or can't be saved : $record and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
 					}
 				}
 

@@ -216,7 +216,7 @@ class VerificationFragment : DaggerDialogFragment() {
                 val newWallet = Wallet(
                     fingerPrint,
                     "",
-                    puzzle_hash,
+                    listOf(puzzle_hash),
                     address,
                     mnemonics,
                     curNetworkType,
@@ -227,7 +227,7 @@ class VerificationFragment : DaggerDialogFragment() {
                     nonObserverHash = 1
                 )
                 defaultTokensOnMainScreen.forEach {
-                    newWallet.hashListImported[it.hash] = arguments[it.hash]!!.toString()
+                    newWallet.hashListImported[it.hash] = listOf(arguments[it.hash]!!.toString())
                 }
                 newWalletViewModel.createNewWallet(newWallet) {
                     dialogManager.hidePrevDialogs()

@@ -5,6 +5,7 @@ import com.android.greenapp.domain.domainmodel.WalletWithTokens
 import com.android.greenapp.presentation.tools.NetworkType
 import kotlinx.coroutines.flow.Flow
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * Created by bekjan on 09.06.2022.
@@ -54,12 +55,6 @@ interface WalletInteract {
 		networkType: String
 	): Flow<List<WalletWithTokens>>
 
-	suspend fun importTokenByFingerPrint(
-		fingerPrint: Long,
-		add: Boolean,
-		asset_id: String,
-		outer_puzzle_hash: String
-	)
 
 	suspend fun importTokenByAddress(
 		address: String,
@@ -67,4 +62,16 @@ interface WalletInteract {
 		asset_id: String,
 		outer_puzzle_hash: String
 	)
+
+	suspend fun getWalletByAddress(address: String): Wallet
+
+	suspend fun updateHashListImported(
+		address: String,
+		main_puzzle_hashes: List<String>,
+		hashListImported: HashMap<String, List<String>>,
+		observer:Int,
+		nonObserver:Int
+	)
+
+
 }

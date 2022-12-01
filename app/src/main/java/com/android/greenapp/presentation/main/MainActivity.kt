@@ -48,6 +48,7 @@ import com.android.greenapp.presentation.main.scan.ScannerFragment
 import com.android.greenapp.presentation.main.send.SendFragment
 import com.android.greenapp.presentation.main.service.AppRemovedRecentTaskService
 import com.android.greenapp.presentation.main.transaction.TransactionsFragment
+import com.android.greenapp.presentation.main.walletsettings.WalletSettingsFragment
 import com.android.greenapp.presentation.tools.*
 import com.example.common.tools.*
 import dev.b3nedikt.reword.Reword
@@ -711,8 +712,11 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
-	fun move2WalletSettings(fingerPrint: Long, address: String) {
-		navController.navigate(walletSettings)
+	fun move2WalletSettings(address: String) {
+		val bundle = bundleOf(
+			WalletSettingsFragment.ADDRESS_KEY to address
+		)
+		navController.navigate(walletSettings,bundle)
 	}
 
 

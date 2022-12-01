@@ -52,7 +52,7 @@
 						android:textSize="12sp" />
 
 				<ImageView
-						android:id="@+id/icSettings"
+						android:id="@+id/icSettingsIcon"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_alignParentEnd="true"
@@ -257,7 +257,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_marginEnd="26dp"
-						android:layout_toLeftOf="@+id/ic_copy_green_3"
+						android:layout_toStartOf="@+id/ic_copy_green_3"
 						android:text="⁕⁕⁕⁕⁕⁕"
 						android:textColor="@color/key_txt_color" />
 

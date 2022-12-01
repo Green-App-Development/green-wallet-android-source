@@ -49,7 +49,7 @@ class ManageWalletViewPagerAdapter(
 	override fun instantiateItem(container: ViewGroup, position: Int): Any {
 		layoutInflater =
 			container.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-		val manageWaleltView = layoutInflater.inflate(R.layout.item_manage_wallet, container, false)
+		val manageWaleltView = layoutInflater.inflate(R.layout.item_manage_wallet_beta, container, false)
 
 		views[position] = manageWaleltView
 		initViewDetails(manageWaleltView, walletList[position], position)
@@ -74,10 +74,10 @@ class ManageWalletViewPagerAdapter(
 				adapterListener.imgCopyClicked(getMnemonicsString(mnemonics))
 			}
 
-//			findViewById<ImageView>(R.id.icSettings).setOnClickListener {
-////				val wallet = walletList[position]
-////				adapterListener.settingsClicked(wallet.fingerPrint,wallet.address)
-//			}
+			findViewById<ImageView>(R.id.icSettingsIcon).setOnClickListener {
+				val wallet = walletList[position]
+				adapterListener.settingsClicked(wallet.fingerPrint,wallet.address)
+			}
 
 		}
 
@@ -135,9 +135,8 @@ class ManageWalletViewPagerAdapter(
 	interface ManageWalletAdapterListener {
 		fun showDataClicked()
 		fun imgCopyClicked(data: String)
-		fun settingsClicked(fingerPrint:Long,address:String)
+		fun settingsClicked(fingerPrint: Long, address: String)
 	}
-
 
 
 }

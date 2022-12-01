@@ -20,6 +20,7 @@ import com.android.greenapp.presentation.main.send.SendFragmentViewModel
 import com.android.greenapp.presentation.main.support.SupportViewModel
 import com.android.greenapp.presentation.main.transaction.TransactionsViewModel
 import com.android.greenapp.presentation.main.walletlist.WalletListViewModel
+import com.android.greenapp.presentation.main.walletsettings.WalletSettingsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -126,6 +127,13 @@ abstract class ViewModelsModule {
     @Binds
     @ViewModelKey(ImportTokenViewModel::class)
     abstract fun bindingImpTokenViewModel(importTokenViewModel: ImportTokenViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(WalletSettingsViewModel::class)
+    abstract fun bindingWalletSettingsViewModel(settingsViewModel: WalletSettingsViewModel): ViewModel
+
+
 
 
 }

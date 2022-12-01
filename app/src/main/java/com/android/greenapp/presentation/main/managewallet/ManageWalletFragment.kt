@@ -22,12 +22,10 @@ import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.ReasonEnterCode
 import com.android.greenapp.presentation.tools.getStringResource
-import com.android.greenapp.presentation.tools.preventDoubleClick
 import com.example.common.tools.*
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_manage_wallet_beta.*
-import kotlinx.android.synthetic.main.item_manage_wallet.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -313,7 +311,7 @@ class ManageWalletFragment : DaggerFragment(),
 	}
 
 	override fun settingsClicked(fingerPrint: Long, address: String) {
-		curActivity().move2WalletSettings(fingerPrint, address)
+		curActivity().move2WalletSettings(address)
 	}
 
 	private val requestPermissions =

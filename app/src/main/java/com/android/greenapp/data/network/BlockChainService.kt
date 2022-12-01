@@ -31,6 +31,10 @@ interface BlockChainService {
     @POST("get_coin_records_by_puzzle_hash")
     suspend fun queryBalance(@Body body: HashMap<String, Any>): Response<JsonObject>
 
+
+	@POST("get_coin_records_by_puzzle_hashes")
+	suspend fun queryBalanceByPuzzleHashes(@Body body: HashMap<String, Any>): Response<CoinRecordResponse>
+
 	@POST("push_tx")
     suspend fun pushTransaction(@Body body: SpenBunde): Response<BaseResponse>
 

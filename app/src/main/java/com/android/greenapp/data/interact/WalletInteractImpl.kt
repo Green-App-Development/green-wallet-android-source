@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 /**
  * Created by bekjan on 09.06.2022.
@@ -113,7 +114,7 @@ class WalletInteractImpl @Inject constructor(
 				wallet.fingerPrint,
 				listOf(tokenWallet),
 				wallet.mnemonics,
-				wallet.sk,
+				wallet.puzzle_hashes,
 				wallet.address
 			)
 		}
@@ -184,7 +185,7 @@ class WalletInteractImpl @Inject constructor(
 			wallet.fingerPrint,
 			tokenList,
 			wallet.mnemonics,
-			wallet.sk,
+			wallet.puzzle_hashes,
 			wallet.address
 		)
 	}
@@ -301,23 +302,8 @@ class WalletInteractImpl @Inject constructor(
 		fingerPrint: Long?,
 		networkType: String
 	): Flow<List<WalletWithTokens>> {
-		return walletDao.getWalletListByNetworkTypeAndFingerPrintFlow(networkType,fingerPrint).map { list -> list.map { convertWalletEntityToWalletWithTokens(it) } }
-	}
-
-	override suspend fun importTokenByFingerPrint(
-		fingerPrint: Long,
-		add: Boolean,
-		asset_id: String,
-		outer_puzzle_hash: String
-	) {
-		val walletEntity = walletDao.getWalletByFingerPrint(fingerPrint)[0]
-		val hashListImported = walletEntity.hashListImported
-		if (add)
-			hashListImported[asset_id] = outer_puzzle_hash
-		else {
-			hashListImported.remove(asset_id)
-		}
-		walletDao.updateChiaNetworkHashListImportedByFingerPrint(fingerPrint, hashListImported)
+		return walletDao.getWalletListByNetworkTypeAndFingerPrintFlow(networkType, fingerPrint)
+			.map { list -> list.map { convertWalletEntityToWalletWithTokens(it) } }
 	}
 
 	override suspend fun importTokenByAddress(
@@ -330,13 +316,37 @@ class WalletInteractImpl @Inject constructor(
 		val hashListImported = walletEntity.hashListImported
 		if (add) {
 			CoroutineScope(Dispatchers.IO).launch {
-				hashListImported[asset_id] = outer_puzzle_hash
+				hashListImported[asset_id] = listOf(outer_puzzle_hash)
 				blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
 			}
 		} else {
 			hashListImported.remove(asset_id)
 		}
 		walletDao.updateChiaNetworkHashListImportedByAddress(address, hashListImported)
+	}
+
+	override suspend fun getWalletByAddress(address: String): Wallet {
+		val walletEntity = walletDao.getWalletByAddress(address = address).get(0)
+		val wallet = walletEntity.toWallet(getDecryptedMnemonicsList(walletEntity.encMnemonics))
+		return wallet
+	}
+
+	override suspend fun updateHashListImported(
+		address: String,
+		main_puzzle_hashes: List<String>,
+		hashListImported: HashMap<String, List<String>>,
+		observer: Int,
+		nonObserver: Int
+	) {
+		walletDao.updateWalletMainPuzzleHashesByAddress(
+			puzzle_hashes = main_puzzle_hashes,
+			address = address
+		)
+		walletDao.updateWalletTokenPuzzleHashesByAddress(
+			hashListImportedNew = hashListImported,
+			address = address
+		)
+		walletDao.updateObserverHashCount(address,observer,nonObserver)
 	}
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)
