@@ -316,6 +316,7 @@ class WalletInteractImpl @Inject constructor(
 		asset_id: String,
 		outer_puzzle_hashes: List<String>
 	) {
+		VLog.d("Updating import token by address : $address  : $outer_puzzle_hashes")
 		val walletEntity = walletDao.getWalletByAddress(address)[0]
 		val hashListImported = walletEntity.hashListImported
 		if (add) {

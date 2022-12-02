@@ -12,6 +12,7 @@ import com.android.greenapp.domain.domainmodel.CurrencyItem
 import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.App
+import com.android.greenapp.presentation.custom.convertListToStringWithSpace
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCurNetworkPrev24ChangeDouble
 import com.android.greenapp.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
@@ -142,22 +143,21 @@ class CryptocurrencyImpl @Inject constructor(
 						needToWait = true
 						val map = hashMapOf<String, String>()
 						//temporary
-						map["puzzle_hash"] = wallet.puzzle_hashes.toString()
+						map["puzzle_hashes"] = convertListToStringWithSpace(wallet.puzzle_hashes)
 						map["asset_id"] = token.hash
 						withContext(Dispatchers.Main) {
 							methodChannel.setMethodCallHandler { method, calLBack ->
 								if (method.method == "generate_outer_hash") {
 									val args = method.arguments as HashMap<*, *>
-									val outer_hash = args[token.hash]!!.toString()
-									hashListImported[token.hash] = listOf(outer_hash)
-									VLog.d("Address new hash to wallet : $outer_hash  imported : $hashListImported")
+									val outer_hashes = args[token.hash] as List<String>
+									hashListImported[token.hash] = outer_hashes
 								}
 							}
 							methodChannel.invokeMethod("generatewrappedcatpuzzle", map)
 						}
 					}
 					if (needToWait)
-						delay(300)
+						delay(400)
 					VLog.d("HashListImported after : $hashListImported")
 					walletDao.updateChiaNetworkHashListImportedByAddress(
 						wallet.address,
