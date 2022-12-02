@@ -315,14 +315,14 @@ class GreenAppInteractImpl @Inject constructor(
             val res = greenAppService.getServerTime()
             if (res.isSuccessful) {
                 val time = JSONObject(res.body()!!.toString()).getLong("result")
-                return time * 1000
+                return time*1000
             } else {
                 VLog.d("Response is not success getting  server time :")
             }
         } catch (ex: java.lang.Exception) {
             VLog.d("Exception getting  server time : ${ex.message}")
         }
-        return System.currentTimeMillis()
+		return -1
     }
 
 

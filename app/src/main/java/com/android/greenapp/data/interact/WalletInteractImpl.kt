@@ -115,7 +115,9 @@ class WalletInteractImpl @Inject constructor(
 				listOf(tokenWallet),
 				wallet.mnemonics,
 				wallet.puzzle_hashes,
-				wallet.address
+				wallet.address,
+				wallet.observerHash,
+				wallet.nonObserverHash
 			)
 		}
 		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
@@ -186,7 +188,9 @@ class WalletInteractImpl @Inject constructor(
 			tokenList,
 			wallet.mnemonics,
 			wallet.puzzle_hashes,
-			wallet.address
+			wallet.address,
+			wallet.observerHash,
+			wallet.nonObserverHash
 		)
 	}
 
@@ -310,13 +314,13 @@ class WalletInteractImpl @Inject constructor(
 		address: String,
 		add: Boolean,
 		asset_id: String,
-		outer_puzzle_hash: String
+		outer_puzzle_hashes: List<String>
 	) {
 		val walletEntity = walletDao.getWalletByAddress(address)[0]
 		val hashListImported = walletEntity.hashListImported
 		if (add) {
 			CoroutineScope(Dispatchers.IO).launch {
-				hashListImported[asset_id] = listOf(outer_puzzle_hash)
+				hashListImported[asset_id] = outer_puzzle_hashes
 				blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
 			}
 		} else {
@@ -346,7 +350,7 @@ class WalletInteractImpl @Inject constructor(
 			hashListImportedNew = hashListImported,
 			address = address
 		)
-		walletDao.updateObserverHashCount(address,observer,nonObserver)
+		walletDao.updateObserverHashCount(address, observer, nonObserver)
 	}
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)

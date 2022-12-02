@@ -31,14 +31,17 @@ class ImportTokenViewModel @Inject constructor(
     suspend fun getTokenListAndSearch(fingerPrint: Long, nameCode: String?) =
         tokenInteract.getTokenListAndSearchForWallet(fingerPrint, nameCode)
 
+	suspend fun getWalletByAddress(address: String)=walletInteract.getWalletByAddress(address)
+
     private var importTokenJob: Job? = null
 
-    fun importToken(hash: String, address: String, add: Boolean, outer_puzzle_hash: String) {
+    fun importToken(hash: String, address: String, add: Boolean, outer_puzzle_hash: List<String>) {
         importTokenJob?.cancel()
         importTokenJob = viewModelScope.launch {
             walletInteract.importTokenByAddress(address, add, hash, outer_puzzle_hash)
         }
     }
+
 
 
 }

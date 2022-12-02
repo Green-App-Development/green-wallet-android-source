@@ -64,7 +64,10 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 		val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
 		val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
-		val walletEntity = wallet.toWalletEntity(encMnemonics, greenAppInteract.getServerTime())
+		var savedTime = greenAppInteract.getServerTime()
+		if (savedTime == -1L)
+			savedTime = System.currentTimeMillis()
+		val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
 			updateWalletBalance(walletEntity)
@@ -146,9 +149,9 @@ class BlockChainInteractImpl @Inject constructor(
 					val timeStamp = record.timestamp
 //					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp} trantime : ${tran.created_at_time}, CoinAmount : $coinAmount , TranCoinAmount : ${tran.amount}")
 					if (coinAmount == tran.amount && timeStamp >=
-						tran.created_at_time / 1000
+						tran.created_at_time / 1000 - 120
 					) {
-						return record.confirmed_block_index.toLong()
+						return record.confirmed_block_index
 					}
 				}
 			}
@@ -173,7 +176,10 @@ class BlockChainInteractImpl @Inject constructor(
 		spentCoinsToken: String
 	): Resource<String> {
 		try {
-			val timeBeforePushingTrans = greenAppInteract.getServerTime() - 60 * 1000
+			val serverTime = greenAppInteract.getServerTime()
+			if (serverTime == -1L)
+				throw  ServerMaintenanceExceptions()
+			val timeBeforePushingTrans = serverTime - 60 * 1000
 			VLog.d("Push method got called in data layer code : $networkType")
 			val curBlockChainService =
 				retrofitBuilder.baseUrl("$url/").build()

@@ -60,7 +60,7 @@ interface WalletInteract {
 		address: String,
 		add: Boolean,
 		asset_id: String,
-		outer_puzzle_hash: String
+		outer_puzzle_hashes: List<String>
 	)
 
 	suspend fun getWalletByAddress(address: String): Wallet

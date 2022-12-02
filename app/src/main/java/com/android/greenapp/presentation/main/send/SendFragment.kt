@@ -441,7 +441,7 @@ class SendFragment : DaggerFragment() {
 		} else if (sendingAmount == 0.0) {
 			twoEdtsFilled.remove(2)
 			hideAmountNotEnoughWarning()
-		}else {
+		} else {
 			twoEdtsFilled.add(2)
 			hideAmountNotEnoughWarning()
 			hideNotEnoughAmountWarningSending()
@@ -707,7 +707,8 @@ class SendFragment : DaggerFragment() {
 					showSuccessSendMoneyDialog()
 				}
 				Resource.State.ERROR -> {
-					showFailedSendingTransaction()
+					val error=res.error!!
+					manageExceptionDialogsForBlockChain(curActivity(),dialogManager,error)
 				}
 				Resource.State.LOADING -> {
 
@@ -773,6 +774,8 @@ class SendFragment : DaggerFragment() {
 			argSpendBundle["network_type"] = convertNetworkTypeForFlutter(wallet.networkType)
 			argSpendBundle["asset_id"] = asset_id
 			argSpendBundle["spentCoins"] = Gson().toJson(alreadySpentCoins)
+			argSpendBundle["observer"] = wallet.observer
+			argSpendBundle["nonObserver"]=wallet.nonObserver
 			VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
 			if (asset_id.isEmpty())
 				methodChannel.invokeMethod("generateSpendBundleXCH", argSpendBundle)
@@ -1054,8 +1057,6 @@ class SendFragment : DaggerFragment() {
 			if (gadPrice != 0.0) {
 				convertedAmountGAD = amountInUSD / gadPrice
 			}
-			val tokenPrice =
-				viewModel.getTokenPriceByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
 			binding.txtAmountInGAD.setText(
 				"~${
 					formattedDollarWithPrecision(

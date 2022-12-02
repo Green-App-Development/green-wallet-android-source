@@ -14,11 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentImportTokenBinding
 import com.android.greenapp.domain.domainmodel.Token
+import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.App
-import com.android.greenapp.presentation.custom.AnimationManager
-import com.android.greenapp.presentation.custom.DialogManager
-import com.android.greenapp.presentation.custom.hidePublicKey
-import com.android.greenapp.presentation.custom.manageExceptionDialogsForRest
+import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
@@ -72,8 +70,9 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 
 	var curFingerPrint: Long? = null
 	var curNetworkType: String = ""
-	var curMainPuzzleHash: String = ""
 	var address: String = ""
+
+	lateinit var wallet: Wallet
 
 
 	lateinit var methodChannel: MethodChannel
@@ -83,7 +82,6 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 		arguments?.let {
 			curFingerPrint = it.getLong(FINGER_PRINT_KEY)
 			curNetworkType = it.getString(NETWORK_TYPE_KEY, "")
-			curMainPuzzleHash = it.getString(MAIN_PUZZLE_HASH, "")
 			address = it.getString(ADDRESS_KEY, "")
 		}
 	}
@@ -119,6 +117,9 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 			(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
+		lifecycleScope.launch {
+			wallet = viewModel.getWalletByAddress(address = address)
+		}
 	}
 
 	private fun searchTokenList(nameCode: String?) {
@@ -172,7 +173,6 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 		token: Token
 	) {
 		VLog.d("Importing token added : $added, token : $token")
-		val fingerPrint = curFingerPrint!!
 		switchImport.isChecked = added
 		token.imported = added
 		if (added) {
@@ -181,18 +181,18 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 				makeViewGone(this)
 			}
 			val map = hashMapOf<String, String>()
-			map["puzzle_hash"] = curMainPuzzleHash
+			map["puzzle_hashes"] = convertListToStringWithSpace(wallet.puzzle_hashes)
 			map["asset_id"] = token.hash
 			methodChannel.setMethodCallHandler { method, calLBack ->
 				if (method.method == "generate_outer_hash") {
 					val args = method.arguments as HashMap<*, *>
-					val outer_hash = args[token.hash]!!.toString()
-					viewModel.importToken(token.hash, address, added, outer_hash)
+					val outer_hashes = args[token.hash]!! as List<String>
+					viewModel.importToken(token.hash, address, added, outer_hashes)
 				}
 			}
 			methodChannel.invokeMethod("generatewrappedcatpuzzle", map)
 		} else
-			viewModel.importToken(token.hash, address, added, "")
+			viewModel.importToken(token.hash, address, added, listOf())
 	}
 
 	private fun makeViewGone(relAddedHome: RelativeLayout) {

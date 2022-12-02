@@ -8,5 +8,7 @@ data class WalletWithTokens(
 	val tokenWalletList: List<TokenWallet>,
 	val mnemonics:List<String>,
 	val puzzle_hashes:List<String>,
-	val address:String
+	val address:String,
+	val observer:Int,
+	val nonObserver:Int
 )
