@@ -42,7 +42,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="15dp"
 			android:gravity="center_horizontal"
-			android:text="Wallet Settings"
+			android:text="@string/wallet_settings_main"
 			android:textColor="@color/green"
 			android:textFontWeight="600"
 			android:textSize="25sp"
@@ -89,7 +89,7 @@
 						android:layout_height="wrap_content"
 						android:layout_marginEnd="10dp"
 						android:layout_toStartOf="@+id/ic_question_mark_observer"
-						android:text="Derivation Index m/12381/8444/2/0"
+						android:text="@string/derivation_index_first"
 						android:textColor="@color/green"
 						android:textFontWeight="500"
 						android:textSize="16sp" />
@@ -101,7 +101,7 @@
 						android:layout_below="@+id/txtObserverDerivation"
 						android:layout_marginEnd="10dp"
 						android:layout_toStartOf="@+id/ic_question_mark_observer"
-						android:text="Observer - to import from the official wallet"
+						android:text="@string/derivation_index_first_subtext"
 						android:textColor="@color/grey_txt_color"
 						android:textSize="13sp" />
 
@@ -195,7 +195,7 @@
 						android:layout_height="wrap_content"
 						android:layout_marginEnd="10dp"
 						android:layout_toStartOf="@+id/ic_question_mark_non_observer"
-						android:text="Derivation Index m/12381n/8444n/2n/0n"
+						android:text="@string/derivation_index_second"
 						android:textColor="@color/green"
 						android:textFontWeight="500"
 						android:textSize="16sp" />
@@ -207,7 +207,7 @@
 						android:layout_below="@+id/txtNonObserverDerivation"
 						android:layout_marginEnd="10dp"
 						android:layout_toStartOf="@+id/ic_question_mark_non_observer"
-						android:text="Non-observer - to import balance from Nucle, Arbor, Goby wallets"
+						android:text="@string/derivation_index_second_subtext"
 						android:textColor="@color/grey_txt_color"
 						android:textSize="13sp" />
 
@@ -298,7 +298,7 @@
 			android:layout_marginBottom="10dp"
 			android:background="@drawable/btn_background_draw"
 			android:enabled="true"
-			android:text="Save Settings"
+			android:text="@string/save_settings_button"
 			android:textAllCaps="false"
 			app:layout_constraintBottom_toTopOf="@+id/txtDefaultSettings"
 			app:layout_constraintEnd_toEndOf="parent"
@@ -314,7 +314,7 @@
 			android:clickable="true"
 			android:focusable="true"
 			android:foreground="?android:attr/selectableItemBackground"
-			android:text="Defaut Settings"
+			android:text="@string/default_settings_button"
 			android:textColor="@color/red_mnemonic"
 			android:textFontWeight="500"
 			android:textSize="16sp"

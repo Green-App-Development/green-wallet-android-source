@@ -126,9 +126,9 @@ class LanguageFragment : DaggerFragment() {
 
 	private var jobDownloadingLang: Job? = null
 
-
 	private fun downloadingLang(code: String) {
-		jobDownloadingLang?.cancel()
+		if (jobDownloadingLang != null && jobDownloadingLang!!.isActive)
+			return
 		jobDownloadingLang = lifecycleScope.launch {
 			val res = greetingViewModel.downloadLanguage(code)
 			when (res.state) {

@@ -100,7 +100,7 @@ class ListingFragment : DaggerDialogFragment() {
 
 			imgArrow.setOnClickListener {
 				spinnerBlockchain.performClick()
-				animManage.rotateBy180Forward(it)
+				animManage.rotateBy180Forward(it,curActivity())
 				txtBlockChain.visibility = View.VISIBLE
 				edtBlockChain.setText(if (adapter.selectedPosition == 0) com.android.greenapp.presentation.tools.CHIA else com.android.greenapp.presentation.tools.CHIVES)
 				firstTimeNotSetToEdt = false
@@ -130,7 +130,7 @@ class ListingFragment : DaggerDialogFragment() {
 				}
 
 				override fun onSpinnerClosed(spin: Spinner?) {
-					animManage.rotateBy180Backward(imgArrow)
+					animManage.rotateBy180Backward(imgArrow,curActivity())
 					view6.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
 				}
 

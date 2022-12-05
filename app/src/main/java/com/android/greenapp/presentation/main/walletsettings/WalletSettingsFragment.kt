@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentWalletSettingsBinding
 import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.App
@@ -16,10 +17,12 @@ import com.android.greenapp.presentation.custom.hidePublicKey
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.android.greenapp.presentation.tools.getStringResource
 import com.android.greenapp.presentation.tools.preventDoubleClick
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -118,42 +121,46 @@ class WalletSettingsFragment : DaggerFragment() {
 		}
 
 		txtDefaultSettings.setOnClickListener {
-			dialog.showAssuranceDialogDefaultSetting(
-				curActivity(),
-				"Restore default settings?",
-				"This action will return the settings of the wallet derivative index to the default values, which may lead to incorrect display of the balance",
-				btnYes = {
-					seekBarObserver.progress = 1
-					seekBarNonObserver.progress = 1
-					importMoreHashes()
-				},
-				btnNo = {
+			curActivity().apply {
+				dialog.showAssuranceDialogDefaultSetting(
+					this,
+					getStringResource(R.string.restore_def_settings),
+					getStringResource(R.string.restore_def_settings_subtext),
+					btnYes = {
+						seekBarObserver.progress = 1
+						seekBarNonObserver.progress = 0
+						importMoreHashes()
+					},
+					btnNo = {
 
-				}
-			)
+					}
+				)
+			}
 		}
 
 		icQuestionMarkNonObserver.setOnClickListener {
-			dialog.showQuestionDetailsDialog(
-				curActivity(),
-				"Derivation Index",
-				"The derivation index sets the range of wallet addresses that the wallet scans the blockchain for. This number is generally higher if you have a lot of transactions or canceled offers for XCH, CATs, or NFTs. If you believe your balance is incorrect because it’s missing coins, then increasing the derivation index could help the wallet include the missing coins in the balance total.\u2028\n" +
-						"Use this setting if, after importing mnemonics from Goby, Nucle, Arbor wallets, the balance of the wallet is displayed incorrectly\n",
-				"Okay"
-			) {
+			curActivity().apply {
+				dialog.showQuestionDetailsDialog(
+					this,
+					getStringResource(R.string.derivation_index_title),
+					getStringResource(R.string.derivation_index_subtext),
+					getStringResource(R.string.ok_button)
+				) {
 
+				}
 			}
 		}
 
 		icQuestionMarkObserver.setOnClickListener {
-			dialog.showQuestionDetailsDialog(
-				curActivity(),
-				"Derivation Index",
-				"The derivation index sets the range of wallet addresses that the wallet scans the blockchain for. This number is generally higher if you have a lot of transactions or canceled offers for XCH, CATs, or NFTs. If you believe your balance is incorrect because it’s missing coins, then increasing the derivation index could help the wallet include the missing coins in the balance total.\u2028\n" +
-						"Use this setting if, after importing mnemonics from Goby, Nucle, Arbor wallets, the balance of the wallet is displayed incorrectly\n",
-				"Okay"
-			) {
+			curActivity().apply {
+				dialog.showQuestionDetailsDialog(
+					this,
+					getStringResource(R.string.derivation_index_title),
+					getStringResource(R.string.derivation_index_subtext),
+					getStringResource(R.string.ok_button)
+				) {
 
+				}
 			}
 		}
 
@@ -162,6 +169,7 @@ class WalletSettingsFragment : DaggerFragment() {
 		}
 
 		seekBarObserver.max = 24
+		seekBarObserver.min = 1
 		seekBarNonObserver.max = 24
 
 		seekBarObserver.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -193,7 +201,6 @@ class WalletSettingsFragment : DaggerFragment() {
 			}
 		})
 
-
 	}
 
 	private fun importMoreHashes() {
@@ -220,6 +227,7 @@ class WalletSettingsFragment : DaggerFragment() {
 				val map = method.arguments as HashMap<*, *>
 				val main_hashes = map["main_puzzle_hashes"] as List<String>
 				val hashListImported = hashMapOf<String, List<String>>()
+				//asset_id
 				wallet.hashListImported.keys.forEach {
 					val token_hashes = map[it] as List<String>
 					hashListImported[it] = token_hashes
@@ -232,14 +240,17 @@ class WalletSettingsFragment : DaggerFragment() {
 					binding.seekBarNonObserver.progress
 				)
 				dialog.hidePrevDialogs()
-				dialog.showSuccessDialog(
-					curActivity(),
-					"Saved",
-					"Wallet settings saved successfully!",
-					"Done",
-					isDialogOutsideTouchable = false
-				) {
-					binding.btnSaveSettings.isEnabled = true
+				curActivity().apply {
+					dialog.showSuccessDialog(
+						this,
+						getStringResource(R.string.settings_saved),
+						getStringResource(R.string.settings_saved_subtext),
+						getStringResource(R.string.ready_btn),
+						isDialogOutsideTouchable = false
+					) {
+						binding.btnSaveSettings.isEnabled = true
+						curActivity().popBackStackOnce()
+					}
 				}
 			}
 		}

@@ -164,7 +164,8 @@ class MainLanguageFragment : DaggerDialogFragment() {
 	private var jobDownloadingLang: Job? = null
 
 	private fun downloadingLang(code: String) {
-		jobDownloadingLang?.cancel()
+		if (jobDownloadingLang != null && jobDownloadingLang!!.isActive)
+			return
 		jobDownloadingLang = lifecycleScope.launch {
 			val res = mainLanguageViewModel.downloadLanguage(code)
 			when (res.state) {

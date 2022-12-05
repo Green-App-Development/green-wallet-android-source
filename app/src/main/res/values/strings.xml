@@ -305,7 +305,11 @@
 	<string name="restore_def_settings"/>
 	<string name="restore_def_settings_subtext"/>
 	<string name="restore_yes_button"/>
-
+	<string name="restore_no_button"/>
+	<string name="settings_saved"/>
+	<string name="settings_saved_subtext"/>
+	<string name="derivation_index_title"/>
+	<string name="derivation_index_subtext"/>
 
 
 </resources>

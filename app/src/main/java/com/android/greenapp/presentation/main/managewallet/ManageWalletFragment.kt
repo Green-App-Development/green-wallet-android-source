@@ -77,6 +77,7 @@ class ManageWalletFragment : DaggerFragment(),
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
+		VLog.d("On create view on manage wallet")
 		binding = FragmentManageWalletBetaBinding.inflate(inflater)
 		return binding.root
 	}
@@ -84,12 +85,24 @@ class ManageWalletFragment : DaggerFragment(),
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		VLog.d("On view crated view on manage wallet")
 		initViewPagerWithAdapter()
 		registerBtnClicks()
 		curActivity().mainViewModel.show_data_wallet_invisible()
 	}
 
 	private var job30s: Job? = null
+
+
+	override fun onStart() {
+		super.onStart()
+		VLog.d("On view start view on manage wallet")
+	}
+
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On view resume view on manage wallet")
+	}
 
 
 	private fun registerBtnClicks() {
@@ -135,11 +148,6 @@ class ManageWalletFragment : DaggerFragment(),
 	}
 
 	private fun initBackButton() {
-//        val detailsShown = curActivity().mainViewModel.show_data_wallet.value
-//        if (detailsShown) {
-//            curActivity().mainViewModel.show_data_wallet_invisible()
-//            return
-//        }
 		curActivity().popBackStackOnce()
 	}
 
@@ -335,6 +343,22 @@ class ManageWalletFragment : DaggerFragment(),
 		registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
 //            curActivity().backToMainWalletFragment()
 		}
+
+	override fun onPause() {
+		super.onPause()
+		VLog.d("On Pause on managewalletfragment")
+	}
+
+	override fun onStop() {
+		super.onStop()
+		VLog.d("On Stop on managewalletfragment")
+		viewPagerJob?.cancel()
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		VLog.d("On Destroy on managewalletfragment")
+	}
 
 
 }

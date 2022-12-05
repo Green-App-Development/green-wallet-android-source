@@ -32,7 +32,9 @@ interface BlockChainInteract {
 		spentCoinsToken: String
 	): Resource<String>
 
-	suspend fun updateTokenBalanceWithFullNode(wallet:WalletEntity)
+	suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity)
+
+	suspend fun updateWalletBalance(wallet: WalletEntity)
 
 
 }

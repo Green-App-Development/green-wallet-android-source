@@ -11,6 +11,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.view.*
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.*
@@ -707,8 +708,8 @@ class SendFragment : DaggerFragment() {
 					showSuccessSendMoneyDialog()
 				}
 				Resource.State.ERROR -> {
-					val error=res.error!!
-					manageExceptionDialogsForBlockChain(curActivity(),dialogManager,error)
+					val error = res.error!!
+					manageExceptionDialogsForBlockChain(curActivity(), dialogManager, error)
 				}
 				Resource.State.LOADING -> {
 
@@ -775,7 +776,7 @@ class SendFragment : DaggerFragment() {
 			argSpendBundle["asset_id"] = asset_id
 			argSpendBundle["spentCoins"] = Gson().toJson(alreadySpentCoins)
 			argSpendBundle["observer"] = wallet.observer
-			argSpendBundle["nonObserver"]=wallet.nonObserver
+			argSpendBundle["nonObserver"] = wallet.nonObserver
 			VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
 			if (asset_id.isEmpty())
 				methodChannel.invokeMethod("generateSpendBundleXCH", argSpendBundle)
@@ -1006,20 +1007,20 @@ class SendFragment : DaggerFragment() {
 			}
 		}
 		ic_wallet_list.setOnClickListener {
+			it.preventDoubleClick(400)
 			binding.walletSpinner.performClick()
 		}
 
 
 		chosenNetworkRel.setOnClickListener {
-			VLog.d("NetworkRelative is clicked")
 			binding.networkSpinner.performClick()
 		}
 
 		curActivity().mainViewModel.send_money_false()
 
-		anim.animateArrowIconCustomSpinner(token_spinner, ic_token_downward)
-		anim.animateArrowIconCustomSpinner(wallet_spinner, ic_wallet_list)
-		anim.animateArrowIconCustomSpinner(network_spinner, imgIconSpinner)
+		anim.animateArrowIconCustomSpinner(token_spinner, ic_token_downward,curActivity())
+		anim.animateArrowIconCustomSpinner(wallet_spinner, ic_wallet_list,curActivity())
+		anim.animateArrowIconCustomSpinner(network_spinner, imgIconSpinner,curActivity())
 
 	}
 

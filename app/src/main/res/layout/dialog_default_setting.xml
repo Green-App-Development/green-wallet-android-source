@@ -65,7 +65,7 @@
 				android:layout_marginTop="27dp"
 				android:layout_marginEnd="40dp"
 				android:background="@drawable/btn_background_draw"
-				android:text="Yes"
+				android:text="@string/restore_yes_button"
 				android:textAllCaps="false"
 				android:textColor="@color/white"
 				android:textSize="15sp"
@@ -81,7 +81,7 @@
 				android:layout_marginEnd="40dp"
 				android:layout_marginBottom="25dp"
 				android:background="@drawable/btn_confirm"
-				android:text="No"
+				android:text="@string/restore_no_button"
 				android:textAllCaps="false"
 				android:textColor="@color/red_mnemonic"
 				android:textSize="15sp" />

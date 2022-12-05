@@ -394,7 +394,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 		}
 
-		animManager.animateArrowIconCustomSpinner(network_spinner_trans, imgArrow)
+		animManager.animateArrowIconCustomSpinner(network_spinner_trans, imgArrow, curActivity())
 
 	}
 

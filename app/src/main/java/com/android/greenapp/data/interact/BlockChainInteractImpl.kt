@@ -375,7 +375,7 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
-	suspend fun updateWalletBalance(wallet: WalletEntity) {
+	override suspend fun updateWalletBalance(wallet: WalletEntity) {
 		try {
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
