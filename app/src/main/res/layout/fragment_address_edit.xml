@@ -130,21 +130,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/edtAddressWallet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:layout_toLeftOf="@+id/img_edt_scan"
-                android:background="@android:color/transparent"
-                android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789,"
-                android:ellipsize="end"
-                android:hint="@string/address_book_add_contact_adress"
-                android:imeActionLabel="Done"
-                android:inputType="text"
-                android:singleLine="true"
-                android:textColor="@color/secondary_text_color"
-                android:textSize="16sp" />
+			<EditText
+					android:id="@+id/edtAddressWallet"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="3dp"
+					android:layout_toLeftOf="@+id/img_edt_scan"
+					android:background="@android:color/transparent"
+					android:digits="abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789,"
+					android:ellipsize="end"
+					android:hint="@string/address_book_add_contact_adress"
+					android:imeActionLabel="Done"
+					android:inputType="text"
+					android:singleLine="true"
+					android:textColor="@color/secondary_text_color"
+					android:textSize="16sp" />
 
             <ImageView
                 android:id="@+id/img_edt_scan"

@@ -95,9 +95,18 @@ class ScannerFragment : DaggerFragment() {
 			decodeCallback = DecodeCallback {
 				if (it.text.isNotEmpty()) {
 					lifecycleScope.launch(Dispatchers.Main) {
-						determineDirection()
-						delay(100)
-						curActivity().mainViewModel.saveDecodeQrCode(it.text)
+						if (curFingerPrint == null || curNetworkType == null) {
+							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
+							curActivity().popBackStackOnce()
+						}else{
+							curActivity().move2SendFragment(
+								curNetworkType!!,
+								curFingerPrint,
+								shouldQRCleared = false
+							)
+							delay(100)
+							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
+						}
 					}
 				}
 			}
@@ -109,18 +118,6 @@ class ScannerFragment : DaggerFragment() {
 		}
 		codeScanner.startPreview()
 
-	}
-
-	private fun determineDirection() {
-		if (curFingerPrint == null || curNetworkType == null)
-			curActivity().popBackStackOnce()
-		else {
-			curActivity().move2SendFragment(
-				curNetworkType!!,
-				curFingerPrint,
-				shouldQRCleared = false
-			)
-		}
 	}
 
 	private val animFadeInBackBtn: Animation by lazy {
