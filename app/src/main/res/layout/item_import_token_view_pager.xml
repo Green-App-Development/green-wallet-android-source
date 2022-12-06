@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rel_import_token"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground">
+		android:id="@+id/rel_import_token"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:focusable="true"
+		android:foreground="?android:attr/selectableItemBackground">
 
-    <TextView
-        android:id="@+id/txtImportToken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="31dp"
-        android:text="@string/main_screen_purse_import"
-        android:textColor="@color/grey_txt_color" />
+	<TextView
+			android:id="@+id/txtImportToken"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:layout_marginStart="31dp"
+			android:text="@string/main_screen_purse_import"
+			android:textColor="@color/grey_txt_color" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@+id/txtImportToken"
-        android:layout_marginTop="15dp"
-        android:background="@color/line_divider" />
+	<View
+			android:layout_width="match_parent"
+			android:layout_height="2dp"
+			android:layout_below="@+id/txtImportToken"
+			android:layout_marginTop="15dp"
+			android:background="@color/line_divider" />
 
 </RelativeLayout>

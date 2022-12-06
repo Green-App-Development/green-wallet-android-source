@@ -15,6 +15,7 @@ import com.android.greenapp.presentation.custom.formattedDoubleAmountWithPrecisi
 import com.android.greenapp.presentation.custom.isThisChivesNetwork
 import com.bumptech.glide.Glide
 import com.android.greenapp.presentation.tools.getDrawableResource
+import com.android.greenapp.presentation.tools.getStringResource
 import de.hdodenhof.circleimageview.CircleImageView
 
 
@@ -60,9 +61,13 @@ class WalletTokenAdapter(
 	}
 
 	@SuppressLint("SetTextI18n")
-	private fun adjustTxtImport(v: View) {
+	private fun adjustTxtImport(v: View, activity: Activity) {
 		val txtImport = v.findViewById<TextView>(R.id.txtImportToken)
-		txtImport.text = "    +   ${txtImport.text}" + " ".repeat(7)
+		txtImport.text = ""
+		txtImport.text =
+			"    +   ${activity.getStringResource(R.string.main_screen_purse_import)}" + " ".repeat(
+				7
+			)
 	}
 
 
@@ -119,7 +124,7 @@ class WalletTokenAdapter(
 		fun onBind(token: TokenWallet) {
 			if (isThisChivesNetwork(token.name))
 				importToken.setText(R.string.import_mnemonics_soon)
-			adjustTxtImport(importToken)
+			adjustTxtImport(importToken, activity)
 			if (!isThisChivesNetwork(token.name)) {
 				rootImportToken.setOnClickListener {
 					tokenClicker.onImportTokenClicked()
