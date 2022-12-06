@@ -674,10 +674,11 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 								val mnemonics = p0.split(Regex("\\s+")).toList()
 								if (edtText.text.toString() == mnemonics[0])
 									return
-								if (mnemonics.size == 1) {
-									edtText.setText(p0.toString())
-									return
-								}
+//								if (mnemonics.size == 1) {
+//									edtText.setText(p0.toString())
+//									return
+//								}
+								edtText.setText("")
 								if (binding.btn12Words.isChecked) {
 									fillEdtWithCopiedMnemonics12Words(
 										mnemonics,
@@ -689,7 +690,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 										binding.linearLayout24
 									)
 								}
-								edtText.setText(mnemonics[0])
 							}
 						}
 
@@ -723,7 +723,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		mnemonics: List<String>,
 		linearLayout: LinearLayout
 	) {
-		VLog.d("LinearLayoutCont for 24 Words : ${linearLayout.childCount}")
 		var lastEdt: EditText? = null
 		var at = 0
 		try {
@@ -731,20 +730,20 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 				val pairLayout = linearLayout.getChildAt(i)
 				val everyPair = pairLayout as LinearLayout
 				val leftEdt = everyPair.getChildAt(0) as CustomEdtText
-				if (at < mnemonics.size)
-					lastEdt = leftEdt
 				if (leftEdt.text.toString().isEmpty() && at < mnemonics.size) {
 					leftEdt.setText(mnemonics[at++])
+					if (at < mnemonics.size)
+						lastEdt = leftEdt
 				}
 			}
 			for (i in 0 until 12) {
 				val pairLayout = linearLayout.getChildAt(i)
 				val everyPair = pairLayout as LinearLayout
 				val rightEdt = everyPair.getChildAt(1) as CustomEdtText
-				if (at < mnemonics.size)
-					lastEdt = rightEdt
 				if (rightEdt.text.toString().isEmpty() && at < mnemonics.size) {
 					rightEdt.setText(mnemonics[at++])
+					if (at < mnemonics.size)
+						lastEdt = rightEdt
 				}
 			}
 		} catch (ex: java.lang.Exception) {

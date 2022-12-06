@@ -421,6 +421,7 @@ class SendFragment : DaggerFragment() {
 				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
 					tokenAdapter.selectedPosition = p2
 					tokendAdapterPosition = p2
+					checkingPrecisionsForEnterAmount()
 					calculateSpendableBalance()
 					updateAmounts(tokenWalletList[p2])
 				}
@@ -1007,7 +1008,6 @@ class SendFragment : DaggerFragment() {
 			}
 		}
 		ic_wallet_list.setOnClickListener {
-			it.preventDoubleClick(400)
 			binding.walletSpinner.performClick()
 		}
 
