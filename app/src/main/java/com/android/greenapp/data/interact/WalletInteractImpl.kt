@@ -320,10 +320,8 @@ class WalletInteractImpl @Inject constructor(
 		val walletEntity = walletDao.getWalletByAddress(address)[0]
 		val hashListImported = walletEntity.hashListImported
 		if (add) {
-			CoroutineScope(Dispatchers.IO).launch {
-				hashListImported[asset_id] = outer_puzzle_hashes
-				blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
-			}
+			hashListImported[asset_id] = outer_puzzle_hashes
+			blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
 		} else {
 			hashListImported.remove(asset_id)
 		}

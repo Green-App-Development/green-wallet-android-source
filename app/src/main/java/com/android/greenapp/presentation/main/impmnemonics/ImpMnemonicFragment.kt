@@ -361,8 +361,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			VLog.d("Mnemonics om import : $mnemonics")
 			curActivity().curMnemonicCode =
 				Mnemonics.MnemonicCode(convertListToStringWithSpace(mnemonics))
-			callingFlutterMethodToGenerateHash()
 			listenToMethodCallFromFlutter()
+			callingFlutterMethodToGenerateHash()
 		}
 	}
 
@@ -415,18 +415,24 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 	}
 
 	private fun callingFlutterMethodToGenerateHash() {
-		val mnemonics = curActivity().curMnemonicCode.words.map { String(it) }.toList()
-		val methodChannel = MethodChannel(
-			(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
-			METHOD_CHANNEL_GENERATE_HASH
-		)
-		val mnemonicString = convertListToStringWithSpace(mnemonics)
-		val map = hashMapOf<String, Any>()
-		map["mnemonic"] = mnemonicString
-		map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
-		map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
-		VLog.d("Calling flutter generate hash : $mnemonicString")
-		methodChannel.invokeMethod("generateHash", map);
+		try {
+			val mnemonics = curActivity().curMnemonicCode.words.map { String(it) }.toList()
+			val methodChannel = MethodChannel(
+				(curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
+				METHOD_CHANNEL_GENERATE_HASH
+			)
+			val mnemonicString = convertListToStringWithSpace(mnemonics)
+			curActivity().curMnemonicCode.validate()
+			val map = hashMapOf<String, Any>()
+			map["mnemonic"] = mnemonicString
+			map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
+			map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
+			VLog.d("Calling flutter generate hash : $mnemonicString")
+			methodChannel.invokeMethod("generateHash", map)
+		}catch (ex:Exception){
+			VLog.d("Exception in calling flutter module to generate hash : ${ex.message}")
+			adjustingAssureTxt(24)
+		}
 	}
 
 	private fun showSuccessImportingDialog() {
@@ -860,51 +866,51 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 						}
 					}
 					containMulWords = containMulWords || curContainTwoWordsOrDigit
-					if (duplicateWordsWithEdts[value] == null)
-						duplicateWordsWithEdts[value] = mutableSetOf()
-					duplicateWordsWithEdts[value]!!.add(edtText)
-					edtWithPrevValues[edtText] = value
-					if (seenMap[value] != null) {
-						hasSeen = true
-
-						edtText.apply {
-							setTextColor(
-								ResourcesCompat.getColor(
-									resources,
-									R.color.red_mnemonic,
-									null
-								)
-							)
-							background = ResourcesCompat.getDrawable(
-								resources,
-								R.drawable.edt_mneumonic_red,
-								null
-							)
-						}
-						val prevEdt = seenMap[value] ?: continue
-						prevEdt.apply {
-							setTextColor(
-								ResourcesCompat.getColor(
-									resources,
-									R.color.red_mnemonic,
-									null
-								)
-							)
-							background = ResourcesCompat.getDrawable(
-								resources,
-								R.drawable.edt_mneumonic_red,
-								null
-							)
-						}
-					}
-					if (seenMap[value] == null)
-						seenMap[value] = edtText
+//					if (duplicateWordsWithEdts[value] == null)
+//						duplicateWordsWithEdts[value] = mutableSetOf()
+//					duplicateWordsWithEdts[value]!!.add(edtText)
+//					edtWithPrevValues[edtText] = value
+//					if (seenMap[value] != null) {
+//						hasSeen = true
+//
+//						edtText.apply {
+//							setTextColor(
+//								ResourcesCompat.getColor(
+//									resources,
+//									R.color.red_mnemonic,
+//									null
+//								)
+//							)
+//							background = ResourcesCompat.getDrawable(
+//								resources,
+//								R.drawable.edt_mneumonic_red,
+//								null
+//							)
+//						}
+//						val prevEdt = seenMap[value] ?: continue
+//						prevEdt.apply {
+//							setTextColor(
+//								ResourcesCompat.getColor(
+//									resources,
+//									R.color.red_mnemonic,
+//									null
+//								)
+//							)
+//							background = ResourcesCompat.getDrawable(
+//								resources,
+//								R.drawable.edt_mneumonic_red,
+//								null
+//							)
+//						}
+//					}
+//					if (seenMap[value] == null)
+//						seenMap[value] = edtText
 				}
 			}
 		} catch (ex: Exception) {
 			VLog.d("Exception : ${ex.message}")
 		}
-		if (containMulWords) return "containwords"
+//		if (containMulWords) return "containwords"
 		VLog.d("Checking words Existence with respective edts : ${duplicateWordsWithEdts["о"]}")
 		return if (hasSeen) "same" else "valid"
 	}

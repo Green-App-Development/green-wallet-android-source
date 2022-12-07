@@ -212,7 +212,7 @@ class CryptocurrencyImpl @Inject constructor(
 
 		//make all tails enabled false
 		val existingTails = tokenDao.getTokenListAndSearch(null)
-			.map { TokenDto(it.name, it.code, it.hash, it.logo_url, it.default_tail, "") }
+			.map { TokenDto(it.name, it.code, it.hash, it.logo_url, 0, "") }
 			.toMutableList()
 
 		val jsonAllNetworkItemList = prefs.getObjectString(ALL_NETWORK_ITEMS_LIST)
@@ -234,11 +234,12 @@ class CryptocurrencyImpl @Inject constructor(
 							tokenEntity.code,
 							tokenEntity.hash,
 							tokenEntity.logo_url,
-							tokenEntity.default_tail,
+							0,
 							""
 						)
 						existingTails.remove(tokenDto)
 					}
+					VLog.d("Existing tails should be disabled : $existingTails")
 					existingTails.forEach {
 						tokenDao.updateTokenEnable(it.code, false)
 					}

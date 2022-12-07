@@ -176,6 +176,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 		switchImport.isChecked = added
 		token.imported = added
 		if (added) {
+			dialogManager.showProgress(curActivity())
 			binding.relAddedHome.apply {
 				visibility = View.VISIBLE
 				makeViewGone(this)
@@ -187,12 +188,16 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 				if (method.method == "generate_outer_hash") {
 					val args = method.arguments as HashMap<*, *>
 					val outer_hashes = args[token.hash]!! as List<String>
-					viewModel.importToken(token.hash, address, added, outer_hashes)
+					viewModel.importToken(token.hash, address, added, outer_hashes) {
+						dialogManager.hidePrevDialogs()
+					}
 				}
 			}
 			methodChannel.invokeMethod("generatewrappedcatpuzzle", map)
 		} else
-			viewModel.importToken(token.hash, address, added, listOf())
+			viewModel.importToken(token.hash, address, added, listOf()) {
+
+			}
 	}
 
 	private fun makeViewGone(relAddedHome: RelativeLayout) {

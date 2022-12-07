@@ -63,7 +63,6 @@ class WalletTokenAdapter(
 	@SuppressLint("SetTextI18n")
 	private fun adjustTxtImport(v: View, activity: Activity) {
 		val txtImport = v.findViewById<TextView>(R.id.txtImportToken)
-		txtImport.text = ""
 		txtImport.text =
 			"    +   ${activity.getStringResource(R.string.main_screen_purse_import)}" + " ".repeat(
 				7
