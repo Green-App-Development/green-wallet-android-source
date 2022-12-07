@@ -389,8 +389,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 						home_id_added = System.currentTimeMillis(),
 						0.0,
 						savedTime = System.currentTimeMillis(),
-						observerHash = 1,
-						nonObserverHash = 0
+						observerHash = 10,
+						nonObserverHash = 10
 					)
 					defaultTokensOnMainScreen.forEach {
 						newWallet.hashListImported[it.hash] =

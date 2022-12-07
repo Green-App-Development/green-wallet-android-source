@@ -168,9 +168,9 @@ class WalletSettingsFragment : DaggerFragment() {
 			curActivity().popBackStackOnce()
 		}
 
-		seekBarObserver.max = 24
+		seekBarObserver.max = 1000
 		seekBarObserver.min = 1
-		seekBarNonObserver.max = 24
+		seekBarNonObserver.max = 1000
 
 		seekBarObserver.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 			override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {

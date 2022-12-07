@@ -183,6 +183,9 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		}
 	}
 
+	fun isProgressDialogShowing() = progressDialog?.isShowing
+
+
 	fun dismissNoConnectionDialog() {
 		if (noConnectionDialog != null && noConnectionDialog!!.isShowing) {
 			noConnectionDialog!!.dismiss()

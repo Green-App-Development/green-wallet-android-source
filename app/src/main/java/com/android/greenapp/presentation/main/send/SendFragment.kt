@@ -1018,9 +1018,9 @@ class SendFragment : DaggerFragment() {
 
 		curActivity().mainViewModel.send_money_false()
 
-		anim.animateArrowIconCustomSpinner(token_spinner, ic_token_downward,curActivity())
-		anim.animateArrowIconCustomSpinner(wallet_spinner, ic_wallet_list,curActivity())
-		anim.animateArrowIconCustomSpinner(network_spinner, imgIconSpinner,curActivity())
+		anim.animateArrowIconCustomSpinner(token_spinner, ic_token_downward, curActivity())
+		anim.animateArrowIconCustomSpinner(wallet_spinner, ic_wallet_list, curActivity())
+		anim.animateArrowIconCustomSpinner(network_spinner, imgIconSpinner, curActivity())
 
 	}
 
@@ -1307,6 +1307,10 @@ class SendFragment : DaggerFragment() {
 		super.onStart()
 		VLog.d("Send Fragment on Start")
 		regulateVisibilityOfTxtsAfterPasscode()
+		if (dialogManager.isProgressDialogShowing() == true) {
+			dialogManager.hidePrevDialogs()
+			dialogManager.showProgress(curActivity())
+		}
 	}
 
 	override fun onResume() {
