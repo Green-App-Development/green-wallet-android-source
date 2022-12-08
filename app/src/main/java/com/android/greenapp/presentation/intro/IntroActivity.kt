@@ -16,6 +16,7 @@ import com.android.greenapp.presentation.custom.getStatusBcgBarColorBasedOnTime
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.onboard.OnBoardActivity
 import com.android.greenapp.presentation.main.MainActivity
+import com.android.greenapp.presentation.main.MainActivity.Companion.MAIN_BUNDLE_KEY
 import com.example.common.tools.VLog
 import com.android.greenapp.presentation.tools.getBooleanResource
 import com.android.greenapp.presentation.tools.getColorResource
@@ -27,7 +28,7 @@ class IntroActivity : BaseActivity() {
 	private val navController by lazy { findNavController(R.id.my_nav_host_fragment) }
 
 	companion object {
-		const val NOTIF_OTHER_KEY = "notif_other_key"
+		const val INTRO_BUNDLE_KEY = "intro_bundle"
 	}
 
 	@Inject
@@ -44,9 +45,27 @@ class IntroActivity : BaseActivity() {
 		checkingIntentFromPush()
 	}
 
+	override fun onNewIntent(intent: Intent?) {
+		super.onNewIntent(intent)
+		VLog.d(
+			"Open with push notification message new intent : ${
+				intent?.getBundleExtra(
+					INTRO_BUNDLE_KEY
+				)
+			}"
+		)
+
+	}
+
 	private fun checkingIntentFromPush() {
-		val notifOther = intent?.extras?.getString(NOTIF_OTHER_KEY, "default_value")
-         VLog.d("Open with push notification : $notifOther")
+		val introBundle = intent.getBundleExtra(INTRO_BUNDLE_KEY)
+		if (introBundle == null) {
+			VLog.d("Intro Bundle is null on intro activity")
+			return
+		}
+		introBundle.keySet().forEach {
+			VLog.d("IntroBundle on intro activity key : $it -> value : ${introBundle.getString(it)}")
+		}
 	}
 
 
@@ -114,6 +133,7 @@ class IntroActivity : BaseActivity() {
 	fun move2MainActivity() {
 		Intent(this, MainActivity::class.java).apply {
 			addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+			putExtra(MAIN_BUNDLE_KEY, intent.getBundleExtra(INTRO_BUNDLE_KEY))
 			startActivity(this)
 			finish()
 		}

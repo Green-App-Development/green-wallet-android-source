@@ -27,6 +27,7 @@ import com.android.greenapp.domain.domainmodel.Address
 import com.android.greenapp.presentation.App
 import com.android.greenapp.presentation.BaseActivity
 import com.android.greenapp.presentation.custom.*
+import com.android.greenapp.presentation.custom.NotificationHelper.Companion.GreenAppChannel
 import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.intro.IntroActivity
 import com.android.greenapp.presentation.main.address.AddressFragment
@@ -43,6 +44,7 @@ import com.android.greenapp.presentation.main.home.HomeFragment
 import com.android.greenapp.presentation.main.impmnemonics.ImpMnemonicFragment
 import com.android.greenapp.presentation.main.importtoken.ImportTokenFragment
 import com.android.greenapp.presentation.main.managewallet.ManageWalletFragment
+import com.android.greenapp.presentation.main.notification.NotifFragment.Companion.SHOW_GREEN_APP_NOTIF
 import com.android.greenapp.presentation.main.receive.ReceiveFragment
 import com.android.greenapp.presentation.main.scan.ScannerFragment
 import com.android.greenapp.presentation.main.send.SendFragment
@@ -59,6 +61,11 @@ import javax.inject.Inject
 
 
 class MainActivity : BaseActivity() {
+
+
+	companion object {
+		const val MAIN_BUNDLE_KEY = "main_bundle"
+	}
 
 	private lateinit var binding: ActivityMainBinding
 	private val navController by lazy { findNavController(my_nav_host_fragment) }
@@ -103,6 +110,19 @@ class MainActivity : BaseActivity() {
 		(application as App).applicationIsAlive = true
 		startServiceAppRemoveRecentTask()
 		softKeyboardListener()
+		initCheckingBundleFromPushNotification()
+	}
+
+	private fun initCheckingBundleFromPushNotification() {
+		val bundle = intent.getBundleExtra(MAIN_BUNDLE_KEY)
+		if (bundle == null) {
+			VLog.d("Bundle is null in mainActivity")
+			return
+		}
+		val greenAppNotif = bundle.getString(GreenAppChannel, "")
+		if (greenAppNotif.isNotEmpty()) {
+			move2NotificationFragment(showGreenAppNotif = true)
+		}
 	}
 
 
@@ -508,8 +528,10 @@ class MainActivity : BaseActivity() {
 		navController.navigate(addressFragment, bundle)
 	}
 
-	fun move2NotificationFragment() {
-		navController.navigate(notificationFragment)
+	fun move2NotificationFragment(showGreenAppNotif: Boolean = false) {
+		val bundle = bundleOf()
+		bundle.putBoolean(SHOW_GREEN_APP_NOTIF, showGreenAppNotif)
+		navController.navigate(notificationFragment, bundle)
 	}
 
 	fun move2FaqFragment() {
@@ -716,7 +738,7 @@ class MainActivity : BaseActivity() {
 		val bundle = bundleOf(
 			WalletSettingsFragment.ADDRESS_KEY to address
 		)
-		navController.navigate(walletSettings,bundle)
+		navController.navigate(walletSettings, bundle)
 	}
 
 

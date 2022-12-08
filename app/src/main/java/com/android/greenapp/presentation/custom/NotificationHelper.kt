@@ -3,6 +3,7 @@ package com.android.greenapp.presentation.custom
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -12,16 +13,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.bundleOf
 import com.android.greenapp.R
 import com.android.greenapp.data.preference.PrefsManager
-import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.di.application.AppScope
 import com.android.greenapp.presentation.intro.IntroActivity
-import com.android.greenapp.presentation.main.MainActivity
+import com.android.greenapp.presentation.intro.IntroActivity.Companion.INTRO_BUNDLE_KEY
 import com.example.common.tools.VLog
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
-import java.util.*
 import javax.inject.Inject
 
 
@@ -31,11 +28,20 @@ class NotificationHelper @Inject constructor(
 	private val prefs: PrefsManager
 ) {
 
-	private val greenAppChannel = "Green Wallet Messages"
-	private val transactionMessages = "Transactions"
+	companion object {
+		const val GreenAppChannel = "Green Wallet Messages"
+		const val transactionMessages = "Transactions"
+	}
+
 	private val mutex = Mutex()
 
-	suspend fun callGreenAppNotificationMessages(message: String, create_at_time: Long) {
+
+	suspend fun callGreenAppNotificationMessages(
+		message: String,
+		create_at_time: Long,
+		key: String = "",
+		value: String = ""
+	) {
 		mutex.withLock {
 			buildingNotificationChannels()
 			val title = "Green Wallet"
@@ -49,21 +55,25 @@ class NotificationHelper @Inject constructor(
 				return
 			}
 
+			val bundle = bundleOf()
+			bundle.putString(key, value)
+
 			val notifIntent = Intent(applicationContext, IntroActivity::class.java).apply {
-				putExtra(IntroActivity.NOTIF_OTHER_KEY, "notifOther")
 				flags = Intent.FLAG_ACTIVITY_NEW_TASK
 				action = Intent.ACTION_MAIN
 				addCategory(Intent.CATEGORY_LAUNCHER)
+				putExtra(INTRO_BUNDLE_KEY, bundle)
+				putExtra("code2", "code2")
 			}
 
 			val pendingIntent = PendingIntent.getActivity(
 				applicationContext,
-				1,
+				unique_notif_id,
 				notifIntent,
-				PendingIntent.FLAG_IMMUTABLE
+				FLAG_IMMUTABLE
 			)
 
-			val builder = NotificationCompat.Builder(applicationContext, greenAppChannel)
+			val builder = NotificationCompat.Builder(applicationContext, GreenAppChannel)
 				.setSmallIcon(R.drawable.ic_chia_white)
 				.setContentTitle(title)
 				.setContentText(message)
@@ -80,7 +90,7 @@ class NotificationHelper @Inject constructor(
 
 	private fun buildingNotificationChannels() {
 
-		val channels = listOf(greenAppChannel, transactionMessages)
+		val channels = listOf(GreenAppChannel, transactionMessages)
 		channels.forEach {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				val importance: Int = NotificationManager.IMPORTANCE_DEFAULT

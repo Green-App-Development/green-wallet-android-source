@@ -12,6 +12,7 @@ import com.android.greenapp.domain.interact.CryptocurrencyInteract
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
 import com.android.greenapp.presentation.custom.NotificationHelper
+import com.android.greenapp.presentation.custom.NotificationHelper.Companion.GreenAppChannel
 import com.android.greenapp.presentation.di.application.DaggerAppComponent
 import com.android.greenapp.presentation.tools.SYNC_WORK_TAG
 import com.example.common.tools.VLog
@@ -79,7 +80,7 @@ class App : DaggerApplication() {
 			this,
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
-		cancelWorkManager()
+//		cancelWorkManager()
 //		testingMethod()
 
 	}
@@ -93,9 +94,11 @@ class App : DaggerApplication() {
 			while (true) {
 				notificationHelper.callGreenAppNotificationMessages(
 					"I am here to help you",
-					System.currentTimeMillis()
+					System.currentTimeMillis(),
+					key = GreenAppChannel,
+					value = "Green App Notification"
 				)
-				delay(60000)
+				break
 			}
 		}
 

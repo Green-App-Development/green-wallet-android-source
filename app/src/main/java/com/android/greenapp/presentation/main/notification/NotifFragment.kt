@@ -50,6 +50,11 @@ class NotifFragment : DaggerDialogFragment(),
 	NotifSectionAdapter.ParentNotifListener {
 
 
+	companion object {
+		const val SHOW_GREEN_APP_NOTIF = "show_green_notif_key"
+	}
+
+
 	private val binding: FragmentNotificationBinding by viewBinding(FragmentNotificationBinding::bind)
 	private lateinit var dateAdapter: TransactionSortingAdapter
 	private var prevCLickedStatus: TextView? = null
@@ -61,6 +66,13 @@ class NotifFragment : DaggerDialogFragment(),
 	private val viewModel: NotifViewModel by viewModels { viewModelFactory }
 
 	private var queryJob: Job? = null
+	private var show_green_notif = false
+
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		show_green_notif = arguments?.getBoolean(SHOW_GREEN_APP_NOTIF, false) ?: false
+	}
 
 
 	override fun onCreateView(
@@ -98,7 +110,7 @@ class NotifFragment : DaggerDialogFragment(),
 			getCurSearchByForYesterdayStart(),
 			getCurSearchByForYesterdayEnds()
 		)
-		retrievingNotifs()
+//		retrievingNotifs()
 	}
 
 	private fun getCurChosenNotifStatus(): Status? {
@@ -128,7 +140,8 @@ class NotifFragment : DaggerDialogFragment(),
 	}
 
 	private fun initSortingByStatus() {
-		prevCLickedStatus = binding.txtSortingAll
+		val curChosenStatus = if (show_green_notif) binding.txtOther else binding.txtSortingAll
+		prevCLickedStatus = curChosenStatus
 		for (txt in binding.linearSortingByStatus.children) {
 			if (txt is TextView) {
 				sortingCategoryUnClicked(txt)
@@ -142,7 +155,14 @@ class NotifFragment : DaggerDialogFragment(),
 				}
 			}
 		}
-		sortingCategoryClicked(binding.txtSortingAll)
+		if (show_green_notif) {
+			binding.apply {
+				horizontalSorting.post {
+					horizontalSorting.scrollTo(txtOther.right, txtOther.top)
+				}
+			}
+		}
+		sortingCategoryClicked(curChosenStatus)
 	}
 
 	private fun getCurSearchTransByDateCreatedExceptYesterday(): Long? {
