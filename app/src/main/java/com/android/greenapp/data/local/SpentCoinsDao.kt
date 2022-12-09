@@ -20,6 +20,9 @@ interface SpentCoinsDao {
 	@Query("DELETE FROM SpentCoins WHERE time_created=:time_created")
 	suspend fun deleteSpentConsByTimeCreated(time_created: Long): Int
 
+	@Query("DELETE FROM SpentCoins WHERE fk_address=:fk_address")
+	suspend fun deleteSpentCoinsByFkAddress(fk_address: String): Int
+
 
 	@Query("SELECT * FROM SpentCoins WHERE fk_address=:fk_address AND code=:code")
 	fun getSpentCoinsByAddressCodeFlow(

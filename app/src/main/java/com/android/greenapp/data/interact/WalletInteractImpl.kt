@@ -2,6 +2,7 @@ package com.android.greenapp.data.interact
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.android.greenapp.data.local.SpentCoinsDao
 import com.android.greenapp.data.local.TokenDao
 import com.android.greenapp.data.local.TransactionDao
 import com.android.greenapp.data.local.WalletDao
@@ -35,7 +36,8 @@ class WalletInteractImpl @Inject constructor(
 	private val transactionDao: TransactionDao,
 	private val tokenDao: TokenDao,
 	private val encryptor: AESEncryptor,
-	private val blockChainInteract: BlockChainInteract
+	private val blockChainInteract: BlockChainInteract,
+	private val spentCoinsDao: SpentCoinsDao
 ) : WalletInteract {
 
 	override fun getFlowOfWalletList(): Flow<List<Wallet>> {
@@ -197,6 +199,7 @@ class WalletInteractImpl @Inject constructor(
 	override suspend fun deleteWallet(wallet: Wallet): Int {
 		val rowDeleted = walletDao.deleteWalletByAddress(wallet.address)
 		transactionDao.deleteTransactionsWhenWalletDeleted(wallet.address)
+		spentCoinsDao.deleteSpentCoinsByFkAddress(wallet.address)
 
 		if (wallet.home_id_added != 0L) {
 			prefsInteract.decreaseHomeAddedCounter()
