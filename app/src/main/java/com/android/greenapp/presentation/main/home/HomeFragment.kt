@@ -143,7 +143,13 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 				it?.let {
 					courseTradeUp(it.increased, it.percent)
 					curCourseChia = it.price
-					txtPrice.setText("${getShortNetworkType(it.network)} price: ${formattedDoubleAmountWithPrecision(it.price)}$")
+					txtPrice.setText(
+						"${getShortNetworkType(it.network)} price: ${
+							formattedDoubleAmountWithPrecision(
+								it.price
+							)
+						}$"
+					)
 					updateBalanceToDollarStr()
 				}
 			}

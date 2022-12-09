@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.fragment_manage_wallet_beta.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -166,16 +167,14 @@ class ManageWalletFragment : DaggerFragment(),
 
 	private fun initViewPagerWithAdapter() {
 		viewPagerJob = lifecycleScope.launchWhenStarted {
-
-			val walletList = viewModel.getAllWalletList()
-
-			if (walletList.isEmpty()) {
-				curActivity().move2HomeFragment()
-				return@launchWhenStarted
-			}
 			launch {
-				viewModel.getFlowAllWalletListFirstHomeIsAddedThenRemain().collect {
-					VLog.d("FLow of wallet List changed on manage view : $it")
+				viewModel.getFlowAllWalletListFirstHomeIsAddedThenRemain().collectLatest { walletList ->
+
+					if (walletList.isEmpty()) {
+						curActivity().move2HomeFragment()
+						return@collectLatest
+					}
+					VLog.d("FLow of wallet List changed on manage view : $walletList")
 					manageWalletAdapter = ManageWalletViewPagerAdapter(
 						effect = effect,
 						walletList = walletList,
@@ -210,14 +209,15 @@ class ManageWalletFragment : DaggerFragment(),
 						}
 
 					})
-					updateViewsIfSavedBefore(manageWalletAdapter, it)
+					updateViewsIfSavedBefore(manageWalletAdapter, walletList)
 					curChosenWalletPosition = Math.min(curChosenWalletPosition, walletList.size - 1)
 					delay(10)
 					manage_wallet_view_pager.setCurrentItem(
 						curChosenWalletPosition
 					)
+					binding.pageIndicator.setSelected(curChosenWalletPosition)
 				}
-				VLog.d("Cur Chosen Wallet Position on Manage: ${curChosenWalletPosition}")
+				VLog.d("Cur Chosen Wallet Position on Manage: $curChosenWalletPosition")
 
 			}
 
@@ -235,7 +235,6 @@ class ManageWalletFragment : DaggerFragment(),
 					}
 				}
 			}
-
 		}
 
 	}

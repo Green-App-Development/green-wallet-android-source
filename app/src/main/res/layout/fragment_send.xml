@@ -583,6 +583,7 @@
 							android:layout_marginTop="12dp"
 							app:cardCornerRadius="20dp"
 							app:cardElevation="3dp"
+							android:id="@+id/cardViewCommission"
 							app:layout_constraintBottom_toTopOf="@+id/dummy_view"
 							app:layout_constraintEnd_toStartOf="@+id/guideline16"
 							app:layout_constraintStart_toStartOf="@+id/guideline15"

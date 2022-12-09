@@ -143,7 +143,7 @@ class SendFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		registerCLicks()
+		binding.registerCLicks()
 		getQrCodeDecoded()
 		queryWalletList(curNetworkType, curFingerPrint)
 		updateNetworkName(curNetworkType)
@@ -431,38 +431,6 @@ class SendFragment : DaggerFragment() {
 				}
 			}
 
-	}
-
-	private fun checkBtnEnabledAfterTokenChanged() {
-		checkingPrecisionsForEnterAmount()
-		val sendingAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
-		if (sendingAmount > spendableAmountToken) {
-			twoEdtsFilled.remove(2)
-			showNotEnoughAmountWarning()
-			notEnoughAmountWarningSending()
-		} else if (sendingAmount == 0.0) {
-			twoEdtsFilled.remove(2)
-			hideAmountNotEnoughWarning()
-		} else {
-			twoEdtsFilled.add(2)
-			hideAmountNotEnoughWarning()
-			hideNotEnoughAmountWarningSending()
-			val totalWithCommission = getCommissionAmount() + getSendingAmountForFee()
-//				VLog.d("TotalWithCommission on checkBtnEnabled : $totalWithCommission : Commission : ${getCommissionAmount()} and EnteredAmount : ${getSendingAmountForFee()}")
-			if (totalWithCommission > spendableAmountFee) {
-				twoEdtsFilled.remove(2)
-				if (tokenAdapter.selectedPosition == 0) {
-					notEnoughAmountWarningSending()
-				} else {
-					hideNotEnoughAmountWarningSending()
-				}
-			} else {
-				twoEdtsFilled.add(2)
-				hideNotEnoughAmountFee()
-				hideNotEnoughAmountWarningFee()
-			}
-		}
-		enableBtnContinueTwoEdtsFilled()
 	}
 
 	private fun checkingPrecisionsForEnterAmount() {
@@ -922,8 +890,8 @@ class SendFragment : DaggerFragment() {
 	}
 
 
-	private fun registerCLicks() {
-		binding.apply {
+	private fun FragmentSendBinding.registerCLicks() {
+		apply {
 			checkBoxAddAddress.setOnCheckedChangeListener(object :
 				CompoundButton.OnCheckedChangeListener {
 				override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
@@ -942,22 +910,22 @@ class SendFragment : DaggerFragment() {
 		}
 
 
-		binding.backLayout.setOnClickListener {
+		backLayout.setOnClickListener {
 			curActivity().popBackStackOnce()
 		}
 
 
-		binding.imgEdtScan.setOnClickListener {
+		imgEdtScan.setOnClickListener {
 			it.startAnimation(anim.getBtnEffectAnimation())
 			requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
 		}
 
-		binding.imgAddressIc.setOnClickListener {
+		imgAddressIc.setOnClickListener {
 			curActivity().move2AddressFragmentList(true)
 		}
 
 
-		binding.edtAddressWallet.addTextChangedListener {
+		edtAddressWallet.addTextChangedListener {
 			if (it.isNullOrEmpty()) {
 				twoEdtsFilled.remove(1)
 			} else {
@@ -971,7 +939,7 @@ class SendFragment : DaggerFragment() {
 			enableBtnContinueTwoEdtsFilled()
 		}
 
-		binding.edtEnterAmount.addTextChangedListener {
+		edtEnterAmount.addTextChangedListener {
 			kotlin.runCatching {
 				initAmountNotEnoughWarnings()
 			}.onFailure {
@@ -979,7 +947,7 @@ class SendFragment : DaggerFragment() {
 			}
 		}
 
-		binding.edtEnterCommission.addTextChangedListener {
+		edtEnterCommission.addTextChangedListener {
 			kotlin.runCatching {
 				initAmountNotEnoughWarnings()
 			}.onFailure {
@@ -988,7 +956,7 @@ class SendFragment : DaggerFragment() {
 		}
 
 
-		binding.btnContinue.setOnClickListener {
+		btnContinue.setOnClickListener {
 			if (sendingBtnWaitingJob != null && sendingBtnWaitingJob!!.isActive)
 				return@setOnClickListener
 			sendingBtnWaitingJob = lifecycleScope.launch {
@@ -1026,26 +994,6 @@ class SendFragment : DaggerFragment() {
 
 	private var sendingBtnWaitingJob: Job? = null
 
-	private fun getSendingAmountForFee(): Double {
-		if (!this@SendFragment::tokenAdapter.isInitialized)
-			return 0.0
-		val sendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
-		if (sendingToken == "XCH" || sendingToken == "XCC")
-			return binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
-		return 0.0
-	}
-
-	private fun getCommissionAmount(): Double {
-		val commission = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: return 0.0
-		return commission
-	}
-
-	private fun isPrecisionSatisfied(amount: Double?): Boolean {
-		if (amount == null || !this::tokenAdapter.isInitialized) return false
-		val precision =
-			getTokenPrecisionByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
-		return precision * amount >= 1.0
-	}
 
 	@SuppressLint("SetTextI18n")
 	private fun convertAmountToUSDGAD(amount: Double) {
