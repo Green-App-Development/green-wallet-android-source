@@ -19,7 +19,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.android.greenapp.R
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
@@ -508,11 +510,6 @@ class SendFragment : DaggerFragment() {
 			}
 
 
-			edtAddressWallet.addTextChangedListener {
-				if (it == null) return@addTextChangedListener
-			}
-
-
 			edtEnterAmount.setOnFocusChangeListener { view, focus ->
 				if (focus) {
 					txtEnterAmount.visibility = View.VISIBLE
@@ -876,20 +873,26 @@ class SendFragment : DaggerFragment() {
 
 	}
 
+	private var prevEnterAddressJob: Job? = null
 
 	private fun getQrCodeDecoded() {
-		lifecycleScope.launchWhenStarted {
-			launch {
-				curActivity().mainViewModel.decodedQrCode.collect {
-					if (it.isNotEmpty()) {
-						binding.edtAddressWallet.setText(it)
+		prevEnterAddressJob?.cancel()
+		prevEnterAddressJob = lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				launch {
+					curActivity().mainViewModel.decodedQrCode.collectLatest {
+						if (it.isNotEmpty()) {
+							binding.edtAddressWallet.setText(it)
+							curActivity().mainViewModel.saveDecodeQrCode("")
+						}
 					}
 				}
-			}
-			curActivity().mainViewModel.chosenAddress.collect { addres ->
-				VLog.d("Chosen Address from AddressFragment : $addres")
-				if (addres.isNotEmpty()) {
-					binding.edtAddressWallet.setText(addres)
+				curActivity().mainViewModel.chosenAddress.collectLatest { addres ->
+					VLog.d("Chosen Address from AddressFragment : $addres")
+					if (addres.isNotEmpty()) {
+						binding.edtAddressWallet.setText(addres)
+						curActivity().mainViewModel.saveChosenAddress("")
+					}
 				}
 			}
 		}

@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentAddressEditBinding
 import com.android.greenapp.domain.domainmodel.Address
@@ -142,6 +144,7 @@ class EditAddressFragment : DaggerFragment() {
 					setToEnableBtn.remove(2)
 				else {
 					setToEnableBtn.add(2)
+					curActivity().mainViewModel.saveDecodeQrCode(it.toString())
 				}
 				enableBtnAdd()
 			}
@@ -233,12 +236,14 @@ class EditAddressFragment : DaggerFragment() {
 		}
 
 	private fun getQrCodeDecoded() {
-		lifecycleScope.launchWhenStarted {
-			curActivity().mainViewModel.decodedQrCode.collect { decodeQr ->
-				if (decodeQr.isNotEmpty()) {
-					binding.apply {
-						edtAddressWallet.setText(decodeQr)
-						txtAddressWallet.visibility = View.VISIBLE
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				curActivity().mainViewModel.decodedQrCode.collect { decodeQr ->
+					if (decodeQr.isNotEmpty()) {
+						binding.apply {
+							edtAddressWallet.setText(decodeQr)
+							txtAddressWallet.visibility = View.VISIBLE
+						}
 					}
 				}
 			}

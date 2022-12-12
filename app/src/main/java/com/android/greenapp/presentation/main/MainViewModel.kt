@@ -46,12 +46,12 @@ class MainViewModel @Inject constructor(
 	val show_data_wallet = _show_data_wallet.asStateFlow()
 	private val _money_send = MutableStateFlow(false)
 	val money_send_success = _money_send.asStateFlow()
-	private val _decodeQrCode = MutableSharedFlow<String>()
-	val decodedQrCode: SharedFlow<String> = _decodeQrCode
+	private val _decodeQrCode = MutableStateFlow("")
+	val decodedQrCode: StateFlow<String> = _decodeQrCode
 	private val _delete_wallet = MutableStateFlow(false)
 	val delete_wallet: StateFlow<Boolean> = _delete_wallet.asStateFlow()
-	private val _chosenAddress = MutableSharedFlow<String>()
-	val chosenAddress: SharedFlow<String> = _chosenAddress.asSharedFlow()
+	private val _chosenAddress = MutableStateFlow<String>("")
+	val chosenAddress: StateFlow<String> = _chosenAddress.asStateFlow()
 
 
 	fun saveDecodeQrCode(code: String) {

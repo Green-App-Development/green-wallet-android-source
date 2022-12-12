@@ -100,13 +100,12 @@ class ScannerFragment : DaggerFragment() {
 							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
 							curActivity().popBackStackOnce()
 						} else {
+							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
 							curActivity().move2SendFragment(
 								curNetworkType!!,
 								curFingerPrint,
 								shouldQRCleared = false
 							)
-							delay(200)
-							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
 						}
 					}
 				}
