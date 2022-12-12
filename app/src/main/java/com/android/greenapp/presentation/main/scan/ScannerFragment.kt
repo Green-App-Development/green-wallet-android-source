@@ -21,6 +21,7 @@ import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -94,17 +95,17 @@ class ScannerFragment : DaggerFragment() {
 
 			decodeCallback = DecodeCallback {
 				if (it.text.isNotEmpty()) {
-					lifecycleScope.launch(Dispatchers.Main) {
+					CoroutineScope(Dispatchers.Main).launch {
 						if (curFingerPrint == null || curNetworkType == null) {
 							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
 							curActivity().popBackStackOnce()
-						}else{
+						} else {
 							curActivity().move2SendFragment(
 								curNetworkType!!,
 								curFingerPrint,
 								shouldQRCleared = false
 							)
-							delay(100)
+							delay(200)
 							curActivity().mainViewModel.saveDecodeQrCode(it.text.toString())
 						}
 					}
