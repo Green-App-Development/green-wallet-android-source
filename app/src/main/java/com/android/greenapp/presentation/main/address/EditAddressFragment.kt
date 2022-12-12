@@ -144,7 +144,6 @@ class EditAddressFragment : DaggerFragment() {
 					setToEnableBtn.remove(2)
 				else {
 					setToEnableBtn.add(2)
-					curActivity().mainViewModel.saveDecodeQrCode(it.toString())
 				}
 				enableBtnAdd()
 			}
@@ -235,8 +234,11 @@ class EditAddressFragment : DaggerFragment() {
 			}
 		}
 
+	private var jobDecodedAddress: Job? = null
+
 	private fun getQrCodeDecoded() {
-		lifecycleScope.launch {
+		jobDecodedAddress?.cancel()
+		jobDecodedAddress=lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				curActivity().mainViewModel.decodedQrCode.collect { decodeQr ->
 					if (decodeQr.isNotEmpty()) {
@@ -244,6 +246,7 @@ class EditAddressFragment : DaggerFragment() {
 							edtAddressWallet.setText(decodeQr)
 							txtAddressWallet.visibility = View.VISIBLE
 						}
+						curActivity().mainViewModel.saveDecodeQrCode("")
 					}
 				}
 			}

@@ -750,7 +750,7 @@ class SendFragment : DaggerFragment() {
 			argSpendBundle["observer"] = wallet.observer
 			argSpendBundle["nonObserver"] = wallet.nonObserver
 			VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
-			if (asset_id.isEmpty())
+			if (asset_id.trim().isEmpty() && (curCode == "XCH" || curCode == "XCC"))
 				methodChannel.invokeMethod("generateSpendBundleXCH", argSpendBundle)
 			else {
 				methodChannel.invokeMethod("generateSpendBundleToken", argSpendBundle)

@@ -30,8 +30,6 @@ class HomeFragmentViewModel @Inject constructor(
 	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
-	private var updateTrans: Job? = null
-	private var updateNotifsFromServer: Job? = null
 	private var job10Seconds: Job? = null
 
 	init {

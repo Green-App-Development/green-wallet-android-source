@@ -13,8 +13,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager.widget.ViewPager
 import com.android.greenapp.R
 import com.android.greenapp.data.local.WalletDao
@@ -171,15 +173,17 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	private fun initWalletTokenAdapter() {
 		kotlin.runCatching {
 			walletsJob?.cancel()
-			walletsJob = lifecycleScope.launchWhenStarted {
-				homeFragmentViewModel.getHomeAddedWalletWithTokensFlow().collect {
-					for (wallet in it) {
-						VLog.d("Wallet from DB  ->  : $wallet")
-						for (tokenWallet in wallet.tokenWalletList) {
-							VLog.d("Token list : $tokenWallet")
-						}
+			walletsJob = lifecycleScope.launch {
+				repeatOnLifecycle(Lifecycle.State.STARTED) {
+					homeFragmentViewModel.getHomeAddedWalletWithTokensFlow().collect {
+//						for (wallet in it) {
+//							VLog.d("Wallet from DB  ->  : $wallet")
+//							for (tokenWallet in wallet.tokenWalletList) {
+//								VLog.d("Token list : $tokenWallet")
+//							}
+//						}
+						initWalletListViewPager(it)
 					}
-					initWalletListViewPager(it)
 				}
 			}
 		}.onFailure {
@@ -268,7 +272,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 				if (this@HomeFragment::mainViewPagerWalletAdapter.isInitialized) {
 					curBalance = mainViewPagerWalletAdapter.walletList[position].totalAmountInUSD
 					curNetwork = mainViewPagerWalletAdapter.walletList[position].networkType
-//                    homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
 					curFingerPrint =
 						mainViewPagerWalletAdapter.walletList[position].fingerPrint
 					updateBalanceToDollarStr()

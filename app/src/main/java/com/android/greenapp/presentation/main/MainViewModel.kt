@@ -50,7 +50,7 @@ class MainViewModel @Inject constructor(
 	val decodedQrCode: StateFlow<String> = _decodeQrCode
 	private val _delete_wallet = MutableStateFlow(false)
 	val delete_wallet: StateFlow<Boolean> = _delete_wallet.asStateFlow()
-	private val _chosenAddress = MutableStateFlow<String>("")
+	private val _chosenAddress = MutableStateFlow("")
 	val chosenAddress: StateFlow<String> = _chosenAddress.asStateFlow()
 
 

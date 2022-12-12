@@ -378,23 +378,22 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 					val arguments = (call.arguments as HashMap<*, *>)
 					val fingerPrint = arguments["fingerPrint"]!!.toString().toLong()
 					val address = arguments["address"]!!.toString()
-					val puzzle_hash = arguments["puzzle_hash"]!!.toString()
+					val main_hashes = arguments["main_puzzle_hashes"] as List<String>
 					val newWallet = Wallet(
 						fingerPrint,
 						"",
-						listOf(puzzle_hash),
+						main_hashes,
 						address,
 						getMnemonicsList(),
 						curNetworkType,
 						home_id_added = System.currentTimeMillis(),
 						0.0,
 						savedTime = System.currentTimeMillis(),
-						observerHash = 10,
-						nonObserverHash = 10
+						observerHash = 12,
+						nonObserverHash = 5
 					)
 					defaultTokensOnMainScreen.forEach {
-						newWallet.hashListImported[it.hash] =
-							listOf(arguments[it.hash]!!.toString())
+						newWallet.hashListImported[it.hash] = arguments[it.hash] as List<String>
 					}
 					impMnemonicViewModel.importNewWallet(newWallet) {
 						dialogManager.hidePrevDialogs()
@@ -427,6 +426,8 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			map["mnemonic"] = mnemonicString
 			map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 			map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
+			map["observer"]=12
+			map["non_observer"]=5
 			VLog.d("Calling flutter generate hash : $mnemonicString")
 			methodChannel.invokeMethod("generateHash", map)
 		}catch (ex:Exception){
