@@ -335,7 +335,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 	) {
 
 		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
-		dialog.setContentView(R.layout.dialog_question)
+		dialog.setContentView(R.layout.dialog_question_beta)
 		val width = activity.resources.displayMetrics.widthPixels
 		dialog.window?.setLayout(
 			width,

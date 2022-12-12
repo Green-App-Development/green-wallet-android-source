@@ -409,13 +409,19 @@ class SendFragment : DaggerFragment() {
 			ic_token_downward.visibility = View.VISIBLE
 		}
 		curTokenWalletList = tokenWalletList
-		tokenAdapter = NetworkAdapter(curActivity(), tokenWalletList.map { it.code }.toList())
+		tokenAdapter = NetworkAdapter(
+			curActivity(),
+			tokenWalletList.filter { (it.code == "XCH" || (it.asset_id.trim().isNotEmpty())) }
+				.map { it.code }.toList()
+		)
 		binding.tokenSpinner.adapter = tokenAdapter
 		binding.icTokenDownward.setOnClickListener {
 			binding.tokenSpinner.performClick()
 		}
-		if (tokendAdapterPosition < tokenWalletList.size)
+		if (tokendAdapterPosition < tokenWalletList.size) {
 			binding.tokenSpinner.setSelection(tokendAdapterPosition)
+			tokenAdapter.selectedPosition = tokendAdapterPosition
+		}
 		binding.tokenSpinner.onItemSelectedListener =
 			object : AdapterView.OnItemSelectedListener {
 				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {

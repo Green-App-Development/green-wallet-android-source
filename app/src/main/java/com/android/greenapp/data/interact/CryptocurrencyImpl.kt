@@ -156,8 +156,7 @@ class CryptocurrencyImpl @Inject constructor(
 							methodChannel.invokeMethod("generatewrappedcatpuzzle", map)
 						}
 					}
-					if (needToWait)
-						delay(400)
+					delay(500)
 					VLog.d("HashListImported after : $hashListImported")
 					walletDao.updateChiaNetworkHashListImportedByAddress(
 						wallet.address,
