@@ -170,7 +170,8 @@ class WalletSettingsFragment : DaggerFragment() {
 
 		seekBarObserver.max = 48
 		seekBarObserver.min = 12
-		seekBarNonObserver.max = 5
+		seekBarNonObserver.max = 24
+		seekBarNonObserver.min=5
 
 		seekBarObserver.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 			override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
