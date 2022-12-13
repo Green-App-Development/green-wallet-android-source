@@ -78,6 +78,7 @@ class NotificationHelper @Inject constructor(
 				.setContentTitle(title)
 				.setContentText(message)
 				.setAutoCancel(true)
+				.setSmallIcon(R.mipmap.ic_launcher_round)
 				.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 				.setContentIntent(pendingIntent)
 

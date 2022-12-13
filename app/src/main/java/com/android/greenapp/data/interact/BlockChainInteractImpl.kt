@@ -243,11 +243,13 @@ class BlockChainInteractImpl @Inject constructor(
 				}
 			} else {
 				withContext(Dispatchers.Main) {
-					Toast.makeText(context, "Error: ${res.body()}", Toast.LENGTH_SHORT).show()
+					Toast.makeText(context, "Error from server: ${res.body()}", Toast.LENGTH_LONG).show()
 				}
 			}
 		} catch (ex: Exception) {
-
+			withContext(Dispatchers.Main) {
+				Toast.makeText(context, "Error in try catch: ${ex.message}", Toast.LENGTH_LONG).show()
+			}
 			VLog.d("Exception occured in push_tx transaction : ${ex.message}")
 			return Resource.error(ex)
 		}

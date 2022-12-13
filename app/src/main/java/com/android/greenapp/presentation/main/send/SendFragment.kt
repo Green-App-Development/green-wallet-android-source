@@ -754,6 +754,11 @@ class SendFragment : DaggerFragment() {
 				methodChannel.invokeMethod("generateSpendBundleXCH", argSpendBundle)
 			else {
 				methodChannel.invokeMethod("generateSpendBundleToken", argSpendBundle)
+				if (asset_id.isEmpty()) {
+					withContext(Dispatchers.Main) {
+						Toast.makeText(context, "Asset ID is empty", Toast.LENGTH_LONG).show()
+					}
+				}
 			}
 		}
 	}
@@ -804,6 +809,11 @@ class SendFragment : DaggerFragment() {
 				)
 			} else if (method.method == "exception") {
 				showFailedSendingTransaction()
+				Toast.makeText(
+					curActivity(),
+					"Error in try catch: ${method.arguments}",
+					Toast.LENGTH_LONG
+				).show()
 			}
 		}
 	}

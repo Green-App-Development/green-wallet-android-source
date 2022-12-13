@@ -81,9 +81,9 @@
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         android:scrollbars="vertical"
-        android:text="1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sit lacus, aliquam tincidunt tempus quam malesuada nulla pharetra. Arcu facilisi molestie diam morbi ultrices sollicitudin egestas non. Tellus cursus lobortis sociis elementum. Euismod nunc, amet est neque, posuere eu mauris. Leo sit sed viverra amet. Ac consectetur in convallis velit tristique eget morbi tortor consectetur. Ac nunc tincidunt erat quam convallis mattis cras sollicitudin pellentesque. Urna vel pellentesque viverra mi.
-Nisl nunc, accumsan malesuada nisl, vestibulum, tempus vel. Enim felis arcu nulla malesuada quis in dignissim. Pretium magnis quis id pharetra vitae. Enim ut vitae ultrices laoreet urna facilisi quam laoreet. Mauris arcu arcu eget platea sodales. In feugiat odio egestas eget. Tellus libero, malesuada in egestas aliquam velit. Neque vel a, morbi mauris sed eros, faucibus. In pretium accumsan, sit nibh nunc sodales diam eget. Et, lorem odio velit id nisl egestas purus. Nec augue risus, vulputate diam amet, dui nunc ut nisl. Rutrum nulla nisl, in eu vivamus rhoncus sit egestas ultricies. Scelerisque pellentesque tellus, libero, fermentum tempor consequat sed. Aliquet consequat feugiat pharetra maecenas et tincidunt.
-Accumsan, amet mi hac massa vitae nulla turpis orci. Tempus, euismod proin a luctus. Eu aenean tristique est, quam tristique aliquet donec tincidunt. Phasellus porttitor fringilla adipiscing eros, ultrices odio. Maecenas lobortis vitae a aliquam scelerisque ut egestas adipiscing volutpat. At egestas duis aliquam integer augue."
+        android:text="  Green Wallet is a hot open source non-custodial wallet for the Chia blockchain with a user-friendly interface.
+This version is a minimum viable product (MVP) that allows you to receive, store, send XCH and CAT2 tokens.
+Green Wallet is in open b-testing and may contain some bugs that will be fixed in the future."
         android:textColor="@color/secondary_text_color"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline14"

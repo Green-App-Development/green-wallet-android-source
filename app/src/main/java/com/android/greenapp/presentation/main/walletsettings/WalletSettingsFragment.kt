@@ -127,8 +127,8 @@ class WalletSettingsFragment : DaggerFragment() {
 					getStringResource(R.string.restore_def_settings),
 					getStringResource(R.string.restore_def_settings_subtext),
 					btnYes = {
-						seekBarObserver.progress = 1
-						seekBarNonObserver.progress = 0
+						seekBarObserver.progress = 12
+						seekBarNonObserver.progress = 5
 						importMoreHashes()
 					},
 					btnNo = {
