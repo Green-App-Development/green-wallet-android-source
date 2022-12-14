@@ -6,6 +6,7 @@ import com.android.greenapp.data.local.entity.WalletEntity
 import com.android.greenapp.presentation.tools.NetworkType
 import kotlinx.coroutines.flow.Flow
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -132,6 +133,12 @@ interface WalletDao {
 
 	@Query("UPDATE WalletEntity SET observer_hash=:observer,non_observer_hash=:nonObserver WHERE address=:address")
 	suspend fun updateObserverHashCount(address: String, observer: Int, nonObserver: Int): Int
+
+	@Query("UPDATE WalletEntity SET tokens_start_height=:tokenStartHeight WHERE address=:address")
+	suspend fun updateTokenStartHeightByAddress(
+		tokenStartHeight: HashMap<String, Long>,
+		address: String
+	)
 
 
 }

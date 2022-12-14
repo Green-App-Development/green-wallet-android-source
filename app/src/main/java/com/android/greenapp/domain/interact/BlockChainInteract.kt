@@ -1,8 +1,10 @@
 package com.android.greenapp.domain.interact
 
 import com.android.greenapp.data.local.entity.WalletEntity
+import com.android.greenapp.data.network.BlockChainService
 import com.android.greenapp.domain.domainmodel.Wallet
 import com.android.greenapp.presentation.tools.Resource
+import java.util.HashMap
 
 /**
  * Created by bekjan on 06.06.2022.

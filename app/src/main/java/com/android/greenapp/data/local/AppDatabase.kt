@@ -14,7 +14,7 @@ import com.android.greenapp.domain.domainmodel.FAQItem
 
 @Database(
 	entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class, SpentCoinsEntity::class, FaqItemEntity::class],
-	version = 23,
+	version = 24,
 	exportSchema = false
 )
 @TypeConverters(Converters::class)

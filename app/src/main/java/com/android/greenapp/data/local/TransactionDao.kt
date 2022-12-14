@@ -67,5 +67,29 @@ interface TransactionDao {
 		code: String
 	): List<TransactionEntity>
 
+	@Query("SELECT * FROM TransactionEntity WHERE fkAddress=:fkAddress AND status=:status")
+	suspend fun checkInProgressTransactionsByAddress(
+		fkAddress: String,
+		status: Status = Status.InProgress
+	): Optional<TransactionEntity>
+
+	@Query("SELECT * FROM TransactionEntity WHERE fkAddress=:fkAddress AND status=:status AND amount=:amount AND height=:height AND to_dest_hash=:dest_hash AND code=:tokenCode")
+	suspend fun checkoutOutGoingTransactionsByAddressHeightAmountDestHash(
+		fkAddress: String,
+		amount: Double,
+		height: Long,
+		dest_hash: String,
+		tokenCode: String,
+		status: Status = Status.Outgoing
+	): Optional<TransactionEntity>
+
+	@Query("SELECT * FROM TransactionEntity WHERE fkAddress=:fkAddress AND STATUS=:status AND amount=:amount AND height=:height")
+	suspend fun checkoutOutgoingTransactionsByAddressHeightSecondCase(
+		fkAddress: String,
+		status: Status = Status.Outgoing,
+		amount: Double,
+		height: Long
+	):Optional<TransactionEntity>
+
 
 }

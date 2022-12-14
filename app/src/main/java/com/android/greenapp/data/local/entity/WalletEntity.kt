@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.android.greenapp.domain.domainmodel.Wallet
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * Created by bekjan on 09.06.2022.
@@ -40,8 +41,9 @@ data class WalletEntity(
 	@ColumnInfo(name = "observer_hash")
 	var observer_hash: Int,
 	@ColumnInfo(name = "non_observer_hash")
-	var non_observer_hash: Int
-
+	var non_observer_hash: Int,
+	@ColumnInfo(name = "tokens_start_height")
+	val tokensStartHeight: HashMap<String, Long> = hashMapOf()
 ) {
 
 	fun toWallet(decMnemonics: List<String>) =

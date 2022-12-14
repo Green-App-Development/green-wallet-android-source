@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import com.android.greenapp.data.local.*
 import com.android.greenapp.data.local.entity.TransactionEntity
 import com.android.greenapp.data.local.entity.WalletEntity
+import com.android.greenapp.data.managers.OutgoingTransactionManager
 import com.android.greenapp.data.network.BlockChainService
 import com.android.greenapp.data.network.dto.greenapp.network.NetworkItem
 import com.android.greenapp.data.preference.PrefsManager
@@ -51,7 +52,8 @@ class BlockChainInteractImpl @Inject constructor(
 	private val spentCoinsInteract: SpentCoinsInteract,
 	private val spentCoinsDao: SpentCoinsDao,
 	private val greenAppInteract: GreenAppInteract,
-	private val context: Context
+	private val context: Context,
+	private val outgoingTransactionManager: OutgoingTransactionManager
 ) :
 	BlockChainInteract {
 
@@ -86,9 +88,9 @@ class BlockChainInteractImpl @Inject constructor(
 		mutexUpdateBalance.withLock {
 			val walletListDb = walletDao.getAllWalletList()
 			for (wallet in walletListDb) {
+				updateInProgressTransactions()
 				updateWalletBalance(wallet)
 				updateTokenBalanceWithFullNode(wallet)
-				updateInProgressTransactions()
 			}
 		}
 	}
@@ -243,12 +245,14 @@ class BlockChainInteractImpl @Inject constructor(
 				}
 			} else {
 				withContext(Dispatchers.Main) {
-					Toast.makeText(context, "Error from server: ${res.body()}", Toast.LENGTH_LONG).show()
+					Toast.makeText(context, "Error from server: ${res.body()}", Toast.LENGTH_LONG)
+						.show()
 				}
 			}
 		} catch (ex: Exception) {
 			withContext(Dispatchers.Main) {
-				Toast.makeText(context, "Error in try catch: ${ex.message}", Toast.LENGTH_LONG).show()
+				Toast.makeText(context, "Error in try catch: ${ex.message}", Toast.LENGTH_LONG)
+					.show()
 			}
 			VLog.d("Exception occured in push_tx transaction : ${ex.message}")
 			return Resource.error(ex)
@@ -275,10 +279,15 @@ class BlockChainInteractImpl @Inject constructor(
 				var balance = 0L
 				val prevAmount = wallet.hashWithAmount[asset_id] ?: 0.0
 				val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
+				val tokeEntity = tokenDao.getTokenByHash(hash = asset_id).get()
+				val prevTokenStartHeight = wallet.tokensStartHeight
+				val prevStartHeight = prevTokenStartHeight[tokeEntity.code] ?: 0
+				var newStartHeight = Long.MAX_VALUE
 				if (request.isSuccessful) {
 					val coinRecordsJsonArray = request.body()!!.coin_records
 					for (coin in coinRecordsJsonArray) {
 						val curAmount = coin.coin.amount
+						newStartHeight = Math.min(newStartHeight, coin.confirmed_block_index)
 						val spent = coin.spent
 						if (!spent)
 							balance += curAmount
@@ -287,12 +296,16 @@ class BlockChainInteractImpl @Inject constructor(
 				val newAmount = balance / division
 				hashWithAmount[asset_id] = newAmount
 				if (newAmount != prevAmount) {
+					prevTokenStartHeight[tokeEntity.code] = newStartHeight
+					walletDao.updateTokenStartHeightByAddress(prevTokenStartHeight, wallet.address)
 					getIncomingTransactionNotifForToken(
 						puzzle_hashes,
 						wallet,
 						curBlockChainService,
 						asset_id
 					)
+//					outgoingTransactionManager.checkOutGoingTransactions(puzzle_hashes,prevStartHeight,wallet,curBlockChainService,
+//						getTokenPrecisionByCode(tokeEntity.code), tokenCode = tokeEntity.code)
 				}
 			}
 			if (wallet.hashWithAmount != hashWithAmount) {
@@ -385,6 +398,8 @@ class BlockChainInteractImpl @Inject constructor(
 			val curBlockChainService =
 				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 					.create(BlockChainService::class.java)
+			val tokensStartHeight = wallet.tokensStartHeight
+			val prevStartHeight = tokensStartHeight[getShortNetworkType(wallet.networkType)] ?: 0
 			val body = hashMapOf<String, Any>()
 			body["puzzle_hashes"] =
 				wallet.puzzle_hashes
@@ -399,21 +414,30 @@ class BlockChainInteractImpl @Inject constructor(
 				)
 			var balance = 0L
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
+			var newStartHeight = Long.MAX_VALUE
 			if (request.isSuccessful) {
 				for (coin in request.body()!!.coin_records) {
 					val curAmount = coin.coin.amount
 					val spent = coin.spent
+					newStartHeight = Math.min(newStartHeight, coin.confirmed_block_index)
 					if (!spent)
 						balance += curAmount
 				}
 				val prevBalance =
 					walletDao.getWalletByAddress(wallet.address).get(0).balance
 				val newBalance = balance / division
-				VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance")
+				VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance and newStartHeight : $newStartHeight")
 				if (prevBalance != newBalance) {
 					VLog.d("CurBalance is not the same as the previous one for wallet : ${wallet.fingerPrint}")
+					tokensStartHeight[getShortNetworkType(wallet.networkType)] =
+						newStartHeight
+					walletDao.updateTokenStartHeightByAddress(tokensStartHeight, wallet.address)
 					walletDao.updateWalletBalanceByAddress(newBalance, wallet.address)
 					updateIncomingTransactions(wallet)
+//					outgoingTransactionManager.checkOutGoingTransactions(wallet.puzzle_hashes,
+//						prevStartHeight, wallet, curBlockChainService, division,
+//						getShortNetworkType(wallet.networkType)
+//					)
 				}
 			} else {
 				VLog.d("Request is not success in updating balance : ${request.message()}")
@@ -467,7 +491,7 @@ class BlockChainInteractImpl @Inject constructor(
 						val transEntity = TransactionEntity(
 							parent_coin_info,
 							coinAmount / division,
-							greenAppInteract.getServerTime() - 60 * 1000,
+							timeStamp * 1000L,
 							height,
 							Status.Incoming,
 							wallet.networkType,
@@ -491,7 +515,7 @@ class BlockChainInteractImpl @Inject constructor(
 						VLog.d("Inserting New Incoming Transaction  : $transEntity")
 						transactionDao.insertTransaction(transEntity)
 					} else {
-						VLog.d("Current incoming transactions is already saved or can't be saved : $record and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
+//						VLog.d("Current incoming transactions is already saved or can't be saved : $record and parentPuzzle_Hash : $parent_puzzle_hash and parentInfo exist : $transExistByParentInfo")
 					}
 				}
 

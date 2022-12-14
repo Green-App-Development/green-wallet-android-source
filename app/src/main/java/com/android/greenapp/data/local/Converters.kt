@@ -17,41 +17,52 @@ object Converters {
 
 	@TypeConverter
 	fun convertJsonToList(value: String): List<String> {
-        val type = object : TypeToken<List<String>>() {}.type
-        return Gson().fromJson(value, type)
-    }
-
-    @TypeConverter
-    fun convertHashWithAmountToJson(hashWithAmount: HashMap<String, Double>): String {
-        return Gson().toJson(hashWithAmount)
-    }
+		val type = object : TypeToken<List<String>>() {}.type
+		return Gson().fromJson(value, type)
+	}
 
 	@TypeConverter
-    fun convertHashListImportedToJson(hashListImported: HashMap<String, List<String>>): String {
-        return Gson().toJson(hashListImported)
-    }
-
-    @TypeConverter
-    fun convertJsonToHashWithAmount(hashWithAmount: String): HashMap<String, Double> {
-        val type = object : TypeToken<HashMap<String, Double>>() {}.type
-        return Gson().fromJson(hashWithAmount, type)
-    }
+	fun convertHashWithAmountToJson(hashWithAmount: HashMap<String, Double>): String {
+		return Gson().toJson(hashWithAmount)
+	}
 
 	@TypeConverter
-    fun convertJsonToHashListImported(hashListImported: String): HashMap<String, List<String>> {
-        val type = object : TypeToken<HashMap<String, List<String>>>() {}.type
-        return Gson().fromJson(hashListImported, type)
-    }
+	fun convertHashListImportedToJson(hashListImported: HashMap<String, List<String>>): String {
+		return Gson().toJson(hashListImported)
+	}
+
+	@TypeConverter
+	fun convertTokensStartHeightToJson(tokenStartHeight: HashMap<String, Long>): String {
+		return Gson().toJson(tokenStartHeight)
+	}
+
+	@TypeConverter
+	fun convertJsonToHashWithAmount(hashWithAmount: String): HashMap<String, Double> {
+		val type = object : TypeToken<HashMap<String, Double>>() {}.type
+		return Gson().fromJson(hashWithAmount, type)
+	}
+
+	@TypeConverter
+	fun convertJsonToTokenStartHeight(tokenStartHeight: String): HashMap<String, Long> {
+		val type = object : TypeToken<HashMap<String, Long>>() {}.type
+		return Gson().fromJson(tokenStartHeight, type)
+	}
+
+	@TypeConverter
+	fun convertJsonToHashListImported(hashListImported: String): HashMap<String, List<String>> {
+		val type = object : TypeToken<HashMap<String, List<String>>>() {}.type
+		return Gson().fromJson(hashListImported, type)
+	}
 
 
-    fun stringToHashMap(str: String): HashMap<String, String> {
-        val type = object : TypeToken<HashMap<String, String>>() {}.type
-        return Gson().fromJson(str, type)
-    }
+	fun stringToHashMap(str: String): HashMap<String, String> {
+		val type = object : TypeToken<HashMap<String, String>>() {}.type
+		return Gson().fromJson(str, type)
+	}
 
-    fun hashMapToString(hashMap: HashMap<String, String>): String {
-        return Gson().toJson(hashMap)
-    }
+	fun hashMapToString(hashMap: HashMap<String, String>): String {
+		return Gson().toJson(hashMap)
+	}
 
 
 }
