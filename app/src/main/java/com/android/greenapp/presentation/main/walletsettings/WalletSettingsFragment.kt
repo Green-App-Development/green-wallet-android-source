@@ -18,11 +18,9 @@ import com.android.greenapp.presentation.di.factory.ViewModelFactory
 import com.android.greenapp.presentation.main.MainActivity
 import com.android.greenapp.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.android.greenapp.presentation.tools.getStringResource
-import com.android.greenapp.presentation.tools.preventDoubleClick
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +37,7 @@ class WalletSettingsFragment : DaggerFragment() {
 	private lateinit var binding: FragmentWalletSettingsBinding
 
 	@Inject
-	lateinit var dialog: DialogManager
+	lateinit var dialogManager: DialogManager
 
 	companion object {
 		const val ADDRESS_KEY = "address_key"
@@ -122,7 +120,7 @@ class WalletSettingsFragment : DaggerFragment() {
 
 		txtDefaultSettings.setOnClickListener {
 			curActivity().apply {
-				dialog.showAssuranceDialogDefaultSetting(
+				dialogManager.showAssuranceDialogDefaultSetting(
 					this,
 					getStringResource(R.string.restore_def_settings),
 					getStringResource(R.string.restore_def_settings_subtext),
@@ -140,7 +138,7 @@ class WalletSettingsFragment : DaggerFragment() {
 
 		icQuestionMarkNonObserver.setOnClickListener {
 			curActivity().apply {
-				dialog.showQuestionDetailsDialog(
+				dialogManager.showQuestionDetailsDialog(
 					this,
 					getStringResource(R.string.derivation_index_title),
 					getStringResource(R.string.derivation_index_subtext),
@@ -153,7 +151,7 @@ class WalletSettingsFragment : DaggerFragment() {
 
 		icQuestionMarkObserver.setOnClickListener {
 			curActivity().apply {
-				dialog.showQuestionDetailsDialog(
+				dialogManager.showQuestionDetailsDialog(
 					this,
 					getStringResource(R.string.derivation_index_title),
 					getStringResource(R.string.derivation_index_subtext),
@@ -171,7 +169,7 @@ class WalletSettingsFragment : DaggerFragment() {
 		seekBarObserver.max = 48
 		seekBarObserver.min = 12
 		seekBarNonObserver.max = 24
-		seekBarNonObserver.min=5
+		seekBarNonObserver.min = 5
 
 		seekBarObserver.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 			override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
@@ -210,7 +208,7 @@ class WalletSettingsFragment : DaggerFragment() {
 		val observer = binding.seekBarObserver.progress
 		val max = Math.max(nObserver, observer)
 		if (max >= 2)
-			dialog.showProgress(curActivity())
+			dialogManager.showProgress(curActivity())
 		val mnemonics = convertListToStringWithSpace(wallet.mnemonics)
 		val asset_id_s = convertListToStringWithSpace(wallet.hashListImported.keys.toList())
 		val map = hashMapOf<String, Any>()
@@ -240,9 +238,9 @@ class WalletSettingsFragment : DaggerFragment() {
 					binding.seekBarObserver.progress,
 					binding.seekBarNonObserver.progress
 				)
-				dialog.hidePrevDialogs()
+				dialogManager.hidePrevDialogs()
 				curActivity().apply {
-					dialog.showSuccessDialog(
+					dialogManager.showSuccessDialog(
 						this,
 						getStringResource(R.string.settings_saved),
 						getStringResource(R.string.settings_saved_subtext),
@@ -259,6 +257,14 @@ class WalletSettingsFragment : DaggerFragment() {
 
 
 	private fun curActivity() = requireActivity() as MainActivity
+
+	override fun onStart() {
+		super.onStart()
+		if (dialogManager.isProgressDialogShowing() == true) {
+			dialogManager.hidePrevDialogs()
+			dialogManager.showProgress(curActivity())
+		}
+	}
 
 
 }

@@ -129,7 +129,7 @@ class SendFragment : DaggerFragment() {
 				curFingerPrint = it[FINGERPRINT_KEY] as Long
 			}
 		}
-		VLog.d("On SendFragment Params : FingerPrint  ${curFingerPrint}, NetworkType : $curNetworkType")
+		VLog.d("On Create SendFragment Params : FingerPrint  ${curFingerPrint}, NetworkType : $curNetworkType")
 	}
 
 	override fun onCreateView(
@@ -1272,7 +1272,7 @@ class SendFragment : DaggerFragment() {
 
 	override fun onStart() {
 		super.onStart()
-		VLog.d("Send Fragment on Start")
+		VLog.d("SendFragment onStart")
 		regulateVisibilityOfTxtsAfterPasscode()
 		if (dialogManager.isProgressDialogShowing() == true) {
 			dialogManager.hidePrevDialogs()

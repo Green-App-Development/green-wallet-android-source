@@ -130,7 +130,6 @@ class EditAddressFragment : DaggerFragment() {
 					setToEnableBtn.remove(1)
 				else {
 					setToEnableBtn.add(1)
-					txtAddressWallet.visibility = View.VISIBLE
 				}
 
 				enableBtnAdd()

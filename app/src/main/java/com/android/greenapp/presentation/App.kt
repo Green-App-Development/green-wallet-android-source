@@ -101,7 +101,6 @@ class App : DaggerApplication() {
 				break
 			}
 		}
-
 	}
 
 	private fun quickNavigationIfUserUnBoarded() {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.provider.Settings.ACTION_SETTINGS
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.android.greenapp.R
 import com.android.greenapp.presentation.di.application.AppScope
