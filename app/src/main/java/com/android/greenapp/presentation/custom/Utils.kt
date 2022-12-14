@@ -191,6 +191,10 @@ fun getPreferenceKeyForCoinDetail(type: String): Preferences.Key<String> {
 	return stringPreferencesKey("${type}_coin_detail")
 }
 
+fun getPreferenceKeyForTermsOfUse(type: String): Preferences.Key<String> {
+	return stringPreferencesKey(type + "_terms_use_text")
+}
+
 fun trimNetwork(networkType: String): String {
 	return networkType.replace("Network", "")
 }
@@ -218,7 +222,7 @@ fun isOnline(context: Context): Boolean {
 	return netInfo != null && netInfo.isConnected
 }
 
-fun convertTimeInMillisToAlmatyTime(millis:Long): Long {
+fun convertTimeInMillisToAlmatyTime(millis: Long): Long {
 	val date =
 		Date(millis)
 	val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")

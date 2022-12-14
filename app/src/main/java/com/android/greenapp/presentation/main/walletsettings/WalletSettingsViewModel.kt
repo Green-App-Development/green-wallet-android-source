@@ -3,6 +3,8 @@ package com.android.greenapp.presentation.main.walletsettings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.greenapp.domain.interact.WalletInteract
+import com.example.common.tools.VLog
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,16 +17,25 @@ class WalletSettingsViewModel @Inject constructor(private val walletInteract: Wa
 
 
 	suspend fun getWalletByAddress(address: String) = walletInteract.getWalletByAddress(address)
+	private val handler = CoroutineExceptionHandler { context, throwable ->
+		VLog.d("Exception in wallet settings view model : ${throwable.message}")
+	}
 
 	fun updateHashesMainToken(
 		address: String,
 		main_hashes: List<String>,
 		hashListImported: HashMap<String, List<String>>,
-		observer:Int,
-		nonObserver:Int
+		observer: Int,
+		nonObserver: Int
 	) {
-		viewModelScope.launch {
-			walletInteract.updateHashListImported(address, main_hashes, hashListImported,observer,nonObserver)
+		viewModelScope.launch(handler) {
+			walletInteract.updateHashListImported(
+				address,
+				main_hashes,
+				hashListImported,
+				observer,
+				nonObserver
+			)
 		}
 	}
 

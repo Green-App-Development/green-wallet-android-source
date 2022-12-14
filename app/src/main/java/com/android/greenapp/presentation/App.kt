@@ -7,10 +7,7 @@ import androidx.work.*
 import com.android.greenapp.BuildConfig
 import com.android.greenapp.R
 import com.android.greenapp.data.preference.PrefsManager
-import com.android.greenapp.domain.interact.BlockChainInteract
-import com.android.greenapp.domain.interact.CryptocurrencyInteract
-import com.android.greenapp.domain.interact.GreenAppInteract
-import com.android.greenapp.domain.interact.PrefsInteract
+import com.android.greenapp.domain.interact.*
 import com.android.greenapp.presentation.custom.NotificationHelper
 import com.android.greenapp.presentation.custom.NotificationHelper.Companion.GreenAppChannel
 import com.android.greenapp.presentation.di.application.DaggerAppComponent
@@ -36,6 +33,9 @@ class App : DaggerApplication() {
 
 	@Inject
 	lateinit var cryptocurrencyInteract: CryptocurrencyInteract
+
+	@Inject
+	lateinit var supportInteract:SupportInteract
 
 	@Inject
 	lateinit var prefs: PrefsInteract
@@ -72,6 +72,7 @@ class App : DaggerApplication() {
 		Restring.init(this)
 		ViewPump.init(RewordInterceptor)
 		determineModeAndLanguage()
+		requestsPerApplication()
 		updateBalanceEachPeriodically()
 		if (BuildConfig.DEBUG)
 			Timber.plant(Timber.DebugTree())
@@ -83,6 +84,18 @@ class App : DaggerApplication() {
 //		cancelWorkManager()
 //		testingMethod()
 
+	}
+
+	private fun requestsPerApplication() {
+		CoroutineScope(Dispatchers.IO).launch{
+			with(greenAppInteract) {
+				updateCoinDetails()
+				getAvailableNetworkItemsFromRestAndSave()
+				getAvailableLanguageList()
+				getAgreementsText()
+			}
+			supportInteract.getFAQQuestionAnswers()
+		}
 	}
 
 	private fun cancelWorkManager() {

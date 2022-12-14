@@ -353,7 +353,7 @@ class WalletInteractImpl @Inject constructor(
 			address = address
 		)
 		walletDao.updateObserverHashCount(address, observer, nonObserver)
-		val walletEntity = walletDao.getWalletByAddress(address = address).get(0)
+		val walletEntity = walletDao.getWalletByAddress(address = address)[0]
 		blockChainInteract.updateWalletBalance(walletEntity)
 		blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
 	}

@@ -10,11 +10,8 @@ import com.android.greenapp.data.preference.PrefsManager
 import com.android.greenapp.domain.domainmodel.CoinDetails
 import com.android.greenapp.domain.interact.GreenAppInteract
 import com.android.greenapp.domain.interact.PrefsInteract
-import com.android.greenapp.presentation.custom.NotificationHelper
+import com.android.greenapp.presentation.custom.*
 import com.android.greenapp.presentation.custom.NotificationHelper.Companion.GreenAppChannel
-import com.android.greenapp.presentation.custom.getPreferenceKeyForCoinDetail
-import com.android.greenapp.presentation.custom.getPreferenceKeyForNetworkItem
-import com.android.greenapp.presentation.custom.parseException
 import com.android.greenapp.presentation.tools.JsonHelper
 import com.android.greenapp.presentation.tools.Resource
 import com.example.common.tools.VLog
@@ -222,8 +219,8 @@ class GreenAppInteractImpl @Inject constructor(
 
 	override suspend fun getAgreementsText(): Resource<String> {
 		try {
-
-			val agreementTextSaved = prefs.getSettingString(PrefsManager.AGREEMENT_TEXT, "")
+			val langCode=prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE,"en")
+			val agreementTextSaved = prefs.getSettingString(getPreferenceKeyForTermsOfUse(langCode), "")
 			if (agreementTextSaved.isNotEmpty()) {
 				return Resource.success(agreementTextSaved)
 			}
@@ -238,7 +235,7 @@ class GreenAppInteractImpl @Inject constructor(
 					val agreementText = JSONObject(
 						res.body()!!.getAsJsonObject("result").toString()
 					).getString("agreement_text")
-					prefs.saveSettingString(PrefsManager.AGREEMENT_TEXT, agreementText)
+					prefs.saveSettingString(getPreferenceKeyForTermsOfUse(code), agreementText)
 					return Resource.success(agreementText)
 				} else {
 					val error_code = jsonResponse.getInt("error_code")

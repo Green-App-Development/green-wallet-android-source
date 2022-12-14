@@ -143,7 +143,6 @@ class PrefsManager @Inject constructor(private val context: Context) : PrefsInte
 		val HOME_ADDED_COUNTER = intPreferencesKey("home_added_counter")
 		val ALL_NETWORK_ITEMS_LIST = stringPreferencesKey("all_network_items_list")
 		val LANG_ITEMS_LIST = stringPreferencesKey("lang_items_list")
-		val AGREEMENT_TEXT = stringPreferencesKey("agreement_text")
 		val APP_INSTALL_TIME = longPreferencesKey("app_install_time")
 		val NOTIFICATION_ID = intPreferencesKey("notification_id")
 	}
