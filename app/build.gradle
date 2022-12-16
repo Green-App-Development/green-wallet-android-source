@@ -4,10 +4,10 @@ plugins {
     id 'kotlin-kapt'
     id 'org.jetbrains.kotlin.android.extensions'
 	// Make sure that you have the Google services Gradle plugin
-//	id 'com.google.gms.google-services'
+	id 'com.google.gms.google-services'
 
 	// Add the Crashlytics Gradle plugin
-//	id 'com.google.firebase.crashlytics'
+	id 'com.google.firebase.crashlytics'
 }
 
 
@@ -22,7 +22,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.android.greenapp"
+        applicationId "extralogic.wallet.greenapp"
         minSdk 26
         targetSdk 32
         versionCode 1

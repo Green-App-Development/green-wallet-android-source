@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.android.greenapp.presentation.main.home.HomeFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.home.HomeFragment"
         android:label="WalletFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -44,7 +44,7 @@
 
     <dialog
         android:id="@+id/coinsDetailsFragment2"
-        android:name="com.android.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.createnewwallet.CoinsDetailsFragment"
         android:label="CoinsDetailsFragment"
         tools:layout="@layout/fragment_coins_inf">
 
@@ -58,7 +58,7 @@
 
     <dialog
         android:id="@+id/progressWalletCreating"
-        android:name="com.android.greenapp.presentation.main.createnewwallet.ProgressCreatingWalletFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.createnewwallet.ProgressCreatingWalletFragment"
         android:label="CreatingWalletFragment"
         tools:layout="@layout/progress_wallet_creating">
         <action
@@ -68,32 +68,32 @@
 
     <fragment
         android:id="@+id/impMnemonicFragment"
-        android:name="com.android.greenapp.presentation.main.impmnemonics.ImpMnemonicFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.impmnemonics.ImpMnemonicFragment"
         android:label="ImpMnemonicFragment"
         tools:layout="@layout/fragment_impmnemonic" />
 
     <fragment
         android:id="@+id/receiveFragment"
-        android:name="com.android.greenapp.presentation.main.receive.ReceiveFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.receive.ReceiveFragment"
         android:label="ReceiveFragment"
         tools:layout="@layout/fragment_receive" />
 
     <fragment
         android:id="@+id/sendFragment"
-        android:name="com.android.greenapp.presentation.main.send.SendFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.send.SendFragment"
         android:label="SendFragment"
         tools:layout="@layout/fragment_send" />
 
     <fragment
         android:id="@+id/scannerFragment"
-        android:name="com.android.greenapp.presentation.main.scan.ScannerFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.scan.ScannerFragment"
         android:label="ScannerFragment"
         tools:layout="@layout/fragment_scanner" />
 
 
     <dialog
         android:id="@+id/saveMnemonicsFragment"
-        android:name="com.android.greenapp.presentation.main.createnewwallet.SaveMnemonicsFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.createnewwallet.SaveMnemonicsFragment"
         android:label="SaveMnemonicsFragment"
         tools:layout="@layout/fragment_savemnemonics">
         <action
@@ -104,14 +104,14 @@
 
     <dialog
         android:id="@+id/verificationFragment"
-        android:name="com.android.greenapp.presentation.main.createnewwallet.VerificationFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.createnewwallet.VerificationFragment"
         android:label="VerificationFragment"
         tools:layout="@layout/fragment_verification_wallet" />
 
 
     <fragment
         android:id="@+id/allWalletListFragment"
-        android:name="com.android.greenapp.presentation.main.walletlist.AllWalletListFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.walletlist.AllWalletListFragment"
         android:label="ActivesFragment"
         tools:layout="@layout/fragment_all_wallet_list">
         <action
@@ -123,22 +123,22 @@
     </fragment>
     <fragment
         android:id="@+id/entPasscodeFrMain"
-        android:name="com.android.greenapp.presentation.main.enterpasscode.EnterPasscodeFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.enterpasscode.EnterPasscodeFragment"
         android:label="EntPasscodeFrMain"
         tools:layout="@layout/fragment_enter_passcode_main" />
     <fragment
         android:id="@+id/manageWalletFragment"
-        android:name="com.android.greenapp.presentation.main.managewallet.ManageWalletFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.managewallet.ManageWalletFragment"
         android:label="ManageWalletFragment"
         tools:layout="@layout/fragment_manage_wallet_beta" />
     <fragment
         android:id="@+id/importTokenFragment"
-        android:name="com.android.greenapp.presentation.main.importtoken.ImportTokenFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.importtoken.ImportTokenFragment"
         android:label="ImportTokenFragment"
         tools:layout="@layout/fragment_import_token" />
     <dialog
         android:id="@+id/supportFragment"
-        android:name="com.android.greenapp.presentation.main.support.SupportFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.support.SupportFragment"
         android:label="SupportFragment"
         tools:layout="@layout/fragment_support">
         <action
@@ -150,7 +150,7 @@
     </dialog>
     <dialog
         android:id="@+id/allSettingsFragment"
-        android:name="com.android.greenapp.presentation.main.allsettings.AllSettingsFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.allsettings.AllSettingsFragment"
         android:label="AllSettingsFragment"
         tools:layout="@layout/fragment_all_settings">
         <action
@@ -165,22 +165,22 @@
     </dialog>
     <dialog
         android:id="@+id/mainLanguageFragment"
-        android:name="com.android.greenapp.presentation.main.language.MainLanguageFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.language.MainLanguageFragment"
         android:label="MainLanguageFragment"
         tools:layout="@layout/fragment_mainlanguage" />
     <dialog
         android:id="@+id/aboutAppFragment"
-        android:name="com.android.greenapp.presentation.main.about.AboutAppFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.about.AboutAppFragment"
         android:label="AboutAppFragment"
         tools:layout="@layout/fragment_about_app" />
     <fragment
         android:id="@+id/transactionsFragment"
-        android:name="com.android.greenapp.presentation.main.transaction.TransactionsFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.transaction.TransactionsFragment"
         android:label="TransactionsFragment"
         tools:layout="@layout/fragment_transactions" />
     <fragment
         android:id="@+id/addressFragment"
-        android:name="com.android.greenapp.presentation.main.address.AddressFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.address.AddressFragment"
         android:label="AddressFragment"
         tools:layout="@layout/fragment_address_list">
         <action
@@ -190,55 +190,50 @@
 
     <fragment
         android:id="@+id/addAddressFragment"
-        android:name="com.android.greenapp.presentation.main.address.EditAddressFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.address.EditAddressFragment"
         android:label="AddAddressFragment"
         tools:layout="@layout/fragment_address_edit" />
 
     <dialog
         android:id="@+id/notificationFragment"
-        android:name="com.android.greenapp.presentation.main.notification.NotifFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.notification.NotifFragment"
         android:label="NotificationFragment"
         tools:layout="@layout/fragment_notification" />
 
     <dialog
         android:id="@+id/FAQFragment"
-        android:name="com.android.greenapp.presentation.main.support.faq.FAQFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.support.faq.FAQFragment"
         android:label="FAQFragment"
         tools:layout="@layout/fragment_faq" />
 
 
     <dialog
         android:id="@+id/questionFragment"
-        android:name="com.android.greenapp.presentation.main.support.QuestionFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.support.QuestionFragment"
         android:label="AskQuestionFragment"
         tools:layout="@layout/fragment_question" />
     <dialog
         android:id="@+id/listingFragment"
-        android:name="com.android.greenapp.presentation.main.support.ListingFragment"
+        android:name="extralogic.wallet.greenapp.presentation.main.support.ListingFragment"
         android:label="ListingFragment"
         tools:layout="@layout/fragment_listing" />
 
-    <fragment
-        android:id="@+id/noConnectionFragment"
-        android:name="com.android.greenapp.presentation.main.noconnection.NoConnectionFragment"
-        android:label="NoConnectionFragment"
-        tools:layout="@layout/fragment_no_internet" />
 
     <dialog
         android:id="@+id/btmSheetChooseNetwork"
-        android:name="com.android.greenapp.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork"
+        android:name="extralogic.wallet.greenapp.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork"
         android:label="btmDialog"
         tools:layout="@layout/dialog_choose_network" />
 
     <dialog
         android:id="@+id/btmSheetDialogNewOrImport"
-        android:name="com.android.greenapp.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
+        android:name="extralogic.wallet.greenapp.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
         android:label="btmDialog"
         tools:layout="@layout/dialog_add_wallet" />
 
 	<fragment
 		android:id="@+id/walletSettings"
-		android:name="com.android.greenapp.presentation.main.walletsettings.WalletSettingsFragment"
+		android:name="extralogic.wallet.greenapp.presentation.main.walletsettings.WalletSettingsFragment"
 		android:label="WalletSettings"
 		tools:layout="@layout/fragment_wallet_settings"
 		/>

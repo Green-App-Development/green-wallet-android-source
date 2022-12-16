@@ -14,7 +14,7 @@
         android:required="false" />
 
     <application
-        android:name=".presentation.App"
+        android:name="extralogic.wallet.greenapp.presentation.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/MyLightTheme">
         <activity
-            android:name=".presentation.main.MainActivity"
+            android:name="extralogic.wallet.greenapp.presentation.main.MainActivity"
             android:exported="true"
             android:noHistory="false"
             android:screenOrientation="portrait"
@@ -33,7 +33,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.onboard.OnBoardActivity"
+            android:name="extralogic.wallet.greenapp.presentation.onboard.OnBoardActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustResize">
@@ -41,7 +41,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.intro.IntroActivity"
+            android:name="extralogic.wallet.greenapp.presentation.intro.IntroActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|adjustResize">
@@ -53,9 +53,9 @@
 
         </activity>
 
-        <service android:name=".presentation.main.service.AppRemovedRecentTaskService" />
+        <service android:name="extralogic.wallet.greenapp.presentation.main.service.AppRemovedRecentTaskService" />
 
-        <receiver android:name=".presentation.main.receiver.NetworkChangeReceiver"
+        <receiver android:name="extralogic.wallet.greenapp.presentation.main.receiver.NetworkChangeReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

@@ -273,7 +273,7 @@
 							android:layout_alignParentEnd="true"
 							android:layout_marginTop="2dp">
 
-						<com.android.greenapp.presentation.custom.CustomSpinner
+						<extralogic.wallet.greenapp.presentation.custom.CustomSpinner
 								android:id="@+id/spinner_blockchain"
 								android:layout_width="wrap_content"
 								android:layout_height="0dp"

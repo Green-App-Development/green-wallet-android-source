@@ -81,8 +81,10 @@
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         android:scrollbars="vertical"
-        android:text="  Green Wallet is a hot open source non-custodial wallet for the Chia blockchain with a user-friendly interface.
+        android:text="Green Wallet is a hot open source non-custodial wallet for the Chia blockchain with a user-friendly interface.
+\n\n\n
 This version is a minimum viable product (MVP) that allows you to receive, store, send XCH and CAT2 tokens.
+\n\n\n
 Green Wallet is in open b-testing and may contain some bugs that will be fixed in the future."
         android:textColor="@color/secondary_text_color"
         android:textSize="16sp"

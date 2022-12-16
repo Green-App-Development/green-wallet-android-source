@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "1055597598111",
+    "project_id": "green-wallet-d0fe2",
+    "storage_bucket": "green-wallet-d0fe2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055597598111:android:e26021287d5013fe6b59aa",
+        "android_client_info": {
+          "package_name": "com.android.greenapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055597598111-h5gnppnbrviluei3il3s66h8gs9bh2gq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlE8-MkcQJmSq4BU6lQAmyZpEfgH9ah2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055597598111-h5gnppnbrviluei3il3s66h8gs9bh2gq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055597598111:android:ea78e04ee35a4cc86b59aa",
+        "android_client_info": {
+          "package_name": "extralogic.wallet.greenapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055597598111-h5gnppnbrviluei3il3s66h8gs9bh2gq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlE8-MkcQJmSq4BU6lQAmyZpEfgH9ah2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055597598111-h5gnppnbrviluei3il3s66h8gs9bh2gq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
