@@ -54,9 +54,7 @@ import extralogic.wallet.greenapp.presentation.main.walletsettings.WalletSetting
 import extralogic.wallet.greenapp.presentation.tools.*
 import com.example.common.tools.*
 import dev.b3nedikt.reword.Reword
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -89,6 +87,10 @@ class MainActivity : BaseActivity() {
 
 	var curMnemonicCode = MnemonicCode(Mnemonics.WordCount.COUNT_12)
 
+	private val handler = CoroutineExceptionHandler { context, throwable ->
+		VLog.d("Exception in main Activity : $throwable")
+	}
+
 	val mainViewModel: MainViewModel by viewModels { viewModelFactory }
 
 	private var sendReceiveJob: Job? = null
@@ -108,9 +110,9 @@ class MainActivity : BaseActivity() {
 		bottomNavViewClicks()
 		initStatusBarColorRegulation()
 		(application as App).applicationIsAlive = true
-		startServiceAppRemoveRecentTask()
 		softKeyboardListener()
 		initCheckingBundleFromPushNotification()
+		startServiceAppRemoveRecentTask()
 	}
 
 	private fun initCheckingBundleFromPushNotification() {
@@ -143,9 +145,14 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
+	private var startServiceJobLater: Job? = null
+
 	private fun startServiceAppRemoveRecentTask() {
-		val stickyService = Intent(this, AppRemovedRecentTaskService::class.java)
-		startService(stickyService)
+		startServiceJobLater = lifecycleScope.launch(handler) {
+			delay(1000L)
+			val stickyService = Intent(this@MainActivity, AppRemovedRecentTaskService::class.java)
+			startService(stickyService)
+		}
 	}
 
 	override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
@@ -168,6 +175,7 @@ class MainActivity : BaseActivity() {
 					this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 					startActivity(this)
 				}
+				startServiceJobLater?.cancel()
 				finish()
 			}
 		}

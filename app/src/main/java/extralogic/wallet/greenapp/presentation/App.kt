@@ -1,8 +1,10 @@
 package extralogic.wallet.greenapp.presentation
 
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.android.greenapp.BuildConfig
 import com.android.greenapp.R
@@ -17,6 +19,7 @@ import extralogic.wallet.greenapp.domain.interact.*
 import extralogic.wallet.greenapp.presentation.custom.NotificationHelper
 import extralogic.wallet.greenapp.presentation.custom.NotificationHelper.Companion.GreenAppChannel
 import extralogic.wallet.greenapp.presentation.di.application.DaggerAppComponent
+import extralogic.wallet.greenapp.presentation.main.service.AppRemovedRecentTaskService
 import extralogic.wallet.greenapp.presentation.tools.SYNC_WORK_TAG
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
@@ -35,7 +38,7 @@ class App : DaggerApplication() {
 	lateinit var cryptocurrencyInteract: CryptocurrencyInteract
 
 	@Inject
-	lateinit var supportInteract:SupportInteract
+	lateinit var supportInteract: SupportInteract
 
 	@Inject
 	lateinit var prefs: PrefsInteract
@@ -83,11 +86,10 @@ class App : DaggerApplication() {
 		)
 //		cancelWorkManager()
 //		testingMethod()
-
 	}
 
 	private fun requestsPerApplication() {
-		CoroutineScope(Dispatchers.IO).launch{
+		CoroutineScope(Dispatchers.IO).launch {
 			with(greenAppInteract) {
 				updateCoinDetails()
 				getAvailableNetworkItemsFromRestAndSave()
@@ -104,17 +106,13 @@ class App : DaggerApplication() {
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.IO).launch {
-			while (true) {
-				notificationHelper.callGreenAppNotificationMessages(
-					"I am here to help you",
-					System.currentTimeMillis(),
-					key = GreenAppChannel,
-					value = "Green App Notification"
-				)
-				break
+			for (i in 0 until 10) {
+				VLog.d("Waiting : $i")
+				delay(1000L)
 			}
 		}
 	}
+
 
 	private fun quickNavigationIfUserUnBoarded() {
 		CoroutineScope(Dispatchers.IO).launch {

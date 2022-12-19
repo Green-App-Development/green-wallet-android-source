@@ -53,7 +53,7 @@
 
         </activity>
 
-        <service android:name="extralogic.wallet.greenapp.presentation.main.service.AppRemovedRecentTaskService" />
+        <service android:enabled="true" android:name="extralogic.wallet.greenapp.presentation.main.service.AppRemovedRecentTaskService" />
 
         <receiver android:name="extralogic.wallet.greenapp.presentation.main.receiver.NetworkChangeReceiver"
             android:enabled="true"
