@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extralogic.wallet.greenapp.presentation.custom.OnlyVerticalSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.green.wallet.presentation.custom.OnlyVerticalSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
 		android:id="@+id/swipeRefresh"
@@ -85,7 +85,7 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
 
-			<extralogic.wallet.greenapp.presentation.custom.CustomSpinner
+			<com.green.wallet.presentation.custom.CustomSpinner
 					android:id="@+id/date_spinner"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
@@ -102,7 +102,7 @@
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/rel_txt_network">
 
-			<extralogic.wallet.greenapp.presentation.custom.CustomSpinner
+			<com.green.wallet.presentation.custom.CustomSpinner
 					android:id="@+id/network_spinner_trans"
 					android:layout_width="match_parent"
 					android:layout_height="0dp"
@@ -337,4 +337,4 @@
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
-</extralogic.wallet.greenapp.presentation.custom.OnlyVerticalSwipeRefreshLayout>
+</com.green.wallet.presentation.custom.OnlyVerticalSwipeRefreshLayout>

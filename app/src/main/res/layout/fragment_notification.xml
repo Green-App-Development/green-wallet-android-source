@@ -111,7 +111,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout3">
 
-        <extralogic.wallet.greenapp.presentation.custom.CustomSpinner
+        <com.green.wallet.presentation.custom.CustomSpinner
             android:id="@+id/date_spinner"
             android:layout_width="match_parent"
             android:layout_height="0dp"

@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/themeFragment"
-        android:name="extralogic.wallet.greenapp.presentation.onboard.icon.IconFragment"
+        android:name="com.green.wallet.presentation.onboard.icon.IconFragment"
         android:label="ThemeFragment"
         tools:layout="@layout/fragment_icon">
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/languageFragment2"
-        android:name="extralogic.wallet.greenapp.presentation.onboard.language.LanguageFragment"
+        android:name="com.green.wallet.presentation.onboard.language.LanguageFragment"
         android:label="LanguageFragment"
         tools:layout="@layout/fragment_language">
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/termsFragment"
-        android:name="extralogic.wallet.greenapp.presentation.onboard.terms.TermsFragment"
+        android:name="com.green.wallet.presentation.onboard.terms.TermsFragment"
         android:label="TermsFragment"
         tools:layout="@layout/fragment_termsofuse">
         <action
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/setPasswordFragment"
-        android:name="extralogic.wallet.greenapp.presentation.onboard.setpassword.SetPasswordFragment"
+        android:name="com.green.wallet.presentation.onboard.setpassword.SetPasswordFragment"
         android:label="SetPasswordFragment"
         tools:layout="@layout/fragment_set_password">
         <action
@@ -57,7 +57,7 @@
     <fragment
         android:id="@+id/timeFragment2"
         tools:layout="@layout/fragment_time"
-        android:name="extralogic.wallet.greenapp.presentation.onboard.time.GreetingTimeFragment"
+        android:name="com.green.wallet.presentation.onboard.time.GreetingTimeFragment"
         android:label="TimeFragment" >
         <action
             android:id="@+id/action_timeFragment2_to_setPasswordFragment"
