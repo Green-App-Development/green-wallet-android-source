@@ -113,7 +113,6 @@ class App : DaggerApplication() {
 		}
 	}
 
-
 	private fun quickNavigationIfUserUnBoarded() {
 		CoroutineScope(Dispatchers.IO).launch {
 			isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, true)

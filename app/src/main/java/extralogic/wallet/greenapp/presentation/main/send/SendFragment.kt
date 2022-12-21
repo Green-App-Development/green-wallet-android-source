@@ -348,9 +348,9 @@ class SendFragment : DaggerFragment() {
 			viewModel.queryWalletWithTokensList(type, fingerPrint)
 				.collectLatest { walletTokenList ->
 
-					for (walletWithToken in walletTokenList) {
-						VLog.d("Wallet Token on SendFragment : $walletWithToken ")
-					}
+//					for (walletWithToken in walletTokenList) {
+//						VLog.d("Wallet Token on SendFragment : $walletWithToken ")
+//					}
 
 					walletAdapter = WalletListAdapter(curActivity(), walletTokenList)
 					binding.walletSpinner.adapter = walletAdapter
@@ -410,7 +410,9 @@ class SendFragment : DaggerFragment() {
 		curTokenWalletList = tokenWalletList
 		tokenAdapter = NetworkAdapter(
 			curActivity(),
-			tokenWalletList.filter { (it.code == "XCH" || (it.asset_id.trim().isNotEmpty())) }
+			tokenWalletList.filter {
+				(it.code == "XCH" || it.asset_id.trim().isNotEmpty() || it.code == "XCC")
+			}
 				.map { it.code }.toList()
 		)
 		binding.tokenSpinner.adapter = tokenAdapter

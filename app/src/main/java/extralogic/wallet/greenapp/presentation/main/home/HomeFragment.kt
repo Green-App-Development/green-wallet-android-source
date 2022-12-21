@@ -3,7 +3,6 @@ package extralogic.wallet.greenapp.presentation.main.home
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,13 +28,11 @@ import extralogic.wallet.greenapp.domain.domainmodel.WalletWithTokens
 import extralogic.wallet.greenapp.presentation.custom.*
 import extralogic.wallet.greenapp.presentation.di.factory.ViewModelFactory
 import extralogic.wallet.greenapp.presentation.main.MainActivity
-import extralogic.wallet.greenapp.presentation.main.service.AppRemovedRecentTaskService
 import extralogic.wallet.greenapp.presentation.tools.preventDoubleClick
 import extralogic.wallet.greenapp.presentation.viewBinding
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 /**
