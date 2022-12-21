@@ -61,10 +61,14 @@ class WalletTokenAdapter(
 	}
 
 	@SuppressLint("SetTextI18n")
-	private fun adjustTxtImport(v: View, activity: Activity) {
+	private fun adjustTxtImport(v: View, activity: Activity, tokenName: String) {
+		val import =
+			if (isThisChivesNetwork(tokenName)) activity.getStringResource(R.string.import_mnemonics_soon) else activity.getStringResource(
+				R.string.main_screen_purse_import
+			)
 		val txtImport = v.findViewById<TextView>(R.id.txtImportToken)
 		txtImport.text =
-			"    +   ${activity.getStringResource(R.string.main_screen_purse_import)}" + " ".repeat(
+			"    +   $import" + " ".repeat(
 				7
 			)
 	}
@@ -121,9 +125,7 @@ class WalletTokenAdapter(
 
 		@SuppressLint("SetTextI18n")
 		fun onBind(token: TokenWallet) {
-			if (isThisChivesNetwork(token.name))
-				importToken.setText(R.string.import_mnemonics_soon)
-			adjustTxtImport(importToken, activity)
+			adjustTxtImport(importToken, activity, token.name)
 			if (!isThisChivesNetwork(token.name)) {
 				rootImportToken.setOnClickListener {
 					tokenClicker.onImportTokenClicked()
