@@ -22,83 +22,87 @@ import com.green.wallet.presentation.custom.trimNetwork
  * email: bekjan.omirzak98@gmail.com
  */
 class ViewPagerWalletsAdapter(
-    private val activity: Activity,
-    private val viewPagerClicker: ViewPagerWalletClicker,
-    private val effect: AnimationManager,
-    val walletList: List<WalletWithTokens>,
-    val balanceIsHidden: Boolean
+	private val activity: Activity,
+	private val viewPagerClicker: ViewPagerWalletClicker,
+	private val effect: AnimationManager,
+	val walletList: List<WalletWithTokens>,
+	val balanceIsHidden: Boolean
 ) : PagerAdapter() {
 
-    lateinit var layoutInflater: LayoutInflater
+	lateinit var layoutInflater: LayoutInflater
 
-    private val views = Array<View?>(walletList.size) { null }
+	private val views = Array<View?>(walletList.size) { null }
 
-    override fun getCount(): Int {
-        return walletList.size
-    }
+	override fun getCount(): Int {
+		return walletList.size
+	}
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return (view == `object` as RelativeLayout)
-    }
+	override fun isViewFromObject(view: View, `object`: Any): Boolean {
+		return (view == `object` as RelativeLayout)
+	}
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        layoutInflater =
-            activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val viewPagerItem = layoutInflater.inflate(R.layout.item_home_view_pager, container, false)
-        registerClicks(viewPagerItem)
-        initViewDetails(viewPagerItem, position)
-        container.addView(viewPagerItem)
-        views[position] = viewPagerItem
-        return views[position]!!
-    }
+	override fun instantiateItem(container: ViewGroup, position: Int): Any {
+		layoutInflater =
+			activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+		val viewPagerItem = layoutInflater.inflate(R.layout.item_home_view_pager, container, false)
+		registerClicks(viewPagerItem)
+		initViewDetails(viewPagerItem, position)
+		container.addView(viewPagerItem)
+		views[position] = viewPagerItem
+		return views[position]!!
+	}
 
-    @SuppressLint("SetTextI18n")
-    private fun initViewDetails(viewPagerItem: View, position: Int) {
-        val tokenRecView = viewPagerItem.findViewById<RecyclerView>(R.id.rec_view_wallet_tokens)
-        val viewPagerTokenAdapter = WalletTokenAdapter(
-            walletList[position].tokenWalletList,
-            object : WalletTokenAdapter.TokenClicker {
-                override fun onImportTokenClicked() {
-                    viewPagerClicker.impToken(walletList[position].fingerPrint,walletList[position].puzzle_hashes,walletList[position].address)
-                }
-            },
-            activity,
-            balanceIsHidden
-        )
-        tokenRecView.adapter = viewPagerTokenAdapter
+	@SuppressLint("SetTextI18n")
+	private fun initViewDetails(viewPagerItem: View, position: Int) {
+		val tokenRecView = viewPagerItem.findViewById<RecyclerView>(R.id.rec_view_wallet_tokens)
+		val viewPagerTokenAdapter = WalletTokenAdapter(
+			walletList[position].tokenWalletList,
+			object : WalletTokenAdapter.TokenClicker {
+				override fun onImportTokenClicked() {
+					viewPagerClicker.impToken(
+						walletList[position].fingerPrint,
+						walletList[position].puzzle_hashes,
+						walletList[position].address
+					)
+				}
+			},
+			activity,
+			balanceIsHidden
+		)
+		tokenRecView.adapter = viewPagerTokenAdapter
 
-        val txtView = viewPagerItem.findViewById<TextView>(R.id.txtWalletPublicKey)
+		val txtView = viewPagerItem.findViewById<TextView>(R.id.txtWalletPublicKey)
 
-        txtView.setText(
-            "${trimNetwork(walletList[position].networkType)}     ${
-                hidePublicKey(
-                    walletList[position].fingerPrint
-                )
-            }"
-        )
-    }
+		txtView.setText(
+			"${trimNetwork(walletList[position].networkType)}     ${
+				hidePublicKey(
+					walletList[position].fingerPrint
+				)
+			}"
+		)
+	}
 
-    private fun registerClicks(view: View?) {
-        if (view == null) return
+	private fun registerClicks(view: View?) {
+		if (view == null) return
 
-        view.findViewById<TextView>(R.id.txtAllWallet).setOnClickListener {
-            viewPagerClicker.allWallet()
-        }
+		view.findViewById<TextView>(R.id.txtAllWallet).setOnClickListener {
+			viewPagerClicker.allWallet()
+		}
 
-        view.findViewById<ImageView>(R.id.imgAddWallet).setOnClickListener {
-            viewPagerClicker.addWallet()
-        }
-    }
+		view.findViewById<ImageView>(R.id.imgAddWallet).setOnClickListener {
+			viewPagerClicker.addWallet()
+		}
+	}
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as RelativeLayout)
-    }
+	override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+		container.removeView(`object` as RelativeLayout)
+	}
 
-    interface ViewPagerWalletClicker {
-        fun addWallet()
-        fun allWallet()
-        fun impToken(fingerPrint: Long,main_puzzle_hashes:List<String>,address:String)
-    }
+	interface ViewPagerWalletClicker {
+		fun addWallet()
+		fun allWallet()
+		fun impToken(fingerPrint: Long, main_puzzle_hashes: List<String>, address: String)
+	}
 
 
 }

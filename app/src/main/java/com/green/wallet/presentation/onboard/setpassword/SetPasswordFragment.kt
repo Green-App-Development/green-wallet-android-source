@@ -27,131 +27,132 @@ import javax.inject.Inject
 
 class SetPasswordFragment : DaggerFragment() {
 
-    private val binding: FragmentSetPasswordBinding by viewBinding(FragmentSetPasswordBinding::bind)
-    private var atPasswordIndex = 0
-    private val firstPassword = IntArray(6)
-    private val secondPassword = IntArray(6)
-    private var curPasswordFirst = true
-    private var jobAfter3SecondShowRedColor: Job? = null
+	private val binding: FragmentSetPasswordBinding by viewBinding(FragmentSetPasswordBinding::bind)
+	private var atPasswordIndex = 0
+	private val firstPassword = IntArray(6)
+	private val secondPassword = IntArray(6)
+	private var curPasswordFirst = true
+	private var jobAfter3SecondShowRedColor: Job? = null
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
-
-
-    @Inject
-    lateinit var effect: AnimationManager
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val greetingViewModel: OnBoardViewModel by viewModels { viewModelFactory }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_set_password, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        registerButtonClicks()
-    }
+	@Inject
+	lateinit var effect: AnimationManager
 
 
-    private fun registerButtonClicks() {
-        binding.backLayout.setOnClickListener {
-            it.startAnimation(effect.getBtnEffectAnimation())
-            curActivity().popBackStack()
-        }
-        for (k in binding.btnsGridLayout.children) {
-            k.setOnClickListener {
-                savingFirstTimePasscodeLogic(it)
-            }
-        }
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
 
-    private fun savingFirstTimePasscodeLogic(it: View) {
-        VLog.d("AtPasswordIndex : ${atPasswordIndex}")
-        binding.circles.shouldBeRedAll = false
-        binding.txtPassword6DigitsWarning.visibility = View.GONE
-        if (it is RelativeLayout) {
-            it.startAnimation(effect.getBtnEffectAnimation())
-            if (atPasswordIndex - 1 >= 0) {
-                atPasswordIndex--
-                binding.circles.usedCircleCount = atPasswordIndex
-            }
-        } else if (it is Button) {
-            if (curPasswordFirst) {
-                firstPassword[atPasswordIndex++] = it.text.toString()[0] - '0'
-                if (atPasswordIndex == 6) {
-                    binding.circles.usedCircleCount = 0
-                    atPasswordIndex = 0
-                    curPasswordFirst = false
-                    changeTextHeaderPassword()
-                    jobAfter3SecondShowRedColor?.cancel()
-                } else {
-                    binding.circles.usedCircleCount = atPasswordIndex
-                }
-            } else {
-                if (atPasswordIndex + 1 < 7) {
-                    secondPassword[atPasswordIndex++] = it.text.toString()[0] - '0'
-                    binding.circles.usedCircleCount = atPasswordIndex
-                    if (atPasswordIndex == 6) {
-                        if (firstPassword.toList() == secondPassword.toList()) {
-                            greetingViewModel.savePasscode(
-                                firstPassword.toList().toString()
-                            )
-                            greetingViewModel.saveUserUnBoarded(boarded = true)
-                            greetingViewModel.saveLastVisitedValue(System.currentTimeMillis())
-                            curActivity().move2TimeFragment()
-                        } else {
-                            showMessagePasscodesDontMatch()
-                            atPasswordIndex = 0
-                            binding.circles.usedCircleCount = atPasswordIndex
-                        }
-                    }
-                }
-            }
-        }
-    }
+	}
 
-    private fun showMessagePasscodesDontMatch() {
-        binding.circles.shouldBeRedAll = true
-        binding.txtPassword6DigitsWarning.apply {
-            text = curActivity().getStringResource(R.string.creating_a_password_error_difference)
-            visibility = View.VISIBLE
-        }
-        jobAfter3SecondShowRedColor?.cancel()
-        jobAfter3SecondShowRedColor = lifecycleScope.launch {
-            delay(2000)
-            binding.circles.shouldBeRedAll = false
-            binding.txtPassword6DigitsWarning.visibility = View.GONE
-        }
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		val binding = FragmentSetPasswordBinding.inflate(layoutInflater)
+		return binding.root
+	}
 
-    private fun triggerJobAfter3Seconds() {
-        jobAfter3SecondShowRedColor?.cancel()
-        jobAfter3SecondShowRedColor = lifecycleScope.launch {
-            delay(3000)
-            binding.circles.shouldBeRedAll = true
-            binding.txtPassword6DigitsWarning.text =
-                curActivity().getStringResource(R.string.creating_a_password_error_amount_of_characters)
-            binding.txtPassword6DigitsWarning.visibility = View.VISIBLE
-        }
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		registerButtonClicks()
+	}
 
-    private fun changeTextHeaderPassword() {
-        binding.txtCreatCodePassword.text =
-            curActivity().getStringResource(R.string.repeat_passcode_title)
-        binding.txtPassCodeDetail.text =
-            curActivity().getStringResource(R.string.repeat_passcode_description)
-    }
 
-    private fun curActivity() = requireActivity() as OnBoardActivity
+	private fun registerButtonClicks() {
+		binding.backLayout.setOnClickListener {
+			it.startAnimation(effect.getBtnEffectAnimation())
+			curActivity().popBackStack()
+		}
+		for (k in binding.btnsGridLayout.children) {
+			k.setOnClickListener {
+				savingFirstTimePasscodeLogic(it)
+			}
+		}
+	}
+
+	private fun savingFirstTimePasscodeLogic(it: View) {
+		VLog.d("AtPasswordIndex : ${atPasswordIndex}")
+		binding.circles.shouldBeRedAll = false
+		binding.txtPassword6DigitsWarning.visibility = View.GONE
+		if (it is RelativeLayout) {
+			it.startAnimation(effect.getBtnEffectAnimation())
+			if (atPasswordIndex - 1 >= 0) {
+				atPasswordIndex--
+				binding.circles.usedCircleCount = atPasswordIndex
+			}
+		} else if (it is Button) {
+			if (curPasswordFirst) {
+				firstPassword[atPasswordIndex++] = it.text.toString()[0] - '0'
+				if (atPasswordIndex == 6) {
+					binding.circles.usedCircleCount = 0
+					atPasswordIndex = 0
+					curPasswordFirst = false
+					changeTextHeaderPassword()
+					jobAfter3SecondShowRedColor?.cancel()
+				} else {
+					binding.circles.usedCircleCount = atPasswordIndex
+				}
+			} else {
+				if (atPasswordIndex + 1 < 7) {
+					secondPassword[atPasswordIndex++] = it.text.toString()[0] - '0'
+					binding.circles.usedCircleCount = atPasswordIndex
+					if (atPasswordIndex == 6) {
+						if (firstPassword.toList() == secondPassword.toList()) {
+							greetingViewModel.savePasscode(
+								firstPassword.toList().toString()
+							)
+							greetingViewModel.saveUserUnBoarded(boarded = true)
+							greetingViewModel.saveLastVisitedValue(System.currentTimeMillis())
+							curActivity().move2TimeFragment()
+						} else {
+							showMessagePasscodesDontMatch()
+							atPasswordIndex = 0
+							binding.circles.usedCircleCount = atPasswordIndex
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private fun showMessagePasscodesDontMatch() {
+		binding.circles.shouldBeRedAll = true
+		binding.txtPassword6DigitsWarning.apply {
+			text = curActivity().getStringResource(R.string.creating_a_password_error_difference)
+			visibility = View.VISIBLE
+		}
+		jobAfter3SecondShowRedColor?.cancel()
+		jobAfter3SecondShowRedColor = lifecycleScope.launch {
+			delay(2000)
+			binding.circles.shouldBeRedAll = false
+			binding.txtPassword6DigitsWarning.visibility = View.GONE
+		}
+	}
+
+	private fun triggerJobAfter3Seconds() {
+		jobAfter3SecondShowRedColor?.cancel()
+		jobAfter3SecondShowRedColor = lifecycleScope.launch {
+			delay(3000)
+			binding.circles.shouldBeRedAll = true
+			binding.txtPassword6DigitsWarning.text =
+				curActivity().getStringResource(R.string.creating_a_password_error_amount_of_characters)
+			binding.txtPassword6DigitsWarning.visibility = View.VISIBLE
+		}
+	}
+
+	private fun changeTextHeaderPassword() {
+		binding.txtCreatCodePassword.text =
+			curActivity().getStringResource(R.string.repeat_passcode_title)
+		binding.txtPassCodeDetail.text =
+			curActivity().getStringResource(R.string.repeat_passcode_description)
+	}
+
+	private fun curActivity() = requireActivity() as OnBoardActivity
 
 
 }

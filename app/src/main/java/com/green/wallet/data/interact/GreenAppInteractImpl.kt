@@ -105,8 +105,9 @@ class GreenAppInteractImpl @Inject constructor(
 				PrefsManager.LANGUAGE_RESOURCE,
 				Converters.hashMapToString(resMap)
 			)
-			getAgreementsText()
 			response.close()
+			getAgreementsText()
+			updateCoinDetails()
 			return Resource.success("OK")
 		} catch (ex: java.lang.Exception) {
 			VLog.d("Failed getting language string resource and saving it in db : ${ex.message}")

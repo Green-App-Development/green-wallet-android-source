@@ -80,14 +80,15 @@ class App : DaggerApplication() {
 			this,
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
+
 //		cancelWorkManager()
 //		testingMethod()
+
 	}
 
 	private fun requestsPerApplication() {
 		CoroutineScope(Dispatchers.IO).launch {
 			with(greenAppInteract) {
-				updateCoinDetails()
 				getAvailableNetworkItemsFromRestAndSave()
 				getAvailableLanguageList()
 				getAgreementsText()

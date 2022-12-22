@@ -3,6 +3,7 @@ package com.green.wallet.presentation.custom
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewConfiguration
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
@@ -15,6 +16,7 @@ class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 	private val touchSlop: Int = ViewConfiguration.get(context).scaledTouchSlop
 	private var prevX = 0f
 	private var declined = false
+
 	override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
 		when (event.getAction()) {
 			MotionEvent.ACTION_DOWN -> {
@@ -32,5 +34,8 @@ class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 		}
 		return super.onInterceptTouchEvent(event)
 	}
+
+
+
 
 }

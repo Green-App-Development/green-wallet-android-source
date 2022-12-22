@@ -22,11 +22,11 @@ android {
 	compileSdk 32
 
 	defaultConfig {
-		applicationId "extralogic.wallet.greenapp"
+		applicationId "com.green.wallet"
 		minSdk 26
 		targetSdk 32
 		versionCode 1
-		versionName "0.0.53"
+		versionName "0.0.54"
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
