@@ -168,6 +168,7 @@
 			android:layout_marginTop="10dp"
 			android:layout_marginEnd="20dp"
 			android:background="@drawable/copied_bcg"
+			android:elevation="7dp"
 			android:visibility="gone"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"

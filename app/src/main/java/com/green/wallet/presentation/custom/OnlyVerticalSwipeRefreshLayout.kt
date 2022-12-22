@@ -17,7 +17,11 @@ class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 	private var prevX = 0f
 	private var declined = false
 
+	var topY = 0
+	var bottomY = 0
+
 	override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+		isEnabled = event.y.toInt() !in topY..bottomY
 		when (event.getAction()) {
 			MotionEvent.ACTION_DOWN -> {
 				prevX = MotionEvent.obtain(event).getX()
@@ -34,8 +38,6 @@ class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 		}
 		return super.onInterceptTouchEvent(event)
 	}
-
-
 
 
 }

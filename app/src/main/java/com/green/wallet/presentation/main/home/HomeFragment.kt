@@ -3,6 +3,7 @@ package com.green.wallet.presentation.main.home
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -192,7 +193,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 	@RequiresApi(Build.VERSION_CODES.N)
 	@SuppressLint("SetTextI18n")
-	private fun initWalletListViewPager(homeAddedList: List<WalletWithTokens>) {
+	private suspend fun initWalletListViewPager(homeAddedList: List<WalletWithTokens>) {
 		if (homeAddedList.isNotEmpty()) {
 
 			mainViewPagerWalletAdapter =
@@ -219,6 +220,14 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			updateBalanceToDollarStr()
 			homeFragmentViewModel.saveHomeIsAddedWalletCounter(homeAddedList.size)
 			hasAtLeastOneWallet = true
+
+			delay(1000L)
+			val rect = Rect()
+			binding.apply {
+				mainWalletViewPager.getGlobalVisibleRect(rect)
+				swipeRefresh.topY = rect.top - 40
+				swipeRefresh.bottomY = rect.bottom
+			}
 		} else {
 			binding.apply {
 				rel_no_wallet.visibility = View.VISIBLE
