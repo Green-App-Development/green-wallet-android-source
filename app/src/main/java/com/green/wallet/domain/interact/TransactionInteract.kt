@@ -26,7 +26,8 @@ interface TransactionInteract {
 		status: Status?,
 		at_least_created_at: Long?,
 		yesterday: Long?,
-		today: Long?
+		today: Long?,
+		tokenCode:String?
 	): kotlinx.coroutines.flow.Flow<List<Transaction>>
 
 	suspend fun getMempoolTransactionsAmountByAddressAndToken(

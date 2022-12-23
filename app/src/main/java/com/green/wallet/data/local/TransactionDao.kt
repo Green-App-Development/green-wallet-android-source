@@ -48,7 +48,7 @@ interface TransactionDao {
 	suspend fun updateTransactionStatusHeight(status: Status, height: Long, transaction_id: String)
 
 
-	@Query("SELECT * FROM TransactionEntity WHERE (:fkAddress IS NULL OR fkAddress=:fkAddress) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) ORDER BY created_at_time DESC")
+	@Query("SELECT * FROM TransactionEntity WHERE (:fkAddress IS NULL OR fkAddress=:fkAddress) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) AND (:tokenCode IS NULL OR code LIKE '%' || :tokenCode || '%') ORDER BY created_at_time DESC")
 	fun getALlTransactionsFlowByGivenParameters(
 		fkAddress: String?,
 		qAmount: Double?,
@@ -56,7 +56,8 @@ interface TransactionDao {
 		status: Status?,
 		at_least_created_time: Long?,
 		yesterday: Long?,
-		today: Long?
+		today: Long?,
+		tokenCode: String?
 	): Flow<List<TransactionEntity>>
 
 	@Query("SELECT * FROM TransactionEntity WHERE status=:status AND fkAddress=:address AND code=:code")
@@ -88,7 +89,7 @@ interface TransactionDao {
 		status: Status = Status.Outgoing,
 		amount: Double,
 		height: Long
-	):Optional<TransactionEntity>
+	): Optional<TransactionEntity>
 
 
 }

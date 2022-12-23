@@ -67,7 +67,8 @@ class TransactionsViewModel @Inject constructor(
 		status: Status?,
 		at_least_created_at: Long?,
 		yesterdayStart: Long?,
-		yesterdayEnd: Long?
+		yesterdayEnd: Long?,
+		tokenCode:String?
 	): Flow<List<Transaction>> {
 		VLog.d(
 			"FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
@@ -87,7 +88,8 @@ class TransactionsViewModel @Inject constructor(
 			status,
 			at_least_created_at,
 			yesterdayStart,
-			yesterdayEnd
+			yesterdayEnd,
+			tokenCode
 		)
 	}
 

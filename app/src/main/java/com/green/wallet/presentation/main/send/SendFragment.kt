@@ -1251,6 +1251,10 @@ class SendFragment : DaggerFragment() {
 			findViewById<TextView>(R.id.edtConfirmToken).setText(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
 			findViewById<TextView>(R.id.edtConfirmNetwork).setText(walletAdapter.walletList[walletAdapter.selectedPosition].networkType)
 			findViewById<TextView>(R.id.edtConfirmWalletAmount).setText(binding.edtEnterAmount.text.toString())
+			var commissionText=binding.edtEnterCommission.text.toString()
+			if(commissionText.isEmpty())
+				commissionText="0"
+			findViewById<TextView>(R.id.edtConfirmWalletCommision).setText("$commissionText ${tokenAdapter.dataOptions[0]}")
 			findViewById<TextView>(R.id.edtConfirmAddressWallet).setText(binding.edtAddressWallet.text.toString())
 		}
 	}

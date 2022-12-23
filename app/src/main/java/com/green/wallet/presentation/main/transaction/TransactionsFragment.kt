@@ -149,7 +149,8 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 				getCurChosenStatus(),
 				getCurSearchTransByDateCreatedExceptYesterday(),
 				getCurSearchByForYesterdayStart(),
-				getCurSearchByForYesterdayEnds()
+				getCurSearchByForYesterdayEnds(),
+				getTokenCode()
 			).collectLatest { transList ->
 				binding.apply {
 					if (transList.isNotEmpty()) {
@@ -163,6 +164,15 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 				}
 			}
 		}
+	}
+
+	private fun getTokenCode(): String? {
+		val searchText = edtSearchTrans.text.toString()
+		if (searchText.toDoubleOrNull() != null)
+			return null
+		if (searchText.isEmpty())
+			return null
+		return searchText
 	}
 
 	private fun initStatusHorizontalView() {
@@ -301,7 +311,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	}
 
 	private fun getCurSearchAmount(): Double? {
-		if (edtSearchTrans.text.isNullOrEmpty()) return null
+		if (edtSearchTrans.text.toString().toDoubleOrNull() == null) return null
 		return edtSearchTrans.text.toString().toDouble()
 	}
 
@@ -475,7 +485,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	private fun curActivity() = requireActivity() as MainActivity
 
 	override fun onTransactionItemClicked(transaction: Transaction) {
-
+		showTransactionDetails(transaction)
 	}
 
 

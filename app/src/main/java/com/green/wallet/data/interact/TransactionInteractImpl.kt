@@ -42,7 +42,8 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 		status: Status?,
 		at_least_created_at: Long?,
 		yesterday: Long?,
-		today: Long?
+		today: Long?,
+		tokenCode: String?
 	): Flow<List<Transaction>> {
 		val flowTransactionList = transactionDao.getALlTransactionsFlowByGivenParameters(
 			fkAddress,
@@ -51,7 +52,8 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 			status,
 			at_least_created_at,
 			yesterday,
-			today
+			today,
+			tokenCode
 		).map { listFlow -> listFlow.map { tran -> tran.toTransaction() } }
 
 		return flowTransactionList

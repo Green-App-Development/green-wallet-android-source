@@ -53,7 +53,7 @@
 					android:drawableEnd="@drawable/ic_search"
 					android:hint="@string/search"
 					android:imeOptions="actionDone"
-					android:inputType="numberDecimal"
+					android:inputType="text"
 					android:maxLines="1"
 					android:paddingStart="15dp"
 					android:paddingTop="9dp"
