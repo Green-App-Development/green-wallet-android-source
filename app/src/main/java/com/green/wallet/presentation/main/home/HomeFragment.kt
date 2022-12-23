@@ -133,7 +133,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 				}
 			}
 			setColorSchemeResources(R.color.green)
-
+			isOneHomeFragment = true
 		}
 	}
 

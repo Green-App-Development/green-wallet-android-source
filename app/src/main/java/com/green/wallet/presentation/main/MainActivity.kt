@@ -648,22 +648,37 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
+	var prevSoftKeyboardValue = false
+
 	private fun changeVisibilityOfViewsDuringSoftKeyBoardOpen(visibility: Boolean) {
-		if (impMnemonicsFragmentView != null) {
-			val tempLinear = impMnemonicsFragmentView!!.findViewById<LinearLayout>(temp_linear)
-			val tempLinear2 = impMnemonicsFragmentView!!.findViewById<LinearLayout>(temp_linear_2)
-			tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
-			tempLinear2.visibility = if (visibility) View.VISIBLE else View.GONE
-		}
-		if (sendCoinsFragmentView != null) {
-			val tempLinear = sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
-			tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
-		}
-		if (listingFragmentView != null) {
-			val linearAgree = listingFragmentView!!.findViewById<LinearLayout>(linearAgree)
-			val button = listingFragmentView!!.findViewById<Button>(btnSend)
-			button.visibility = if (visibility) View.GONE else View.VISIBLE
-			linearAgree.visibility = if (visibility) View.GONE else View.VISIBLE
+		VLog.d("Soft key board is open : $visibility")
+		if (visibility == prevSoftKeyboardValue)
+			return
+
+		prevSoftKeyboardValue = visibility
+
+		try {
+			if (impMnemonicsFragmentView != null) {
+				val tempLinear = impMnemonicsFragmentView!!.findViewById<LinearLayout>(temp_linear)
+				val tempLinear2 =
+					impMnemonicsFragmentView!!.findViewById<LinearLayout>(temp_linear_2)
+				tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
+				tempLinear2.visibility = if (visibility) View.VISIBLE else View.GONE
+			}
+			if (sendCoinsFragmentView != null) {
+				val tempLinear = sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
+				tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
+				sendCoinsFragmentView!!.findViewById<OnlyVerticalSwipeRefreshLayout>(swipeRefresh).isEnabled =
+					!visibility
+			}
+			if (listingFragmentView != null) {
+				val linearAgree = listingFragmentView!!.findViewById<LinearLayout>(linearAgree)
+				val button = listingFragmentView!!.findViewById<Button>(btnSend)
+				button.visibility = if (visibility) View.GONE else View.VISIBLE
+				linearAgree.visibility = if (visibility) View.GONE else View.VISIBLE
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception in updating views when soft keyboard pops up : ${ex.message}")
 		}
 	}
 

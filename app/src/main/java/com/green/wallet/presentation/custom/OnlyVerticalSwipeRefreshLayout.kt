@@ -19,9 +19,11 @@ class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 
 	var topY = 0
 	var bottomY = 0
+	var isOneHomeFragment = false
 
 	override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-		isEnabled = event.y.toInt() !in topY..bottomY
+		if (isOneHomeFragment)
+			isEnabled = event.y.toInt() !in topY..bottomY
 		when (event.getAction()) {
 			MotionEvent.ACTION_DOWN -> {
 				prevX = MotionEvent.obtain(event).getX()

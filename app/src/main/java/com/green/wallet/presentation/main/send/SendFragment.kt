@@ -1003,8 +1003,16 @@ class SendFragment : DaggerFragment() {
 
 		curActivity().mainViewModel.send_money_false()
 
-		anim.animateArrowIconCustomSpinner(binding.tokenSpinner, binding.icTokenDownward, curActivity())
-		anim.animateArrowIconCustomSpinner(binding.walletSpinner, binding.icWalletList, curActivity())
+		anim.animateArrowIconCustomSpinner(
+			binding.tokenSpinner,
+			binding.icTokenDownward,
+			curActivity()
+		)
+		anim.animateArrowIconCustomSpinner(
+			binding.walletSpinner,
+			binding.icWalletList,
+			curActivity()
+		)
 		anim.animateArrowIconCustomSpinner(binding.networkSpinner, imgIconSpinner, curActivity())
 
 	}
