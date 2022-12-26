@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.android.greenapp.R
 import com.android.greenapp.databinding.FragmentWalletSettingsBinding
+import com.example.common.tools.VLog
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.DialogManager
@@ -18,7 +19,6 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.getStringResource
-import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
@@ -167,9 +167,9 @@ class WalletSettingsFragment : DaggerFragment() {
 		}
 
 		seekBarObserver.max = 48
-		seekBarObserver.min = 12
+		seekBarObserver.min = 1
 		seekBarNonObserver.max = 24
-		seekBarNonObserver.min = 5
+		seekBarNonObserver.min = 1
 
 		seekBarObserver.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 			override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
