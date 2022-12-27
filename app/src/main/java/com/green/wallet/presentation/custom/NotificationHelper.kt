@@ -11,7 +11,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.os.bundleOf
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.presentation.di.application.AppScope
 import com.green.wallet.presentation.intro.IntroActivity

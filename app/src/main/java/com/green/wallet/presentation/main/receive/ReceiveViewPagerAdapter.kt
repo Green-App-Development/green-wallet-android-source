@@ -12,7 +12,7 @@ import androidmads.library.qrgenearator.QRGEncoder
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.PagerAdapter
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Wallet
 import com.example.common.tools.VLog
 

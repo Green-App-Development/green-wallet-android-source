@@ -1,7 +1,7 @@
 package com.green.wallet.presentation.custom
 
 import android.app.Activity
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.presentation.tools.getStringResource
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

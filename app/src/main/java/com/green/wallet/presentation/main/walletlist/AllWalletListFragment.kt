@@ -13,8 +13,8 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentAllWalletListBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentAllWalletListBinding
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory

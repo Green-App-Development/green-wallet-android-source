@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.intro.authenticate
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.hardware.biometrics.BiometricManager.Authenticators.*
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,11 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentEnterPasswordIntroBinding
 import com.example.common.tools.VLog
-import dagger.android.support.DaggerFragment
-import dev.b3nedikt.reword.Reword
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentEnterPasswordIntroBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
@@ -26,6 +25,8 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.intro.IntroActViewModel
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.tools.getStringResource
+import dagger.android.support.DaggerFragment
+import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -129,6 +130,7 @@ class AuthFragmentIntro : DaggerFragment() {
 		super.onStart()
 		index = 0
 		binding.circles.usedCircleCount = index
+		VLog.d("On Start on auth fragment intro")
 	}
 
 	private fun registerBtnClicks() {
@@ -219,6 +221,21 @@ class AuthFragmentIntro : DaggerFragment() {
 
 	private fun curActivity() =
 		requireActivity() as IntroActivity
+
+
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On Resume on auth fragment intro")
+	}
+
+	override fun onPause() {
+		super.onPause()
+	}
+
+	override fun onStop() {
+		super.onStop()
+
+	}
 
 
 }

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentTimeBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentTimeBinding
 import com.green.wallet.presentation.intro.IntroActivity
 import com.example.common.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentWalletSettingsBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentWalletSettingsBinding
 import com.example.common.tools.VLog
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.App

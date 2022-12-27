@@ -4,8 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
-import com.android.greenapp.BuildConfig
-import com.android.greenapp.R
+import com.green.wallet.BuildConfig
+import com.green.wallet.R
 import com.example.common.tools.VLog
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication

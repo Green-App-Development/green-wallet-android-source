@@ -13,8 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentAddressEditBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentAddressEditBinding
 import com.example.common.tools.VLog
 import dagger.android.support.DaggerFragment
 import com.green.wallet.domain.domainmodel.Address

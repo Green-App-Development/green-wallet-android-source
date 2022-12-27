@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.presentation.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

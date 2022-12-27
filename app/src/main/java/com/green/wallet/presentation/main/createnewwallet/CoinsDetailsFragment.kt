@@ -13,8 +13,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentCoinsInfBinding
+import com.example.common.tools.VLog
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentCoinsInfBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.getShortNetworkType
@@ -23,7 +24,6 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.VLog
 import dagger.android.support.DaggerDialogFragment
 import dev.b3nedikt.restring.Restring
 import kotlinx.android.synthetic.main.fragment_coins_inf.*

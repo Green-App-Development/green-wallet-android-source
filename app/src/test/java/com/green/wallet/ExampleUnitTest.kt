@@ -1,4 +1,4 @@
-package com.android.greenapp
+package com.green.wallet
 
 import org.junit.Test
 

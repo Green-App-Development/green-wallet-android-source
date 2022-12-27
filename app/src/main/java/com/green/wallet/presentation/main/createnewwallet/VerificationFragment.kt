@@ -16,8 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentVerificationWalletBinding
+import com.example.common.tools.*
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentVerificationWalletBinding
 import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.App
@@ -30,7 +31,6 @@ import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
 import com.green.wallet.presentation.tools.getStringResource
-import com.example.common.tools.*
 import dagger.android.support.DaggerDialogFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_verification_wallet.*

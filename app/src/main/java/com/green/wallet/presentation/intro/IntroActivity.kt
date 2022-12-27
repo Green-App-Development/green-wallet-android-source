@@ -8,7 +8,7 @@ import android.view.WindowInsetsController
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.example.common.tools.VLog
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
@@ -44,6 +44,8 @@ class IntroActivity : BaseActivity() {
 		VLog.d("Application is Alive : ${(application as App).applicationIsAlive}")
 		checkingIntentFromPush()
 	}
+
+
 
 	override fun onNewIntent(intent: Intent?) {
 		super.onNewIntent(intent)

@@ -9,13 +9,13 @@ import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
-import com.android.greenapp.R
-import com.android.greenapp.databinding.ProgressWalletCreatingBinding
+import com.example.common.tools.VLog
+import com.green.wallet.R
+import com.green.wallet.databinding.ProgressWalletCreatingBinding
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.viewBinding
 import com.green.wallet.presentation.tools.getColorResource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

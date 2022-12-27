@@ -12,8 +12,8 @@ import android.widget.AdapterView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentReceiveBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentReceiveBinding
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory

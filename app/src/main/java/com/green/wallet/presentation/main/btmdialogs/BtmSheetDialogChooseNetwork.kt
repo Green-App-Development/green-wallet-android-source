@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.presentation.custom.dialogs.NetworkAdapter
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getStringResource

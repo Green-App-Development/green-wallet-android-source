@@ -1,4 +1,4 @@
-package com.android.greenapp
+package com.green.wallet
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

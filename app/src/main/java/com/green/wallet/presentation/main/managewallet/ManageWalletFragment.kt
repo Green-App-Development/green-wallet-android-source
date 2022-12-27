@@ -13,8 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentManageWalletBetaBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentManageWalletBetaBinding
 import com.example.common.tools.*
 import dagger.android.support.DaggerFragment
 import com.green.wallet.domain.domainmodel.Wallet

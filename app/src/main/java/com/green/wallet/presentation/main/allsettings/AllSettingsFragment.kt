@@ -7,16 +7,16 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentAllSettingsBinding
 import com.example.common.tools.VLog
-import dagger.android.support.DaggerDialogFragment
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentAllSettingsBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.preventDoubleClick
 import com.green.wallet.presentation.viewBinding
+import dagger.android.support.DaggerDialogFragment
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

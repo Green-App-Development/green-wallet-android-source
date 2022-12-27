@@ -21,8 +21,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentSendBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
 import dagger.android.support.DaggerFragment

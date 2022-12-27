@@ -16,13 +16,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentSavemnemonicsBinding
+import com.example.common.tools.VLog
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentSavemnemonicsBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource
-import com.example.common.tools.VLog
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

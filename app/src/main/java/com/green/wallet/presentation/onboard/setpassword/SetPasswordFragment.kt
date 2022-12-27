@@ -9,8 +9,8 @@ import android.widget.RelativeLayout
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentSetPasswordBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentSetPasswordBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.onboard.OnBoardActivity

@@ -2,7 +2,7 @@ package com.green.wallet.presentation.custom
 
 import android.content.Context
 import android.util.AttributeSet
-import com.android.greenapp.R
+import com.green.wallet.R
 
 /**
  * Created by bekjan on 14.10.2022.

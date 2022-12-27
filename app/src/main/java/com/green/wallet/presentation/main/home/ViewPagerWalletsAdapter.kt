@@ -11,7 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.hidePublicKey

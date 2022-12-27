@@ -5,8 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
-import com.android.greenapp.R
-import com.example.common.tools.VLog
+import com.green.wallet.R
 
 class Circles(private val con: Context, private val attr: AttributeSet) : View(con, attr) {
 

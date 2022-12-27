@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.notification.NotifSection
 import com.green.wallet.domain.domainmodel.notification.NotificationItem
 import com.green.wallet.presentation.custom.getTranslatedMonth

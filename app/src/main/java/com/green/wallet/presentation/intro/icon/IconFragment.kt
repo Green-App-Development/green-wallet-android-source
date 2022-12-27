@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentIconBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentIconBinding
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.viewBinding
 import kotlinx.coroutines.delay

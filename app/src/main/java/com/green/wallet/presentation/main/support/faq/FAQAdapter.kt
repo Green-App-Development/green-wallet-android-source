@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.FAQItem
 import com.example.common.tools.VLog
 

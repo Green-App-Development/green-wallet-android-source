@@ -8,7 +8,7 @@ import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Token
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView

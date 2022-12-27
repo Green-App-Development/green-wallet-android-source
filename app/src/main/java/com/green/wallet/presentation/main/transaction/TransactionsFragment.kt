@@ -15,12 +15,10 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentTransactionsBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentTransactionsBinding
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -447,9 +445,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 			findViewById<TextView>(R.id.edtAmountTrans).text =
 				"${formattedDoubleAmountWithPrecision(transaction.amount)} ${
-					getShortNetworkType(
-						transaction.networkType
-					)
+					transaction.code
 				}"
 			findViewById<TextView>(R.id.edtCommission).text =
 				"${formattedDoubleAmountWithPrecision(transaction.fee_amount)} ${

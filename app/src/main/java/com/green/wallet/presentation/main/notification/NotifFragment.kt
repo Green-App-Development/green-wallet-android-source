@@ -16,8 +16,8 @@ import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentNotificationBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentNotificationBinding
 import com.green.wallet.domain.domainmodel.notification.NotificationItem
 import com.green.wallet.presentation.custom.CustomSpinner
 import com.green.wallet.presentation.custom.formattedDateForTransaction

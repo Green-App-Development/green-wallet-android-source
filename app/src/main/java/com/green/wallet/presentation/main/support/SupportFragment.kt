@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentSupportBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentSupportBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource

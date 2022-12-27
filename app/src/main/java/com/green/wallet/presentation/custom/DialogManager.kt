@@ -7,7 +7,7 @@ import android.provider.Settings.ACTION_SETTINGS
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.presentation.di.application.AppScope
 import com.green.wallet.presentation.tools.getColorResource
 import com.example.common.tools.VLog

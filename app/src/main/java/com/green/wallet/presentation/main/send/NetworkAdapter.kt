@@ -9,7 +9,7 @@ import android.widget.BaseAdapter
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.android.greenapp.R
+import com.green.wallet.R
 
 /**
  * Created by bekjan on 21.04.2022.

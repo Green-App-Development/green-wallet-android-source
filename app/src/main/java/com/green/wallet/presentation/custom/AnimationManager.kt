@@ -6,7 +6,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Spinner
-import com.android.greenapp.R
+import com.green.wallet.R
 import com.green.wallet.presentation.di.application.AppScope
 import javax.inject.Inject
 

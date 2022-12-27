@@ -7,8 +7,8 @@ import android.view.View
 import android.view.WindowInsetsController
 import androidx.activity.viewModels
 import androidx.navigation.findNavController
-import com.android.greenapp.R
-import com.android.greenapp.databinding.ActivityGreetingBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.ActivityGreetingBinding
 import com.example.common.tools.*
 import com.green.wallet.presentation.BaseActivity
 import com.green.wallet.presentation.custom.getStatusBarBcgColorBasedOnTime

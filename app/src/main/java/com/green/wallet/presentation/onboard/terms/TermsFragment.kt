@@ -15,8 +15,8 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentTermsofuseBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentTermsofuseBinding
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory

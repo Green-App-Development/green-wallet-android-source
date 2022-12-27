@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.android.greenapp.data.network.dto.*
+-keep class com.green.wallet.data.network.dto.*

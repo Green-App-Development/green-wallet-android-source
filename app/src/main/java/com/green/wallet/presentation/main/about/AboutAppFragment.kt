@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentAboutAppBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentAboutAppBinding
 import dagger.android.support.DaggerDialogFragment
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentLanguageBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentLanguageBinding
 import com.green.wallet.data.network.dto.greenapp.lang.LanguageItemDto
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest

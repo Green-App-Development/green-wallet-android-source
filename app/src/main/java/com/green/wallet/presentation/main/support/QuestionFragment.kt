@@ -14,8 +14,8 @@ import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentQuestionBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentQuestionBinding
 import com.green.wallet.data.network.dto.support.QuestionPost
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager

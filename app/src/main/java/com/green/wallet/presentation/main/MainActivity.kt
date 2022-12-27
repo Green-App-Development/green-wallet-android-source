@@ -20,9 +20,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
-import com.android.greenapp.R
-import com.android.greenapp.R.id.*
-import com.android.greenapp.databinding.ActivityMainBinding
+import com.green.wallet.R
+import com.green.wallet.R.id.*
+import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity

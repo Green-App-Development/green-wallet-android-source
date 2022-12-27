@@ -20,8 +20,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentImpmnemonicBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentImpmnemonicBinding
 import com.example.common.tools.VLog
 import com.example.common.tools.getPrefixForAddressFromNetworkType
 import dagger.android.support.DaggerDialogFragment

@@ -8,8 +8,8 @@ import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentFaqBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentFaqBinding
 import dagger.android.support.DaggerDialogFragment
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest

@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.viewModels
-import com.android.greenapp.R
-import com.android.greenapp.databinding.FragmentScannerBinding
+import com.green.wallet.R
+import com.green.wallet.databinding.FragmentScannerBinding
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.main.send.SendFragmentViewModel
