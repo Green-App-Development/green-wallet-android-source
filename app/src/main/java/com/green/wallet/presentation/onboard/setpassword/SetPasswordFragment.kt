@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.onboard.setpassword
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +61,15 @@ class SetPasswordFragment : DaggerFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		registerButtonClicks()
+		refreshGridLayout()
+	}
+
+	private fun refreshGridLayout() {
+		Handler().postDelayed(
+			{
+				binding.btnsGridLayout.invalidate()
+			}, 1000L
+		)
 	}
 
 

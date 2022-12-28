@@ -29,7 +29,6 @@ class AppRemovedRecentTaskService : Service() {
 		super.onTaskRemoved(rootIntent)
 		VLog.d("On Task Removed for Application")
 		(application as App).applicationIsAlive = false
-		initWorkManager()
 	}
 
 
@@ -40,17 +39,6 @@ class AppRemovedRecentTaskService : Service() {
 
 
 
-	private fun initWorkManager() {
-		val constraints =
-			Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-		val periodicWorkRequest =
-			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(15000, TimeUnit.MILLISECONDS)
-				.setConstraints(constraints)
-		WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-			SYNC_WORK_TAG,
-			ExistingPeriodicWorkPolicy.REPLACE,
-			periodicWorkRequest.build()
-		)
-	}
+
 
 }

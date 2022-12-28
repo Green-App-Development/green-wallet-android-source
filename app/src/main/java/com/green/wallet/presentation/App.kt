@@ -15,6 +15,7 @@ import dev.b3nedikt.viewpump.ViewPump
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.NotificationHelper
+import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.green.wallet.presentation.di.application.DaggerAppComponent
 import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import io.flutter.embedding.engine.FlutterEngine
@@ -22,6 +23,7 @@ import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -80,9 +82,7 @@ class App : DaggerApplication() {
 			this,
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
-
-//		cancelWorkManager()
-//		testingMethod()
+		initWorkManager()
 
 	}
 
@@ -97,8 +97,17 @@ class App : DaggerApplication() {
 		}
 	}
 
-	private fun cancelWorkManager() {
-		WorkManager.getInstance(this).cancelAllWorkByTag(SYNC_WORK_TAG)
+	private fun initWorkManager() {
+		val constraints =
+			Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+		val periodicWorkRequest =
+			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(15000, TimeUnit.MILLISECONDS)
+				.setConstraints(constraints)
+		WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+			SYNC_WORK_TAG,
+			ExistingPeriodicWorkPolicy.REPLACE,
+			periodicWorkRequest.build()
+		)
 	}
 
 	private fun testingMethod() {
