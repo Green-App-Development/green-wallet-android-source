@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -61,7 +63,7 @@ class SetPasswordFragment : DaggerFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		registerButtonClicks()
-		refreshGridLayout()
+
 	}
 
 	private fun refreshGridLayout() {
@@ -78,10 +80,12 @@ class SetPasswordFragment : DaggerFragment() {
 			it.startAnimation(effect.getBtnEffectAnimation())
 			curActivity().popBackStack()
 		}
-		for (k in binding.btnsGridLayout.children) {
-			k.setOnClickListener {
-				savingFirstTimePasscodeLogic(it)
-			}
+		for (linear in binding.btnsGridLayout.children) {
+			linear as LinearLayoutCompat
+			for (k in linear.children)
+				k.setOnClickListener {
+					savingFirstTimePasscodeLogic(it)
+				}
 		}
 	}
 

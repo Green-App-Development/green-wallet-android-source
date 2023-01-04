@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt.*
 import androidx.core.content.ContextCompat
@@ -135,29 +136,31 @@ class AuthFragmentIntro : DaggerFragment() {
 
 	private fun registerBtnClicks() {
 
-		for (btnNum in binding.btnsGridLayout.children) {
-			btnNum.setOnClickListener {
-				if (index == 6)
-					return@setOnClickListener
-				if (btnNum is Button) {
-					val n = Integer.valueOf(btnNum.text.toString())
-					passCode[index++] = n
-					binding.circles.usedCircleCount = index
-				} else if (btnNum is RelativeLayout) {
-					if (btnNum.tag == "rel_img_back_space") {
-						btnNum.startAnimation(effect.getBtnEffectAnimation())
-						index--
-						if (index < 0)
-							index = 0
+		for (linear in binding.btnsGridLayout.children) {
+			linear as LinearLayoutCompat
+			for (btnNum in linear.children)
+				btnNum.setOnClickListener {
+					if (index == 6)
+						return@setOnClickListener
+					if (btnNum is Button) {
+						val n = Integer.valueOf(btnNum.text.toString())
+						passCode[index++] = n
 						binding.circles.usedCircleCount = index
-					} else if (btnNum.tag == "rel_face_id") {
-						askingFaceIdPermission()
+					} else if (btnNum is RelativeLayout) {
+						if (btnNum.tag == "rel_img_back_space") {
+							btnNum.startAnimation(effect.getBtnEffectAnimation())
+							index--
+							if (index < 0)
+								index = 0
+							binding.circles.usedCircleCount = index
+						} else if (btnNum.tag == "rel_face_id") {
+							askingFaceIdPermission()
+						}
+					}
+					if (index == 6) {
+						verifiedPasscode(passCode)
 					}
 				}
-				if (index == 6) {
-					verifiedPasscode(passCode)
-				}
-			}
 		}
 
 		binding.txtClearCash.setOnClickListener {
