@@ -87,6 +87,7 @@ class AuthFragmentIntro : DaggerFragment() {
 
 	@SuppressLint("WrongConstant")
 	private fun askingFaceIdPermission() {
+		VLog.d("Face Id Permission : clicked")
 		executor = ContextCompat.getMainExecutor(curActivity())
 		biometricPrompt = androidx.biometric.BiometricPrompt(
 			curActivity(),
