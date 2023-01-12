@@ -295,21 +295,25 @@
 	<string name="spendable_balance" />
 	<string name="server_maintenance">The server is undergoing maintenance, please try again later</string>
 	<string name="ok_button">OK</string>
-	<string name="wallet_settings_main"/>
-	<string name="derivation_index_first"/>
-	<string name="derivation_index_first_subtext"/>
-	<string name="derivation_index_second"/>
-	<string name="derivation_index_second_subtext"/>
-	<string name="save_settings_button"/>
-	<string name="default_settings_button"/>
-	<string name="restore_def_settings"/>
-	<string name="restore_def_settings_subtext"/>
-	<string name="restore_yes_button"/>
-	<string name="restore_no_button"/>
-	<string name="settings_saved"/>
-	<string name="settings_saved_subtext"/>
-	<string name="derivation_index_title"/>
-	<string name="derivation_index_subtext"/>
+	<string name="wallet_settings_main" />
+	<string name="derivation_index_first" />
+	<string name="derivation_index_first_subtext" />
+	<string name="derivation_index_second" />
+	<string name="derivation_index_second_subtext" />
+	<string name="save_settings_button" />
+	<string name="default_settings_button" />
+	<string name="restore_def_settings" />
+	<string name="restore_def_settings_subtext" />
+	<string name="restore_yes_button" />
+	<string name="restore_no_button" />
+	<string name="settings_saved" />
+	<string name="settings_saved_subtext" />
+	<string name="derivation_index_title" />
+	<string name="derivation_index_subtext" />
+	<string name="bio_authetication" />
+	<string name="bio_login" />
+	<string name="bio_cancel_btn" />
+
 
 
 </resources>

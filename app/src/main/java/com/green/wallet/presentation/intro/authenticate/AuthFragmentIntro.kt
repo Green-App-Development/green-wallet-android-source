@@ -1,8 +1,10 @@
 package com.green.wallet.presentation.intro.authenticate
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Configuration
 import android.hardware.biometrics.BiometricManager.Authenticators.*
+import android.hardware.fingerprint.FingerprintManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt.*
 import androidx.core.content.ContextCompat
+import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -111,9 +114,9 @@ class AuthFragmentIntro : DaggerFragment() {
 			})
 
 		biometricPromptInfo = PromptInfo.Builder()
-			.setTitle("Biometric Authentication")
-			.setSubtitle("Login using your face id")
-			.setNegativeButtonText("Cancel")
+			.setTitle(curActivity().getStringResource(R.string.bio_authetication))
+			.setSubtitle(curActivity().getStringResource(R.string.bio_login))
+			.setNegativeButtonText(curActivity().getStringResource(R.string.bio_cancel_btn))
 			.setConfirmationRequired(false)
 			.build()
 
@@ -186,6 +189,16 @@ class AuthFragmentIntro : DaggerFragment() {
 
 		}
 
+	}
+
+	private fun isFaceIDAvailable(): Boolean {
+		val fingerprintManager: FingerprintManager =
+			context!!.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
+		VLog.d("FingerPrintManager hardware detected : ${fingerprintManager.isHardwareDetected}")
+		if (fingerprintManager.isHardwareDetected) {
+			return false
+		}
+		return true
 	}
 
 

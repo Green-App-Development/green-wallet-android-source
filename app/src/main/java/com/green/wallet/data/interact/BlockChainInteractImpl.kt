@@ -416,6 +416,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			var newStartHeight = Long.MAX_VALUE
 			if (request.isSuccessful) {
+				VLog.d("Got coin records : ${request.body()!!.coin_records}")
 				for (coin in request.body()!!.coin_records) {
 					val curAmount = coin.coin.amount
 					val spent = coin.spent
@@ -481,11 +482,11 @@ class BlockChainInteractImpl @Inject constructor(
 					)!!["puzzle_hash"] as String
 					val transExistByParentInfo =
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
-					if (timeStamp * 1000 >= wallet.savedTime && !wallet.puzzle_hashes.contains(
+					if (timeStamp * 1000 >= wallet.savedTime && (!wallet.puzzle_hashes.contains(
 							parent_puzzle_hash.substring(
 								2
 							)
-						) && !transExistByParentInfo.isPresent
+						) || record.coinbase) && !transExistByParentInfo.isPresent
 					) {
 						VLog.d("Actual timeStamp of incoming coin record : $timeStamp and walletCreatedTime : ${wallet.savedTime}")
 						val transEntity = TransactionEntity(

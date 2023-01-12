@@ -110,7 +110,7 @@ class App : DaggerApplication() {
 		)
 	}
 
-		private fun testingMethod() {
+	private fun testingMethod() {
 		CoroutineScope(Dispatchers.IO).launch {
 			for (i in 0 until 10) {
 				VLog.d("Waiting : $i")
