@@ -158,7 +158,9 @@ class AuthFragmentIntro : DaggerFragment() {
 								index = 0
 							binding.circles.usedCircleCount = index
 						} else if (btnNum.tag == "rel_face_id") {
-							askingFaceIdPermission()
+							kotlin.runCatching {
+								askingFaceIdPermission()
+							}
 						}
 					}
 					if (index == 6) {

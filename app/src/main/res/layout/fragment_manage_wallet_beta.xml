@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primary_app_background"
-    android:scrollbars="none">
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/primary_app_background"
+		android:scrollbars="none">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+	<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/back_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:orientation="horizontal">
+		<LinearLayout
+				android:id="@+id/back_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="10dp"
+				android:layout_marginTop="10dp"
+				android:foreground="?android:attr/selectableItemBackground"
+				android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:src="@drawable/back_arrow_ic" />
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center_vertical"
+					android:gravity="center_vertical"
+					android:src="@drawable/back_arrow_ic" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:text="@string/back_btn"
-                android:textColor="@color/greey"
-                android:textFontWeight="500"
-                android:textSize="18sp" />
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center_vertical"
+					android:text="@string/back_btn"
+					android:textColor="@color/greey"
+					android:textFontWeight="500"
+					android:textSize="18sp" />
 
-        </LinearLayout>
+		</LinearLayout>
 
-        <TextView
-            android:id="@+id/txtWallet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:gravity="center_horizontal"
-            android:text="@string/wallet_title"
-            android:textColor="@color/green"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+		<TextView
+				android:id="@+id/txtWallet"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+				android:layout_marginTop="8dp"
+				android:gravity="center_horizontal"
+				android:text="@string/wallet_title"
+				android:textColor="@color/green"
+				android:textSize="25sp"
+				android:textStyle="bold" />
 
 		<ScrollView
 				android:layout_width="match_parent"
@@ -152,16 +152,17 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:layout_marginTop="5dp"
+								android:autoSizeMaxTextSize="16sp"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_send_title"
-								android:textColor="@color/green"
-								android:textSize="16sp" />
+								android:textColor="@color/green" />
 
 						<TextView
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:layout_height="match_parent"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_send_description"
-								android:textColor="@color/greey"
-								android:textSize="12sp" />
+								android:textColor="@color/greey" />
 
 
 					</LinearLayout>
@@ -188,16 +189,17 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:layout_marginTop="5dp"
+								android:autoSizeMaxTextSize="16sp"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_receive_title"
-								android:textColor="@color/green"
-								android:textSize="16sp" />
+								android:textColor="@color/green" />
 
 						<TextView
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:layout_height="match_parent"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_receive_description"
-								android:textColor="@color/greey"
-								android:textSize="12sp" />
+								android:textColor="@color/greey" />
 
 
 					</LinearLayout>
@@ -223,16 +225,17 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:layout_marginTop="5dp"
+								android:autoSizeMaxTextSize="16sp"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_share_title"
-								android:textColor="@color/green"
-								android:textSize="16sp" />
+								android:textColor="@color/green" />
 
 						<TextView
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:layout_height="match_parent"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_share_description"
-								android:textColor="@color/greey"
-								android:textSize="12sp" />
+								android:textColor="@color/greey" />
 
 
 					</LinearLayout>
@@ -261,12 +264,15 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:layout_marginTop="5dp"
+								android:autoSizeMaxTextSize="16sp"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_scan_address_title"
 								android:textColor="@color/green" />
 
 						<TextView
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:layout_height="match_parent"
+								android:autoSizeTextType="uniform"
 								android:text="@string/wallet_scan_address_description"
 								android:textColor="@color/greey"
 								android:textSize="12sp" />
@@ -315,6 +321,6 @@
 		</ScrollView>
 
 
-    </RelativeLayout>
+	</RelativeLayout>
 
 </ScrollView>
