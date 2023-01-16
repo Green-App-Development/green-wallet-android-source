@@ -847,7 +847,7 @@ class SendFragment : DaggerFragment() {
 
 	private fun showSuccessSendMoneyDialog() {
 		curActivity().apply {
-			if (!this.isFinishing) {
+			if (!this.isDestroyed) {
 				dialogManager.showSuccessDialog(
 					this,
 					getStringResource(R.string.send_token_pop_up_succsess_title),
@@ -1337,6 +1337,7 @@ class SendFragment : DaggerFragment() {
 
 	override fun onDestroy() {
 		super.onDestroy()
+		dialogManager.dismissAllPrevDialogs()
 	}
 
 	private fun curActivity() = requireActivity() as MainActivity

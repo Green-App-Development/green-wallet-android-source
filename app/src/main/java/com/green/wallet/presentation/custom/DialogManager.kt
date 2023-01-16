@@ -183,6 +183,15 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		}
 	}
 
+	fun dismissAllPrevDialogs() {
+		progressDialog?.dismiss()
+		progressDialog = null
+		successDialog?.dismiss()
+		successDialog = null
+		failureDialog?.dismiss()
+		failureDialog = null
+	}
+
 	fun isProgressDialogShowing() = progressDialog?.isShowing
 
 

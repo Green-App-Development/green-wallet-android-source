@@ -30,7 +30,7 @@
 				android:paddingBottom="10dp">
 
 
-			<RelativeLayout
+			<androidx.constraintlayout.widget.ConstraintLayout
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
 
@@ -42,14 +42,17 @@
 
 				<TextView
 						android:id="@+id/txtFingerPrintPk"
-						android:layout_width="match_parent"
+						android:layout_width="0dp"
 						android:layout_height="35dp"
-						android:layout_marginStart="27dp"
 						android:layout_centerVertical="true"
-						android:layout_marginEnd="30dp"
+						android:layout_marginStart="27dp"
 						android:layout_toRightOf="@id/ic_coin"
 						android:autoSizeTextType="uniform"
-						android:text="Приватный ключ с публичным отпечатком 8745635630" />
+						android:text="Приватный ключ с публичным отпечатком 8745635630 ok I here to help"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toStartOf="@+id/icSettingsIcon"
+						app:layout_constraintStart_toEndOf="@+id/ic_coin"
+						app:layout_constraintTop_toTopOf="parent" />
 
 				<ImageView
 						android:id="@+id/icSettingsIcon"
@@ -57,9 +60,12 @@
 						android:layout_height="wrap_content"
 						android:layout_alignParentEnd="true"
 						android:layout_centerVertical="true"
-						android:src="@drawable/ic_settings" />
+						android:src="@drawable/ic_settings"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintTop_toTopOf="parent" />
 
-			</RelativeLayout>
+			</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 			<TextView
