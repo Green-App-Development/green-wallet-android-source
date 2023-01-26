@@ -70,28 +70,15 @@
 					android:foreground="?android:attr/selectableItemBackground"
 					android:src="@drawable/ic_up" />
 
-			<FrameLayout
+			<ImageView
+					android:id="@+id/img_qr"
 					android:layout_width="55dp"
 					android:layout_height="55dp"
 					android:layout_below="@+id/img_ic_up"
 					android:layout_alignParentEnd="true"
-					android:layout_marginTop="15dp">
-
-				<ImageView
-						android:id="@+id/img_qr"
-						android:layout_width="55dp"
-						android:layout_height="55dp"
-						android:foreground="?android:attr/selectableItemBackground"
-						android:src="@drawable/ic_qr_rect" />
-
-				<ImageView
-						android:id="@+id/up_arrow_qr"
-						android:layout_width="55dp"
-						android:layout_height="55dp"
-						android:src="@drawable/triangle_up_comment"
-						android:visibility="visible" />
-
-			</FrameLayout>
+					android:layout_marginTop="15dp"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_qr_rect" />
 
 
 			<RelativeLayout
@@ -267,53 +254,76 @@
 				app:piv_unselectedColor="@color/unselected_dot_indicator" />
 
 
-		<RelativeLayout
-				android:id="@+id/comment_rel_"
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/constraint_comment_qr"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginTop="-12dp"
+				android:layout_marginTop="-25dp"
 				android:layout_marginEnd="15dp"
-				android:background="@drawable/bcg_rounded_corner_comment"
-				android:paddingLeft="20dp"
-				android:paddingTop="10dp"
-				android:paddingRight="20dp"
-				android:paddingBottom="10dp"
+				android:visibility="gone"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
-
-			<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_centerInParent="true"
-					android:gravity="center_horizontal"
-					android:text="Functionality is \n under  development"
-					android:textColor="@color/white" />
-
-
-		</RelativeLayout>
-
-		<androidx.constraintlayout.widget.ConstraintLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				tools:layout_editor_absoluteX="105dp"
-				tools:layout_editor_absoluteY="421dp">
 
 			<ImageView
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginEnd="10dp"
 					android:src="@drawable/ic_polygon"
-					app:layout_constraintEnd_toEndOf="parent" />
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent" />
 
 			<RelativeLayout
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:layout_marginTop="13dp"
 					android:background="@drawable/bcg_rounded_corner_comment"
 					android:paddingLeft="20dp"
 					android:paddingTop="10dp"
 					android:paddingRight="20dp"
 					android:paddingBottom="10dp"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:gravity="center_horizontal"
+						android:text="Functionality is \n under  development"
+						android:textColor="@color/white" />
+
+			</RelativeLayout>
+
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/constraint_comment_send"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="-95dp"
+				android:layout_marginEnd="18dp"
+				android:visibility="gone"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
+
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="10dp"
+					android:src="@drawable/ic_polygon"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintTop_toTopOf="parent" />
+
+			<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
 					android:layout_marginTop="13dp"
+					android:background="@drawable/bcg_rounded_corner_comment"
+					android:paddingLeft="20dp"
+					android:paddingTop="10dp"
+					android:paddingRight="20dp"
+					android:paddingBottom="10dp"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintTop_toTopOf="parent">
 

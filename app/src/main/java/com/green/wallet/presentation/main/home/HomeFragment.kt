@@ -107,7 +107,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		super.onViewCreated(view, savedInstanceState)
 		VLog.d("OnViewCreated on HomeFragment")
 		prevModeChanged()
-		registerButtonClicks()
+		binding.registerButtonClicks()
 		initWalletTokenAdapter()
 		updateViewDetails()
 		initCurCryptoCourseUpdate()
@@ -239,23 +239,29 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		}
 	}
 
-	private fun registerButtonClicks() {
+	private fun FragmentHomeBinding.registerButtonClicks() {
 
-		img_ic_up.setOnClickListener {
-			if (hasAtLeastOneWallet)
-				curActivity().move2SendFragment(curNetwork, curFingerPrint, shouldQRCleared = true)
-			else
-				curActivity().showBtmDialogCreateOrImportNewWallet(false)
+		imgIcUp.setOnClickListener {
+
+
+
+//			if (hasAtLeastOneWallet)
+//				curActivity().move2SendFragment(curNetwork, curFingerPrint, shouldQRCleared = true)
+//			else
+//				curActivity().showBtmDialogCreateOrImportNewWallet(false)
 		}
 
-		img_qr.setOnClickListener {
-			if (hasAtLeastOneWallet)
-				curActivity().move2ReceiveFragment(curNetwork, curFingerPrint)
-			else
-				curActivity().showBtmDialogCreateOrImportNewWallet(false)
+		imgQr.setOnClickListener {
+
+
+
+//			if (hasAtLeastOneWallet)
+//				curActivity().move2ReceiveFragment(curNetwork, curFingerPrint)
+//			else
+//				curActivity().showBtmDialogCreateOrImportNewWallet(false)
 		}
 
-		img_three_dots.setOnClickListener {
+		imgThreeDots.setOnClickListener {
 			it.preventDoubleClick()
 //            it.startAnimation(effect.getAnimation())
 			showBottomSheetDialogSettings()
@@ -292,7 +298,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 		})
 
-		rel_add_wallet.setOnClickListener {
+		relAddWallet.setOnClickListener {
 			addWallet()
 		}
 
