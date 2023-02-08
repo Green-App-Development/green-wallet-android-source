@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.util.DisplayMetrics
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -207,6 +208,16 @@ fun convertListToStringWithSpace(listString: List<String>): String {
 			str += " "
 	}
 	return str
+}
+
+fun Context.convertDpToPixel(dp: Int): Int {
+	val metrics = resources.displayMetrics
+	val px: Float = dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+	return px.toInt()
+}
+
+fun Context.convertPixelToDp(pixel: Float): Int {
+	return pixel.toInt()/ resources.displayMetrics.density.toInt()
 }
 
 

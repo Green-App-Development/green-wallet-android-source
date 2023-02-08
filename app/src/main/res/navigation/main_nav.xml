@@ -1,241 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_nav"
-    app:startDestination="@id/homeFragment">
-
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.green.wallet.presentation.main.home.HomeFragment"
-        android:label="WalletFragment"
-        tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_walletFragment_to_coinsDetailsFragment2"
-            app:destination="@id/coinsDetailsFragment2" />
-        <action
-            android:id="@+id/action_walletFragment_to_impMnemonicFragment"
-            app:destination="@id/impMnemonicFragment" />
-        <action
-            android:id="@+id/action_walletFragment_to_allWalletFragment"
-            app:destination="@id/allWalletListFragment" />
-        <action
-            android:id="@+id/action_walletFragment_to_importTokenFragment2"
-            app:destination="@id/importTokenFragment" />
-        <action
-            android:id="@+id/action_walletFragment_to_supportFragment"
-            app:destination="@id/supportFragment" />
-        <action
-            android:id="@+id/action_walletFragment_to_allSettingsFragment"
-            app:destination="@id/allSettingsFragment" />
-        <action
-            android:id="@+id/action_walletFragment_to_transactionsFragment"
-            app:destination="@id/transactionsFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_addressFragment"
-            app:destination="@id/addressFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_notificationFragment"
-            app:destination="@id/notificationFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_listingFragment"
-            app:destination="@id/listingFragment" />
-    </fragment>
-
-    <dialog
-        android:id="@+id/coinsDetailsFragment2"
-        android:name="com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment"
-        android:label="CoinsDetailsFragment"
-        tools:layout="@layout/fragment_coins_inf">
-
-        <action
-            android:id="@+id/action_coinsDetailsFragment2_to_creatingWalletFragment"
-            app:destination="@id/progressWalletCreating" />
-        <action
-            android:id="@+id/action_coinsDetailsFragment2_to_walletFragment2"
-            app:destination="@id/homeFragment" />
-    </dialog>
-
-    <dialog
-        android:id="@+id/progressWalletCreating"
-        android:name="com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWalletFragment"
-        android:label="CreatingWalletFragment"
-        tools:layout="@layout/progress_wallet_creating">
-        <action
-            android:id="@+id/action_creatingWalletFragment_to_saveMnemonicsFragment"
-            app:destination="@id/saveMnemonicsFragment" />
-    </dialog>
-
-    <fragment
-        android:id="@+id/impMnemonicFragment"
-        android:name="com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment"
-        android:label="ImpMnemonicFragment"
-        tools:layout="@layout/fragment_impmnemonic" />
-
-    <fragment
-        android:id="@+id/receiveFragment"
-        android:name="com.green.wallet.presentation.main.receive.ReceiveFragment"
-        android:label="ReceiveFragment"
-        tools:layout="@layout/fragment_receive" />
-
-    <fragment
-        android:id="@+id/sendFragment"
-        android:name="com.green.wallet.presentation.main.send.SendFragment"
-        android:label="SendFragment"
-        tools:layout="@layout/fragment_send" />
-
-    <fragment
-        android:id="@+id/scannerFragment"
-        android:name="com.green.wallet.presentation.main.scan.ScannerFragment"
-        android:label="ScannerFragment"
-        tools:layout="@layout/fragment_scanner" />
-
-
-    <dialog
-        android:id="@+id/saveMnemonicsFragment"
-        android:name="com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment"
-        android:label="SaveMnemonicsFragment"
-        tools:layout="@layout/fragment_savemnemonics">
-        <action
-            android:id="@+id/action_saveMnemonicsFragment_to_verificationFragment"
-            app:destination="@id/verificationFragment" />
-    </dialog>
-
-
-    <dialog
-        android:id="@+id/verificationFragment"
-        android:name="com.green.wallet.presentation.main.createnewwallet.VerificationFragment"
-        android:label="VerificationFragment"
-        tools:layout="@layout/fragment_verification_wallet" />
-
-
-    <fragment
-        android:id="@+id/allWalletListFragment"
-        android:name="com.green.wallet.presentation.main.walletlist.AllWalletListFragment"
-        android:label="ActivesFragment"
-        tools:layout="@layout/fragment_all_wallet_list">
-        <action
-            android:id="@+id/action_allWalletListFragment_to_entPasscodeFrMain"
-            app:destination="@id/entPasscodeFrMain" />
-        <action
-            android:id="@+id/action_allWalletListFragment_to_manageWalletFragment"
-            app:destination="@id/manageWalletFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/entPasscodeFrMain"
-        android:name="com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment"
-        android:label="EntPasscodeFrMain"
-        tools:layout="@layout/fragment_enter_passcode_main" />
-    <fragment
-        android:id="@+id/manageWalletFragment"
-        android:name="com.green.wallet.presentation.main.managewallet.ManageWalletFragment"
-        android:label="ManageWalletFragment"
-        tools:layout="@layout/fragment_manage_wallet_beta" />
-    <fragment
-        android:id="@+id/importTokenFragment"
-        android:name="com.green.wallet.presentation.main.importtoken.ImportTokenFragment"
-        android:label="ImportTokenFragment"
-        tools:layout="@layout/fragment_import_token" />
-    <dialog
-        android:id="@+id/supportFragment"
-        android:name="com.green.wallet.presentation.main.support.SupportFragment"
-        android:label="SupportFragment"
-        tools:layout="@layout/fragment_support">
-        <action
-            android:id="@+id/action_supportFragment_to_FAQFragment"
-            app:destination="@id/FAQFragment" />
-        <action
-            android:id="@+id/action_supportFragment_to_askQuestionFragment"
-            app:destination="@id/questionFragment" />
-    </dialog>
-    <dialog
-        android:id="@+id/allSettingsFragment"
-        android:name="com.green.wallet.presentation.main.allsettings.AllSettingsFragment"
-        android:label="AllSettingsFragment"
-        tools:layout="@layout/fragment_all_settings">
-        <action
-            android:id="@+id/action_allSettingsFragment_to_mainLanguageFragment"
-            app:destination="@id/mainLanguageFragment" />
-        <action
-            android:id="@+id/action_allSettingsFragment_to_aboutAppFragment"
-            app:destination="@id/aboutAppFragment" />
-        <action
-            android:id="@+id/action_allSettingsFragment_to_supportFragment"
-            app:destination="@id/supportFragment" />
-    </dialog>
-    <dialog
-        android:id="@+id/mainLanguageFragment"
-        android:name="com.green.wallet.presentation.main.language.MainLanguageFragment"
-        android:label="MainLanguageFragment"
-        tools:layout="@layout/fragment_mainlanguage" />
-    <dialog
-        android:id="@+id/aboutAppFragment"
-        android:name="com.green.wallet.presentation.main.about.AboutAppFragment"
-        android:label="AboutAppFragment"
-        tools:layout="@layout/fragment_about_app" />
-    <fragment
-        android:id="@+id/transactionsFragment"
-        android:name="com.green.wallet.presentation.main.transaction.TransactionsFragment"
-        android:label="TransactionsFragment"
-        tools:layout="@layout/fragment_transactions" />
-    <fragment
-        android:id="@+id/addressFragment"
-        android:name="com.green.wallet.presentation.main.address.AddressFragment"
-        android:label="AddressFragment"
-        tools:layout="@layout/fragment_address_list">
-        <action
-            android:id="@+id/action_addressFragment_to_addAddressFragment"
-            app:destination="@id/addAddressFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/addAddressFragment"
-        android:name="com.green.wallet.presentation.main.address.EditAddressFragment"
-        android:label="AddAddressFragment"
-        tools:layout="@layout/fragment_address_edit" />
-
-    <dialog
-        android:id="@+id/notificationFragment"
-        android:name="com.green.wallet.presentation.main.notification.NotifFragment"
-        android:label="NotificationFragment"
-        tools:layout="@layout/fragment_notification" />
-
-    <dialog
-        android:id="@+id/FAQFragment"
-        android:name="com.green.wallet.presentation.main.support.faq.FAQFragment"
-        android:label="FAQFragment"
-        tools:layout="@layout/fragment_faq" />
-
-
-    <dialog
-        android:id="@+id/questionFragment"
-        android:name="com.green.wallet.presentation.main.support.QuestionFragment"
-        android:label="AskQuestionFragment"
-        tools:layout="@layout/fragment_question" />
-    <dialog
-        android:id="@+id/listingFragment"
-        android:name="com.green.wallet.presentation.main.support.ListingFragment"
-        android:label="ListingFragment"
-        tools:layout="@layout/fragment_listing" />
-
-
-    <dialog
-        android:id="@+id/btmSheetChooseNetwork"
-        android:name="com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork"
-        android:label="btmDialog"
-        tools:layout="@layout/dialog_choose_network" />
-
-    <dialog
-        android:id="@+id/btmSheetDialogNewOrImport"
-        android:name="com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
-        android:label="btmDialog"
-        tools:layout="@layout/dialog_add_wallet" />
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/main_nav"
+		app:startDestination="@id/homeFragment">
 
 	<fragment
-		android:id="@+id/walletSettings"
-		android:name="com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment"
-		android:label="WalletSettings"
-		tools:layout="@layout/fragment_wallet_settings"
-		/>
+			android:id="@+id/homeFragment"
+			android:name="com.green.wallet.presentation.main.home.HomeFragment"
+			android:label="WalletFragment"
+			tools:layout="@layout/fragment_home">
+		<action
+				android:id="@+id/action_walletFragment_to_coinsDetailsFragment2"
+				app:destination="@id/coinsDetailsFragment2" />
+		<action
+				android:id="@+id/action_walletFragment_to_impMnemonicFragment"
+				app:destination="@id/impMnemonicFragment" />
+		<action
+				android:id="@+id/action_walletFragment_to_allWalletFragment"
+				app:destination="@id/allWalletListFragment" />
+		<action
+				android:id="@+id/action_walletFragment_to_importTokenFragment2"
+				app:destination="@id/importTokenFragment" />
+		<action
+				android:id="@+id/action_walletFragment_to_supportFragment"
+				app:destination="@id/supportFragment" />
+		<action
+				android:id="@+id/action_walletFragment_to_allSettingsFragment"
+				app:destination="@id/allSettingsFragment" />
+		<action
+				android:id="@+id/action_walletFragment_to_transactionsFragment"
+				app:destination="@id/transactionsFragment" />
+		<action
+				android:id="@+id/action_homeFragment_to_addressFragment"
+				app:destination="@id/addressFragment" />
+		<action
+				android:id="@+id/action_homeFragment_to_notificationFragment"
+				app:destination="@id/notificationFragment" />
+		<action
+				android:id="@+id/action_homeFragment_to_listingFragment"
+				app:destination="@id/listingFragment" />
+	</fragment>
+
+	<dialog
+			android:id="@+id/coinsDetailsFragment2"
+			android:name="com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment"
+			android:label="CoinsDetailsFragment"
+			tools:layout="@layout/fragment_coins_inf">
+
+		<action
+				android:id="@+id/action_coinsDetailsFragment2_to_creatingWalletFragment"
+				app:destination="@id/progressWalletCreating" />
+		<action
+				android:id="@+id/action_coinsDetailsFragment2_to_walletFragment2"
+				app:destination="@id/homeFragment" />
+	</dialog>
+
+	<dialog
+			android:id="@+id/progressWalletCreating"
+			android:name="com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWalletFragment"
+			android:label="CreatingWalletFragment"
+			tools:layout="@layout/progress_wallet_creating">
+		<action
+				android:id="@+id/action_creatingWalletFragment_to_saveMnemonicsFragment"
+				app:destination="@id/saveMnemonicsFragment" />
+	</dialog>
+
+	<fragment
+			android:id="@+id/impMnemonicFragment"
+			android:name="com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment"
+			android:label="ImpMnemonicFragment"
+			tools:layout="@layout/fragment_impmnemonic" />
+
+	<fragment
+			android:id="@+id/receiveFragment"
+			android:name="com.green.wallet.presentation.main.receive.ReceiveFragment"
+			android:label="ReceiveFragment"
+			tools:layout="@layout/fragment_receive" />
+
+	<fragment
+			android:id="@+id/sendFragment"
+			android:name="com.green.wallet.presentation.main.send.SendFragment"
+			android:label="SendFragment"
+			tools:layout="@layout/fragment_send" />
+
+	<fragment
+			android:id="@+id/scannerFragment"
+			android:name="com.green.wallet.presentation.main.scan.ScannerFragment"
+			android:label="ScannerFragment"
+			tools:layout="@layout/fragment_scanner" />
+
+
+	<dialog
+			android:id="@+id/saveMnemonicsFragment"
+			android:name="com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment"
+			android:label="SaveMnemonicsFragment"
+			tools:layout="@layout/fragment_savemnemonics">
+		<action
+				android:id="@+id/action_saveMnemonicsFragment_to_verificationFragment"
+				app:destination="@id/verificationFragment" />
+	</dialog>
+
+
+	<dialog
+			android:id="@+id/verificationFragment"
+			android:name="com.green.wallet.presentation.main.createnewwallet.VerificationFragment"
+			android:label="VerificationFragment"
+			tools:layout="@layout/fragment_verification_wallet" />
+
+
+	<fragment
+			android:id="@+id/allWalletListFragment"
+			android:name="com.green.wallet.presentation.main.walletlist.AllWalletListFragment"
+			android:label="ActivesFragment"
+			tools:layout="@layout/fragment_all_wallet_list">
+		<action
+				android:id="@+id/action_allWalletListFragment_to_entPasscodeFrMain"
+				app:destination="@id/entPasscodeFrMain" />
+		<action
+				android:id="@+id/action_allWalletListFragment_to_manageWalletFragment"
+				app:destination="@id/manageWalletFragment" />
+	</fragment>
+	<fragment
+			android:id="@+id/entPasscodeFrMain"
+			android:name="com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment"
+			android:label="EntPasscodeFrMain"
+			tools:layout="@layout/fragment_enter_passcode_main" />
+	<fragment
+			android:id="@+id/manageWalletFragment"
+			android:name="com.green.wallet.presentation.main.managewallet.ManageWalletFragment"
+			android:label="ManageWalletFragment"
+			tools:layout="@layout/fragment_manage_wallet_beta" />
+	<fragment
+			android:id="@+id/importTokenFragment"
+			android:name="com.green.wallet.presentation.main.importtoken.ImportTokenFragment"
+			android:label="ImportTokenFragment"
+			tools:layout="@layout/fragment_import_token" />
+	<dialog
+			android:id="@+id/supportFragment"
+			android:name="com.green.wallet.presentation.main.support.SupportFragment"
+			android:label="SupportFragment"
+			tools:layout="@layout/fragment_support">
+		<action
+				android:id="@+id/action_supportFragment_to_FAQFragment"
+				app:destination="@id/FAQFragment" />
+		<action
+				android:id="@+id/action_supportFragment_to_askQuestionFragment"
+				app:destination="@id/questionFragment" />
+	</dialog>
+	<dialog
+			android:id="@+id/allSettingsFragment"
+			android:name="com.green.wallet.presentation.main.allsettings.AllSettingsFragment"
+			android:label="AllSettingsFragment"
+			tools:layout="@layout/fragment_all_settings">
+		<action
+				android:id="@+id/action_allSettingsFragment_to_mainLanguageFragment"
+				app:destination="@id/mainLanguageFragment" />
+		<action
+				android:id="@+id/action_allSettingsFragment_to_aboutAppFragment"
+				app:destination="@id/aboutAppFragment" />
+		<action
+				android:id="@+id/action_allSettingsFragment_to_supportFragment"
+				app:destination="@id/supportFragment" />
+	</dialog>
+	<dialog
+			android:id="@+id/mainLanguageFragment"
+			android:name="com.green.wallet.presentation.main.language.MainLanguageFragment"
+			android:label="MainLanguageFragment"
+			tools:layout="@layout/fragment_mainlanguage" />
+	<dialog
+			android:id="@+id/aboutAppFragment"
+			android:name="com.green.wallet.presentation.main.about.AboutAppFragment"
+			android:label="AboutAppFragment"
+			tools:layout="@layout/fragment_about_app" />
+	<fragment
+			android:id="@+id/transactionsFragment"
+			android:name="com.green.wallet.presentation.main.transaction.TransactionsFragment"
+			android:label="TransactionsFragment"
+			tools:layout="@layout/fragment_transactions" />
+	<fragment
+			android:id="@+id/addressFragment"
+			android:name="com.green.wallet.presentation.main.address.AddressFragment"
+			android:label="AddressFragment"
+			tools:layout="@layout/fragment_address_list">
+		<action
+				android:id="@+id/action_addressFragment_to_addAddressFragment"
+				app:destination="@id/addAddressFragment" />
+	</fragment>
+
+	<fragment
+			android:id="@+id/addAddressFragment"
+			android:name="com.green.wallet.presentation.main.address.EditAddressFragment"
+			android:label="AddAddressFragment"
+			tools:layout="@layout/fragment_address_edit" />
+
+	<dialog
+			android:id="@+id/notificationFragment"
+			android:name="com.green.wallet.presentation.main.notification.NotifFragment"
+			android:label="NotificationFragment"
+			tools:layout="@layout/fragment_notification" />
+
+	<dialog
+			android:id="@+id/FAQFragment"
+			android:name="com.green.wallet.presentation.main.support.faq.FAQFragment"
+			android:label="FAQFragment"
+			tools:layout="@layout/fragment_faq" />
+
+
+	<dialog
+			android:id="@+id/questionFragment"
+			android:name="com.green.wallet.presentation.main.support.QuestionFragment"
+			android:label="AskQuestionFragment"
+			tools:layout="@layout/fragment_question" />
+	<dialog
+			android:id="@+id/listingFragment"
+			android:name="com.green.wallet.presentation.main.support.ListingFragment"
+			android:label="ListingFragment"
+			tools:layout="@layout/fragment_listing" />
+
+
+	<dialog
+			android:id="@+id/btmSheetChooseNetwork"
+			android:name="com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_choose_network" />
+
+	<dialog
+			android:id="@+id/btmSheetDialogNewOrImport"
+			android:name="com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_add_wallet" />
+
+	<fragment
+			android:id="@+id/walletSettings"
+			android:name="com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment"
+			android:label="WalletSettings"
+			tools:layout="@layout/fragment_wallet_settings" />
+
+	<fragment
+			android:id="@+id/fragmentUserNFTs"
+			android:name="com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensFragment"
+			android:label="WalletUserNFT"
+			tools:layout="@layout/fragment_user_nft" />
+
+	<fragment
+			android:id="@+id/fragmentNFTDetails"
+			android:name="com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment"
+			android:label="NFTDetails"
+			tools:layout="@layout/fragment_nft_detail" />
 
 </navigation>

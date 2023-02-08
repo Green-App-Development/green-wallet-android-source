@@ -63,29 +63,29 @@
 
 
 			<ImageView
-					android:id="@+id/img_ic_up"
+					android:id="@+id/ic_home_qr"
 					android:layout_width="55dp"
 					android:layout_height="55dp"
 					android:layout_alignParentEnd="true"
 					android:foreground="?android:attr/selectableItemBackground"
-					android:src="@drawable/ic_up" />
+					android:src="@drawable/ic_home_new_qr" />
 
 			<ImageView
-					android:id="@+id/img_qr"
+					android:id="@+id/ic_home_plus"
 					android:layout_width="55dp"
 					android:layout_height="55dp"
-					android:layout_below="@+id/img_ic_up"
+					android:layout_below="@+id/ic_home_qr"
 					android:layout_alignParentEnd="true"
 					android:layout_marginTop="15dp"
 					android:foreground="?android:attr/selectableItemBackground"
-					android:src="@drawable/ic_qr_rect" />
+					android:src="@drawable/ic_home_add" />
 
 
 			<RelativeLayout
 					android:layout_width="match_parent"
 					android:layout_height="match_parent"
 					android:layout_marginEnd="13dp"
-					android:layout_toStartOf="@+id/img_ic_up"
+					android:layout_toStartOf="@+id/ic_home_qr"
 					android:background="@drawable/card_view_bcg_shape"
 					android:paddingStart="15dp"
 					android:paddingTop="15dp"
@@ -168,6 +168,117 @@
 
 		</RelativeLayout>
 
+		<LinearLayout
+				android:id="@+id/linear_receive_send_history"
+				android:layout_width="match_parent"
+				android:layout_height="78dp"
+				android:orientation="horizontal"
+				android:paddingStart="10dp"
+				android:paddingTop="5dp"
+				android:paddingEnd="10dp"
+				android:paddingBottom="7dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
+
+
+			<RelativeLayout
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginEnd="4dp"
+					android:layout_weight="1"
+					android:clickable="true"
+					android:id="@+id/rel_receive"
+					android:background="@drawable/card_view_bcg_shape"
+					android:foreground="?android:attr/selectableItemBackground">
+
+				<ImageView
+						android:id="@+id/ic_home_receive"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerHorizontal="true"
+						android:layout_marginTop="8dp"
+						android:src="@drawable/ic_home_receive" />
+
+				<TextView
+						android:id="@+id/txtAllWallet"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_below="@+id/ic_home_receive"
+						android:layout_centerHorizontal="true"
+						android:text="Receive"
+						android:textColor="@color/green"
+						android:textFontWeight="500"
+						android:textSize="13sp" />
+
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginStart="2dp"
+					android:layout_marginEnd="2dp"
+					android:layout_weight="1"
+					android:clickable="true"
+					android:id="@+id/rel_send"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:background="@drawable/card_view_bcg_shape">
+
+				<ImageView
+						android:id="@+id/ic_home_send"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerHorizontal="true"
+						android:layout_marginTop="8dp"
+						android:src="@drawable/ic_home_up" />
+
+				<TextView
+						android:id="@+id/txtReceive"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_below="@+id/ic_home_send"
+						android:layout_centerHorizontal="true"
+						android:text="Send"
+						android:textColor="@color/green"
+						android:textFontWeight="500"
+						android:textSize="13sp" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginStart="4dp"
+					android:layout_weight="1"
+					android:clickable="true"
+					android:id="@+id/rel_history"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:background="@drawable/card_view_bcg_shape">
+
+				<ImageView
+						android:id="@+id/ic_home_history"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerHorizontal="true"
+						android:layout_marginTop="8dp"
+						android:src="@drawable/ic_home_history" />
+
+				<TextView
+						android:id="@+id/txtHistory"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_below="@+id/ic_home_history"
+						android:layout_centerHorizontal="true"
+						android:text="History"
+						android:textColor="@color/green"
+						android:textFontWeight="500"
+						android:textSize="13sp" />
+
+			</RelativeLayout>
+
+		</LinearLayout>
+
 		<androidx.viewpager.widget.ViewPager
 				android:id="@+id/mainWalletViewPager"
 				android:layout_width="match_parent"
@@ -177,7 +288,7 @@
 				app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
+				app:layout_constraintTop_toBottomOf="@+id/linear_receive_send_history"
 				app:layout_constraintVertical_bias="0.0">
 
 		</androidx.viewpager.widget.ViewPager>
@@ -193,8 +304,8 @@
 				android:paddingTop="15dp"
 				android:paddingEnd="15dp"
 				android:paddingBottom="25dp"
-				android:visibility="visible"
-				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
+				android:visibility="gone"
+				app:layout_constraintTop_toBottomOf="@+id/linear_receive_send_history">
 
 			<TextView
 					android:id="@+id/txtMyWallet"
@@ -255,11 +366,11 @@
 
 
 		<androidx.constraintlayout.widget.ConstraintLayout
-				android:id="@+id/constraint_comment_qr"
+				android:id="@+id/constraint_comment_plus"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="-25dp"
-				android:layout_marginEnd="15dp"
+				android:layout_marginEnd="18dp"
 				android:visibility="gone"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
@@ -298,7 +409,7 @@
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
 		<androidx.constraintlayout.widget.ConstraintLayout
-				android:id="@+id/constraint_comment_send"
+				android:id="@+id/constraint_comment_home_qr"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="-95dp"
@@ -341,8 +452,62 @@
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
 
-	</androidx.constraintlayout.widget.ConstraintLayout>
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/dot_constraint_comment"
+				android:layout_width="1dp"
+				android:layout_height="1dp"
+				android:layout_marginEnd="0dp"
+				android:layout_marginBottom="0dp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintRight_toRightOf="parent" />
 
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/constraint_btm_nav_view_comment"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="-25dp"
+				android:visibility="gone"
+				app:layout_constraintBottom_toTopOf="@+id/dot_constraint_comment"
+				app:layout_constraintEnd_toEndOf="@+id/dot_constraint_comment"
+				app:layout_constraintHorizontal_bias="1.0"
+				app:layout_constraintStart_toStartOf="parent">
+
+			<ImageView
+					android:id="@+id/imageView"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="15dp"
+					android:rotation="180"
+					android:src="@drawable/ic_polygon"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent" />
+
+			<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="-2dp"
+					android:background="@drawable/bcg_rounded_corner_comment"
+					android:paddingLeft="20dp"
+					android:paddingTop="10dp"
+					android:paddingRight="20dp"
+					android:paddingBottom="10dp"
+					app:layout_constraintBottom_toTopOf="@+id/imageView"
+					app:layout_constraintEnd_toEndOf="parent">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:gravity="center_horizontal"
+						android:text="Functionality is \n under  development"
+						android:textColor="@color/white" />
+
+			</RelativeLayout>
+
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.green.wallet.presentation.custom.OnlyVerticalSwipeRefreshLayout>
 

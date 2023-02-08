@@ -39,7 +39,7 @@ class ReceiveViewPagerAdapter(private val walletList: List<Wallet>, private val 
 	@SuppressLint("SetTextI18n")
 	override fun instantiateItem(container: ViewGroup, position: Int): Any {
 		layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-		val view = layoutInflater.inflate(R.layout.view_pager_receive, container, false)
+		val view = layoutInflater.inflate(R.layout.item_view_pager_receive, container, false)
 		views[position] = view
 
 		val curWallet = walletList[position]

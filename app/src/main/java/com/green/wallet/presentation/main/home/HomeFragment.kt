@@ -6,6 +6,8 @@ import android.content.DialogInterface
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +50,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	lateinit var viewModelFactory: ViewModelFactory
 
 	@Inject
-	lateinit var effect: com.green.wallet.presentation.custom.AnimationManager
+	lateinit var effect: AnimationManager
 	private val homeFragmentViewModel: HomeFragmentViewModel by viewModels { viewModelFactory }
 
 	@Inject
@@ -113,6 +115,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		initCurCryptoCourseUpdate()
 		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
 		initSwipeRefreshLayout()
+
 	}
 
 	private fun initSwipeRefreshLayout() {
@@ -241,24 +244,42 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 	private fun FragmentHomeBinding.registerButtonClicks() {
 
-		imgIcUp.setOnClickListener {
+		icHomeQr.setOnClickListener {
+			it.isEnabled = false
+			constraintCommentHomeQr.visibility = View.VISIBLE
+			Handler(Looper.getMainLooper()).postDelayed({
+				constraintCommentHomeQr.visibility = View.GONE
+				it.isEnabled = true
+			}, 2000L)
 
-
-
-//			if (hasAtLeastOneWallet)
-//				curActivity().move2SendFragment(curNetwork, curFingerPrint, shouldQRCleared = true)
-//			else
-//				curActivity().showBtmDialogCreateOrImportNewWallet(false)
 		}
 
-		imgQr.setOnClickListener {
+		icHomePlus.setOnClickListener {
+			it.isEnabled = false
+			constraintCommentPlus.visibility = View.VISIBLE
+			Handler(Looper.getMainLooper()).postDelayed({
+				constraintCommentPlus.visibility = View.GONE
+				it.isEnabled = true
+			}, 2000L)
 
+		}
 
+		relSend.setOnClickListener {
+			if (hasAtLeastOneWallet)
+				curActivity().move2SendFragment(curNetwork, curFingerPrint, shouldQRCleared = true)
+			else
+				curActivity().showBtmDialogCreateOrImportNewWallet(false)
+		}
 
-//			if (hasAtLeastOneWallet)
-//				curActivity().move2ReceiveFragment(curNetwork, curFingerPrint)
-//			else
-//				curActivity().showBtmDialogCreateOrImportNewWallet(false)
+		relReceive.setOnClickListener {
+			if (hasAtLeastOneWallet)
+				curActivity().move2ReceiveFragment(curNetwork, curFingerPrint)
+			else
+				curActivity().showBtmDialogCreateOrImportNewWallet(false)
+		}
+
+		relHistory.setOnClickListener {
+			curActivity().move2TransactionsFragment(0)
 		}
 
 		imgThreeDots.setOnClickListener {
@@ -453,6 +474,23 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		)
 	}
 
+	private var jobUnderDev: Job? = null
+
+	fun onCommentUnderDevClicked() {
+		if (jobUnderDev?.isActive == true) return
+		jobUnderDev = lifecycleScope.launch {
+			val totalWidthInDp =
+				curActivity().convertPixelToDp(binding.swipeRefresh.width.toFloat())
+			val lenItem = totalWidthInDp / 3
+			val params = binding.dotConstraintComment.layoutParams as ViewGroup.MarginLayoutParams
+			params.setMargins(0, 0, lenItem, 0)
+			binding.dotConstraintComment.layoutParams = params
+			binding.constraintBtmNavViewComment.visibility = View.VISIBLE
+			delay(2000)
+			binding.constraintBtmNavViewComment.visibility = View.GONE
+		}
+	}
+
 	override fun onStart() {
 		super.onStart()
 		VLog.d("On Start on HomeFragment")
@@ -471,6 +509,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	override fun onStop() {
 		super.onStop()
 		walletsJob?.cancel()
+		jobUnderDev?.cancel()
 		VLog.d("On Stop on HomeFragment")
 	}
 

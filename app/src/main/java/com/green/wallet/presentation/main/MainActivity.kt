@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
+import com.example.common.tools.*
 import com.green.wallet.R
 import com.green.wallet.R.id.*
 import com.green.wallet.databinding.ActivityMainBinding
@@ -44,6 +45,7 @@ import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
 import com.green.wallet.presentation.main.importtoken.ImportTokenFragment
 import com.green.wallet.presentation.main.managewallet.ManageWalletFragment
+import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensFragment
 import com.green.wallet.presentation.main.notification.NotifFragment.Companion.SHOW_GREEN_APP_NOTIF
 import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
@@ -52,7 +54,6 @@ import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
-import com.example.common.tools.*
 import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -114,6 +115,7 @@ class MainActivity : BaseActivity() {
 		initCheckingBundleFromPushNotification()
 		startServiceAppRemoveRecentTask()
 	}
+
 
 	private fun initCheckingBundleFromPushNotification() {
 		val bundle = intent.getBundleExtra(MAIN_BUNDLE_KEY)
@@ -248,6 +250,14 @@ class MainActivity : BaseActivity() {
 //					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 //					window.statusBarColor = getColorResource(R.color.primary_app_background)
 //				}
+				fragmentUserNFTs -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+				fragmentNFTDetails -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -259,33 +269,37 @@ class MainActivity : BaseActivity() {
 	private fun bottomNavViewClicks() {
 		binding.mainBottomNav.setOnItemSelectedListener { item ->
 			when (item.itemId) {
-				send -> {
-					showDialogNetworkToSend()
-				}
-				receive -> {
-					showDialogNetworkToReceive()
-				}
-				transactions -> {
-					if (navController.currentDestination?.id != transactionsFragment) {
-						item.isChecked = true
-						move2TransactionsFragment(0)
-					}
-				}
 				home -> {
 					if (navController.currentDestination?.id != homeFragment) {
 						item.isChecked = true
 						popBackStackTillHomeFragment()
 					}
 				}
-				address -> {
-					if (navController.currentDestination?.id != addressFragment) {
+				dapp -> {
+					sendEventToFragment()
+				}
+				nfts -> {
+					if (navController.currentDestination?.id != fragmentUserNFTs) {
 						item.isChecked = true
-						move2AddressFragmentList()
+						move2UserNFTTokensFragment()
 					}
 				}
 			}
 			false
 		}
+	}
+
+	private fun sendEventToFragment() {
+		VLog.d("Nft clicked on peek fragment : ${supportFragmentManager.currentNavigationFragment}")
+		when (val curFragment = supportFragmentManager.currentNavigationFragment) {
+			is HomeFragment -> {
+				curFragment.onCommentUnderDevClicked()
+			}
+			is UserNFTTokensFragment -> {
+				curFragment.onCommentUnderDevClicked()
+			}
+		}
+
 	}
 
 	private fun popBackStackTillHomeFragment() {
@@ -376,8 +390,9 @@ class MainActivity : BaseActivity() {
 					aboutAppFragment,
 					addAddressFragment,
 					notificationFragment,
-//					noConnectionFragment,
-					walletSettings
+					transactionsFragment,
+					walletSettings,
+					fragmentNFTDetails
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -416,7 +431,7 @@ class MainActivity : BaseActivity() {
 			TransactionsFragment.FINGER_PRINT_KEY to fingerPrint,
 			TransactionsFragment.ADDRESS_KEY to address
 		)
-		binding.mainBottomNav.menu.findItem(transactions).isChecked = true
+//		binding.mainBottomNav.menu.findItem(transactions).isChecked = true
 		navController.navigate(transactionsFragment, bundle)
 	}
 
@@ -490,6 +505,10 @@ class MainActivity : BaseActivity() {
 		navController.navigate(action_walletFragment_to_allWalletFragment)
 	}
 
+	fun move2NFTDetailsFragment() {
+		navController.navigate(fragmentNFTDetails)
+	}
+
 	fun move2ManageWalletFragment(id: Int) {
 		val bundle = bundleOf(ManageWalletFragment.WALLET_KEY to id)
 		navController.navigate(manageWalletFragment, bundle)
@@ -532,7 +551,7 @@ class MainActivity : BaseActivity() {
 
 	fun move2AddressFragmentList(clickable: Boolean = false) {
 		val bundle = bundleOf(AddressFragment.SHOULD_BE_CLICKABLE_KEY to clickable)
-		binding.mainBottomNav.menu.findItem(address).isChecked = true
+//		binding.mainBottomNav.menu.findItem(address).isChecked = true
 		navController.navigate(addressFragment, bundle)
 	}
 
@@ -552,6 +571,10 @@ class MainActivity : BaseActivity() {
 
 	fun move2ListingFragment() {
 		navController.navigate(listingFragment)
+	}
+
+	fun move2UserNFTTokensFragment() {
+		navController.navigate(fragmentUserNFTs)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {

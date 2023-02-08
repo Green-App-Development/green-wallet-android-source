@@ -24,6 +24,8 @@ import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
 import com.green.wallet.presentation.main.importtoken.ImportTokenFragment
 import com.green.wallet.presentation.main.language.MainLanguageFragment
 import com.green.wallet.presentation.main.managewallet.ManageWalletFragment
+import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
+import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensFragment
 import com.green.wallet.presentation.main.notification.NotifFragment
 import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
@@ -147,5 +149,11 @@ abstract class InjectorBuildersModule {
 	@ContributesAndroidInjector
 	abstract fun injectWalletSettingsFragment(): WalletSettingsFragment
 
+	@ContributesAndroidInjector
+	abstract fun injectUserNFTsTokenList(): UserNFTTokensFragment
+
+
+	@ContributesAndroidInjector
+	abstract fun injectNFTDetailsFragment(): NFTDetailsFragment
 
 }

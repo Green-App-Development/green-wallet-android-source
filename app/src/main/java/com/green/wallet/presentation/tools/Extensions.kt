@@ -9,6 +9,8 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -143,4 +145,5 @@ fun View.preventDoubleClick(interval: Long = 1000) {
 	}, interval)
 }
 
-
+val FragmentManager.currentNavigationFragment: Fragment?
+	get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()

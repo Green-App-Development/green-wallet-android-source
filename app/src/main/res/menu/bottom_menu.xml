@@ -1,29 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/home"
-        android:icon="@drawable/main"
-        android:title="@string/main_screen_title_purse" />
 
-    <item
-        android:id="@+id/receive"
-        android:icon="@drawable/receive"
-        android:title="@string/main_screen_recive_btn" />
+	<item
+			android:id="@+id/home"
+			android:icon="@drawable/main"
+			android:title="@string/main_screen_title_purse" />
 
-    <item
-        android:id="@+id/send"
-        android:icon="@drawable/send"
-        android:title="@string/main_screen_send_btn" />
+	<item
+			android:id="@+id/nfts"
+			android:icon="@drawable/ic_btm_nft"
+			android:title="NFts" />
 
-    <item
-        android:id="@+id/transactions"
-        android:icon="@drawable/transactions"
-        android:title="@string/transactions_title" />
 
-    <item
-        android:id="@+id/address"
-        android:icon="@drawable/addreess_book"
-        android:title="@string/main_screen_addresses_btn" />
+	<item
+			android:id="@+id/dapp"
+			android:icon="@drawable/ic_btm_dapp"
+			android:title="dApp" />
+
 
 </menu>

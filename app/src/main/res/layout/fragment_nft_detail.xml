@@ -1,0 +1,931 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/primary_app_background">
+
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline11"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.03" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline14"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.97" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline8"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.03" />
+
+
+	<LinearLayout
+			android:id="@+id/back_layout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintStart_toStartOf="@+id/guideline11"
+			app:layout_constraintTop_toTopOf="@+id/guideline8">
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:gravity="center_vertical"
+				android:src="@drawable/back_arrow_ic" />
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:text="@string/back_btn"
+				android:textColor="@color/greey"
+				android:textFontWeight="500"
+				android:textSize="18sp" />
+
+	</LinearLayout>
+
+	<LinearLayout
+			android:id="@+id/linearLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:gravity="center"
+			android:orientation="horizontal"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/back_layout">
+
+		<TextView
+				android:id="@+id/txtAllNFTS"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="GAD NFT Collection #187"
+				android:textColor="@color/secondary_text_color"
+				android:textFontWeight="400"
+				android:textSize="20sp" />
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="8dp"
+				android:src="@drawable/ic_nft_checked" />
+
+	</LinearLayout>
+
+
+	<ScrollView
+			android:id="@+id/scrollNFTProperties"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_marginTop="10dp"
+			app:layout_constraintBottom_toTopOf="@+id/parent"
+			app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+			<androidx.cardview.widget.CardView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginEnd="12dp"
+					app:cardCornerRadius="15dp">
+
+				<ImageView
+						android:layout_width="match_parent"
+						android:layout_height="300dp"
+						android:scaleType="fitXY"
+						android:src="@drawable/img_nft" />
+
+			</androidx.cardview.widget.CardView>
+
+
+			<TextView
+					android:id="@+id/txtNftDescription"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="30dp"
+					android:layout_marginEnd="12dp"
+					android:text="Description"
+					android:textColor="@color/green"
+					android:textFontWeight="600"
+					android:textSize="18sp"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+
+			<TextView
+					android:id="@+id/edtNftDescription"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="8dp"
+					android:layout_marginEnd="12dp"
+					android:text="10,000 unique NFTs issued by @greenapp_io on the Chia blockchain"
+					android:textColor="@color/secondary_text_color"
+					android:textFontWeight="400"
+					android:textSize="16sp" />
+
+			<TextView
+					android:id="@+id/txtNftCollection"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="10dp"
+					android:layout_marginEnd="12dp"
+					android:text="Collection"
+					android:textColor="@color/green"
+					android:textFontWeight="600"
+					android:textSize="18sp"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="8dp"
+					android:layout_marginEnd="12dp"
+					android:gravity="center"
+					android:orientation="horizontal">
+
+				<TextView
+						android:id="@+id/edtNftCollection"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="GAD NFT Collection "
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:src="@drawable/ic_nft_checked" />
+
+			</LinearLayout>
+
+			<TextView
+					android:id="@+id/txtNftProperties"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="10dp"
+					android:layout_marginEnd="12dp"
+					android:text="Properties"
+					android:textColor="@color/green"
+					android:textFontWeight="600"
+					android:textSize="18sp"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="7dp"
+					android:layout_marginEnd="12dp"
+					android:orientation="horizontal">
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginEnd="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtApyPlus"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="APY+"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtApyPlus"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtApyPlus"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="9.5%"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="500"
+							android:textSize="16sp" />
+
+
+				</RelativeLayout>
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginStart="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtBody"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Body"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtBody"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtBody"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="Common"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="16sp" />
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="7dp"
+					android:layout_marginEnd="12dp"
+					android:orientation="horizontal">
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginEnd="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtBreakType"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Break Type"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtBreakType"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtBreakType"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="Common"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="500"
+							android:textSize="16sp" />
+
+
+				</RelativeLayout>
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginStart="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtEyeType"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Body"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtEyeType"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtEyeType"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="Common"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="16sp" />
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="7dp"
+					android:layout_marginEnd="12dp"
+					android:orientation="horizontal">
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginEnd="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtEyeColor"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Eye color"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtEyeColor"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtEyeColor"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="Dart green"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="500"
+							android:textSize="16sp" />
+
+
+				</RelativeLayout>
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginStart="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtClothing"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Clothing"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtClothing"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtClothing"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="T-shirt"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="16sp" />
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="7dp"
+					android:layout_marginEnd="12dp"
+					android:orientation="horizontal">
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginEnd="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtClothingColor"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Clothing color"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtClothingColor"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtClothingColor"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="Pink"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="500"
+							android:textSize="16sp" />
+
+
+				</RelativeLayout>
+
+				<RelativeLayout
+						android:layout_width="0dp"
+						android:layout_height="70dp"
+						android:layout_marginStart="5dp"
+						android:layout_weight="1"
+						android:background="@drawable/bcg_nft_property">
+
+
+					<TextView
+							android:id="@+id/txtSpecialSign"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="10dp"
+							android:text="Special Sign"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="12sp" />
+
+					<TextView
+							android:id="@+id/edtSpecialSign"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_below="@+id/txtSpecialSign"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:text="Playful"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="16sp" />
+
+				</RelativeLayout>
+
+			</LinearLayout>
+
+			<TextView
+					android:id="@+id/txtNftDetails"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:layout_marginTop="10dp"
+					android:layout_marginEnd="12dp"
+					android:text="Details"
+					android:textColor="@color/green"
+					android:textFontWeight="600"
+					android:textSize="18sp"
+					app:layout_constraintEnd_toEndOf="parent"
+					app:layout_constraintStart_toStartOf="parent"
+					app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp"
+					android:layout_marginTop="7dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtNFTID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="NFT ID"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtNFTID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="nft1qxas...ne84"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="8dp"
+						android:layout_toStartOf="@+id/edtNFTID"
+						android:src="@drawable/ic_copy_green" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtLauncherID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Launcher ID"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtLaunchedID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="02gg..n8g9"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtOwnerID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Owner ID"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtOwnerID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="Unassigned"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtMinterDID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Minter DID"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtMinterDID"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="did:chia:10t0...h3mz"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtRoyaltyPercentage"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Royalty Percentage"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtRoyaltyPercentage"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="5%"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtMintedBlockHeight"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Minted at Block Height"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtMinterBlockHeight"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="2201780"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtDataUrl1"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="NFT ID"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtDataUrl1"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="https://prnt.s..."
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="8dp"
+						android:layout_toStartOf="@+id/edtDataUrl1"
+						android:src="@drawable/ic_copy_green" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtDataHash"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Data Hash"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtDataHash"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="0x4810...7691"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtMetadataUrl1"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="MetaData URL 1"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtMetaData1"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="https://prnt.s..."
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+
+				<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="8dp"
+						android:layout_toStartOf="@+id/edtMetaData1"
+						android:src="@drawable/ic_copy_green" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="40dp">
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/txtMetadataHash"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="12dp"
+						android:text="Metadata Hash"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+				<TextView
+						android:id="@+id/edtMetadataHash"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="12dp"
+						android:text="0xb4b8...k486"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="400"
+						android:textSize="16sp" />
+
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:visibility="visible"
+					android:layout_height="100dp" />
+
+		</LinearLayout>
+
+	</ScrollView>
+
+	<RelativeLayout
+			android:id="@+id/relativeLayoutBtnSend"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@color/cardView_background"
+			app:layout_constraintBottom_toBottomOf="parent">
+
+		<com.google.android.material.button.MaterialButton
+				android:id="@+id/btnSend"
+				style="@style/Widget.AppTheme.MaterialButton"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:layout_centerInParent="true"
+				android:layout_marginStart="32dp"
+				android:layout_marginTop="15dp"
+				android:layout_marginEnd="32dp"
+				android:layout_marginBottom="15dp"
+				android:background="@drawable/btn_background_draw"
+				android:text="Send NFT"
+				android:textAllCaps="false"
+				app:layout_constraintHorizontal_bias="0.0" />
+
+
+	</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
