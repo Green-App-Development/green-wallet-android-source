@@ -39,13 +39,13 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.android.synthetic.main.dialog_confirm_transactions.*
-import kotlinx.android.synthetic.main.dialog_confirm_transactions.txtAddress
-import kotlinx.android.synthetic.main.dialog_confirm_transactions.txtBlockChain
+import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.*
 import kotlinx.android.synthetic.main.dialog_notification_detail.*
 import kotlinx.android.synthetic.main.fragment_impmnemonic.*
 import kotlinx.android.synthetic.main.fragment_listing.*
+import kotlinx.android.synthetic.main.fragment_listing.txtBlockChain
 import kotlinx.android.synthetic.main.fragment_receive.*
+import kotlinx.android.synthetic.main.fragment_receive.txtAddress
 import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.android.synthetic.main.fragment_send.chosenNetworkRel
 import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
@@ -1232,7 +1232,7 @@ class SendFragment : DaggerFragment() {
 
 	private fun showConfirmTransactionDialog() {
 		val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
-		dialog.setContentView(R.layout.dialog_confirm_transactions)
+		dialog.setContentView(R.layout.dialog_confirm_transactions_coins)
 		registerBtnClicks(dialog)
 		initConfirmDialogDetails(dialog)
 		val width = resources.displayMetrics.widthPixels

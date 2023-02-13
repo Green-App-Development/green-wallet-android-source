@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.BaseAdapter
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.green.wallet.presentation.main.MainActivity
 
 /**
  * Created by bekjan on 27.04.2022.
@@ -147,3 +149,7 @@ fun View.preventDoubleClick(interval: Long = 1000) {
 
 val FragmentManager.currentNavigationFragment: Fragment?
 	get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+
+fun Fragment.getMainActivity(): MainActivity {
+	return requireActivity() as MainActivity
+}

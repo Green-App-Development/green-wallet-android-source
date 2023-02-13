@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import com.example.common.tools.VLog
 import com.green.wallet.databinding.FragmentNftDetailBinding
+import com.green.wallet.presentation.main.MainActivity
 import dagger.android.support.DaggerFragment
 
 /**
@@ -42,19 +43,29 @@ class NFTDetailsFragment : DaggerFragment() {
 	fun FragmentNftDetailBinding.registerClicks() {
 
 
-		scrollNFTProperties.setOnScrollChangeListener { view, curX, curY, oldX, oldY ->
-			if (curY > oldY) {
-				//down
-				val diff = Math.abs(curY - oldY)
-				if (diff >= 10)
-					moveRelativeLayoutToBtmSlowly(relativeLayoutBtnSend)
-			} else {
-				//up
-				val diff = Math.abs(curY - oldY)
-				if (diff >= 10)
-					moveRelativeLayoutFromBtmSlowly(relativeLayoutBtnSend)
-			}
+//		scrollNFTProperties.setOnScrollChangeListener { view, curX, curY, oldX, oldY ->
+//			if (curY > oldY) {
+//				//down
+//				val diff = Math.abs(curY - oldY)
+//				if (diff >= 10)
+//					moveRelativeLayoutToBtmSlowly(relativeLayoutBtnSend)
+//			} else {
+//				//up
+//				val diff = Math.abs(curY - oldY)
+//				if (diff >= 10)
+//					moveRelativeLayoutFromBtmSlowly(relativeLayoutBtnSend)
+//			}
+//		}
+
+		btnSend.setOnClickListener {
+			curActivity().move2SendNFTFragment()
 		}
+
+		backLayout.setOnClickListener {
+			curActivity().popBackStackOnce()
+		}
+
+
 	}
 
 	var isHiddenRelLayoutBtnSend = false
@@ -78,6 +89,8 @@ class NFTDetailsFragment : DaggerFragment() {
 		animator.duration = 1000
 		animator.start()
 	}
+
+	fun curActivity() = requireActivity() as MainActivity
 
 
 }

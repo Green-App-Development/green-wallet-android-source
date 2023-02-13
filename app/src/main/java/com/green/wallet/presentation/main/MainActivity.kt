@@ -99,6 +99,7 @@ class MainActivity : BaseActivity() {
 	var impMnemonicsFragmentView: View? = null
 	var sendCoinsFragmentView: View? = null
 	var listingFragmentView: View? = null
+	var sendNftFragmentView: View? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -392,7 +393,8 @@ class MainActivity : BaseActivity() {
 					notificationFragment,
 					transactionsFragment,
 					walletSettings,
-					fragmentNFTDetails
+					fragmentNFTDetails,
+					fragmentSendNFT
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -700,6 +702,10 @@ class MainActivity : BaseActivity() {
 				button.visibility = if (visibility) View.GONE else View.VISIBLE
 				linearAgree.visibility = if (visibility) View.GONE else View.VISIBLE
 			}
+			if (sendNftFragmentView != null) {
+				val tempLinear = sendNftFragmentView!!.findViewById<LinearLayout>(temp_linear)
+				tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
+			}
 		} catch (ex: Exception) {
 			VLog.d("Exception in updating views when soft keyboard pops up : ${ex.message}")
 		}
@@ -753,6 +759,10 @@ class MainActivity : BaseActivity() {
 
 	fun showBtmDialogAddOrImportWallets(networkType: String) {
 		move2NewOrImportWallet(networkType)
+	}
+
+	fun move2SendNFTFragment() {
+		navController.navigate(fragmentSendNFT)
 	}
 
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+	<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:background="@color/cardView_background"
+			android:padding="20dp">
+
+		<LinearLayout
+				android:id="@+id/back_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:foreground="?android:attr/selectableItemBackground"
+				android:orientation="horizontal">
+
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center_vertical"
+					android:gravity="center_vertical"
+					android:src="@drawable/back_arrow_ic" />
+
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center_vertical"
+					android:text="@string/back_btn"
+					android:textColor="@color/greey"
+					android:textFontWeight="500"
+					android:textSize="18sp" />
+
+		</LinearLayout>
+
+
+		<TextView
+				android:id="@+id/txt_confirm_transactions"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/back_layout"
+				android:layout_centerHorizontal="true"
+				android:layout_marginStart="50dp"
+				android:layout_marginTop="5dp"
+				android:layout_marginEnd="50dp"
+				android:gravity="center_horizontal"
+				android:text="@string/send_token_pop_up_confirmation"
+				android:textColor="@color/green"
+				android:textFontWeight="600"
+				android:textSize="23sp"
+				android:textStyle="bold" />
+
+
+		<LinearLayout
+				android:id="@+id/lay_detail_trans"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/txt_confirm_transactions"
+				android:layout_marginTop="20dp"
+				android:orientation="vertical">
+
+			<androidx.constraintlayout.widget.ConstraintLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<androidx.cardview.widget.CardView
+						android:id="@+id/imgCardNft"
+						android:layout_width="130dp"
+						android:layout_height="wrap_content"
+						app:cardCornerRadius="15dp">
+
+					<ImageView
+							android:layout_width="match_parent"
+							android:layout_height="130dp"
+							android:scaleType="centerCrop"
+							android:src="@drawable/img_nft" />
+
+				</androidx.cardview.widget.CardView>
+
+				<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="match_parent"
+						android:layout_marginStart="10dp"
+						android:orientation="vertical"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintLeft_toRightOf="@+id/imgCardNft"
+						app:layout_constraintRight_toRightOf="parent"
+						app:layout_constraintTop_toTopOf="parent">
+
+					<TextView
+							android:id="@+id/txtNftName"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="GAD NFT Collection #187"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="14sp" />
+
+					<TextView
+							android:id="@+id/txtNftCollection"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="8dp"
+							android:text="Collection"
+							android:textColor="@color/green"
+							android:textFontWeight="600"
+							android:textSize="14sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+					<TextView
+							android:id="@+id/txtNftCategory"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="GAD NFT Collection"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="14sp" />
+
+					<TextView
+							android:id="@+id/txtNftID"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="8dp"
+							android:text="NFT ID"
+							android:textColor="@color/green"
+							android:textFontWeight="600"
+							android:textSize="14sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+					<RelativeLayout
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content">
+
+						<TextView
+								android:id="@+id/edtNftID"
+								android:layout_width="match_parent"
+								android:layout_height="wrap_content"
+								android:layout_marginEnd="10dp"
+								android:layout_toLeftOf="@+id/imgCopyNftId"
+								android:text="nft1qxasgvsg7jbd...ne84"
+								android:textColor="@color/secondary_text_color"
+								android:textFontWeight="400"
+								android:textSize="14sp" />
+
+						<ImageView
+								android:id="@+id/imgCopyNftId"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentEnd="true"
+								android:layout_centerVertical="true"
+								android:layout_marginEnd="8dp"
+								android:src="@drawable/ic_copy_green" />
+
+					</RelativeLayout>
+
+
+				</LinearLayout>
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="15dp"
+					android:orientation="horizontal">
+
+				<TextView
+						android:id="@+id/txtNftAddress"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Address"
+						android:textColor="@color/green"
+						android:textFontWeight="600"
+						android:textSize="14sp"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+				<TextView
+						android:id="@+id/edtConfirmSendNftAddress"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:text="xch18fka3ygrum88yl77wp7rwxr08h6m836sxl2c7ndg6xzhcx3774usdlysvd"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="550"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:orientation="horizontal">
+
+				<TextView
+						android:id="@+id/txtNftCommission"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="Commission"
+						android:textColor="@color/green"
+						android:textFontWeight="600"
+						android:textSize="14sp"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+				<TextView
+						android:id="@+id/edtCommission"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:text="0.000123 XCH"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="550"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/lay_detail_trans"
+				android:layout_marginTop="35dp">
+
+			<androidx.constraintlayout.widget.Guideline
+					android:id="@+id/guideline39"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					app:layout_constraintGuide_percent="0.90" />
+
+			<androidx.constraintlayout.widget.Guideline
+					android:id="@+id/guideline41"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					app:layout_constraintGuide_percent="0.10" />
+
+			<com.google.android.material.button.MaterialButton
+					android:id="@+id/btnConfirm"
+					style="@style/Widget.AppTheme.MaterialButton"
+					android:layout_width="0dp"
+					android:layout_height="60dp"
+					android:layout_centerHorizontal="true"
+					android:layout_marginTop="1dp"
+					android:layout_marginBottom="1dp"
+					android:background="@drawable/btn_background_draw"
+					android:text="@string/confirm_btn"
+					android:textAllCaps="false"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toStartOf="@+id/guideline39"
+					app:layout_constraintHorizontal_bias="0.0"
+					app:layout_constraintStart_toStartOf="@+id/guideline41"
+					app:layout_constraintTop_toTopOf="parent"
+					app:layout_constraintVertical_bias="0.0" />
+
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
+	</RelativeLayout>
+
+
+</RelativeLayout>

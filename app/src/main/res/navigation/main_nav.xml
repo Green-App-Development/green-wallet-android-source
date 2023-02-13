@@ -249,4 +249,12 @@
 			android:label="NFTDetails"
 			tools:layout="@layout/fragment_nft_detail" />
 
+	<fragment
+			android:id="@+id/fragmentSendNFT"
+			android:name="com.green.wallet.presentation.main.nft.nftsend.NFTSendFragment"
+			android:label="NFTSend"
+			tools:layout="@layout/fragment_send_nft" />
+
+
+
 </navigation>
