@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -160,7 +162,17 @@ class NFTSendFragment : DaggerFragment() {
 
 	private fun registerBtnClicks(dialog: Dialog) {
 
+		with(dialog) {
 
+			findViewById<Button>(R.id.btnConfirm).setOnClickListener {
+				dialog.dismiss()
+			}
+
+			findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
+				dialog.dismiss()
+			}
+
+		}
 
 	}
 
@@ -169,7 +181,8 @@ class NFTSendFragment : DaggerFragment() {
 			var commissionText = binding.edtEnterCommission.text.toString()
 			if (commissionText.isEmpty())
 				commissionText = "0"
-			findViewById<TextView>(R.id.edtConfirmSendNftAddress).text = binding.edtAddressWallet.text.toString()
+			findViewById<TextView>(R.id.edtConfirmSendNftAddress).text =
+				binding.edtAddressWallet.text.toString()
 			findViewById<TextView>(R.id.edtCommission).text = commissionText
 		}
 	}

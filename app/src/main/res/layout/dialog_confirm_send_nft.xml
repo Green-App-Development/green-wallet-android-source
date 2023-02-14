@@ -52,7 +52,7 @@
 				android:text="@string/send_token_pop_up_confirmation"
 				android:textColor="@color/green"
 				android:textFontWeight="600"
-				android:textSize="23sp"
+				android:textSize="20sp"
 				android:textStyle="bold" />
 
 
@@ -136,32 +136,16 @@
 							app:layout_constraintStart_toStartOf="parent"
 							app:layout_constraintTop_toTopOf="@id/guideline9" />
 
-					<RelativeLayout
+					<TextView
+							android:id="@+id/edtNftID"
 							android:layout_width="match_parent"
-							android:layout_height="wrap_content">
-
-						<TextView
-								android:id="@+id/edtNftID"
-								android:layout_width="match_parent"
-								android:layout_height="wrap_content"
-								android:layout_marginEnd="10dp"
-								android:layout_toLeftOf="@+id/imgCopyNftId"
-								android:text="nft1qxasgvsg7jbd...ne84"
-								android:textColor="@color/secondary_text_color"
-								android:textFontWeight="400"
-								android:textSize="14sp" />
-
-						<ImageView
-								android:id="@+id/imgCopyNftId"
-								android:layout_width="wrap_content"
-								android:layout_height="wrap_content"
-								android:layout_alignParentEnd="true"
-								android:layout_centerVertical="true"
-								android:layout_marginEnd="8dp"
-								android:src="@drawable/ic_copy_green" />
-
-					</RelativeLayout>
-
+							android:layout_height="wrap_content"
+							android:layout_marginEnd="10dp"
+							android:layout_toLeftOf="@+id/imgCopyNftId"
+							android:text="nft1qxasgvsg7jbd...ne84"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="14sp" />
 
 				</LinearLayout>
 
