@@ -30,6 +30,7 @@ import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.preventDoubleClick
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
@@ -207,6 +208,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 					homeAddedList,
 					balanceIsHidden = toHideBalance
 				)
+			initSettingIcon(homeAddedList[0].address)
 			mainWalletViewPager.adapter = mainViewPagerWalletAdapter
 			pageIndicator.count = homeAddedList.size
 			pageIndicator.visibility = View.VISIBLE
@@ -223,7 +225,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			updateBalanceToDollarStr()
 			homeFragmentViewModel.saveHomeIsAddedWalletCounter(homeAddedList.size)
 			hasAtLeastOneWallet = true
-
 			delay(1000L)
 			val rect = Rect()
 			binding.apply {
@@ -310,6 +311,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 					curFingerPrint =
 						mainViewPagerWalletAdapter.walletList[position].fingerPrint
 					updateBalanceToDollarStr()
+					initSettingIcon(mainViewPagerWalletAdapter.walletList[position].address)
 				}
 			}
 
@@ -323,6 +325,13 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			addWallet()
 		}
 
+
+	}
+
+	private fun initSettingIcon(address: String) {
+		binding.icSetting.setOnClickListener {
+			getMainActivity().move2WalletSettings(address = address)
+		}
 	}
 
 	private fun updateBalanceToDollarStr() {

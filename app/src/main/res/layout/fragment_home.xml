@@ -92,21 +92,37 @@
 					android:paddingBottom="12dp"
 					tools:ignore="RtlSymmetry">
 
-				<TextView
-						android:id="@+id/txtBalance"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="@string/main_screen_title_balance"
-						android:textColor="@color/green"
-						android:textFontWeight="600"
-						android:textSize="20sp" />
+				<RelativeLayout
+						android:id="@+id/rel_balance_setting"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content">
+
+					<TextView
+							android:id="@+id/txtBalance"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="@string/main_screen_title_balance"
+							android:textColor="@color/green"
+							android:textFontWeight="600"
+							android:textSize="20sp" />
+
+					<ImageView
+							android:id="@+id/ic_setting"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_alignParentEnd="true"
+							android:layout_centerVertical="true"
+							android:layout_marginEnd="11dp"
+							android:src="@drawable/ic_settings_home" />
+
+				</RelativeLayout>
 
 
 				<TextView
 						android:id="@+id/txtMyBalance"
 						android:layout_width="match_parent"
 						android:layout_height="33dp"
-						android:layout_below="@+id/txtBalance"
+						android:layout_below="@+id/rel_balance_setting"
 						android:layout_alignParentEnd="true"
 						android:layout_marginTop="5dp"
 						android:layout_marginEnd="5dp"
@@ -183,13 +199,13 @@
 
 
 			<RelativeLayout
+					android:id="@+id/rel_receive"
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
 					android:layout_marginEnd="4dp"
 					android:layout_weight="1"
-					android:clickable="true"
-					android:id="@+id/rel_receive"
 					android:background="@drawable/card_view_bcg_shape"
+					android:clickable="true"
 					android:foreground="?android:attr/selectableItemBackground">
 
 				<ImageView
@@ -215,15 +231,15 @@
 			</RelativeLayout>
 
 			<RelativeLayout
+					android:id="@+id/rel_send"
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
 					android:layout_marginStart="2dp"
 					android:layout_marginEnd="2dp"
 					android:layout_weight="1"
+					android:background="@drawable/card_view_bcg_shape"
 					android:clickable="true"
-					android:id="@+id/rel_send"
-					android:foreground="?android:attr/selectableItemBackground"
-					android:background="@drawable/card_view_bcg_shape">
+					android:foreground="?android:attr/selectableItemBackground">
 
 				<ImageView
 						android:id="@+id/ic_home_send"
@@ -247,14 +263,14 @@
 			</RelativeLayout>
 
 			<RelativeLayout
+					android:id="@+id/rel_history"
 					android:layout_width="0dp"
 					android:layout_height="match_parent"
 					android:layout_marginStart="4dp"
 					android:layout_weight="1"
+					android:background="@drawable/card_view_bcg_shape"
 					android:clickable="true"
-					android:id="@+id/rel_history"
-					android:foreground="?android:attr/selectableItemBackground"
-					android:background="@drawable/card_view_bcg_shape">
+					android:foreground="?android:attr/selectableItemBackground">
 
 				<ImageView
 						android:id="@+id/ic_home_history"
