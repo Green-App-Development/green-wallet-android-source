@@ -234,10 +234,11 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			}
 		} else {
 			binding.apply {
-				rel_no_wallet.visibility = View.VISIBLE
+				relNoWallet.visibility = View.VISIBLE
 				mainWalletViewPager.visibility = View.GONE
 				txtMyBalance.text = "0 USD"
 				pageIndicator.visibility = View.INVISIBLE
+				icSetting.visibility = View.GONE
 			}
 			hasAtLeastOneWallet = false
 		}
@@ -287,7 +288,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			it.preventDoubleClick()
 //            it.startAnimation(effect.getAnimation())
 			showBottomSheetDialogSettings()
-
 		}
 
 		mainWalletViewPager.addOnPageChangeListener(object :
