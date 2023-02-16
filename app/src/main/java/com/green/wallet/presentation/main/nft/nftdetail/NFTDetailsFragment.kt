@@ -1,15 +1,21 @@
 package com.green.wallet.presentation.main.nft.nftdetail
 
 import android.animation.ObjectAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
+import androidx.lifecycle.lifecycleScope
 import com.example.common.tools.VLog
 import com.green.wallet.databinding.FragmentNftDetailBinding
 import com.green.wallet.presentation.main.MainActivity
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by bekjan on 07.02.2023.
@@ -66,6 +72,37 @@ class NFTDetailsFragment : DaggerFragment() {
 		}
 
 
+		imgCpyDataUrl.setOnClickListener {
+			copyToClipBoardShowCopied("Sample Copied")
+		}
+
+		imgCpyMetadataUrl.setOnClickListener {
+			copyToClipBoardShowCopied("Sample Copied")
+		}
+
+		imgCpyNftId.setOnClickListener {
+			copyToClipBoardShowCopied("Sample Copied")
+		}
+
+	}
+
+	private fun copyToClipBoardShowCopied(text: String) {
+		val clipBoard =
+			curActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+		val clip = ClipData.newPlainText(
+			"label",
+			text
+		)
+		clipBoard.setPrimaryClip(clip)
+		binding.relCopied.visibility = View.VISIBLE
+		lifecycleScope.launch {
+			delay(2000)
+			kotlin.runCatching {
+				binding.relCopied.visibility = View.GONE
+			}.onFailure {
+				VLog.d("Exception in changing relCopied visibility")
+			}
+		}
 	}
 
 	var isHiddenRelLayoutBtnSend = false

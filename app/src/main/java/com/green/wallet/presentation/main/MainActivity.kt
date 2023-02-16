@@ -394,7 +394,8 @@ class MainActivity : BaseActivity() {
 					transactionsFragment,
 					walletSettings,
 					fragmentNFTDetails,
-					fragmentSendNFT
+					fragmentSendNFT,
+					addressFragment
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE

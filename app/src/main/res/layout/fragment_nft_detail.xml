@@ -90,7 +90,8 @@
 			android:layout_height="0dp"
 			android:layout_marginTop="10dp"
 			android:scrollbars="none"
-			app:layout_constraintBottom_toTopOf="@+id/parent"
+			android:visibility="visible"
+			app:layout_constraintBottom_toTopOf="@+id/relativeLayoutBtnSend"
 			app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
 		<LinearLayout
@@ -557,6 +558,7 @@
 						android:textSize="16sp" />
 
 				<ImageView
+						android:id="@+id/imgCpyNftId"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerVertical="true"
@@ -753,7 +755,7 @@
 						android:layout_height="wrap_content"
 						android:layout_centerVertical="true"
 						android:layout_marginStart="12dp"
-						android:text="NFT ID"
+						android:text="Data URL 1"
 						android:textColor="@color/secondary_text_color"
 						android:textFontWeight="400"
 						android:textSize="16sp" />
@@ -771,6 +773,7 @@
 						android:textSize="16sp" />
 
 				<ImageView
+						android:id="@+id/imgCpyDataUrl"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerVertical="true"
@@ -831,7 +834,7 @@
 						android:layout_height="wrap_content"
 						android:layout_centerVertical="true"
 						android:layout_marginStart="12dp"
-						android:text="MetaData URL 1"
+						android:text="Metadata URL 1"
 						android:textColor="@color/secondary_text_color"
 						android:textFontWeight="400"
 						android:textSize="16sp" />
@@ -850,6 +853,7 @@
 
 
 				<ImageView
+						android:id="@+id/imgCpyMetadataUrl"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerVertical="true"
@@ -903,6 +907,32 @@
 		</LinearLayout>
 
 	</ScrollView>
+
+
+	<RelativeLayout
+			android:id="@+id/relCopied"
+			android:layout_width="match_parent"
+			android:layout_height="40dp"
+			android:layout_marginStart="15dp"
+			android:layout_marginEnd="15dp"
+			android:layout_marginBottom="-15dp"
+			android:background="@drawable/copied_bcg"
+			android:elevation="7dp"
+			android:visibility="gone"
+			app:layout_constraintBottom_toTopOf="@+id/relativeLayoutBtnSend"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent">
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginStart="15dp"
+				android:text="@string/lable_copied"
+				android:textColor="@color/btn_copy_txt_icon_color"
+				android:textFontWeight="500" />
+
+	</RelativeLayout>
 
 	<RelativeLayout
 			android:id="@+id/relativeLayoutBtnSend"

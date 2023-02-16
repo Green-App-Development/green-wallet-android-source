@@ -1,6 +1,9 @@
 package com.green.wallet.presentation.main.nft.nftsend
 
 import android.app.Dialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +34,7 @@ import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.txtBlock
 import kotlinx.android.synthetic.main.fragment_listing.*
 import kotlinx.android.synthetic.main.fragment_receive.*
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -141,6 +145,29 @@ class NFTSendFragment : DaggerFragment() {
 			requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
 		}
 
+		imgCopyNftId.setOnClickListener {
+			copyToClipBoardShowCopied("Sample Copied")
+		}
+
+	}
+
+	private fun copyToClipBoardShowCopied(text: String) {
+		val clipBoard =
+			getMainActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+		val clip = ClipData.newPlainText(
+			"label",
+			text
+		)
+		clipBoard.setPrimaryClip(clip)
+		binding.relCopied.visibility = View.VISIBLE
+		lifecycleScope.launch {
+			delay(2000)
+			kotlin.runCatching {
+				binding.relCopied.visibility = View.GONE
+			}.onFailure {
+				VLog.d("Exception in changing relCopied visibility")
+			}
+		}
 	}
 
 	private fun showConfirmTransactionDialog() {
