@@ -342,6 +342,8 @@
 	<string name="nft_metadata_url_one"/>
 	<string name="nft_metadata_hash"/>
 	<string name="nft_send_btn"/>
+	<string name="nft_send_title"/>
+	<string name="funct_is_under_dev"/>
 
 
 </resources>

@@ -211,11 +211,11 @@
 				app:layout_constraintEnd_toEndOf="parent">
 
 			<TextView
-					android:layout_width="wrap_content"
+					android:layout_width="150dp"
 					android:layout_height="wrap_content"
 					android:layout_centerInParent="true"
 					android:gravity="center_horizontal"
-					android:text="Functionality is \n under  development"
+					android:text="@string/funct_is_under_dev"
 					android:textColor="@color/white" />
 
 		</RelativeLayout>
@@ -328,11 +328,11 @@
 				app:layout_constraintEnd_toEndOf="parent">
 
 			<TextView
-					android:layout_width="wrap_content"
+					android:layout_width="150dp"
 					android:layout_height="wrap_content"
 					android:layout_centerInParent="true"
 					android:gravity="center_horizontal"
-					android:text="Functionality is \n under  development"
+					android:text="@string/funct_is_under_dev"
 					android:textColor="@color/white" />
 
 		</RelativeLayout>

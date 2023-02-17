@@ -13,6 +13,7 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.convertPixelToDp
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.main.send.NetworkAdapter
+import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,7 +24,7 @@ import javax.inject.Inject
  * Created by bekjan on 06.02.2023.
  * email: bekjan.omirzak98@gmail.com
  */
-class UserNFTTokensFragment : DaggerFragment(),NFTTokenAdapter.NFTTokenClicked {
+class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked {
 
 	private lateinit var binding: FragmentUserNftBinding
 
@@ -84,7 +85,10 @@ class UserNFTTokensFragment : DaggerFragment(),NFTTokenAdapter.NFTTokenClicked {
 	private fun updateViewDetails() {
 		//nftAdapter
 		val nftAdapter =
-			NetworkAdapter(curActivity(), listOf("ALL NFTS"))
+			NetworkAdapter(
+				curActivity(),
+				listOf(curActivity().getStringResource(R.string.all_nfts))
+			)
 		binding.nftTypeSpinner.adapter = nftAdapter
 
 

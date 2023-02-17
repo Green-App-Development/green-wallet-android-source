@@ -10,13 +10,13 @@
 	<item
 			android:id="@+id/nfts"
 			android:icon="@drawable/ic_btm_nft"
-			android:title="NFts" />
+			android:title="@string/nfts_btn" />
 
 
 	<item
 			android:id="@+id/dapp"
 			android:icon="@drawable/ic_btm_dapp"
-			android:title="dApp" />
+			android:title="@string/dapp_bnt" />
 
 
 </menu>
