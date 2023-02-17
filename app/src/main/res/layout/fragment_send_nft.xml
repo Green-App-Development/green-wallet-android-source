@@ -164,7 +164,7 @@
 										android:layout_width="wrap_content"
 										android:layout_height="wrap_content"
 										android:layout_marginTop="8dp"
-										android:text="Collection"
+										android:text="@string/nft_collection"
 										android:textColor="@color/green"
 										android:textFontWeight="600"
 										android:textSize="14sp"
@@ -186,7 +186,7 @@
 										android:layout_width="wrap_content"
 										android:layout_height="wrap_content"
 										android:layout_marginTop="8dp"
-										android:text="NFT ID"
+										android:text="@string/nft_id"
 										android:textColor="@color/green"
 										android:textFontWeight="600"
 										android:textSize="14sp"
@@ -250,7 +250,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="APY+"
+											android:text="@string/nft_apy"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -280,7 +280,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Body"
+											android:text="@string/nft_body"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -310,7 +310,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Break Type"
+											android:text="@string/nft_beak_type"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -340,7 +340,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Eye Type"
+											android:text="@string/nft_eye_type"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -370,7 +370,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Eye color"
+											android:text="@string/nft_eye_color"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -400,7 +400,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Clothing"
+											android:text="@string/nft_clothing"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -430,7 +430,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Clothing Color"
+											android:text="@string/nft_clothing_color"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 
@@ -460,7 +460,7 @@
 									<TextView
 											android:layout_width="wrap_content"
 											android:layout_height="wrap_content"
-											android:text="Special Sign"
+											android:text="@string/nft_special_sign"
 											android:textColor="@color/secondary_text_color"
 											android:textSize="10sp" />
 

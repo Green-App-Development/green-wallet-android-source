@@ -117,7 +117,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		animator.start()
 	}
 
-	fun moveRelativeLayoutFromBtmSlowly(relLayout: RelativeLayout) {
+	fun `moveRelativeLayoutFromBtmSlowly`(relLayout: RelativeLayout) {
 		if (!isHiddenRelLayoutBtnSend)
 			return
 		isHiddenRelLayoutBtnSend = false
