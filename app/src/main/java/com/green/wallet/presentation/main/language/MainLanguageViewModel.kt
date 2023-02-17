@@ -6,7 +6,7 @@ import com.green.wallet.data.network.dto.greenapp.lang.LanguageItemDto
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.presentation.custom.isExceptionBelongsToNoInternet
 import com.green.wallet.presentation.tools.Resource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

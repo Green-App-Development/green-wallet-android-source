@@ -20,7 +20,7 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.main.send.NetworkAdapter
 import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_receive.*
 import kotlinx.coroutines.delay

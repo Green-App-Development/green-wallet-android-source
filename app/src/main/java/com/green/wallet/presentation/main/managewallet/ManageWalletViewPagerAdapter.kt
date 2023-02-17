@@ -16,7 +16,7 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.main.MainActivity
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getStringResource
 
 /**

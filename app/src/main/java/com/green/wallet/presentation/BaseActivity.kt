@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.presentation.custom.ConnectionLiveData
 import com.green.wallet.presentation.custom.DialogManager
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerAppCompatActivity
 import dev.b3nedikt.restring.Restring
 import kotlinx.coroutines.Job

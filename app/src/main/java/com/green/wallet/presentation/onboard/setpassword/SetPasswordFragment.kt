@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.children
@@ -19,7 +18,7 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.onboard.OnBoardActivity
 import com.green.wallet.presentation.onboard.OnBoardViewModel
 import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job

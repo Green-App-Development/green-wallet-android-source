@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.PagerAdapter
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Wallet
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 
 /**
  * Created by bekjan on 17.05.2022.

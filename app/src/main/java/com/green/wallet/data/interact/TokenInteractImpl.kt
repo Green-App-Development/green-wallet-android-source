@@ -6,7 +6,7 @@ import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.presentation.custom.ServerMaintenanceExceptions
 import com.green.wallet.presentation.tools.Resource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 
 /**

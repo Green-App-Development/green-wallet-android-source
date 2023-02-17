@@ -21,7 +21,7 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.getStringResource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_all_wallet_list.*
 import kotlinx.coroutines.CoroutineExceptionHandler

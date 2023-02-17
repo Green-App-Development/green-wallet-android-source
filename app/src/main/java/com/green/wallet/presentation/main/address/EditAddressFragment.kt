@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentAddressEditBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerFragment
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.presentation.custom.AnimationManager

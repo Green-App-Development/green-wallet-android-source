@@ -21,7 +21,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager.widget.ViewPager
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.green.wallet.R
 import com.green.wallet.data.local.WalletDao

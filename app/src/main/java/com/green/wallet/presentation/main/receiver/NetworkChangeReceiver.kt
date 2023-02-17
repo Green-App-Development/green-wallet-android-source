@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 
 class NetworkChangeReceiver : BroadcastReceiver() {
 

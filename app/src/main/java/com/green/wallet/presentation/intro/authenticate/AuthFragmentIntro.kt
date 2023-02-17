@@ -2,7 +2,6 @@ package com.green.wallet.presentation.intro.authenticate
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Configuration
 import android.hardware.biometrics.BiometricManager.Authenticators.*
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Bundle
@@ -15,11 +14,10 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt.*
 import androidx.core.content.ContextCompat
-import androidx.core.hardware.fingerprint.FingerprintManagerCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentEnterPasswordIntroBinding
 import com.green.wallet.presentation.App

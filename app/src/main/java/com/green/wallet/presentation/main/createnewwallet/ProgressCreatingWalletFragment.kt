@@ -9,7 +9,7 @@ import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.R
 import com.green.wallet.databinding.ProgressWalletCreatingBinding
 import com.green.wallet.presentation.di.factory.ViewModelFactory

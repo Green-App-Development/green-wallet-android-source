@@ -26,6 +26,7 @@ import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 import com.example.common.tools.*
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.android.synthetic.main.fragment_listing.*
 import kotlinx.coroutines.CoroutineExceptionHandler

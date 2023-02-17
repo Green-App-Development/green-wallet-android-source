@@ -25,7 +25,7 @@ import com.green.wallet.presentation.onboard.OnBoardViewModel
 import com.green.wallet.presentation.viewBinding
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.getStringResource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.restring.Restring
 import kotlinx.coroutines.launch

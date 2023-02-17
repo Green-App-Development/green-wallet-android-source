@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.di.application.AppScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first

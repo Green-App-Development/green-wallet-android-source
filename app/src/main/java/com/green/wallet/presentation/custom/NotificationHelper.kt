@@ -16,7 +16,7 @@ import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.presentation.di.application.AppScope
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.intro.IntroActivity.Companion.INTRO_BUNDLE_KEY
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject

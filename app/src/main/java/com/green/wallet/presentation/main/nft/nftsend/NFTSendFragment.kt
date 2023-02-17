@@ -18,7 +18,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.addingDoubleDotsTxt
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSendNftBinding
@@ -28,11 +28,6 @@ import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.dialog_confirm_send_nft.*
-import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.*
-import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.txtAddress
-import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.txtBlockChain
-import kotlinx.android.synthetic.main.fragment_listing.*
-import kotlinx.android.synthetic.main.fragment_receive.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest

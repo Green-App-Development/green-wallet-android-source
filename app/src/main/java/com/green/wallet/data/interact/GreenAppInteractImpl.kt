@@ -1,6 +1,6 @@
 package com.green.wallet.data.interact
 
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.convertDateFormatToMilliSeconds
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson

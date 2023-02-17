@@ -16,7 +16,7 @@ import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.tools.NetworkType
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.*

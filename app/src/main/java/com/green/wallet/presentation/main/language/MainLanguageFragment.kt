@@ -21,7 +21,7 @@ import com.green.wallet.presentation.tools.JsonHelper
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.google.gson.Gson
 import dagger.android.support.DaggerDialogFragment
 import dev.b3nedikt.reword.Reword

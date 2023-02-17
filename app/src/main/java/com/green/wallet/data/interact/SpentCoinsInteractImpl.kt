@@ -5,7 +5,7 @@ import com.green.wallet.data.local.entity.SpentCoinsEntity
 import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.presentation.custom.getShortNetworkType
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import kotlinx.coroutines.flow.*
 import org.json.JSONArray

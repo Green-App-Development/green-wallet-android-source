@@ -12,7 +12,7 @@ import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.custom.NotificationHelper
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.tools.Status
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap

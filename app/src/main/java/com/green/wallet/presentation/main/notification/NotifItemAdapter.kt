@@ -14,11 +14,8 @@ import com.green.wallet.domain.domainmodel.notification.NotificationItem
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.trimNetwork
-import com.green.wallet.presentation.tools.Status
-import com.green.wallet.presentation.tools.getColorResource
-import com.green.wallet.presentation.tools.getDrawableResource
-import com.green.wallet.presentation.tools.getStringResource
 import com.example.common.tools.*
+import com.green.wallet.presentation.tools.*
 
 class NotifItemAdapter(
 	private val activity: Activity,

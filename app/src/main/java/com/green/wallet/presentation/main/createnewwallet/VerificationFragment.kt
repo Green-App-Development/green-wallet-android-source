@@ -27,10 +27,7 @@ import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
-import com.green.wallet.presentation.tools.getColorResource
-import com.green.wallet.presentation.tools.getDrawableResource
-import com.green.wallet.presentation.tools.getStringResource
+import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerDialogFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.fragment_verification_wallet.*

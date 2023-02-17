@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTimeBinding
 import com.green.wallet.presentation.intro.IntroActivity
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
 import com.green.wallet.presentation.tools.getStringResource

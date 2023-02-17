@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.interact.AddressInteract
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

@@ -13,7 +13,7 @@ import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Address
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 
 
 class AddressAdapter(

@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import dev.b3nedikt.restring.Restring

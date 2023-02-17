@@ -3,13 +3,9 @@ package com.green.wallet.presentation.main.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import androidx.work.*
 import com.green.wallet.presentation.App
-import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
-import com.green.wallet.presentation.tools.SYNC_WORK_TAG
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.Job
-import java.util.concurrent.TimeUnit
 
 class AppRemovedRecentTaskService : Service() {
 

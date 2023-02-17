@@ -3,7 +3,7 @@ package com.green.wallet.data.interact
 import com.green.wallet.data.local.AddressDao
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.interact.AddressInteract
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

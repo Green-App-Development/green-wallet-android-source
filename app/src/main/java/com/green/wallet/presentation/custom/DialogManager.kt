@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.green.wallet.R
 import com.green.wallet.presentation.di.application.AppScope
 import com.green.wallet.presentation.tools.getColorResource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getStringResource
 import javax.inject.Inject
 

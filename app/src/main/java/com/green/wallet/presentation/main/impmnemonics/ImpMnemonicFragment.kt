@@ -22,7 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentImpmnemonicBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getPrefixForAddressFromNetworkType
 import dagger.android.support.DaggerDialogFragment
 import com.green.wallet.domain.domainmodel.Token

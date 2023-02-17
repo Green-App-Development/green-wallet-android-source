@@ -8,7 +8,7 @@ import com.green.wallet.domain.domainmodel.FAQItem
 import com.green.wallet.domain.interact.SupportInteract
 import com.green.wallet.presentation.custom.isExceptionBelongsToNoInternet
 import com.green.wallet.presentation.tools.Resource
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

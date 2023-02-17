@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.green.wallet.R
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.getShortNetworkType

@@ -8,7 +8,7 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkRequest
 import androidx.lifecycle.LiveData
 import com.green.wallet.presentation.di.application.AppScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 
 

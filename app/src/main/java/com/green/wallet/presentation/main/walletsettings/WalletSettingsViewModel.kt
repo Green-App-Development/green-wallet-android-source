@@ -2,7 +2,7 @@ package com.green.wallet.presentation.main.walletsettings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.domain.interact.WalletInteract
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch

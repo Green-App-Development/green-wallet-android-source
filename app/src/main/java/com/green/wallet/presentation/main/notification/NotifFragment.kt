@@ -26,12 +26,9 @@ import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.main.transaction.TransactionSortingAdapter
-import com.green.wallet.presentation.tools.Status
-import com.green.wallet.presentation.tools.getColorResource
-import com.green.wallet.presentation.tools.getDrawableResource
-import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.viewBinding
 import com.example.common.tools.*
+import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.android.synthetic.main.dialog_notification_detail.*
 import kotlinx.android.synthetic.main.fragment_notification.*

@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentIconBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.google.gson.Gson
 import dagger.android.support.DaggerFragment
 import com.green.wallet.presentation.custom.AnimationManager

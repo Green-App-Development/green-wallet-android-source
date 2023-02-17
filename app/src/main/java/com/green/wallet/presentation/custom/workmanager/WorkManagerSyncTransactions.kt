@@ -6,7 +6,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.GreenAppInteract
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 import javax.inject.Provider
 

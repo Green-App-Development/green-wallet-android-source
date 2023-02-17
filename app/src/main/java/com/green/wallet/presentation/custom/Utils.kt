@@ -19,6 +19,7 @@ import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 import com.example.common.tools.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.green.wallet.presentation.tools.VLog
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.text.DecimalFormat

@@ -9,7 +9,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.green.wallet.R
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
 import com.green.wallet.presentation.custom.getStatusBarBcgColorBasedOnTime

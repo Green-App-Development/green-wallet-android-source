@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.WalletWithTokens
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 
 /**
  * Created by bekjan on 18.05.2022.

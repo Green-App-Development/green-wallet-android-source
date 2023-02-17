@@ -23,6 +23,7 @@ import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.ReasonEnterCode
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getStringResource
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_manage_wallet_beta.*

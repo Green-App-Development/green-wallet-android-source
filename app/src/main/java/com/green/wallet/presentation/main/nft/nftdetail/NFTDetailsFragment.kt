@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.lifecycle.lifecycleScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.databinding.FragmentNftDetailBinding
 import com.green.wallet.presentation.main.MainActivity
 import dagger.android.support.DaggerFragment

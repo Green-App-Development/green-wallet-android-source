@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.FAQItem
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 
 /**
  * Created by bekjan on 02.06.2022.

@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSavemnemonicsBinding
 import com.green.wallet.presentation.custom.AnimationManager

@@ -3,7 +3,7 @@ package com.green.wallet.presentation.di.application
 import android.content.Context
 import androidx.room.Room
 import com.green.wallet.data.local.AppDatabase
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

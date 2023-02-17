@@ -17,7 +17,7 @@ import com.green.wallet.presentation.onboard.OnBoardActivity
 import com.green.wallet.presentation.onboard.OnBoardViewModel
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import dagger.android.support.DaggerFragment
 import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.CoroutineExceptionHandler

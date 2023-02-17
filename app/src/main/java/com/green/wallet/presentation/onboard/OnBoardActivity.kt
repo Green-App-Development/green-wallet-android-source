@@ -16,6 +16,7 @@ import com.green.wallet.presentation.custom.getStatusBcgBarColorBasedOnTime
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.tools.VLog
 import java.util.*
 import javax.inject.Inject
 

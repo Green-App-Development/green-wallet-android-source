@@ -16,7 +16,7 @@ import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.validateEmail
 import com.green.wallet.R
 import com.green.wallet.data.network.dto.support.ListingPost

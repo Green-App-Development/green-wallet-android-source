@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentWalletSettingsBinding
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.DialogManager

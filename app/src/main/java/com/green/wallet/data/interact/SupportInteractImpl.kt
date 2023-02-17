@@ -2,7 +2,7 @@ package com.green.wallet.data.interact
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.common.tools.VLog
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.data.local.FAQDao
 import com.green.wallet.data.local.entity.FaqItemEntity
 import com.green.wallet.data.network.GreenAppService
