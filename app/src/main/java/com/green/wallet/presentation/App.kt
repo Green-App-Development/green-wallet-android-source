@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
 import com.green.wallet.presentation.tools.VLog
@@ -16,6 +18,7 @@ import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.NotificationHelper
 import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
+import com.green.wallet.presentation.di.application.AppComponent
 import com.green.wallet.presentation.di.application.DaggerAppComponent
 import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import io.flutter.embedding.engine.FlutterEngine
@@ -51,6 +54,7 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var notificationHelper: NotificationHelper
 
+	lateinit var appComponent: AppComponent
 
 	var applicationIsAlive = false
 	var isUserUnBoardDed = true
@@ -83,7 +87,20 @@ class App : DaggerApplication() {
 			Configuration.Builder().setWorkerFactory(workerFactory).build()
 		)
 		initWorkManager()
+		subscribingToTopic()
 
+	}
+
+	private fun subscribingToTopic() {
+		FirebaseMessaging.getInstance().subscribeToTopic("news")
+			.addOnCompleteListener {
+				VLog.d("On success subscribing to news")
+			}.addOnFailureListener {
+				VLog.d("On failure subscribing to news")
+			}
+		FirebaseMessaging.getInstance().token.addOnSuccessListener {
+			VLog.d("Retrieved token successfully : $it")
+		}
 	}
 
 	private fun requestsPerApplication() {
@@ -108,15 +125,6 @@ class App : DaggerApplication() {
 			ExistingPeriodicWorkPolicy.REPLACE,
 			periodicWorkRequest.build()
 		)
-	}
-
-	private fun testingMethod() {
-		CoroutineScope(Dispatchers.IO).launch {
-			for (i in 0 until 10) {
-				VLog.d("Waiting : $i")
-				delay(1000L)
-			}
-		}
 	}
 
 	private fun quickNavigationIfUserUnBoarded() {
@@ -184,7 +192,8 @@ class App : DaggerApplication() {
 	}
 
 	override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-		return DaggerAppComponent.builder().bindApplication(applicationContext).build()
+		appComponent = DaggerAppComponent.builder().bindApplication(applicationContext).build()
+		return appComponent
 	}
 
 	override fun onLowMemory() {

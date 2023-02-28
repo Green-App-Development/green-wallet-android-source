@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
@@ -31,10 +32,13 @@ import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.preventDoubleClick
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.pageIndicator
+import kotlinx.android.synthetic.main.fragment_manage_wallet_beta.*
 import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -97,6 +101,21 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		}
 	}
 
+	private val requestPermissions =
+		registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { it ->
+			it.entries.forEach {
+				if (it.value) {
+					curActivity().move2ScannerFragment(curFingerPrint, curNetwork)
+				} else
+					Toast.makeText(
+						curActivity(),
+						curActivity().getStringResource(R.string.camera_permission_missing),
+						Toast.LENGTH_SHORT
+					)
+						.show()
+			}
+		}
+
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -114,7 +133,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		initWalletTokenAdapter()
 		updateViewDetails()
 		initCurCryptoCourseUpdate()
-		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
+//		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
 		initSwipeRefreshLayout()
 
 	}
@@ -218,6 +237,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 				prevChosenPositionInViewPager = 0
 			curBalance = homeAddedList[prevChosenPositionInViewPager].totalAmountInUSD
 			curNetwork = homeAddedList[prevChosenPositionInViewPager].networkType
+			homeFragmentViewModel.updateCryptoCurrencyCourse(homeAddedList[prevChosenPositionInViewPager].networkType)
 			pageIndicator.setSelected(prevChosenPositionInViewPager)
 			mainWalletViewPager.setCurrentItem(prevChosenPositionInViewPager, true)
 //            homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
@@ -245,16 +265,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	}
 
 	private fun FragmentHomeBinding.registerButtonClicks() {
-
-		icHomeQr.setOnClickListener {
-			it.isEnabled = false
-			constraintCommentHomeQr.visibility = View.VISIBLE
-			Handler(Looper.getMainLooper()).postDelayed({
-				constraintCommentHomeQr.visibility = View.GONE
-				it.isEnabled = true
-			}, 2000L)
-
-		}
 
 		icHomePlus.setOnClickListener {
 			it.isEnabled = false
@@ -312,6 +322,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 						mainViewPagerWalletAdapter.walletList[position].fingerPrint
 					updateBalanceToDollarStr()
 					initSettingIcon(mainViewPagerWalletAdapter.walletList[position].address)
+					homeFragmentViewModel.updateCryptoCurrencyCourse(mainViewPagerWalletAdapter.walletList[position].networkType)
 				}
 			}
 
@@ -325,6 +336,12 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			addWallet()
 		}
 
+		icHomeQr.setOnClickListener {
+			if (hasAtLeastOneWallet)
+				requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
+			else
+				curActivity().showBtmDialogCreateOrImportNewWallet(false)
+		}
 
 	}
 

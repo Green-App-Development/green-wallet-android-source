@@ -67,7 +67,7 @@ class HomeFragmentViewModel @Inject constructor(
 		job10Seconds = viewModelScope.launch {
 			var network = "Chia Network"
 			while (true) {
-				updateCryptoCurrencyCourse(network)
+//				updateCryptoCurrencyCourse(network)
 				if (network == "Chia Network") {
 					network = "Chives Network"
 				} else {
@@ -78,7 +78,7 @@ class HomeFragmentViewModel @Inject constructor(
 		}
 	}
 
-	private fun updateCryptoCurrencyCourse(networkType: String) {
+	fun updateCryptoCurrencyCourse(networkType: String) {
 		cryptoUpdateCourseJob?.cancel()
 		cryptoUpdateCourseJob = viewModelScope.launch(handler) {
 			cryptocurrencyInteract.getCurrentCurrencyCourseByNetwork(networkType).collect {

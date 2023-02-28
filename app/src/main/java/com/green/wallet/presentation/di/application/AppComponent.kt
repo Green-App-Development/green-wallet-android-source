@@ -14,15 +14,16 @@ import com.green.wallet.data.di.InteractModule
 @Component(modules = [AndroidInjectionModule::class, InteractModule::class, InjectorBuildersModule::class, ViewModelsModule::class, AppModule::class, NetworkModule::class, WorkerBindingModule::class])
 interface AppComponent : AndroidInjector<App> {
 
+	fun fcmComponentBuilder(): FCMServiceComponent.Builder
 
-    @Component.Builder
-    interface Builder {
+	@Component.Builder
+	interface Builder {
 
-        @BindsInstance
-        fun bindApplication(context: Context): Builder
-        fun build(): AppComponent
+		@BindsInstance
+		fun bindApplication(context: Context): Builder
+		fun build(): AppComponent
 
-    }
+	}
 
 
 }
