@@ -33,10 +33,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 28.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ManageWalletFragment : DaggerFragment(),
 	ManageWalletViewPagerAdapter.ManageWalletAdapterListener {
 

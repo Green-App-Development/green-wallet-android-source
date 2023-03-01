@@ -13,10 +13,6 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-/**
- * Created by bekjan on 25.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 fun getUnsafeOkHttpClient(interceptor: Interceptor): OkHttpClient {
     try {
         val trustAllCerts: Array<TrustManager> = arrayOf(object : X509TrustManager {

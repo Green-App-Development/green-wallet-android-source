@@ -9,10 +9,6 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 
 
-/**
- * Created by bekjan on 04.07.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @AppScope
 class InterceptorImpl @Inject constructor() : Interceptor {

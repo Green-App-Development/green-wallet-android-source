@@ -8,10 +8,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 30.11.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class WalletSettingsViewModel @Inject constructor(private val walletInteract: WalletInteract) :
 	ViewModel() {
 

@@ -27,10 +27,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-/**
- * Created by bekjan on 29.11.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class WalletSettingsFragment : DaggerFragment() {
 
 

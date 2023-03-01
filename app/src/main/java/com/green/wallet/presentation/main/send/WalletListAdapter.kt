@@ -13,10 +13,8 @@ import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.presentation.tools.VLog
 
-/**
- * Created by bekjan on 18.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
+
 class WalletListAdapter(private val context: Context, val walletList: List<WalletWithTokens>) :
     BaseAdapter() {
 

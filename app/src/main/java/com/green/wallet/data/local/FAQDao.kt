@@ -5,10 +5,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.green.wallet.data.local.entity.FaqItemEntity
 
-/**
- * Created by bekjan on 18.11.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @Dao
 interface FAQDao {

@@ -5,10 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-/**
- * Created by bekjan on 09.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 object Converters {
 
 

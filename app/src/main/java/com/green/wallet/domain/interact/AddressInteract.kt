@@ -3,10 +3,7 @@ package com.green.wallet.domain.interact
 import com.green.wallet.domain.domainmodel.Address
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 interface AddressInteract {
 
 

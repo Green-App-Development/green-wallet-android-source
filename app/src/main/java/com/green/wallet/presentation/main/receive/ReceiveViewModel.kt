@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.green.wallet.domain.interact.WalletInteract
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 15.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ReceiveViewModel @Inject constructor(private val walletInteract: WalletInteract) :
     ViewModel() {
 

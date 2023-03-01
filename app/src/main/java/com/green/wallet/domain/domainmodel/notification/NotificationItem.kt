@@ -2,10 +2,7 @@ package com.green.wallet.domain.domainmodel.notification
 
 import com.green.wallet.presentation.tools.Status
 
-/**
- * Created by bekjan on 31.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 data class NotificationItem(
     val status: Status = Status.Incoming,
     val amount: Double=0.0,

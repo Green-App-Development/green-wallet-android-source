@@ -4,10 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.green.wallet.R
 
-/**
- * Created by bekjan on 14.10.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class CustomEdtText(mContext: Context, attributeSet: AttributeSet) :
 	androidx.appcompat.widget.AppCompatEditText(mContext, attributeSet) {
 

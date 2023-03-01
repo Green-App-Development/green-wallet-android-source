@@ -11,10 +11,7 @@ import com.example.common.tools.formattedDay
 import java.util.*
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 27.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NotifinteractImpl @Inject constructor(
 	private val transactionDao: TransactionDao,
 	private val notifOtherDao: NotifOtherDao,

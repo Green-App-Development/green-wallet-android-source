@@ -37,10 +37,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 03.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ListingFragment : DaggerDialogFragment() {
 
 	private lateinit var binding: FragmentListingBinding

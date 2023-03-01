@@ -3,10 +3,7 @@ package com.green.wallet.domain.interact
 import com.green.wallet.domain.domainmodel.notification.NotifSection
 import com.green.wallet.presentation.tools.Status
 
-/**
- * Created by bekjan on 27.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 interface NotifInteract {
 
 

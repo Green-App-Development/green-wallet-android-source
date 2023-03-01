@@ -26,10 +26,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 08.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class LanguageFragment : DaggerFragment() {
 
 	private val binding: FragmentLanguageBinding by viewBinding(FragmentLanguageBinding::bind)

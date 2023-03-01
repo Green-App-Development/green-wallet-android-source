@@ -14,10 +14,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 
-/**
- * Created by bekjan on 25.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @Module
 class NetworkModule {

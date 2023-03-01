@@ -19,10 +19,7 @@ import com.green.wallet.presentation.tools.getStringResource
 import de.hdodenhof.circleimageview.CircleImageView
 
 
-/**
- * Created by bekjan on 01.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class WalletTokenAdapter(
 	private val walletList: List<TokenWallet>,
 	private val tokenClicker: TokenClicker,

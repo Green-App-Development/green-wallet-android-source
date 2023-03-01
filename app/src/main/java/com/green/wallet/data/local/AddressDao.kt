@@ -4,10 +4,6 @@ import androidx.room.*
 import com.green.wallet.data.local.entity.AddressEntity
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @Dao
 interface AddressDao {

@@ -27,10 +27,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class GreenAppInteractImpl @Inject constructor(
 	private val greenAppService: GreenAppService,
 	private val prefs: PrefsInteract,

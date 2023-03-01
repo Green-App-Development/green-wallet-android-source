@@ -2,11 +2,6 @@ package com.green.wallet.presentation.tools
 
 import java.lang.Exception
 
-/**
- * Created by bekjan on 25.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
 class Resource<T> private constructor(
     val state: State,
     val data: T?,

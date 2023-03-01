@@ -17,10 +17,6 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.custom.trimNetwork
 
-/**
- * Created by bekjan on 19.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class ViewPagerWalletsAdapter(
 	private val activity: Activity,
 	private val viewPagerClicker: ViewPagerWalletClicker,

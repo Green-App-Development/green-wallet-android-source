@@ -3,10 +3,7 @@ package com.green.wallet.domain.interact
 import com.green.wallet.domain.domainmodel.CurrencyItem
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Created by bekjan on 20.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 interface CryptocurrencyInteract {
 
     suspend fun updateCourseCryptoInDb()

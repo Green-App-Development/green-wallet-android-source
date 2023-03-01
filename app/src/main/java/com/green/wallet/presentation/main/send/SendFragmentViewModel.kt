@@ -5,10 +5,6 @@ import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.interact.*
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 22.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 
 class SendFragmentViewModel @Inject constructor(

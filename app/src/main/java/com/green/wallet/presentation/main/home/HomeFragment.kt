@@ -43,10 +43,7 @@ import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 12.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletClicker {
 
 	private val binding by viewBinding(FragmentHomeBinding::bind)

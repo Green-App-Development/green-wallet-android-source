@@ -5,12 +5,6 @@ import android.util.AttributeSet
 import android.widget.Spinner
 
 
-/**
- * Created by bekjan on 31.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
-
 class CustomSpinner : androidx.appcompat.widget.AppCompatSpinner {
     // private static final String TAG = "CustomSpinner";
     private var mListener: OnSpinnerEventsListener? = null

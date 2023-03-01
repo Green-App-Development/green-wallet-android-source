@@ -13,10 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 11.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class TransactionsViewModel @Inject constructor(
 	private val transactionInteract: TransactionInteract,
 	private val blockChainInteract: BlockChainInteract,

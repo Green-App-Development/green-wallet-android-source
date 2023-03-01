@@ -4,10 +4,6 @@ import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.tools.Resource
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 interface BlockChainInteract {
 
 

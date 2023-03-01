@@ -7,10 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import java.util.*
 import kotlin.collections.HashMap
 
-/**
- * Created by bekjan on 09.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 interface WalletInteract {
 
 	fun getFlowOfWalletList(): Flow<List<Wallet>>

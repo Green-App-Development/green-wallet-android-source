@@ -20,10 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 06.02.2023.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked {
 
 	private lateinit var binding: FragmentUserNftBinding

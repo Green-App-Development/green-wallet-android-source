@@ -12,11 +12,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
 
-/**
- * Created by bekjan on 25.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
 
 interface GreenAppService {
 

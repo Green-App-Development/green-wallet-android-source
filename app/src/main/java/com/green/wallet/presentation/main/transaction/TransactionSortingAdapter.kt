@@ -11,10 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.green.wallet.R
 
-/**
- * Created by bekjan on 12.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class TransactionSortingAdapter(private val context: Context, val options: List<String>) : BaseAdapter() {
 
     var selectedPosition: Int = 0

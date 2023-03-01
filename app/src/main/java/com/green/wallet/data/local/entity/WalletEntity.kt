@@ -6,10 +6,6 @@ import androidx.room.PrimaryKey
 import com.green.wallet.domain.domainmodel.Wallet
 import kotlin.collections.HashMap
 
-/**
- * Created by bekjan on 09.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @Entity(tableName = "WalletEntity")
 data class WalletEntity(

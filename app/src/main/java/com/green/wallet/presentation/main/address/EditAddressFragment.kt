@@ -33,10 +33,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-/**
- * Created by bekjan on 24.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class EditAddressFragment : DaggerFragment() {
 
 	private val binding by viewBinding(FragmentAddressEditBinding::bind)

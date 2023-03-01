@@ -5,12 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.green.wallet.domain.domainmodel.Address
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
-
 @Entity(tableName = "AddressEntity")
 data class AddressEntity(
     @PrimaryKey(autoGenerate = false)

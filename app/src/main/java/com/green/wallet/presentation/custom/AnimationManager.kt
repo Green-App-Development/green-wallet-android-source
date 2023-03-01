@@ -10,10 +10,6 @@ import com.green.wallet.R
 import com.green.wallet.presentation.di.application.AppScope
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 28.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @AppScope
 class AnimationManager @Inject constructor(private var context: Context) {

@@ -16,10 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 11.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class MainLanguageViewModel @Inject constructor(
     private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {

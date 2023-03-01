@@ -14,10 +14,8 @@ import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.FAQItem
 import com.green.wallet.presentation.tools.VLog
 
-/**
- * Created by bekjan on 02.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
+
 class FAQAdapter(private val activity: Activity) :
     RecyclerView.Adapter<FAQAdapter.FAQViewHolder>() {
 

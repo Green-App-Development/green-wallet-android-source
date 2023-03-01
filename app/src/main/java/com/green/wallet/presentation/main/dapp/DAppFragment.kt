@@ -6,10 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 
-/**
- * Created by bekjan on 01.03.2023.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class DAppFragment : DaggerFragment() {
 
 

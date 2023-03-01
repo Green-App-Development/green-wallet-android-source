@@ -11,10 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.green.wallet.R
 
-/**
- * Created by bekjan on 21.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NetworkAdapter(private val context: Context, val dataOptions: List<String>) : BaseAdapter() {
 
     var selectedPosition: Int = 0

@@ -4,10 +4,6 @@ import androidx.room.*
 import com.green.wallet.data.local.entity.TokenEntity
 import java.util.*
 
-/**
- * Created by bekjan on 12.07.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @Dao
 interface TokenDao {

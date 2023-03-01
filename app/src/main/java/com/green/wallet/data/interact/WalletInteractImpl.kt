@@ -23,10 +23,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
 
-/**
- * Created by bekjan on 09.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class WalletInteractImpl @Inject constructor(
 	private val walletDao: WalletDao,
 	private val prefsInteract: PrefsInteract,

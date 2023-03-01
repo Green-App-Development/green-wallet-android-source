@@ -16,10 +16,7 @@ import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 
-/**
- * Created by bekjan on 12.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class TransactionItemAdapter(
     private val effect: AnimationManager,
     private val curActivity: MainActivity,

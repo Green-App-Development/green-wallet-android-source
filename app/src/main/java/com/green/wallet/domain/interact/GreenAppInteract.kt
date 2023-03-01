@@ -5,10 +5,7 @@ import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.domain.domainmodel.CoinDetails
 import com.green.wallet.presentation.tools.Resource
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 interface GreenAppInteract {
 
 

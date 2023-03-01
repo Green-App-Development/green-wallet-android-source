@@ -4,10 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/**
- * Created by bekjan on 05.10.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 @Entity(tableName = "user_post")
 data class UserPostEntity(
 

@@ -38,10 +38,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 31.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NotifFragment : DaggerDialogFragment(),
 	NotifSectionAdapter.ParentNotifListener {
 

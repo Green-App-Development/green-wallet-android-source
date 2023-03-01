@@ -17,10 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 25.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 open class BaseActivity : DaggerAppCompatActivity() {
 
 	private var appCompatDelegate: AppCompatDelegate? = null

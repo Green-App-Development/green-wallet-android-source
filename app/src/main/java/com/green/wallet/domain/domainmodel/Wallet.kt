@@ -4,10 +4,6 @@ import android.os.Parcelable
 import com.green.wallet.data.local.entity.WalletEntity
 import kotlinx.android.parcel.Parcelize
 
-/**
- * Created by bekjan on 09.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 @Parcelize
 data class Wallet(

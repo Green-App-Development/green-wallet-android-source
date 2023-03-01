@@ -49,10 +49,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-/**
- * Created by bekjan on 14.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ImpMnemonicFragment : DaggerDialogFragment() {
 
 	private val binding by viewBinding(FragmentImpmnemonicBinding::bind)

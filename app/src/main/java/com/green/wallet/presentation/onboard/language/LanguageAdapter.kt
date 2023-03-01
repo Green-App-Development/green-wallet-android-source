@@ -12,10 +12,7 @@ import com.green.wallet.R
 import com.green.wallet.data.network.dto.greenapp.lang.LanguageItemDto
 import com.green.wallet.presentation.tools.loadSvg
 
-/**
- * Created by bekjan on 25.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class LanguageAdapter(
 	private val languageClicker: LanguageClicker,
 	private val activity: Activity

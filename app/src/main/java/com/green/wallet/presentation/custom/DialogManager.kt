@@ -15,10 +15,6 @@ import com.green.wallet.presentation.tools.getStringResource
 import javax.inject.Inject
 
 
-/**
- * Created by bekjan on 24.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 
 @AppScope

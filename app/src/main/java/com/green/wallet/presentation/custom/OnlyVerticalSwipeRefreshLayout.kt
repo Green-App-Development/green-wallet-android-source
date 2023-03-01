@@ -7,10 +7,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
-/**
- * Created by bekjan on 08.11.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 	SwipeRefreshLayout(context, attrs) {
 	private val touchSlop: Int = ViewConfiguration.get(context).scaledTouchSlop

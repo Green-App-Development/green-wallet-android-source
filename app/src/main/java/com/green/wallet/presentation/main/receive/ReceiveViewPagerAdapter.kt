@@ -16,10 +16,7 @@ import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.tools.VLog
 
-/**
- * Created by bekjan on 17.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ReceiveViewPagerAdapter(private val walletList: List<Wallet>, private val context: Context) :
 	PagerAdapter() {
 

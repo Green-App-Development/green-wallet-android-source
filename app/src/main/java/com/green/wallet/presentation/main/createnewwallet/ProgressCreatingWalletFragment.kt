@@ -21,10 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 13.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ProgressCreatingWalletFragment : DaggerDialogFragment() {
 
 

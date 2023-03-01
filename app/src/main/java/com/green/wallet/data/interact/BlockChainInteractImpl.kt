@@ -36,10 +36,6 @@ import java.util.*
 import javax.inject.Inject
 
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class BlockChainInteractImpl @Inject constructor(
 	private val walletDao: WalletDao,
 	private val prefs: PrefsInteract,

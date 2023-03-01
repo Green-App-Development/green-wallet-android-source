@@ -31,10 +31,6 @@ import dev.b3nedikt.restring.Restring
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 11.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class TermsFragment : DaggerFragment() {
 
 	private val binding by viewBinding(FragmentTermsofuseBinding::bind)

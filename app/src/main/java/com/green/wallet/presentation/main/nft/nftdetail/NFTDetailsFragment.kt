@@ -17,10 +17,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * Created by bekjan on 07.02.2023.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NFTDetailsFragment : DaggerFragment() {
 
 	private lateinit var binding: FragmentNftDetailBinding

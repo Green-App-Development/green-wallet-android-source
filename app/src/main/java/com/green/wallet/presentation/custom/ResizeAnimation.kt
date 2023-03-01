@@ -5,10 +5,6 @@ import android.view.animation.Animation
 import android.view.animation.Transformation
 
 
-/**
- * Created by bekjan on 02.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class ResizeAnimation(view: View, targetHeight: Int, startHeight: Int) :
     Animation() {
     val targetHeight: Int

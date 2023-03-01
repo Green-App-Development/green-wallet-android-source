@@ -11,10 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.NFTToken
 
-/**
- * Created by bekjan on 06.02.2023.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
 	RecyclerView.Adapter<NFTTokenAdapter.NFTTokenViewHolder>() {
 

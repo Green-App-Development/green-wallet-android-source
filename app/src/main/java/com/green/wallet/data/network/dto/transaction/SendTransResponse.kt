@@ -4,12 +4,6 @@ import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.presentation.tools.Status
 import com.google.gson.annotations.SerializedName
 
-/**
- * Created by bekjan on 04.07.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
-
 data class SendTransResponse(
 	@SerializedName("name")
 	val transaction_id: String,

@@ -9,10 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 23.02.2023.
- * email: bekjan.omirzak98@gmail.com
- */
 class FirebasePushNotifService : FirebaseMessagingService() {
 
 	@Inject

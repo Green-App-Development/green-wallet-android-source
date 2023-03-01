@@ -25,10 +25,7 @@ import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 
-/**
- * Created by bekjan on 19.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 
 	private val binding by viewBinding(FragmentAddressListBinding::bind)

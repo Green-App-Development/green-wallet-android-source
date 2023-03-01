@@ -9,10 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 17.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class TransactionInteractImpl @Inject constructor(private val transactionDao: TransactionDao) :
 	TransactionInteract {
 

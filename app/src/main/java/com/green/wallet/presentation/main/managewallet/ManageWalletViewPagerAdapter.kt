@@ -19,10 +19,6 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getStringResource
 
-/**
- * Created by bekjan on 28.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 class ManageWalletViewPagerAdapter(
 	val walletList: List<Wallet>,

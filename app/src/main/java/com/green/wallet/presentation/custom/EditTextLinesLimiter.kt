@@ -7,12 +7,6 @@ import android.widget.EditText
 import android.text.TextWatcher
 
 
-
-
-/**
- * Created by bekjan on 24.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class EditTextLinesLimiter(editText: EditText, maxLines: Int) : TextWatcher {
     private val editText: EditText
     private val maxLines: Int

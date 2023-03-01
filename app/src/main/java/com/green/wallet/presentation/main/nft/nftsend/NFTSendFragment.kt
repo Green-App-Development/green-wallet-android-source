@@ -33,10 +33,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-/**
- * Created by bekjan on 08.02.2023.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NFTSendFragment : DaggerFragment() {
 
 	private lateinit var binding: FragmentSendNftBinding

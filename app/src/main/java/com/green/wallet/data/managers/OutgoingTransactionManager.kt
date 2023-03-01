@@ -17,10 +17,6 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
 
-/**
- * Created by bekjan on 14.12.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 class OutgoingTransactionManager @Inject constructor(
 	private val transactionDao: TransactionDao,

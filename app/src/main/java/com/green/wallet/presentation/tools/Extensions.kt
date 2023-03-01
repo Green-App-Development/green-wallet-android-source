@@ -17,10 +17,6 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.green.wallet.presentation.main.MainActivity
 
-/**
- * Created by bekjan on 27.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 
 interface OnSwipeHelper {
 	fun swipedLeft()

@@ -9,10 +9,7 @@ import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 12.07.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class TokenInteractImpl @Inject constructor(
 	private val tokenDao: TokenDao,
 	private val walletDoa: WalletDao

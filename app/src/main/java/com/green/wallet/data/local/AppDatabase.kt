@@ -5,12 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.green.wallet.data.local.entity.*
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
-
 @Database(
 	entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class, SpentCoinsEntity::class, FaqItemEntity::class],
 	version = 25,

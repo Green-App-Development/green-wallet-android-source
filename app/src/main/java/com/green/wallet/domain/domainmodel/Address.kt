@@ -4,11 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.green.wallet.data.local.entity.AddressEntity
 
-/**
- * Created by bekjan on 06.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
-
 
 data class Address(
     val address_id: String,

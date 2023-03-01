@@ -13,10 +13,7 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.viewBinding
 
-/**
- * Created by bekjan on 11.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class AboutAppFragment : DaggerDialogFragment() {
 
     private val binding by viewBinding(FragmentAboutAppBinding::bind)

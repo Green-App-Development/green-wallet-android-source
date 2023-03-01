@@ -12,10 +12,7 @@ import com.green.wallet.R
 import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.tools.getDrawableResource
 
-/**
- * Created by bekjan on 05.07.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class NetworkAdapter(private val activity: Activity, val clicker: ChooseNetworkListener) :
     RecyclerView.Adapter<NetworkAdapter.ItemNetworkViewHolder>() {
 

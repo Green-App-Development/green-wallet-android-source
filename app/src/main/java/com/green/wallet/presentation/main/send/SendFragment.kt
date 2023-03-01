@@ -56,10 +56,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-/**
- * Created by bekjan on 21.04.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class SendFragment : DaggerFragment() {
 
 	private val binding by viewBinding(FragmentSendBinding::bind)

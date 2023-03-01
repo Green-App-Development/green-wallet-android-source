@@ -11,10 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 10.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class ManageWalletViewModel @Inject constructor(
 	private val walletInteract: WalletInteract,
 	private val blockChainInteract: BlockChainInteract

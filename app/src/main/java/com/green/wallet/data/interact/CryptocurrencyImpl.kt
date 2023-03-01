@@ -28,10 +28,7 @@ import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 20.06.2022.
- * email: bekjan.omirzak98@gmail.com
- */
+
 class CryptocurrencyImpl @Inject constructor(
     private val prefs: PrefsInteract,
     private val gson: Gson,

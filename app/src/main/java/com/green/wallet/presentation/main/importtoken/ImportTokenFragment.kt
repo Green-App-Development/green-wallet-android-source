@@ -31,10 +31,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Created by bekjan on 04.05.2022.
- * email: bekjan.omirzak98@gmail.com
- */
 class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener {
 
 	private val binding by viewBinding(FragmentImportTokenBinding::bind)
