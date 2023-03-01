@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/root"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/primary_app_background">
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline8"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.02" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline9"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.07" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.40" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline58"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.5" />
+
+	<RelativeLayout
+			android:id="@+id/chosenNetworkRel"
+			android:layout_width="150dp"
+			android:layout_height="30dp"
+			android:layout_marginEnd="15dp"
+			android:background="@drawable/drop_down_network_chooser_bcg"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/guideline8">
+
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true"
+				android:orientation="horizontal">
+
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:src="@drawable/dot_ic" />
+
+			<TextView
+					android:id="@+id/txt_chosen_network"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="5dp"
+					android:layout_marginEnd="5dp"
+					android:fontFamily="@font/inter_regular"
+					android:text="Chia Network"
+					android:textColor="@color/green"
+					android:textFontWeight="400"
+					android:textSize="14sp" />
+
+			<ImageView
+					android:id="@+id/imgArrowDownNetwork"
+					android:layout_width="15dp"
+					android:layout_height="15dp"
+					android:layout_gravity="center_vertical"
+					android:foreground="?android:attr/selectableItemBackground"
+					android:src="@drawable/ic_arrow_downword" />
+
+		</LinearLayout>
+
+	</RelativeLayout>
+
+	<TextView
+			android:id="@+id/edtToken"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="dApp List"
+			android:textColor="@color/green"
+			android:textFontWeight="600"
+			android:textSize="25sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+	<TextView
+			android:id="@+id/txtDEX"
+			android:layout_width="106dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:layout_marginEnd="13dp"
+			android:layout_weight="1"
+			android:background="@drawable/bcg_sorting_txt"
+			android:fontFamily="@font/inter_regular"
+			android:gravity="center_horizontal"
+			android:paddingTop="6dp"
+			android:paddingBottom="6dp"
+			android:tag="Outgoing"
+			android:text="DEX"
+			android:textColor="@color/sorting_txt_category"
+			android:textFontWeight="500"
+			android:textSize="14sp"
+			app:layout_constraintEnd_toStartOf="@+id/guideline58"
+			app:layout_constraintTop_toBottomOf="@+id/edtToken" />
+
+	<TextView
+			android:id="@+id/txtNFtMarkets"
+			android:layout_width="106dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="13dp"
+			android:layout_weight="1"
+			android:background="@drawable/bcg_sorting_txt"
+			android:fontFamily="@font/inter_regular"
+			android:gravity="center_horizontal"
+			android:paddingTop="6dp"
+			android:paddingBottom="6dp"
+			android:tag="Outgoing"
+			android:text="NFT Markets"
+			android:textColor="@color/sorting_txt_category"
+			android:textFontWeight="500"
+			android:textSize="14sp"
+			app:layout_constraintStart_toStartOf="@+id/guideline58"
+			app:layout_constraintTop_toTopOf="@+id/txtDEX" />
+
+	<TextView
+			android:id="@+id/txtNoNFTPlaceHolder"
+			android:layout_width="304dp"
+			android:layout_height="67dp"
+			android:layout_marginTop="20dp"
+			android:fontFamily="@font/inter_regular"
+			android:gravity="center_horizontal"
+			android:text="Soon you will be able to access DEX using Green Wallet"
+			android:textColor="@color/inactive_grey_txt_color"
+			android:textFontWeight="500"
+			android:textSize="20sp"
+			android:visibility="visible"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.495"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/guideline10" />
+
+	<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="20dp"
+			android:orientation="horizontal"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent">
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/inter_regular"
+				android:text="Not on the list?"
+				android:textColor="@color/grey_txt_color"
+				android:textFontWeight="400"
+				android:textSize="16sp" />
+
+		<TextView
+				android:id="@+id/txtListingApplication"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="5dp"
+				android:fontFamily="@font/inter_regular"
+				android:text="Listing Application"
+				android:textColor="@color/green"
+				android:textFontWeight="400"
+				android:textSize="16sp" />
+
+	</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

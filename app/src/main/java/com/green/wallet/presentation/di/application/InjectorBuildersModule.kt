@@ -18,6 +18,7 @@ import com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment
 import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWalletFragment
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
+import com.green.wallet.presentation.main.dapp.DAppFragment
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
@@ -158,6 +159,9 @@ abstract class InjectorBuildersModule {
 
 	@ContributesAndroidInjector
 	abstract fun injectNFTSendFragment(): NFTSendFragment
+
+	@ContributesAndroidInjector
+	abstract fun injectIntoDAppManagement(): DAppFragment
 
 
 }

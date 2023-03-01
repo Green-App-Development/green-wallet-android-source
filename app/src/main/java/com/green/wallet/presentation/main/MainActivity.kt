@@ -259,6 +259,10 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+				fragmentDApp -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -277,7 +281,10 @@ class MainActivity : BaseActivity() {
 					}
 				}
 				dapp -> {
-					sendEventToFragment()
+					if (navController.currentDestination?.id != fragmentDApp) {
+						item.isChecked = true
+						move2DAppFragment()
+					}
 				}
 				nfts -> {
 					if (navController.currentDestination?.id != fragmentUserNFTs) {
@@ -578,6 +585,10 @@ class MainActivity : BaseActivity() {
 
 	fun move2UserNFTTokensFragment() {
 		navController.navigate(fragmentUserNFTs)
+	}
+
+	fun move2DAppFragment() {
+		navController.navigate(fragmentDApp)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {

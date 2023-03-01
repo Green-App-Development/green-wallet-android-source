@@ -8,6 +8,7 @@ import com.green.wallet.presentation.main.MainViewModel
 import com.green.wallet.presentation.main.address.AddressViewModel
 import com.green.wallet.presentation.main.allsettings.AllSettingsViewModel
 import com.green.wallet.presentation.main.createnewwallet.NewWalletViewModel
+import com.green.wallet.presentation.main.dapp.DAppViewModel
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeViewModel
 import com.green.wallet.presentation.main.home.HomeFragmentViewModel
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicViewModel
@@ -146,6 +147,11 @@ abstract class ViewModelsModule {
 	@Binds
 	@ViewModelKey(NFTDetailsViewModel::class)
 	abstract fun bindingNFtDetailsViewModel(nftViewModel: NFTDetailsViewModel): ViewModel
+
+	@IntoMap
+	@Binds
+	@ViewModelKey(DAppViewModel::class)
+	abstract fun bindingDAppViewModel(viewModel: DAppViewModel): ViewModel
 
 
 }

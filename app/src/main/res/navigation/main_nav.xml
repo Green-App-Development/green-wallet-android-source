@@ -255,6 +255,10 @@
 			android:label="NFTSend"
 			tools:layout="@layout/fragment_send_nft" />
 
-
+	<fragment
+			android:id="@+id/fragmentDApp"
+			android:name="com.green.wallet.presentation.main.dapp.DAppFragment"
+			android:label="DAppMan"
+			tools:layout="@layout/fragment_d_app" />
 
 </navigation>
