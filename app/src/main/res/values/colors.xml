@@ -125,5 +125,6 @@
 	<color name="disabled_thumb_track">#c7c7c7</color>
 	<color name="switch_thumb_off_settings">#202020</color>
 	<color name="app_icon_main">#FFFFFF</color>
+	<color name="inactive_grey_txt_color">#494949</color>
 
 </resources>
