@@ -139,7 +139,7 @@
 			android:fontFamily="@font/inter_regular"
 			android:gravity="center_horizontal"
 			android:text="Soon you will be able to access DEX using Green Wallet"
-			android:textColor="@color/inactive_grey_txt_color"
+			android:textColor="@color/grey_txt_color"
 			android:textFontWeight="500"
 			android:textSize="20sp"
 			android:visibility="visible"
