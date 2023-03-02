@@ -41,9 +41,15 @@ class DAppFragment : DaggerFragment() {
 	}
 
 	private fun underlineTxt() {
-		val text = SpannableString("Listing Application")
+		val text =
+			SpannableString(getMainActivity().getStringResource(R.string.listing_request_title))
 		text.setSpan(UnderlineSpan(), 0, text.length, 0)
-		binding.txtListingApplication.text = text
+		binding.txtListingApplication.apply {
+			setText(text)
+			setOnClickListener {
+				getMainActivity().move2ListingFragment()
+			}
+		}
 	}
 
 
@@ -56,6 +62,7 @@ class DAppFragment : DaggerFragment() {
 	private fun FragmentDAppBinding.initChoicesDEXNftMarkets() {
 		txtClicked(txtDEX)
 		txtUnClicked(txtNFtMarkets)
+		txtNoDAppList.text = getMainActivity().getStringResource(R.string.nft_dex_soon_text)
 		txtDEX.setOnClickListener {
 			if (dexIsClicked) return@setOnClickListener
 			dexIsClicked = !dexIsClicked
