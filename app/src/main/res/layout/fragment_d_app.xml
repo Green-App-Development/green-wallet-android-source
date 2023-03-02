@@ -35,6 +35,21 @@
 			android:orientation="vertical"
 			app:layout_constraintGuide_percent="0.5" />
 
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline59"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.07" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline60"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.93" />
+
+
 	<RelativeLayout
 			android:id="@+id/chosenNetworkRel"
 			android:layout_width="150dp"
@@ -84,7 +99,7 @@
 			android:id="@+id/edtToken"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="dApp List"
+			android:text="@string/dapp_list_title"
 			android:textColor="@color/green"
 			android:textFontWeight="600"
 			android:textSize="25sp"
@@ -105,7 +120,7 @@
 			android:paddingTop="6dp"
 			android:paddingBottom="6dp"
 			android:tag="Outgoing"
-			android:text="DEX"
+			android:text="@string/nft_dex_btn"
 			android:textColor="@color/sorting_txt_category"
 			android:textFontWeight="500"
 			android:textSize="14sp"
@@ -124,7 +139,7 @@
 			android:paddingTop="6dp"
 			android:paddingBottom="6dp"
 			android:tag="Outgoing"
-			android:text="NFT Markets"
+			android:text="@string/nft_markets_btn"
 			android:textColor="@color/sorting_txt_category"
 			android:textFontWeight="500"
 			android:textSize="14sp"
@@ -132,9 +147,9 @@
 			app:layout_constraintTop_toTopOf="@+id/txtDEX" />
 
 	<TextView
-			android:id="@+id/txtNoNFTPlaceHolder"
-			android:layout_width="304dp"
-			android:layout_height="67dp"
+			android:id="@+id/txtNoDAppList"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
 			android:layout_marginTop="20dp"
 			android:fontFamily="@font/inter_regular"
 			android:gravity="center_horizontal"
@@ -143,9 +158,8 @@
 			android:textFontWeight="500"
 			android:textSize="20sp"
 			android:visibility="visible"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.495"
-			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/guideline60"
+			app:layout_constraintStart_toStartOf="@+id/guideline59"
 			app:layout_constraintTop_toBottomOf="@+id/guideline10" />
 
 	<LinearLayout
@@ -161,7 +175,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:fontFamily="@font/inter_regular"
-				android:text="Not on the list?"
+				android:text="@string/not_list_text"
 				android:textColor="@color/grey_txt_color"
 				android:textFontWeight="400"
 				android:textSize="16sp" />
@@ -172,7 +186,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginStart="5dp"
 				android:fontFamily="@font/inter_regular"
-				android:text="Listing Application"
+				android:text="@string/listing_request_title"
 				android:textColor="@color/green"
 				android:textFontWeight="400"
 				android:textSize="16sp" />

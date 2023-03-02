@@ -223,7 +223,7 @@
 						android:layout_height="wrap_content"
 						android:layout_below="@+id/ic_home_receive"
 						android:layout_centerHorizontal="true"
-						android:text="Receive"
+						android:text="@string/main_screen_recive_btn"
 						android:textColor="@color/green"
 						android:textFontWeight="500"
 						android:textSize="13sp" />
@@ -256,7 +256,7 @@
 						android:layout_height="wrap_content"
 						android:layout_below="@+id/ic_home_send"
 						android:layout_centerHorizontal="true"
-						android:text="Send"
+						android:text="@string/main_screen_send_btn"
 						android:textColor="@color/green"
 						android:textFontWeight="500"
 						android:textSize="13sp" />
@@ -287,7 +287,7 @@
 						android:layout_height="wrap_content"
 						android:layout_below="@+id/ic_home_history"
 						android:layout_centerHorizontal="true"
-						android:text="History"
+						android:text="@string/main_screen_transaction_btn"
 						android:textColor="@color/green"
 						android:textFontWeight="500"
 						android:textSize="13sp" />

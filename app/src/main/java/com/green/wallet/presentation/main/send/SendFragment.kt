@@ -56,7 +56,6 @@ import java.util.*
 import javax.inject.Inject
 
 
-
 class SendFragment : DaggerFragment() {
 
 	private val binding by viewBinding(FragmentSendBinding::bind)
@@ -141,13 +140,14 @@ class SendFragment : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		binding.registerCLicks()
 		getQrCodeDecoded()
-		queryWalletList(curNetworkType, curFingerPrint)
+		queryWalletList(curNetworkType, null)
 		updateNetworkName(curNetworkType)
 		initTxtAboveEdits()
 		initMoveFocusToEnterAmount()
-		determineOneWalletShow()
+//		determineOneWalletShow()
 		VLog.d("OnViewCreated on send Fragment")
 		initSwipeRefreshLayout()
+		initNetworkAdapter()
 	}
 
 	private fun initConstrainsAfterCommobasedOnToken() {
@@ -332,7 +332,7 @@ class SendFragment : DaggerFragment() {
 			imgIconSpinner.visibility = View.INVISIBLE
 			chosenNetworkRel.isEnabled = false
 		} else {
-			initNetworkAdapter()
+
 		}
 	}
 
@@ -351,6 +351,9 @@ class SendFragment : DaggerFragment() {
 
 					walletAdapter = WalletListAdapter(curActivity(), walletTokenList)
 					binding.walletSpinner.adapter = walletAdapter
+					if (walletAdapterPosition == 0)
+						walletAdapterPosition =
+							walletTokenList.map { it.fingerPrint }.indexOf(curFingerPrint)
 					if (walletAdapterPosition < walletTokenList.size)
 						binding.walletSpinner.setSelection(walletAdapterPosition)
 					binding.walletSpinner.onItemSelectedListener =
@@ -612,7 +615,7 @@ class SendFragment : DaggerFragment() {
 						networkAdapter.selectedPosition = p2
 						queryWalletList(
 							networkAdapter.dataOptions[p2],
-							curFingerPrint
+							null
 						)
 					}
 

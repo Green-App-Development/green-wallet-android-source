@@ -8,25 +8,13 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 
-
 interface BlockChainService {
-
-
-	@POST("create_new_wallet")
-	suspend fun addNewToken(@Body body: HashMap<String, Any>): Response<BaseResponse>
-
-	@POST("get_wallets")
-	suspend fun getWallets(@Body body: HashMap<String, Any>): Response<JsonObject>
-
-	@POST("delete_all_keys")
-	suspend fun delete_all_keys(): Response<BaseResponse>
 
 	@POST("get_coin_records_by_puzzle_hash")
 	suspend fun queryBalanceWithSorting(@Body body: HashMap<String, Any>): Response<CoinRecordResponse>
 
 	@POST("get_coin_records_by_puzzle_hash")
 	suspend fun queryBalance(@Body body: HashMap<String, Any>): Response<JsonObject>
-
 
 	@POST("get_coin_records_by_puzzle_hashes")
 	suspend fun queryBalanceByPuzzleHashes(@Body body: HashMap<String, Any>): Response<CoinRecordResponse>

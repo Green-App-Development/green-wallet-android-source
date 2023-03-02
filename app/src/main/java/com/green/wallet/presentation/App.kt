@@ -47,7 +47,6 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var greenAppInteract: GreenAppInteract
 
-
 	@Inject
 	lateinit var workerFactory: WorkerFactory
 

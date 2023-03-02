@@ -1,11 +1,8 @@
 package com.green.wallet.data.di
 
-import com.green.wallet.data.network.BlockChainService
-import com.green.wallet.data.network.CryptocurrencyService
 import com.green.wallet.data.network.GreenAppService
 import com.green.wallet.data.network.getUnsafeOkHttpClient
 import com.green.wallet.presentation.di.application.AppScope
-import com.green.wallet.presentation.tools.BASE_URL_BLOCKCHAIN
 import com.green.wallet.presentation.tools.BASE_URL_GREEN_APP
 import dagger.Module
 import dagger.Provides
@@ -34,34 +31,9 @@ class NetworkModule {
     }
 
     @Provides
-    @Named("retrofit_blockchain")
-    fun provideBlockchainRetrofitInstance(): Retrofit {
-
-        val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.NONE
-        }
-
-        return Retrofit.Builder().baseUrl(BASE_URL_BLOCKCHAIN)
-            .client(getUnsafeOkHttpClient(interceptor))
-            .addConverterFactory(
-                GsonConverterFactory.create()
-            ).build()
-    }
-
-
-    @Provides
     fun provideLanguageService(@Named("retrofit_green_app") retrofit: Retrofit) = retrofit.create(
         GreenAppService::class.java
     )
-
-
-    @Provides
-    fun provideBlockChain(@Named("retrofit_blockchain") retrofit: Retrofit) =
-        retrofit.create(BlockChainService::class.java)
-
-    @Provides
-    fun provideCryptocurrencyService(@Named("retrofit_blockchain") retrofit: Retrofit) =
-        retrofit.create(CryptocurrencyService::class.java)
 
 
     @Provides

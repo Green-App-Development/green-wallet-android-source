@@ -11,6 +11,7 @@ import com.green.wallet.R
 import com.green.wallet.databinding.FragmentDAppBinding
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.dialog_confirm_send_nft.*
 
@@ -61,6 +62,7 @@ class DAppFragment : DaggerFragment() {
 			if (dexIsClicked) {
 				txtClicked(txtDEX)
 				txtUnClicked(txtNFtMarkets)
+				txtNoDAppList.text = getMainActivity().getStringResource(R.string.nft_dex_soon_text)
 			} else {
 				txtUnClicked(txtDEX)
 				txtClicked(txtNFtMarkets)
@@ -72,6 +74,8 @@ class DAppFragment : DaggerFragment() {
 			if (!dexIsClicked) {
 				txtClicked(txtNFtMarkets)
 				txtUnClicked(txtDEX)
+				txtNoDAppList.text =
+					getMainActivity().getStringResource(R.string.nft_markets_soon_text)
 			} else {
 				txtClicked(txtDEX)
 				txtUnClicked(txtNFtMarkets)

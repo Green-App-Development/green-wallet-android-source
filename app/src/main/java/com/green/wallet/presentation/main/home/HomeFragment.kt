@@ -275,14 +275,14 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 		relSend.setOnClickListener {
 			if (hasAtLeastOneWallet)
-				curActivity().move2SendFragment(curNetwork, null, shouldQRCleared = true)
+				curActivity().move2SendFragment(curNetwork, curFingerPrint, shouldQRCleared = true)
 			else
 				curActivity().showBtmDialogCreateOrImportNewWallet(false)
 		}
 
 		relReceive.setOnClickListener {
 			if (hasAtLeastOneWallet)
-				curActivity().move2ReceiveFragment(curNetwork, null)
+				curActivity().move2ReceiveFragment(curNetwork, curFingerPrint)
 			else
 				curActivity().showBtmDialogCreateOrImportNewWallet(false)
 		}
