@@ -30,6 +30,12 @@ android {
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+		Properties properties = new Properties()
+		properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
+		buildConfigField "String", "CHIA_CHIVES_CHANGE_24", "\"${properties.getProperty("CHIA_CHIVES_CHANGE_24")}\""
+		buildConfigField "String", "BASE_URL_GREEN_APP", "\"${properties.getProperty("BASE_URL_GREEN_APP")}\""
+
 	}
 
 	buildTypes {
@@ -39,8 +45,6 @@ android {
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
-
-
 
 	compileOptions {
 		sourceCompatibility JavaVersion.VERSION_1_8

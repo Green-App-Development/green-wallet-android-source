@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.common.tools.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.green.wallet.BuildConfig
 import com.green.wallet.data.local.TokenDao
 import com.green.wallet.data.local.WalletDao
 import com.green.wallet.data.local.entity.TokenEntity
@@ -19,7 +20,7 @@ import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.getPreferenceKeyForCurNetworkPrev24ChangeDouble
 import com.green.wallet.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
-import com.green.wallet.presentation.tools.URL_CHIA_CHIVES
+import com.green.wallet.presentation.tools.CHIA_CHIVES_CHANGE_24
 import com.green.wallet.presentation.tools.VLog
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
@@ -52,7 +53,7 @@ class CryptocurrencyImpl @Inject constructor(
 	private suspend fun updateChiaChivesCourse() {
 		try {
 			val res =
-				greenAppService.getUpdatedChiaChivesCourse(URL_CHIA_CHIVES)
+				greenAppService.getUpdatedChiaChivesCourse(BuildConfig.CHIA_CHIVES_CHANGE_24)
 			if (res.isSuccessful) {
 
 				val chia = res.body()!!.asJsonObject["chia"]

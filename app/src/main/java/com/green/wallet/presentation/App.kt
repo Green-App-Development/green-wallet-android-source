@@ -70,7 +70,9 @@ class App : DaggerApplication() {
 	@RequiresApi(Build.VERSION_CODES.N)
 	override fun onCreate() {
 		super.onCreate()
-		VLog.d("OnCreate Got Called on App 1")
+		if (BuildConfig.DEBUG)
+			Timber.plant(Timber.DebugTree())
+		VLog.d("OnCreate Got Called on App with API_KEY : ")
 		quickNavigationIfUserUnBoarded()
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		Restring.init(this)
@@ -78,8 +80,6 @@ class App : DaggerApplication() {
 		determineModeAndLanguage()
 		requestsPerApplication()
 		updateBalanceEachPeriodically()
-		if (BuildConfig.DEBUG)
-			Timber.plant(Timber.DebugTree())
 		warmupFlutterEngine()
 		WorkManager.initialize(
 			this,
