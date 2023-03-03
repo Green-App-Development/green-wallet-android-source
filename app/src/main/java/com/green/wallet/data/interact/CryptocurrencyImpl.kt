@@ -19,6 +19,7 @@ import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.getPreferenceKeyForCurNetworkPrev24ChangeDouble
 import com.green.wallet.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.URL_CHIA_CHIVES
 import com.green.wallet.presentation.tools.VLog
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
@@ -41,9 +42,55 @@ class CryptocurrencyImpl @Inject constructor(
 
 	override suspend fun updateCourseCryptoInDb() {
 		try {
+			updateChiaChivesCourse()
 			updateTokensPrice()
 		} catch (ex: Exception) {
 			VLog.d("Exception in getting cryptoCurrency  ${ex.message}")
+		}
+	}
+
+	private suspend fun updateChiaChivesCourse() {
+		try {
+			val res =
+				greenAppService.getUpdatedChiaChivesCourse(URL_CHIA_CHIVES)
+			if (res.isSuccessful) {
+
+				val chia = res.body()!!.asJsonObject["chia"]
+				val chives = res.body()!!.asJsonObject["chives-coin"]
+				val chiaPrice = JSONObject(chia.toString()).getDouble("usd")
+				val chivesPrice = JSONObject(chives.toString()).getDouble("usd")
+				VLog.d("Saving Chia and Chives course Exchange : $chiaPrice, ${chivesPrice}")
+				prefs.saveCoursePriceDouble(
+					getPreferenceKeyForCurStockNetworkDouble("Chia"),
+					chiaPrice
+				)
+				prefs.saveCoursePriceDouble(
+					getPreferenceKeyForCurStockNetworkDouble("Chives"),
+					chivesPrice
+				)
+				var chia24Hour = 0.0
+				if (!JSONObject(chia.toString()).isNull("usd_24h_change")) {
+					chia24Hour = JSONObject(chia.toString()).getDouble("usd_24h_change")
+				}
+				var chives24Hour = 0.0
+				if (!JSONObject(chives.toString()).isNull("usd_24h_change")) {
+					chives24Hour = JSONObject(chia.toString()).getDouble("usd_24h_change")
+				}
+				prefs.saveCoursePriceDouble(
+					getPreferenceKeyForCurNetworkPrev24ChangeDouble("Chia"),
+					chia24Hour
+				)
+				prefs.saveCoursePriceDouble(
+					getPreferenceKeyForCurNetworkPrev24ChangeDouble("Chives"),
+					chives24Hour
+				)
+				tokenDao.updateTokenPrice(chiaPrice, "XCH")
+				tokenDao.updateTokenPrice(chivesPrice, "XCC")
+			} else {
+				VLog.d("Result is not success in updating chia and chives course")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception in updating chia, chives : $ex")
 		}
 	}
 
