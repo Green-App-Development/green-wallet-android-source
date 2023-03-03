@@ -54,7 +54,7 @@ class DAppFragment : DaggerFragment() {
 
 
 	fun FragmentDAppBinding.registerListeners() {
-
+		
 	}
 
 	private var dexIsClicked = true

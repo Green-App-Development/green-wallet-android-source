@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 import javax.inject.Inject
+import kotlin.math.abs
 
 
 class CryptocurrencyImpl @Inject constructor(
@@ -134,7 +135,7 @@ class CryptocurrencyImpl @Inject constructor(
 				)
 				return@map CurrencyItem(
 					it,
-					formatPercentTwoDecimalPrecision(Math.abs(prev24HourChange)),
+					formatPercentTwoDecimalPrecision(abs(prev24HourChange)),
 					prev24HourChange >= 0
 				)
 			}
