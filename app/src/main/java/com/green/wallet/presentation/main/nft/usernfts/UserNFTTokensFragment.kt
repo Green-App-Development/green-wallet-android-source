@@ -56,7 +56,7 @@ class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked 
 	private fun dummyNFTData() {
 		binding.apply {
 			btnExploreMarkets.visibility = View.GONE
-			placeHolderNoNFTs.visibility = View.GONE
+//			placeHolderNoNFTs.visibility = View.GONE
 			txtNoNFTPlaceHolder.visibility = View.GONE
 			constraintCommentExploreMarkets.visibility = View.GONE
 

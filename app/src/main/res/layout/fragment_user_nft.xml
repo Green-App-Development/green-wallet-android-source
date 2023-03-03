@@ -7,6 +7,7 @@
 		android:layout_height="match_parent"
 		android:background="@color/primary_app_background">
 
+
 	<androidx.constraintlayout.widget.Guideline
 			android:id="@+id/guideline8"
 			android:layout_width="wrap_content"
@@ -133,16 +134,6 @@
 			app:layout_constraintTop_toTopOf="@id/guideline9" />
 
 
-	<ImageView
-			android:id="@+id/placeHolderNoNFTs"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/ic_group_nfts"
-			android:visibility="visible"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/guideline10" />
-
 	<TextView
 			android:id="@+id/txtNoNFTPlaceHolder"
 			android:layout_width="304dp"
@@ -151,13 +142,147 @@
 			android:gravity="center_horizontal"
 			android:text="@string/all_nfts_shown_txt"
 			android:textColor="@color/grey_txt_color"
-			android:textFontWeight="500"
+			android:textFontWeight="600"
 			android:textSize="20sp"
 			android:visibility="visible"
-			app:layout_constraintEnd_toEndOf="@+id/placeHolderNoNFTs"
-			app:layout_constraintStart_toStartOf="@+id/placeHolderNoNFTs"
-			app:layout_constraintTop_toBottomOf="@+id/placeHolderNoNFTs" />
+			app:layout_constraintEnd_toEndOf="@+id/linearDummyNftImg2"
+			app:layout_constraintStart_toStartOf="@+id/linearDummyNftImg2"
+			app:layout_constraintTop_toBottomOf="@id/linearDummyNftImg2" />
 
+	<LinearLayout
+			android:id="@+id/linearLayout5"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:padding="2dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/guideline10">
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_76" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="5dp"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_77" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_79__1_" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+	</LinearLayout>
+
+	<LinearLayout
+			android:id="@+id/linearDummyNftImg2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:orientation="horizontal"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_79" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="5dp"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_80" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_81" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_82" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+	</LinearLayout>
 
 	<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/rec_view_nft"
@@ -338,7 +463,6 @@
 					android:textColor="@color/white" />
 
 		</RelativeLayout>
-
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
