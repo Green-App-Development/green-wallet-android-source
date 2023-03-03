@@ -52,7 +52,7 @@
 			app:layout_constraintTop_toBottomOf="@+id/view_pager_receive"
 			app:piv_animationType="swap"
 			app:piv_count="0"
-			app:piv_radius="4dp"
+			app:piv_radius="2.5dp"
 			app:piv_selectedColor="@color/selected_dot_indicator"
 			app:piv_unselectedColor="@color/unselected_dot_indicator" />
 

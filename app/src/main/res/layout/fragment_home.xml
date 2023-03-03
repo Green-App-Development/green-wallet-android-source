@@ -52,7 +52,7 @@
 		<RelativeLayout
 				android:id="@+id/relativeLayout2"
 				android:layout_width="0dp"
-				android:layout_height="150dp"
+				android:layout_height="145dp"
 				android:paddingStart="10dp"
 				android:paddingTop="15dp"
 				android:paddingEnd="10dp"
@@ -187,12 +187,12 @@
 		<LinearLayout
 				android:id="@+id/linear_receive_send_history"
 				android:layout_width="match_parent"
-				android:layout_height="78dp"
+				android:layout_height="68dp"
 				android:orientation="horizontal"
 				android:paddingStart="10dp"
-				android:paddingTop="5dp"
+				android:paddingTop="1dp"
 				android:paddingEnd="10dp"
-				android:paddingBottom="7dp"
+				android:paddingBottom="5dp"
 				android:visibility="visible"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
@@ -214,7 +214,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerHorizontal="true"
-						android:layout_marginTop="8dp"
+						android:layout_marginTop="7dp"
 						android:src="@drawable/ic_home_receive" />
 
 				<TextView
@@ -247,7 +247,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerHorizontal="true"
-						android:layout_marginTop="8dp"
+						android:layout_marginTop="7dp"
 						android:src="@drawable/ic_home_up" />
 
 				<TextView
@@ -278,7 +278,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_centerHorizontal="true"
-						android:layout_marginTop="8dp"
+						android:layout_marginTop="7dp"
 						android:src="@drawable/ic_home_history" />
 
 				<TextView
@@ -300,8 +300,8 @@
 				android:id="@+id/mainWalletViewPager"
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
-				android:layout_marginBottom="10dp"
-				android:visibility="gone"
+				android:layout_marginBottom="5dp"
+				android:visibility="visible"
 				app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
@@ -371,13 +371,13 @@
 				android:id="@+id/pageIndicator"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_marginBottom="15dp"
+				android:layout_marginBottom="10dp"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:piv_animationType="swap"
 				app:piv_count="1"
-				app:piv_radius="4dp"
+				app:piv_radius="2.5dp"
 				app:piv_selectedColor="@color/selected_dot_indicator"
 				app:piv_unselectedColor="@color/unselected_dot_indicator" />
 

@@ -4,7 +4,6 @@ import com.green.wallet.BuildConfig
 import com.green.wallet.data.network.GreenAppService
 import com.green.wallet.data.network.getUnsafeOkHttpClient
 import com.green.wallet.presentation.di.application.AppScope
-import com.green.wallet.presentation.tools.BASE_URL_GREEN_APP
 import dagger.Module
 import dagger.Provides
 import okhttp3.logging.HttpLoggingInterceptor

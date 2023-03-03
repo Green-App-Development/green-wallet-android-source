@@ -20,7 +20,6 @@ import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.getPreferenceKeyForCurNetworkPrev24ChangeDouble
 import com.green.wallet.presentation.custom.getPreferenceKeyForCurStockNetworkDouble
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
-import com.green.wallet.presentation.tools.CHIA_CHIVES_CHANGE_24
 import com.green.wallet.presentation.tools.VLog
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
