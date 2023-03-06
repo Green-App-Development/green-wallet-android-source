@@ -312,6 +312,10 @@ class MainActivity : BaseActivity() {
 
 	private fun popBackStackTillHomeFragment() {
 		while (navController.currentDestination?.id != homeFragment) {
+			if (navController.currentDestination?.id == transactionsFragment) {
+				binding.mainBottomNav.menu.findItem(home).isChecked = true
+				break
+			}
 			navController.popBackStack()
 		}
 	}
@@ -398,7 +402,6 @@ class MainActivity : BaseActivity() {
 					aboutAppFragment,
 					addAddressFragment,
 					notificationFragment,
-					transactionsFragment,
 					walletSettings,
 					fragmentNFTDetails,
 					fragmentSendNFT,
@@ -607,7 +610,7 @@ class MainActivity : BaseActivity() {
 
 	override fun onBackPressed() {
 
-		if ((navController.currentDestination?.id == transactionsFragment && shouldGoBackHomeFragmentFromTransactions) || (navController.currentDestination?.id == addressFragment && shouldGoBackHomeFragmentFromAddress)) {
+		if ((navController.currentDestination?.id == fragmentDApp) || (navController.currentDestination?.id == fragmentUserNFTs)) {
 			popBackStackTillHomeFragment()
 			return
 		}
