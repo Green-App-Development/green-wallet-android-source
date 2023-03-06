@@ -89,7 +89,7 @@
 					android:background="@drawable/card_view_bcg_shape"
 					android:paddingStart="15dp"
 					android:paddingTop="15dp"
-					android:paddingBottom="12dp"
+					android:paddingBottom="8dp"
 					tools:ignore="RtlSymmetry">
 
 				<RelativeLayout
@@ -135,7 +135,7 @@
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
 						android:layout_below="@+id/txtMyBalance"
-						android:layout_marginTop="10dp">
+						android:layout_marginTop="6dp">
 
 					<TextView
 							android:id="@+id/txtPrice"
@@ -300,7 +300,7 @@
 				android:id="@+id/mainWalletViewPager"
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
-				android:layout_marginBottom="5dp"
+				android:layout_marginBottom="4dp"
 				android:visibility="visible"
 				app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
 				app:layout_constraintEnd_toEndOf="parent"

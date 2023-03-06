@@ -35,7 +35,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
 class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.TransactionListener {
 
 
@@ -398,6 +397,10 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		}
 
 		animManager.animateArrowIconCustomSpinner(network_spinner_trans, imgArrow, curActivity())
+
+		binding.backLayout.setOnClickListener {
+			getMainActivity().popBackStackOnce()
+		}
 
 	}
 
