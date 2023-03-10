@@ -320,9 +320,6 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
-	fun popBackTillHomeFragment() {
-
-	}
 
 	@Suppress("DEPRECATION")
 	fun setSystemUiLightStatusBar(isLightStatusBar: Boolean) {
