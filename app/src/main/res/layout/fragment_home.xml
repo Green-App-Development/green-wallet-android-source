@@ -68,7 +68,7 @@
 					android:layout_height="55dp"
 					android:layout_alignParentEnd="true"
 					android:foreground="?android:attr/selectableItemBackground"
-					android:src="@drawable/ic_home_new_qr" />
+					android:src="@drawable/ic_qr_home" />
 
 			<ImageView
 					android:id="@+id/ic_home_plus"
@@ -78,7 +78,7 @@
 					android:layout_alignParentEnd="true"
 					android:layout_marginTop="15dp"
 					android:foreground="?android:attr/selectableItemBackground"
-					android:src="@drawable/ic_home_add" />
+					android:src="@drawable/ic_plus_home" />
 
 
 			<RelativeLayout
