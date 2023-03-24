@@ -132,7 +132,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		initCurCryptoCourseUpdate()
 //		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
 		initSwipeRefreshLayout()
-
+		homeFragmentViewModel.updateCryptoCurrencyCourse("Chia Network")
 	}
 
 	private fun initSwipeRefreshLayout() {
