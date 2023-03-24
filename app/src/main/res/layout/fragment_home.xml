@@ -66,6 +66,7 @@
 					android:id="@+id/ic_home_qr"
 					android:layout_width="55dp"
 					android:layout_height="55dp"
+					android:layout_alignParentTop="true"
 					android:layout_alignParentEnd="true"
 					android:foreground="?android:attr/selectableItemBackground"
 					android:src="@drawable/ic_qr_home" />
@@ -74,9 +75,8 @@
 					android:id="@+id/ic_home_plus"
 					android:layout_width="55dp"
 					android:layout_height="55dp"
-					android:layout_below="@+id/ic_home_qr"
 					android:layout_alignParentEnd="true"
-					android:layout_marginTop="15dp"
+					android:layout_alignParentBottom="true"
 					android:foreground="?android:attr/selectableItemBackground"
 					android:src="@drawable/ic_plus_home" />
 
