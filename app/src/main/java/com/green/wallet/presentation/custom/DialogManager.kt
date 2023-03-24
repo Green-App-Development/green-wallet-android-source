@@ -169,13 +169,13 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 			VLog.d("ProgressDialog  is null there nothing to dismiss")
 		} else {
 			VLog.d("ProgressDialog is not null it is hidden")
-			progressDialog!!.dismiss()
+			progressDialog?.dismiss()
 		}
 		if (noConnectionDialog == null)
 			VLog.d("NoConnectionsDialog is null")
 		else {
 			VLog.d("No Connections Dialog is not null it is hidde")
-			noConnectionDialog!!.dismiss()
+			noConnectionDialog?.dismiss()
 		}
 	}
 

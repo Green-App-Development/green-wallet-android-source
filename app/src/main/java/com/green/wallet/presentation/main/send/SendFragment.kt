@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.InputFilter
 import android.text.SpannableString
 import android.text.Spanned
@@ -810,7 +811,7 @@ class SendFragment : DaggerFragment() {
 				showFailedSendingTransaction()
 				Toast.makeText(
 					curActivity(),
-					"Error in try catch: ${method.arguments}",
+					"Exception : ${method.arguments}",
 					Toast.LENGTH_LONG
 				).show()
 			}
@@ -846,7 +847,7 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun showSuccessSendMoneyDialog() {
-		curActivity().apply {
+		getMainActivity().apply {
 			if (!this.isDestroyed) {
 				dialogManager.showSuccessDialog(
 					this,
@@ -855,7 +856,7 @@ class SendFragment : DaggerFragment() {
 					getStringResource(R.string.ready_btn),
 					isDialogOutsideTouchable = false
 				) {
-					Handler().postDelayed({
+					Handler(Looper.myLooper()!!).postDelayed({
 						popBackStackOnce()
 					}, 500)
 				}
