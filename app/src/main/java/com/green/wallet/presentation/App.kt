@@ -10,11 +10,14 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.NotificationHelper
+import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.green.wallet.presentation.di.application.AppComponent
 import com.green.wallet.presentation.di.application.DaggerAppComponent
+import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import com.green.wallet.presentation.tools.VLog
 import dagger.android.AndroidInjector
@@ -25,6 +28,7 @@ import dev.b3nedikt.viewpump.ViewPump
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
+import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -54,6 +58,9 @@ class App : DaggerApplication() {
 
 	@Inject
 	lateinit var notificationHelper: NotificationHelper
+
+	@Inject
+	lateinit var walletInteract: WalletInteract
 
 	lateinit var appComponent: AppComponent
 
@@ -147,9 +154,24 @@ class App : DaggerApplication() {
 			.getInstance()
 			.put(FLUTTER_ENGINE, flutterEngine)
 		VLog.d("LOG_TAG", "warmupFlutterEngine: got initialized  $flutterEngine")
-
+		val methodChannel = MethodChannel(
+			flutterEngine.dartExecutor.binaryMessenger,
+			METHOD_CHANNEL_GENERATE_HASH
+		)
+		CoroutineScope(Dispatchers.IO).launch {
+			//wait for flutter engine to warm up
+			delay(500L)
+			walletInteract.getAllWalletList().forEach {
+				val args = hashMapOf<String, Any>()
+				args["mnemonics"] = convertListToStringWithSpace(it.mnemonics)
+				args["observer"] = it.observerHash
+				args["non_observer"] = it.nonObserverHash
+				withContext(Dispatchers.Main) {
+					methodChannel.invokeMethod("initWalletFirstTime", args)
+				}
+			}
+		}
 	}
-
 
 	fun updateBalanceEachPeriodically() {
 		updateBalanceJob?.cancel()
