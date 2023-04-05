@@ -65,6 +65,10 @@ class MainViewModel @Inject constructor(
 
 	suspend fun getLastVisitedValue() = prefs.getSettingLong(PrefsManager.LAST_VISITED, 0L)
 
+	suspend fun getServerTime() = greenAppInteract.getServerTime()
+
+	suspend fun saveTimeDifference(timeDif: Long) =
+		prefs.saveSettingLong(PrefsManager.TIME_DIFFERENCE, timeDif)
 
 	fun saveNightIsOn(nightMode: Boolean) {
 		viewModelScope.launch {

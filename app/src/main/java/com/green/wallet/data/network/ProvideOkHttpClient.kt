@@ -14,48 +14,48 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
 fun getUnsafeOkHttpClient(interceptor: Interceptor): OkHttpClient {
-    try {
-        val trustAllCerts: Array<TrustManager> = arrayOf(object : X509TrustManager {
-            override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+	try {
+		val trustAllCerts: Array<TrustManager> = arrayOf(object : X509TrustManager {
+			override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
 
-            }
+			}
 
-            override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
+			override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
 
-            }
+			}
 
-            override fun getAcceptedIssuers(): Array<X509Certificate> {
-                return arrayOf()
-            }
+			override fun getAcceptedIssuers(): Array<X509Certificate> {
+				return arrayOf()
+			}
 
-        })
+		})
 
-        // install the all-trusting trust manager
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, trustAllCerts, SecureRandom())
+		// install the all-trusting trust manager
+		val sslContext = SSLContext.getInstance("SSL")
+		sslContext.init(null, trustAllCerts, SecureRandom())
 
-        // create an ssl socket factory with our all-trusting manager
-        val sslSocketFactory = sslContext.socketFactory
+		// create an ssl socket factory with our all-trusting manager
+		val sslSocketFactory = sslContext.socketFactory
 
-        val timeoutInSec = 20
-        val dispatcher = Dispatcher()
-        dispatcher.maxRequests = 5
+		val timeoutInSec = 20
+		val dispatcher = Dispatcher()
+		dispatcher.maxRequests = 10
 
-        val builder = OkHttpClient.Builder()
-            .connectTimeout(timeoutInSec.toLong(), TimeUnit.SECONDS)
-            .readTimeout(timeoutInSec.toLong(), TimeUnit.SECONDS)
-            .dispatcher(dispatcher)
-            .addInterceptor(interceptor)
+		val builder = OkHttpClient.Builder()
+			.connectTimeout(timeoutInSec.toLong(), TimeUnit.SECONDS)
+			.readTimeout(timeoutInSec.toLong(), TimeUnit.SECONDS)
+			.dispatcher(dispatcher)
+			.addInterceptor(interceptor)
 
-        builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+		builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
 
-        val hostnameVerifier = HostnameVerifier { hostname, session ->
-            true
-        }
+		val hostnameVerifier = HostnameVerifier { hostname, session ->
+			true
+		}
 
-        builder.hostnameVerifier(hostnameVerifier)
-        return builder.build()
-    } catch (e: Exception) {
-        throw RuntimeException(e)
-    }
+		builder.hostnameVerifier(hostnameVerifier)
+		return builder.build()
+	} catch (e: Exception) {
+		throw RuntimeException(e)
+	}
 }

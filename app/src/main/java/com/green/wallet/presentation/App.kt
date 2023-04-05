@@ -1,29 +1,34 @@
 package com.green.wallet.presentation
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
+import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.domain.interact.*
+import com.green.wallet.presentation.custom.NotificationHelper
+import com.green.wallet.presentation.custom.convertListToStringWithSpace
+import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
+import com.green.wallet.presentation.di.application.AppComponent
+import com.green.wallet.presentation.di.application.DaggerAppComponent
+import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import com.green.wallet.presentation.tools.VLog
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import dev.b3nedikt.restring.Restring
 import dev.b3nedikt.reword.RewordInterceptor
 import dev.b3nedikt.viewpump.ViewPump
-import com.green.wallet.data.preference.PrefsManager
-import com.green.wallet.domain.interact.*
-import com.green.wallet.presentation.custom.NotificationHelper
-import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
-import com.green.wallet.presentation.di.application.AppComponent
-import com.green.wallet.presentation.di.application.DaggerAppComponent
-import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
+import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -31,6 +36,7 @@ import javax.inject.Inject
 
 
 class App : DaggerApplication() {
+
 
 	@Inject
 	lateinit var blockChainInteract: BlockChainInteract
@@ -53,6 +59,9 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var notificationHelper: NotificationHelper
 
+	@Inject
+	lateinit var walletInteract: WalletInteract
+
 	lateinit var appComponent: AppComponent
 
 	var applicationIsAlive = false
@@ -72,7 +81,7 @@ class App : DaggerApplication() {
 		super.onCreate()
 		if (BuildConfig.DEBUG)
 			Timber.plant(Timber.DebugTree())
-		VLog.d("OnCreate Got Called on App with API_KEY : ")
+		VLog.d("OnCreate Got Called on App at Local Time : ${System.currentTimeMillis()}")
 		quickNavigationIfUserUnBoarded()
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		Restring.init(this)
@@ -87,8 +96,8 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
-
 	}
+
 
 	private fun subscribingToTopic() {
 		FirebaseMessaging.getInstance().subscribeToTopic("news")
@@ -145,9 +154,24 @@ class App : DaggerApplication() {
 			.getInstance()
 			.put(FLUTTER_ENGINE, flutterEngine)
 		VLog.d("LOG_TAG", "warmupFlutterEngine: got initialized  $flutterEngine")
-
+		val methodChannel = MethodChannel(
+			flutterEngine.dartExecutor.binaryMessenger,
+			METHOD_CHANNEL_GENERATE_HASH
+		)
+		CoroutineScope(Dispatchers.IO).launch {
+			//wait for flutter engine to warm up
+			delay(500L)
+			walletInteract.getAllWalletList().forEach {
+				val args = hashMapOf<String, Any>()
+				args["mnemonics"] = convertListToStringWithSpace(it.mnemonics)
+				args["observer"] = it.observerHash
+				args["non_observer"] = it.nonObserverHash
+				withContext(Dispatchers.Main) {
+					methodChannel.invokeMethod("initWalletFirstTime", args)
+				}
+			}
+		}
 	}
-
 
 	fun updateBalanceEachPeriodically() {
 		updateBalanceJob?.cancel()
