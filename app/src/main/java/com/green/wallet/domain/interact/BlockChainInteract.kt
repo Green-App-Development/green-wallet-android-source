@@ -30,7 +30,7 @@ interface BlockChainInteract {
 
 	suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity)
 
-	suspend fun updateWalletBalance(wallet: WalletEntity)
+	suspend fun updateWalletBalanceWithTransactions(wallet: WalletEntity)
 
 
 }

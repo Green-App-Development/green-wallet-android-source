@@ -1,8 +1,10 @@
 package com.green.wallet.presentation.main
 
 import android.app.Dialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -23,6 +25,7 @@ import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
 import com.example.common.tools.*
 import com.green.wallet.R
 import com.green.wallet.R.id.*
+import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.presentation.App
@@ -64,6 +67,29 @@ class MainActivity : BaseActivity() {
 
 	companion object {
 		const val MAIN_BUNDLE_KEY = "main_bundle"
+		lateinit var timeIntentFilter: IntentFilter
+	}
+
+
+	init {
+		timeIntentFilter = IntentFilter()
+		timeIntentFilter.addAction(Intent.ACTION_TIME_TICK)
+		timeIntentFilter.addAction(Intent.ACTION_TIME_CHANGED)
+		timeIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED)
+	}
+
+	private val m_timeChangedReceiver = object : BroadcastReceiver() {
+		override fun onReceive(context: Context?, intent: Intent) {
+			val action = intent.action
+			if (action == Intent.ACTION_TIME_CHANGED || action == Intent.ACTION_TIMEZONE_CHANGED) {
+				lifecycleScope.launch {
+					val serverTime = mainViewModel.getServerTime()
+					val timeDifference = System.currentTimeMillis() - serverTime
+					VLog.d("Time Difference : $timeDifference is saved in settings on MainActivity")
+					mainViewModel.saveTimeDifference(timeDifference)
+				}
+			}
+		}
 	}
 
 	private lateinit var binding: ActivityMainBinding
@@ -115,6 +141,7 @@ class MainActivity : BaseActivity() {
 		softKeyboardListener()
 		initCheckingBundleFromPushNotification()
 		startServiceAppRemoveRecentTask()
+		registerReceiver(m_timeChangedReceiver, timeIntentFilter)
 	}
 
 
@@ -648,6 +675,7 @@ class MainActivity : BaseActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 		VLog.d("onDestroy MainActivity")
+		unregisterReceiver(m_timeChangedReceiver)
 	}
 
 

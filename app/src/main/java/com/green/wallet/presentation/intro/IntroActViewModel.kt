@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.local.AppDatabase
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.presentation.tools.VLog
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -12,10 +15,20 @@ import javax.inject.Inject
 
 class IntroActViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
-	private val appDatabase: AppDatabase
+	private val appDatabase: AppDatabase,
+	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
 
 	private var clearingJob: Job? = null
+
+	init {
+		viewModelScope.launch {
+			val serverTime = greenAppInteract.getServerTime()
+			val timeDifference = System.currentTimeMillis() - serverTime
+			VLog.d("Time Difference : $timeDifference is saved in settings on Authenticate")
+			prefs.saveSettingLong(PrefsManager.TIME_DIFFERENCE, timeDifference)
+		}
+	}
 
 	suspend fun isUserUnBoarded() =
 		prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, default = false)

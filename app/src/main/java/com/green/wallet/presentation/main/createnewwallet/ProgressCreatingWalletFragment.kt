@@ -64,7 +64,7 @@ class ProgressCreatingWalletFragment : DaggerDialogFragment() {
 
 	private fun threeSecondsWaiting() {
 		lifecycleScope.launch {
-			delay(2500)
+			delay(500)
 			generateMnemonicsLocally()
 		}
 	}

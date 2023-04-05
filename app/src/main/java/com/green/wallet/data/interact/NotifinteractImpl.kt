@@ -8,14 +8,18 @@ import com.green.wallet.domain.domainmodel.notification.NotificationItem
 import com.green.wallet.domain.interact.NotifInteract
 import com.green.wallet.presentation.tools.Status
 import com.example.common.tools.formattedDay
+import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.interact.PrefsInteract
 import java.util.*
+import java.util.prefs.Preferences
 import javax.inject.Inject
 
 
 class NotifinteractImpl @Inject constructor(
 	private val transactionDao: TransactionDao,
 	private val notifOtherDao: NotifOtherDao,
-	private val tokenDAO: TokenDao
+	private val tokenDAO: TokenDao,
+	private val prefs: PrefsInteract
 ) :
 	NotifInteract {
 
@@ -26,6 +30,9 @@ class NotifinteractImpl @Inject constructor(
 		yesterday: Long?,
 		today: Long?
 	): List<NotifSection> {
+
+		val timeDiff =
+			prefs.getSettingLong(PrefsManager.TIME_DIFFERENCE, System.currentTimeMillis())
 
 		val transactionsList = transactionDao.getALlTransactionsByGivenParameters(
 			null,
@@ -48,7 +55,7 @@ class NotifinteractImpl @Inject constructor(
 				trans.networkType,
 				trans.height,
 				trans.fee_amount,
-				trans.created_at_time,
+				trans.created_at_time + timeDiff,
 				"",
 				trans.code
 			)

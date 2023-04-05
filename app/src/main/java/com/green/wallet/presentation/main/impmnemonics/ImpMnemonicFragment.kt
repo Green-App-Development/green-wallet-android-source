@@ -426,7 +426,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			map["observer"]=12
 			map["non_observer"]=5
 			VLog.d("Calling flutter generate hash : $mnemonicString")
-			methodChannel.invokeMethod("generateHash", map)
+			methodChannel.invokeMethod("generateHashImport", map)
 		}catch (ex:Exception){
 			VLog.d("Exception in calling flutter module to generate hash : ${ex.message}")
 			adjustingAssureTxt(24)
