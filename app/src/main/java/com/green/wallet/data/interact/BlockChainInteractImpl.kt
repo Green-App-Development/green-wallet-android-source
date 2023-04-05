@@ -23,20 +23,22 @@ import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
+import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
+import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
-import kotlinx.coroutines.Dispatchers
+import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
 
 
-class  BlockChainInteractImpl @Inject constructor(
+class BlockChainInteractImpl @Inject constructor(
 	private val walletDao: WalletDao,
 	private val prefs: PrefsInteract,
 	private val transactionDao: TransactionDao,
@@ -48,8 +50,7 @@ class  BlockChainInteractImpl @Inject constructor(
 	private val spentCoinsInteract: SpentCoinsInteract,
 	private val spentCoinsDao: SpentCoinsDao,
 	private val greenAppInteract: GreenAppInteract,
-	private val context: Context,
-	private val outgoingTransactionManager: OutgoingTransactionManager
+	private val context: Context
 ) :
 	BlockChainInteract {
 
@@ -70,6 +71,46 @@ class  BlockChainInteractImpl @Inject constructor(
 		if (imported) {
 			updateWalletBalance(walletEntity)
 			updateTokenBalanceWithFullNode(walletEntity)
+		} else {
+			//generating hashes for tokens later
+			CoroutineScope(Dispatchers.IO).launch {
+				val hashListImported = hashMapOf<String, List<String>>()
+				val methodChannel = MethodChannel(
+					(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
+					METHOD_CHANNEL_GENERATE_HASH
+				)
+				val defaultTokenOnMainScreen = tokenDao.getTokensDefaultOnScreen().map { it.hash }
+				var counterTokenHash = 0
+
+				methodChannel.setMethodCallHandler { method, calLBack ->
+					VLog.d("Got back method from hash : ${method.method}")
+					val hashTokenMethod = method.method
+					if (defaultTokenOnMainScreen.contains(hashTokenMethod)) {
+						val args = method.arguments as HashMap<*, *>
+						val outer_hashes = args[hashTokenMethod]!! as List<String>
+						hashListImported[hashTokenMethod] = outer_hashes
+						counterTokenHash++
+						VLog.d("Got back counter token hash : $counterTokenHash")
+						if (counterTokenHash == defaultTokenOnMainScreen.size) {
+							VLog.d("HashList Imported on creating new wallet : $hashListImported")
+							CoroutineScope(Dispatchers.IO).launch {
+								walletDao.updateChiaNetworkHashListImportedByAddress(
+									wallet.address,
+									hashListImported
+								)
+							}
+						}
+					}
+				}
+				for (token in defaultTokenOnMainScreen) {
+					val map = hashMapOf<String, String>()
+					map["puzzle_hashes"] = convertListToStringWithSpace(wallet.puzzle_hashes)
+					map["asset_id"] = token
+					withContext(Dispatchers.Main) {
+						methodChannel.invokeMethod("asyncCatPuzzle", map)
+					}
+				}
+			}
 		}
 		return Resource.success("OK")
 	}
