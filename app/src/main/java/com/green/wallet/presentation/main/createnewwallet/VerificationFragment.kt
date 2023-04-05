@@ -224,7 +224,8 @@ class VerificationFragment : DaggerDialogFragment() {
 					nonObserverHash = 5
 				)
 				defaultTokensOnMainScreen.forEach {
-					newWallet.hashListImported[it.hash] = arguments[it.hash] as List<String>
+					newWallet.hashListImported[it.hash] =
+						(arguments[it.hash] ?: emptyList<String>()) as List<String>
 				}
 				newWalletViewModel.createNewWallet(newWallet) {
 					dialogManager.hidePrevDialogs()
@@ -246,8 +247,10 @@ class VerificationFragment : DaggerDialogFragment() {
 		map["mnemonic"] = mnemonicString
 		map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 		map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
-		map["observer"]=12
-		map["non_observer"]=5
+//		map["observer"]=12
+//		map["non_observer"]=5
+		map["observer"] = 12
+		map["non_observer"] = 5
 		VLog.d("Invoked method generate hash : $mnemonicString")
 		methodChannel.invokeMethod("generateHash", map)
 	}

@@ -89,12 +89,8 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
-		testingMethod()
 	}
 
-	private fun testingMethod() {
-
-	}
 
 	private fun subscribingToTopic() {
 		FirebaseMessaging.getInstance().subscribeToTopic("news")
