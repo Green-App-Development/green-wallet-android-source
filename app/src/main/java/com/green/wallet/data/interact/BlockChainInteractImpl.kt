@@ -10,7 +10,6 @@ import com.google.gson.Gson
 import com.green.wallet.data.local.*
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.data.local.entity.WalletEntity
-import com.green.wallet.data.managers.OutgoingTransactionManager
 import com.green.wallet.data.network.BlockChainService
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.network.dto.spendbundle.CoinDto
@@ -36,6 +35,8 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
+import kotlin.system.measureTimeMillis
 
 
 class BlockChainInteractImpl @Inject constructor(
@@ -69,8 +70,16 @@ class BlockChainInteractImpl @Inject constructor(
 		val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
-			updateWalletBalance(walletEntity)
-			updateTokenBalanceWithFullNode(walletEntity)
+			val timeTaken = measureTimeMillis {
+				val job = CoroutineScope(Dispatchers.IO).launch {
+					launch {
+						updateWalletBalance(walletEntity)
+					}
+					updateTokenBalanceSpeedily(walletEntity)
+				}
+				job.join()
+			}
+			VLog.d("Time taken: ${timeTaken / 1000}s  to get balance")
 		} else {
 			//generating hashes for tokens later
 			CoroutineScope(Dispatchers.IO).launch {
@@ -126,7 +135,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val walletListDb = walletDao.getAllWalletList()
 			for (wallet in walletListDb) {
 				updateInProgressTransactions()
-				updateWalletBalance(wallet)
+				updateWalletBalanceWithTransactions(wallet)
 				updateTokenBalanceWithFullNode(wallet)
 			}
 		}
@@ -297,6 +306,61 @@ class BlockChainInteractImpl @Inject constructor(
 		return Resource.error(Exception("Unknown exception in pushing pushing transaction"))
 	}
 
+	private suspend fun updateTokenBalanceSpeedily(wallet: WalletEntity) {
+		try {
+			if (isThisChivesNetwork(wallet.networkType)) return
+			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+				?: throw Exception("Exception in converting json str to networkItem")
+			val curBlockChainService =
+				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+					.create(BlockChainService::class.java)
+			val hashWithAmount = hashMapOf<String, Double>()
+			val job = CoroutineScope(Dispatchers.IO).launch {
+				for ((asset_id, puzzle_hashes) in wallet.hashListImported) {
+					launch {
+						VLog.d("Launched job to get balance for $asset_id and Puzzle Hash : $puzzle_hashes")
+						updateTokenBalanceIndividually(
+							curBlockChainService,
+							asset_id,
+							puzzle_hashes,
+							hashWithAmount
+						)
+					}
+				}
+			}
+			job.join()
+			walletDao.updateChiaNetworkHashTokenBalanceByAddress(wallet.address, hashWithAmount)
+		} catch (ex: java.lang.Exception) {
+			VLog.d("Update token balance speedily exception : ${ex.message}")
+		}
+	}
+
+	private suspend fun updateTokenBalanceIndividually(
+		blockChainService: BlockChainService,
+		assetId: String,
+		puzzle_hashes: List<String>,
+		hashWithAmount: HashMap<String, Double>
+	) {
+		val body = hashMapOf<String, Any>()
+		body["puzzle_hashes"] =
+			puzzle_hashes
+		body["include_spent_coins"] = false
+		val division = 1000.0
+		var balance = 0L
+		val request = blockChainService.queryBalanceByPuzzleHashes(body)
+		if (request.isSuccessful) {
+			val coinRecordsJsonArray = request.body()!!.coin_records
+			for (coin in coinRecordsJsonArray) {
+				val curAmount = coin.coin.amount
+				val spent = coin.spent
+				if (!spent)
+					balance += curAmount
+			}
+		}
+		val newAmount = balance / division
+		hashWithAmount[assetId] = newAmount
+	}
+
 	override suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity) {
 		try {
 			if (isThisChivesNetwork(wallet.networkType)) return
@@ -316,15 +380,10 @@ class BlockChainInteractImpl @Inject constructor(
 				var balance = 0L
 				val prevAmount = wallet.hashWithAmount[asset_id] ?: 0.0
 				val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
-				val tokeEntity = tokenDao.getTokenByHash(hash = asset_id).get()
-				val prevTokenStartHeight = wallet.tokensStartHeight
-				val prevStartHeight = prevTokenStartHeight[tokeEntity.code] ?: 0
-				var newStartHeight = Long.MAX_VALUE
 				if (request.isSuccessful) {
 					val coinRecordsJsonArray = request.body()!!.coin_records
 					for (coin in coinRecordsJsonArray) {
 						val curAmount = coin.coin.amount
-						newStartHeight = Math.min(newStartHeight, coin.confirmed_block_index)
 						val spent = coin.spent
 						if (!spent)
 							balance += curAmount
@@ -333,8 +392,6 @@ class BlockChainInteractImpl @Inject constructor(
 				val newAmount = balance / division
 				hashWithAmount[asset_id] = newAmount
 				if (newAmount != prevAmount) {
-					prevTokenStartHeight[tokeEntity.code] = newStartHeight
-					walletDao.updateTokenStartHeightByAddress(prevTokenStartHeight, wallet.address)
 					getIncomingTransactionNotifForToken(
 						puzzle_hashes,
 						wallet,
@@ -427,7 +484,52 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
-	override suspend fun updateWalletBalance(wallet: WalletEntity) {
+	suspend fun updateWalletBalance(wallet: WalletEntity) {
+		try {
+			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+				?: throw Exception("Exception in converting json str to networkItem")
+
+			val curBlockChainService =
+				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+					.create(BlockChainService::class.java)
+			val body = hashMapOf<String, Any>()
+			body["puzzle_hashes"] =
+				wallet.puzzle_hashes
+			body["include_spent_coins"] = false
+			val division =
+				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
+					10.0,
+					8.0
+				) else Math.pow(
+					10.0,
+					12.0
+				)
+			var balance = 0L
+			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
+			var newStartHeight = Long.MAX_VALUE
+			if (request.isSuccessful) {
+				VLog.d("Got coin records : ${request.body()!!.coin_records}")
+				for (coin in request.body()!!.coin_records) {
+					val curAmount = coin.coin.amount
+					val spent = coin.spent
+					newStartHeight = Math.min(newStartHeight, coin.confirmed_block_index)
+					if (!spent)
+						balance += curAmount
+				}
+				val prevBalance =
+					walletDao.getWalletByAddress(wallet.address).get(0).balance
+				val newBalance = balance / division
+				VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance and newStartHeight : $newStartHeight")
+				walletDao.updateWalletBalanceByAddress(newBalance, wallet.address)
+			} else {
+				VLog.d("Request is not success in updating balance : ${request.message()}")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred in updating wallet balance : ${ex.message}")
+		}
+	}
+
+	override suspend fun updateWalletBalanceWithTransactions(wallet: WalletEntity) {
 		try {
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
@@ -469,7 +571,6 @@ class BlockChainInteractImpl @Inject constructor(
 					VLog.d("CurBalance is not the same as the previous one for wallet : ${wallet.fingerPrint}")
 					tokensStartHeight[getShortNetworkType(wallet.networkType)] =
 						newStartHeight
-					walletDao.updateTokenStartHeightByAddress(tokensStartHeight, wallet.address)
 					walletDao.updateWalletBalanceByAddress(newBalance, wallet.address)
 					updateIncomingTransactions(wallet)
 //					outgoingTransactionManager.checkOutGoingTransactions(wallet.puzzle_hashes,
