@@ -1,19 +1,14 @@
 package com.green.wallet.presentation
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.*
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
-import com.green.wallet.presentation.tools.VLog
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
-import dev.b3nedikt.restring.Restring
-import dev.b3nedikt.reword.RewordInterceptor
-import dev.b3nedikt.viewpump.ViewPump
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.NotificationHelper
@@ -21,6 +16,12 @@ import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransacti
 import com.green.wallet.presentation.di.application.AppComponent
 import com.green.wallet.presentation.di.application.DaggerAppComponent
 import com.green.wallet.presentation.tools.SYNC_WORK_TAG
+import com.green.wallet.presentation.tools.VLog
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
+import dev.b3nedikt.restring.Restring
+import dev.b3nedikt.reword.RewordInterceptor
+import dev.b3nedikt.viewpump.ViewPump
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -31,6 +32,7 @@ import javax.inject.Inject
 
 
 class App : DaggerApplication() {
+
 
 	@Inject
 	lateinit var blockChainInteract: BlockChainInteract
@@ -72,7 +74,7 @@ class App : DaggerApplication() {
 		super.onCreate()
 		if (BuildConfig.DEBUG)
 			Timber.plant(Timber.DebugTree())
-		VLog.d("OnCreate Got Called on App with API_KEY : ")
+		VLog.d("OnCreate Got Called on App at Local Time : ${System.currentTimeMillis()}")
 		quickNavigationIfUserUnBoarded()
 		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 		Restring.init(this)
@@ -87,6 +89,10 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
+		testingMethod()
+	}
+
+	private fun testingMethod() {
 
 	}
 

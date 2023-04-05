@@ -36,7 +36,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class BlockChainInteractImpl @Inject constructor(
+class  BlockChainInteractImpl @Inject constructor(
 	private val walletDao: WalletDao,
 	private val prefs: PrefsInteract,
 	private val transactionDao: TransactionDao,

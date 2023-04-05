@@ -1,7 +1,9 @@
 package com.green.wallet.data.interact
 
 import com.green.wallet.data.local.TransactionDao
+import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.TransactionInteract
 import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.tools.Status
@@ -10,7 +12,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
-class TransactionInteractImpl @Inject constructor(private val transactionDao: TransactionDao) :
+class TransactionInteractImpl @Inject constructor(
+	private val transactionDao: TransactionDao,
+	private val prefs: PrefsInteract
+) :
 	TransactionInteract {
 
 	override suspend fun getTransactionsByProvidedParameters(
@@ -21,16 +26,22 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 		at_least_created_at: Long?,
 		yesterday: Long?,
 		today: Long?
-	) = transactionDao.getALlTransactionsByGivenParameters(
-		fkAddress,
-		amount,
-		networkType,
-		status,
-		at_least_created_at,
-		yesterday,
-		today
-	)
-		.map { transaction -> transaction.toTransaction() }
+	): List<Transaction> {
+		val timeDiff =
+			prefs.getSettingLong(PrefsManager.TIME_DIFFERENCE, System.currentTimeMillis())
+		val resTrans = transactionDao.getALlTransactionsByGivenParameters(
+			fkAddress,
+			amount,
+			networkType,
+			status,
+			at_least_created_at,
+			yesterday,
+			today
+		)
+			.map { transaction -> transaction.toTransaction(transaction.created_at_time + timeDiff) }
+		return resTrans
+	}
+
 
 	override fun getTransactionsFlowByProvidedParameters(
 		fkAddress: String?,
@@ -51,8 +62,17 @@ class TransactionInteractImpl @Inject constructor(private val transactionDao: Tr
 			yesterday,
 			today,
 			tokenCode
-		).map { listFlow -> listFlow.map { tran -> tran.toTransaction() } }
-
+		).map { listFlow ->
+			listFlow.map { tran ->
+				tran.toTransaction(
+					tran.created_at_time +
+							prefs.getSettingLong(
+								PrefsManager.TIME_DIFFERENCE,
+								System.currentTimeMillis()
+							)
+				)
+			}
+		}
 		return flowTransactionList
 	}
 
