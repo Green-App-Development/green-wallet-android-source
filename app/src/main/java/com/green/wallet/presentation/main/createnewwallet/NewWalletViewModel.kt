@@ -19,9 +19,7 @@ class NewWalletViewModel @Inject constructor(
 	ViewModel() {
 
 	init {
-		viewModelScope.launch {
-			cryptocurrencyInteract.getAllTails()
-		}
+
 	}
 
 	fun createNewWallet(

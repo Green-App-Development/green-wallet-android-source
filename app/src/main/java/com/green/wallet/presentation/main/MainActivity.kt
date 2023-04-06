@@ -142,6 +142,7 @@ class MainActivity : BaseActivity() {
 		initCheckingBundleFromPushNotification()
 		startServiceAppRemoveRecentTask()
 		registerReceiver(m_timeChangedReceiver, timeIntentFilter)
+		initUpdateBalanceJobRegulation()
 	}
 
 
@@ -163,11 +164,12 @@ class MainActivity : BaseActivity() {
 			VLog.d("MainNav navController destination id changed  : ${dest.id}")
 			val shouldStopUpdateBalance = setOf(
 				sendFragment, impMnemonicFragment,
-				verificationFragment
+				verificationFragment,
+				entPasscodeFrMain
 			)
 			if (shouldStopUpdateBalance.contains(dest.id)) {
 				VLog.d("ShouldStopUpdateBalance destination on MainActivity")
-				(application as App).updateBalanceJob?.cancel()
+				(application as App).postPoneAllRequests()
 			} else {
 				VLog.d("Start updating balance and transaction periodically")
 				(application as App).updateBalanceEachPeriodically()
