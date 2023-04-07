@@ -36,6 +36,7 @@ import com.green.wallet.presentation.main.support.ListingFragment
 import com.green.wallet.presentation.main.support.QuestionFragment
 import com.green.wallet.presentation.main.support.SupportFragment
 import com.green.wallet.presentation.main.support.faq.FAQFragment
+import com.green.wallet.presentation.main.swap.SwapFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -162,6 +163,10 @@ abstract class InjectorBuildersModule {
 
 	@ContributesAndroidInjector
 	abstract fun injectIntoDAppManagement(): DAppFragment
+
+	@ContributesAndroidInjector
+	abstract fun injectIntoSwapFragment():SwapFragment
+
 
 
 }
