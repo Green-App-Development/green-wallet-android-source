@@ -279,7 +279,6 @@ class SendFragment : DaggerFragment() {
 									BigDecimal("${sentTokenMempoolAmounts[1]}")
 								)).toDouble()
 							)
-
 						binding.apply {
 							txtSpendableBalanceAmount.setText(
 								"$txtSpendableBalance: $spendableAmountString"
@@ -341,7 +340,7 @@ class SendFragment : DaggerFragment() {
 	private fun queryWalletList(type: String, fingerPrint: Long?) {
 		removeGADIfCurNetworkChives(type)
 		updateJob?.cancel()
-		updateJob = lifecycleScope.launch {
+		updateJob = lifecycleScope.launch(handler) {
 
 			viewModel.queryWalletWithTokensList(type, fingerPrint)
 				.collectLatest { walletTokenList ->
@@ -1334,6 +1333,7 @@ class SendFragment : DaggerFragment() {
 	override fun onDestroyView() {
 		super.onDestroyView()
 		curActivity().sendCoinsFragmentView = null
+		updateJob?.cancel()
 	}
 
 	override fun onDestroy() {
