@@ -263,8 +263,8 @@
 
 	<fragment
 			android:id="@+id/fragmentSwap"
-			android:name="com.green.wallet.presentation.main.swap.SwapFragment"
+			android:name="com.green.wallet.presentation.main.swap.main.SwapMainFragment"
 			android:label="SwapFragment"
-			tools:layout="@layout/fragment_swap" />
+			tools:layout="@layout/fragment_swap_main" />
 
 </navigation>

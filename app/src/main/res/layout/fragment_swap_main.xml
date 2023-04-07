@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/root"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/primary_app_background">
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline8"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.02" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline9"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.07" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline58"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.5" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline59"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.07" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline60"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.93" />
+
+
+	<TextView
+			android:id="@+id/edtToken"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/dapp_list_title"
+			android:textColor="@color/green"
+			android:textFontWeight="600"
+			android:textSize="25sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+	<TextView
+			android:id="@+id/txtDEX"
+			android:layout_width="106dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:layout_marginEnd="13dp"
+			android:layout_weight="1"
+			android:background="@drawable/bcg_sorting_txt"
+			android:fontFamily="@font/inter_regular"
+			android:gravity="center_horizontal"
+			android:paddingTop="6dp"
+			android:paddingBottom="6dp"
+			android:tag="Outgoing"
+			android:text="@string/nft_dex_btn"
+			android:textColor="@color/sorting_txt_category"
+			android:textFontWeight="500"
+			android:textSize="14sp"
+			app:layout_constraintEnd_toStartOf="@+id/guideline58"
+			app:layout_constraintTop_toBottomOf="@+id/edtToken" />
+
+	<TextView
+			android:id="@+id/txtNFtMarkets"
+			android:layout_width="106dp"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="13dp"
+			android:layout_weight="1"
+			android:background="@drawable/bcg_sorting_txt"
+			android:fontFamily="@font/inter_regular"
+			android:gravity="center_horizontal"
+			android:paddingTop="6dp"
+			android:paddingBottom="6dp"
+			android:tag="Outgoing"
+			android:text="@string/nft_markets_btn"
+			android:textColor="@color/sorting_txt_category"
+			android:textFontWeight="500"
+			android:textSize="14sp"
+			app:layout_constraintStart_toStartOf="@+id/guideline58"
+			app:layout_constraintTop_toTopOf="@+id/txtDEX" />
+
+<!--	<fragment-->
+<!--			android:id="@+id/swap_nav"-->
+<!--			android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--			android:layout_width="0dp"-->
+<!--			android:layout_height="0dp"-->
+<!--			android:layout_marginTop="20dp"-->
+<!--			app:defaultNavHost="true"-->
+<!--			app:layout_constraintBottom_toBottomOf="parent"-->
+<!--			app:layout_constraintEnd_toEndOf="parent"-->
+<!--			app:layout_constraintHorizontal_bias="0.0"-->
+<!--			app:layout_constraintStart_toStartOf="parent"-->
+<!--			app:layout_constraintTop_toBottomOf="@+id/txtNFtMarkets"-->
+<!--			app:navGraph="@navigation/swap_nav" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
