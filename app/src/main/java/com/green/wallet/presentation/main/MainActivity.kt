@@ -321,6 +321,12 @@ class MainActivity : BaseActivity() {
 						move2UserNFTTokensFragment()
 					}
 				}
+				swap -> {
+					if (navController.currentDestination?.id != fragmentSwap) {
+						item.isChecked = true
+						move2SwapFragment()
+					}
+				}
 			}
 			false
 		}
@@ -618,6 +624,10 @@ class MainActivity : BaseActivity() {
 
 	fun move2DAppFragment() {
 		navController.navigate(fragmentDApp)
+	}
+
+	fun move2SwapFragment() {
+		navController.navigate(fragmentSwap)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {

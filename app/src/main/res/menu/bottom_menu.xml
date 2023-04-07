@@ -18,10 +18,9 @@
 			android:icon="@drawable/ic_btm_dapp"
 			android:title="@string/dapp_bnt" />
 
-	<!--	<item-->
-	<!--			android:id="@+id/swap"-->
-	<!--			android:icon="@drawable/ic_swap"-->
-	<!--			android:title="SWAP" />-->
-
+	<item
+			android:id="@+id/swap"
+			android:icon="@drawable/ic_swap"
+			android:title="SWAP" />
 
 </menu>
