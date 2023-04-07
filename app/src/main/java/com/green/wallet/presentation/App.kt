@@ -119,6 +119,10 @@ class App : DaggerApplication() {
 				getAgreementsText()
 			}
 			supportInteract.getFAQQuestionAnswers()
+			with(cryptocurrencyInteract) {
+				getAllTails()
+				checkingDefaultWalletTails()
+			}
 		}
 	}
 
@@ -184,9 +188,6 @@ class App : DaggerApplication() {
 		}
 		updateCryptoJob?.cancel()
 		updateCryptoJob = CoroutineScope(Dispatchers.IO + handler).launch {
-			greenAppInteract.getAvailableNetworkItemsFromRestAndSave()
-			cryptocurrencyInteract.getAllTails()
-			cryptocurrencyInteract.checkingDefaultWalletTails()
 			while (true) {
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()
@@ -196,6 +197,10 @@ class App : DaggerApplication() {
 		}
 	}
 
+	fun postPoneAllRequests() {
+		updateBalanceJob?.cancel()
+		updateCryptoJob?.cancel()
+	}
 
 	private fun determineModeAndLanguage() {
 		CoroutineScope(Dispatchers.Main).launch {
