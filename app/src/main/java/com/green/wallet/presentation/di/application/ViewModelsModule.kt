@@ -21,7 +21,7 @@ import com.green.wallet.presentation.main.notification.NotifViewModel
 import com.green.wallet.presentation.main.receive.ReceiveViewModel
 import com.green.wallet.presentation.main.send.SendFragmentViewModel
 import com.green.wallet.presentation.main.support.SupportViewModel
-import com.green.wallet.presentation.main.swap.SwapViewModel
+import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsViewModel
@@ -156,8 +156,8 @@ abstract class ViewModelsModule {
 
 	@IntoMap
 	@Binds
-	@ViewModelKey(SwapViewModel::class)
-	abstract fun bindingSwapViewModel(viewModel: SwapViewModel): ViewModel
+	@ViewModelKey(SwapMainViewModel::class)
+	abstract fun bindingSwapViewModel(viewModel: SwapMainViewModel): ViewModel
 
 
 

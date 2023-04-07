@@ -1,9 +1,9 @@
-package com.green.wallet.presentation.main.swap
+package com.green.wallet.presentation.main.swap.main
 
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 
-class SwapViewModel @Inject constructor() : ViewModel() {
+class SwapMainViewModel @Inject constructor() : ViewModel() {
 
 
 	override fun onCleared() {
