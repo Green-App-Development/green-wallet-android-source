@@ -46,7 +46,7 @@ packages:
   chia_crypto_utils:
     dependency: "direct main"
     description:
-      path: chia-crypto-utils
+      path: wallet-sdk
       relative: true
     source: path
     version: "1.0.15"

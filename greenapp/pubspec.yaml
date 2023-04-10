@@ -30,7 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   chia_crypto_utils:
-    path: ./chia-crypto-utils
+    path: ./wallet-sdk
   http: ^0.13.4
 
 dev_dependencies:
