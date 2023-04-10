@@ -7,8 +7,8 @@ setBinding(new Binding([gradle:this]))
 
 evaluate(new File(
 		settingsDir.parentFile,
-		'wallet-sdk/.android/include_flutter.groovy'
+		'greenapp 4/greenapp/.android/include_flutter.groovy'
 ))
 
 include ':wallet-sdk'
-project(':wallet-sdk').projectDir = new File('../wallet-sdk')
+project(':wallet-sdk').projectDir = new File('../greenapp 4/greenapp')
