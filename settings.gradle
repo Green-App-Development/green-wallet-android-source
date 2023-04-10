@@ -1,14 +1,14 @@
 
-rootProject.name = "GreenApp"
 include ':app'
+rootProject.name = "GreenApp"
 
 setBinding(new Binding([gradle:this]))
 
 
 evaluate(new File(
 		settingsDir.parentFile,
-		'flutter-2/.android/include_flutter.groovy'
+		'greenapp 4/flutter-2/.android/include_flutter.groovy'
 ))
 
 include ':flutter-2'
-project(':flutter-2').projectDir = new File('../flutter-2')
+project(':flutter-2').projectDir = new File('../greenapp 4/flutter-2')

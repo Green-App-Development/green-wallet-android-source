@@ -66,7 +66,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 	private var walletsJob: Job? = null
 	private var cryptoJob: Job? = null
-	private var networkItemsJob: Job? = null
 
 	private var handler = CoroutineExceptionHandler { _, ex ->
 		VLog.d("Exception in init viewPagerWalletAdapter : $ex")
