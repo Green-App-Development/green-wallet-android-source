@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/primary_app_background">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:layout_width="match_parent"
+			android:layout_height="100dp"
+			android:layout_marginStart="15dp"
+			android:layout_marginTop="8dp"
+			android:layout_marginEnd="15dp"
+			android:layout_marginBottom="8dp"
+			android:background="@drawable/bcg_request_item"
+			android:paddingStart="12dp"
+			android:paddingEnd="12dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="6dp"
+				android:text="Заявка #001766"
+				android:textColor="@color/txt_request_id"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		<TextView
+				android:id="@+id/txtStatusRequest"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="6dp"
+				android:text=" выполнена"
+				android:textColor="@color/green"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:layout_marginEnd="8dp"
+				android:src="@drawable/dot_ic"
+				app:layout_constraintBottom_toBottomOf="@id/txtStatusRequest"
+				app:layout_constraintEnd_toStartOf="@+id/txtStatusRequest"
+				app:layout_constraintTop_toTopOf="@+id/txtStatusRequest" />
+
+
+		<TextView
+				android:id="@+id/txtDate"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="4dp"
+				android:text="24/03/2023 19:11"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/txtStatusRequest" />
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

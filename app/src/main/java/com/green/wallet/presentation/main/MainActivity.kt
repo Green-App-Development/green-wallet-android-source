@@ -291,7 +291,7 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
-				fragmentSwap -> {
+				fragmentSwapMain -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
@@ -325,7 +325,7 @@ class MainActivity : BaseActivity() {
 					}
 				}
 				swap -> {
-					if (navController.currentDestination?.id != fragmentSwap) {
+					if (navController.currentDestination?.id != fragmentSwapMain) {
 						item.isChecked = true
 						move2SwapFragment()
 					}
@@ -630,7 +630,7 @@ class MainActivity : BaseActivity() {
 	}
 
 	fun move2SwapFragment() {
-		navController.navigate(fragmentSwap)
+		navController.navigate(fragmentSwapMain)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {

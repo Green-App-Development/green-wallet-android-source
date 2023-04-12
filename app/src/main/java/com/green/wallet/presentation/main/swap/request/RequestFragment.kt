@@ -26,7 +26,12 @@ class RequestFragment : DaggerFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentRequestBinding.inflate(layoutInflater)
+		binding.registerClicks()
 		return binding.root
+	}
+
+	private fun FragmentRequestBinding.registerClicks() {
+
 	}
 
 

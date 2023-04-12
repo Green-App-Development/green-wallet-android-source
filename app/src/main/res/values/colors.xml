@@ -126,6 +126,8 @@
 	<color name="switch_thumb_off_settings">#202020</color>
 	<color name="app_icon_main">#FFFFFF</color>
 	<color name="inactive_grey_txt_color">#494949</color>
-	<color name="primary_txt_clr"></color>
+	<color name="ic_swap_arrow">#FFFFFF</color>
+	<color name="txt_request_id">#4A4A4A</color>
+
 
 </resources>
