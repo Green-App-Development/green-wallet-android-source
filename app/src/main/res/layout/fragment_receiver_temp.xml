@@ -273,7 +273,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:src="@drawable/dot_ic" />
+                android:src="@drawable/dot_ic_green" />
 
             <TextView
                 android:id="@+id/txt_chosen_network"

@@ -7,9 +7,9 @@
 		android:background="@color/primary_app_background">
 
 	<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/rec_view_requests"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="4dp"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent"

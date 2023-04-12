@@ -27,10 +27,10 @@ class RequestItemAdapter(val activity: MainActivity) :
 	}
 
 	override fun onBindViewHolder(holder: RequestItemViewHolder, position: Int) {
-		holder.onBind(data[position])
+//		holder.onBind(data[position])
 	}
 
-	override fun getItemCount() = data.size
+	override fun getItemCount() = 10
 
 	class RequestItemViewHolder(v: View) : ViewHolder(v) {
 
