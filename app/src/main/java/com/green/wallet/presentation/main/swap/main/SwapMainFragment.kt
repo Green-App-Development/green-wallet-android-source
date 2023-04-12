@@ -44,6 +44,7 @@ class SwapMainFragment : DaggerFragment() {
 
 	private fun FragmentSwapMainBinding.registerClicks() {
 		txtClicked(txtExchange)
+		txtUnClicked(txtMyRequests)
 		txtExchange.setOnClickListener {
 			if (showingExchange) return@setOnClickListener
 			showingExchange = true
