@@ -33,8 +33,7 @@ class SwapMainFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-//		navController = findNavController()
+		navController = findNavController()
 	}
-
 
 }

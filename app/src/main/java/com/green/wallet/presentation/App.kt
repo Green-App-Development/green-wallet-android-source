@@ -111,11 +111,6 @@ class App : DaggerApplication() {
 		}
 	}
 
-
-
-
-
-
 	private fun requestsPerApplication() {
 		CoroutineScope(Dispatchers.IO).launch {
 			with(greenAppInteract) {

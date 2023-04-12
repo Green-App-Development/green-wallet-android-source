@@ -20,7 +20,7 @@
 
 	<item
 			android:id="@+id/swap"
-			android:icon="@drawable/ic_swap"
-			android:title="SWAP" />
+			android:icon="@drawable/ic_horizontal"
+			android:title="swap" />
 
 </menu>

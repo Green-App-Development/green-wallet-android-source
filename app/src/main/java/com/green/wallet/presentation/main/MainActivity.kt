@@ -25,7 +25,6 @@ import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
 import com.example.common.tools.*
 import com.green.wallet.R
 import com.green.wallet.R.id.*
-import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.presentation.App
@@ -289,6 +288,10 @@ class MainActivity : BaseActivity() {
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
 				fragmentDApp -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+				fragmentSwap -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
