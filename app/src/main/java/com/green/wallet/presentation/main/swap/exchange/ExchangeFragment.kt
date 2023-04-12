@@ -39,8 +39,8 @@ class ExchangeFragment : DaggerFragment() {
 		return binding.root
 	}
 
-
 	private fun FragmentExchangeBinding.registerViews() {
+
 		initDetailTransaction(container, txtDetailTransactions)
 		initDetailTransaction(container, imgArrowDownDetailTrans)
 		initChooseTokenSpinnerFrom(edtTokenFrom, tokenFromSpinner)
@@ -138,6 +138,5 @@ class ExchangeFragment : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 
 	}
-
 
 }
