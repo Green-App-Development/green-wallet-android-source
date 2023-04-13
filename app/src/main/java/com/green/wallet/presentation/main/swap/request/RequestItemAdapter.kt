@@ -90,7 +90,7 @@ class RequestItemAdapter(
 			txtDate.text = requestDateFormat(item.time_created)
 			initChangeColorStatusTxt(item.status, txtStatus)
 			detailBtn.setOnClickListener {
-
+				listener.onClickDetailItem(item)
 			}
 		}
 

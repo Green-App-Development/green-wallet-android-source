@@ -8,6 +8,7 @@ import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import com.green.wallet.data.di.InteractModule
+import com.green.wallet.presentation.di.components.swap.SwapComponent
 
 
 @AppScope
@@ -15,6 +16,7 @@ import com.green.wallet.data.di.InteractModule
 interface AppComponent : AndroidInjector<App> {
 
 	fun fcmComponentBuilder(): FCMServiceComponent.Builder
+	fun swapComponentBuilder():SwapComponent.Builder
 
 	@Component.Builder
 	interface Builder {

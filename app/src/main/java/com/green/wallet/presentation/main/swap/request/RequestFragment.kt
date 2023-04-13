@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestBinding
 import com.green.wallet.domain.domainmodel.RequestItem
+import com.green.wallet.presentation.App
 import com.green.wallet.presentation.tools.RequestStatus
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
 
@@ -76,7 +79,8 @@ class RequestFragment : DaggerFragment(), RequestItemAdapter.OnClickRequestItemL
 	}
 
 	override fun onClickDetailItem(item: RequestItem) {
-
+		VLog.d("Request Item Detail : $item clicked")
+		getMainActivity().move2RequestDetailsFragment(item.status)
 	}
 
 

@@ -1,22 +1,21 @@
 package com.green.wallet.presentation
 
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.navigation.NavController
 import androidx.work.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
 import com.green.wallet.data.preference.PrefsManager
-import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.NotificationHelper
 import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.green.wallet.presentation.di.application.AppComponent
 import com.green.wallet.presentation.di.application.DaggerAppComponent
+import com.green.wallet.presentation.di.components.swap.SwapComponent
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import com.green.wallet.presentation.tools.VLog
@@ -63,6 +62,8 @@ class App : DaggerApplication() {
 	lateinit var walletInteract: WalletInteract
 
 	lateinit var appComponent: AppComponent
+	lateinit var swapComponent: SwapComponent
+	lateinit var swapNavController: NavController
 
 	var applicationIsAlive = false
 	var isUserUnBoardDed = true
@@ -181,6 +182,7 @@ class App : DaggerApplication() {
 		updateBalanceJob?.cancel()
 		updateBalanceJob = CoroutineScope(Dispatchers.IO + handler).launch {
 			while (true) {
+				delay(1000L * 30L)
 				VLog.d("Start requesting Balance Each Wallets Periodically:")
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
 				delay(1000 * 30L)
@@ -189,6 +191,7 @@ class App : DaggerApplication() {
 		updateCryptoJob?.cancel()
 		updateCryptoJob = CoroutineScope(Dispatchers.IO + handler).launch {
 			while (true) {
+				delay(1000L * 60)
 				VLog.d("Start updating CourseCrypto each Wallets :")
 				cryptocurrencyInteract.updateCourseCryptoInDb()
 				greenAppInteract.requestOtherNotifItems()

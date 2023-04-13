@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.di.application
 
 import android.app.Dialog
+import com.green.wallet.presentation.di.components.swap.SwapInjectorModules
 import com.green.wallet.presentation.onboard.OnBoardActivity
 import com.green.wallet.presentation.onboard.icon.IconFragment
 import com.green.wallet.presentation.onboard.language.LanguageFragment
@@ -39,6 +40,7 @@ import com.green.wallet.presentation.main.support.faq.FAQFragment
 import com.green.wallet.presentation.main.swap.exchange.ExchangeFragment
 import com.green.wallet.presentation.main.swap.main.SwapMainFragment
 import com.green.wallet.presentation.main.swap.request.RequestFragment
+import com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -166,14 +168,17 @@ abstract class InjectorBuildersModule {
 	@ContributesAndroidInjector
 	abstract fun injectIntoDAppManagement(): DAppFragment
 
-	@ContributesAndroidInjector
+	@ContributesAndroidInjector()
 	abstract fun injectIntoSwapFragment(): SwapMainFragment
 
-	@ContributesAndroidInjector
+	@ContributesAndroidInjector()
 	abstract fun injectIntoExchangeFragment(): ExchangeFragment
 
-	@ContributesAndroidInjector
-	abstract fun injectRequestFragment(): RequestFragment
+	@ContributesAndroidInjector()
+	abstract fun injectIntoRequestFragment(): RequestFragment
+
+	@ContributesAndroidInjector()
+	abstract fun injectIntoRequestDetailFragment(): RequestDetailFragment
 
 
 }
