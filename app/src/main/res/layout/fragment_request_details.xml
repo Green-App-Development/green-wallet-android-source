@@ -56,10 +56,11 @@
 			app:layout_constraintTop_toBottomOf="@+id/back_layout" />
 
 	<ImageView
-			android:id="@+id/imgCpyNftId"
+			android:id="@+id/imgCpyRequestHash"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_centerVertical="true"
+			android:layout_marginStart="8dp"
 			android:src="@drawable/ic_copy_green"
 			app:layout_constraintBottom_toBottomOf="@id/txtRequestHash"
 			app:layout_constraintLeft_toRightOf="@id/txtRequestHash"
@@ -74,9 +75,375 @@
 			android:textColor="@color/hint_color"
 			android:textFontWeight="500"
 			android:textSize="16sp"
-			app:layout_constraintEnd_toEndOf="@+id/imgCpyNftId"
+			app:layout_constraintEnd_toEndOf="@+id/imgCpyRequestHash"
 			app:layout_constraintStart_toStartOf="@+id/txtRequestHash"
 			app:layout_constraintTop_toBottomOf="@+id/txtRequestHash" />
 
+	<ScrollView
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_marginTop="20dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/txtStatus">
+
+		<androidx.appcompat.widget.LinearLayoutCompat
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="vertical">
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Дата"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtData"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="24/03/2023 19:11"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Адрес эскроу"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtAddressEksCrou"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+				<ImageView
+						android:id="@+id/imgCpyAddress"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginRight="8dp"
+						android:layout_toLeftOf="@+id/edtAddressEksCrou"
+						android:src="@drawable/ic_copy_green" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Отправлено"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtSendAmount"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Получено"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtReceiveAmount"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Адрес получения"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtAddressReceive"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+				<ImageView
+						android:id="@+id/imgCpyReceiveAddress"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="8dp"
+						android:layout_toStartOf="@+id/edtAddressReceive"
+						android:src="@drawable/ic_copy_green" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Курс обмена"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtCourseExchange"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Hash транзакция"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtHashTransaction"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+				<ImageView
+						android:id="@+id/imgCpyHashTransaction"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginEnd="8dp"
+						android:layout_toStartOf="@+id/edtHashTransaction"
+						android:src="@drawable/ic_copy_green" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Комиссия сети Chia"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtCommissionNetwork"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Комиссия сети Tron"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtCommissionTron"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+
+			<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="@dimen/request_property_start"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="Комиссия за обмен"
+						android:textColor="@color/secondary_text_color" />
+
+				<View
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_alignParentBottom="true"
+						android:background="@color/line_divider" />
+
+				<TextView
+						android:id="@+id/edtCommissionExchange"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_alignParentEnd="true"
+						android:layout_marginTop="@dimen/request_property_top"
+						android:layout_marginEnd="@dimen/request_property_start"
+						android:layout_marginBottom="@dimen/request_property_bottom"
+						android:text="-"
+						android:textColor="@color/secondary_text_color" />
+
+			</RelativeLayout>
+
+		</androidx.appcompat.widget.LinearLayoutCompat>
+
+	</ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

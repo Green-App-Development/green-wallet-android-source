@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
+import com.green.wallet.presentation.App
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
@@ -38,6 +39,7 @@ class SwapMainFragment : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		navController =
 			(childFragmentManager.findFragmentById(R.id.my_nav_swap) as NavHostFragment).navController
+		(getMainActivity().application as App).swapNavController = navController
 	}
 
 	private var showingExchange = true

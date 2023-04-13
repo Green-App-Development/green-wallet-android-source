@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.main.swap.exchange
 
 import android.animation.ValueAnimator
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +10,15 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.green.wallet.databinding.FragmentExchangeBinding
+import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.main.send.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
+import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -23,6 +28,11 @@ class ExchangeFragment : DaggerFragment() {
 
 	@Inject
 	lateinit var animManager: AnimationManager
+
+
+	override fun onAttach(context: Context) {
+		super.onAttach(context)
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)

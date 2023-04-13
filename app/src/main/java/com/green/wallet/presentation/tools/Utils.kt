@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
+import com.green.wallet.presentation.tools.RequestStatus
 import com.green.wallet.presentation.tools.VLog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -163,6 +164,15 @@ fun getTokenPrecisionAfterComoByTokenCode(code: String): Int {
 fun requestDateFormat(timeCreated: Long): String {
 	return SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(timeCreated))
 }
+
+fun convertStringToRequestStatus(status: String): RequestStatus {
+	RequestStatus.values().forEach {
+		if (it == RequestStatus.valueOf(status))
+			return it
+	}
+	return RequestStatus.InProgress
+}
+
 
 
 

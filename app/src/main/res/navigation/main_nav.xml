@@ -267,4 +267,10 @@
 			android:label="SwapFragment"
 			tools:layout="@layout/fragment_swap_main" />
 
+	<fragment
+			android:id="@+id/fragmentRequestDetail"
+			android:name="com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment"
+			android:label="Request Detail"
+			tools:layout="@layout/fragment_request_details" />
+
 </navigation>
