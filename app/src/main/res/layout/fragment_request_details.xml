@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@color/primary_app_background">
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline50"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.03" />
+
+	<LinearLayout
+			android:id="@+id/back_layout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="15dp"
+			android:layout_marginTop="4dp"
+			android:clickable="true"
+			android:focusable="true"
+			android:foreground="?android:attr/selectableItemBackground"
+			android:orientation="horizontal"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/guideline50">
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:gravity="center_vertical"
+				android:src="@drawable/back_arrow_ic" />
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:layout_gravity="center_vertical"
+				android:text="@string/back_btn"
+				android:textColor="@color/greey"
+				android:textFontWeight="500"
+				android:textSize="18sp" />
+
+	</LinearLayout>
+
+	<TextView
+			android:id="@+id/txtRequestHash"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Заявка #001766"
+			android:textColor="@color/green"
+			android:textFontWeight="600"
+			android:textSize="23sp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/back_layout" />
+
+	<ImageView
+			android:id="@+id/imgCpyNftId"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:src="@drawable/ic_copy_green"
+			app:layout_constraintBottom_toBottomOf="@id/txtRequestHash"
+			app:layout_constraintLeft_toRightOf="@id/txtRequestHash"
+			app:layout_constraintTop_toTopOf="@+id/txtRequestHash" />
+
+	<TextView
+			android:id="@+id/txtStatus"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="3dp"
+			android:text="Статус: Выполнена"
+			android:textColor="@color/hint_color"
+			android:textFontWeight="500"
+			android:textSize="16sp"
+			app:layout_constraintEnd_toEndOf="@+id/imgCpyNftId"
+			app:layout_constraintStart_toStartOf="@+id/txtRequestHash"
+			app:layout_constraintTop_toBottomOf="@+id/txtRequestHash" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -128,6 +128,7 @@
 	<color name="inactive_grey_txt_color">#494949</color>
 	<color name="ic_swap_arrow">#FFFFFF</color>
 	<color name="txt_request_id">#4A4A4A</color>
+	<color name="orange">#FEC182</color>
 
 
 </resources>

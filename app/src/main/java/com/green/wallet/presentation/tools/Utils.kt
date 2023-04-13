@@ -160,6 +160,10 @@ fun getTokenPrecisionAfterComoByTokenCode(code: String): Int {
 	}
 }
 
+fun requestDateFormat(timeCreated: Long): String {
+	return SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(timeCreated))
+}
+
 
 
 

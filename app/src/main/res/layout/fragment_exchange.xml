@@ -10,9 +10,9 @@
 			android:id="@+id/container"
 			android:layout_width="match_parent"
 			android:layout_height="300dp"
-			android:layout_marginStart="15dp"
+			android:layout_marginStart="10dp"
 			android:layout_marginTop="4dp"
-			android:layout_marginEnd="15dp"
+			android:layout_marginEnd="10dp"
 			android:background="@drawable/card_view_bcg_shape"
 			android:paddingTop="14dp"
 			app:layout_constraintEnd_toEndOf="parent"
@@ -331,7 +331,7 @@
 					app:layout_constraintGuide_percent="0.65" />
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
- 
+
 		<TextView
 				android:id="@+id/txtDetailTransactions"
 				android:layout_width="wrap_content"

@@ -9,10 +9,10 @@
 	<androidx.constraintlayout.widget.ConstraintLayout
 			android:layout_width="match_parent"
 			android:layout_height="90dp"
-			android:layout_marginStart="15dp"
-			android:layout_marginTop="8dp"
-			android:layout_marginEnd="15dp"
-			android:layout_marginBottom="8dp"
+			android:layout_marginStart="10dp"
+			android:layout_marginTop="4dp"
+			android:layout_marginEnd="10dp"
+			android:layout_marginBottom="12dp"
 			android:background="@drawable/bcg_request_item"
 			android:paddingStart="12dp"
 			android:paddingEnd="12dp"
@@ -43,11 +43,13 @@
 				app:layout_constraintTop_toTopOf="parent" />
 
 		<ImageView
+				android:id="@+id/img_dot"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="center_vertical"
 				android:layout_marginEnd="8dp"
-				android:src="@drawable/dot_ic_green"
+				android:layout_marginTop="2dp"
+				android:src="@drawable/ic_dot_green"
 				app:layout_constraintBottom_toBottomOf="@id/txtStatusRequest"
 				app:layout_constraintEnd_toStartOf="@+id/txtStatusRequest"
 				app:layout_constraintTop_toTopOf="@+id/txtStatusRequest" />
@@ -69,10 +71,14 @@
 				android:layout_width="0dp"
 				android:layout_height="20dp"
 				android:layout_marginTop="4dp"
+				android:autoSizeMinTextSize="5sp"
+				android:autoSizeMaxTextSize="20sp"
 				android:autoSizeTextType="uniform"
+				android:maxLines="1"
 				android:singleLine="true"
-				android:text="Отправлено: - 32322.50 USDT"
+				android:text="Отправлено: - 345.50 USDT"
 				android:textColor="@color/sorting_txt_category"
+				android:textFontWeight="400"
 				app:layout_constraintEnd_toStartOf="@+id/txtDate"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/txtRequestHash" />
@@ -89,6 +95,7 @@
 				app:layout_constraintEnd_toEndOf="parent" />
 
 		<TextView
+				android:id="@+id/txtDetailRequest"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_marginEnd="3dp"
@@ -100,13 +107,17 @@
 				app:layout_constraintTop_toTopOf="@+id/imgArrowRight" />
 
 		<TextView
+				android:id="@+id/txtReceiveAmount"
 				android:layout_width="0dp"
 				android:layout_height="20dp"
 				android:layout_marginTop="4dp"
 				android:autoSizeTextType="uniform"
 				android:singleLine="true"
+				android:autoSizeMinTextSize="5sp"
+				android:autoSizeMaxTextSize="20sp"
 				android:text="Получено: + 0.45 XCH"
 				android:textColor="@color/sorting_txt_category"
+				android:textFontWeight="400"
 				app:layout_constraintEnd_toStartOf="@+id/txtDate"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/txtSendAmount" />
