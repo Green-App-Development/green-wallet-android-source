@@ -11,9 +11,11 @@ import androidx.navigation.fragment.findNavController
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_swap_main.*
 
 class SwapMainFragment : DaggerFragment() {
 
@@ -21,6 +23,7 @@ class SwapMainFragment : DaggerFragment() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		VLog.d("On Create SwapMainFragment")
 	}
 
 	private lateinit var navController: NavController
@@ -32,33 +35,42 @@ class SwapMainFragment : DaggerFragment() {
 	): View {
 		binding = FragmentSwapMainBinding.inflate(layoutInflater)
 		binding.registerClicks()
+		VLog.d("On CreateView SwapMainFragment")
 		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		VLog.d("On ViewCreated SwapMainFragment")
 		navController =
 			(childFragmentManager.findFragmentById(R.id.my_nav_swap) as NavHostFragment).navController
 		(getMainActivity().application as App).swapNavController = navController
+		registerNavListener()
+	}
+
+	private fun registerNavListener() {
+		navController.addOnDestinationChangedListener { controller, destination, arguments ->
+			if (destination.id == R.id.fragment_exchange) {
+				txtClicked(txtExchange)
+				txtUnClicked(txtMyRequests)
+			} else {
+				txtClicked(txtMyRequests)
+				txtUnClicked(txtExchange)
+			}
+		}
 	}
 
 	private var showingExchange = true
 
 	private fun FragmentSwapMainBinding.registerClicks() {
-		txtClicked(txtExchange)
-		txtUnClicked(txtMyRequests)
 		txtExchange.setOnClickListener {
 			if (showingExchange) return@setOnClickListener
 			showingExchange = true
-			txtClicked(txtExchange)
-			txtUnClicked(txtMyRequests)
 			navController.navigate(R.id.fragment_exchange)
 		}
 		txtMyRequests.setOnClickListener {
 			if (!showingExchange) return@setOnClickListener
 			showingExchange = false
-			txtUnClicked(txtExchange)
-			txtClicked(txtMyRequests)
 			navController.navigate(R.id.fragment_request)
 		}
 	}
@@ -77,5 +89,31 @@ class SwapMainFragment : DaggerFragment() {
 		}
 	}
 
+	override fun onStart() {
+		super.onStart()
+		VLog.d("On Start SwapMainFragment")
+	}
+
+
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On Resume SwapMainFragment")
+	}
+
+	override fun onStop() {
+		super.onStop()
+		VLog.d("On Stop SwapMainFragment")
+	}
+
+	override fun onPause() {
+		super.onPause()
+		VLog.d("On Pause SwapMainFragment")
+	}
+
+
+	override fun onDestroy() {
+		super.onDestroy()
+		VLog.d("On Destroy SwapMainFragment")
+	}
 
 }
