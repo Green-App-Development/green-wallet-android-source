@@ -8,7 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.common.tools.convertStringToRequestStatus
+import com.example.common.tools.getRequestStatusColor
+import com.example.common.tools.getRequestStatusTranslation
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestDetailsBinding
 import com.green.wallet.presentation.tools.RequestStatus
@@ -47,12 +50,30 @@ class RequestDetailFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		VLog.d("Status on Request Item Parameters : $status")
-
+		if (status == RequestStatus.Cancelled) {
+			statusCancelled()
+		}
+		binding.initUpdateRequestItemViews()
 	}
 
-	private fun initUpdateItemViews() {
-
+	private fun FragmentRequestDetailsBinding.initUpdateRequestItemViews() {
+		txtStatus.text = "Статус: ${getRequestStatusTranslation(status)}"
+		changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
+		val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
+		when (status) {
+			RequestStatus.InProgress -> {
+				layoutInProgress.visibility = View.VISIBLE
+				params.bottomToTop = R.id.layout_in_progress
+			}
+			RequestStatus.Waiting -> {
+				layoutWaiting.visibility = View.VISIBLE
+				params.bottomToTop = R.id.layout_waiting
+			}
+			else -> {
+				params.bottomToBottom = R.id.root
+			}
+		}
+		scrollViewProperties.layoutParams = params
 	}
 
 	private fun statusCancelled() {
@@ -63,12 +84,12 @@ class RequestDetailFragment : DaggerFragment() {
 		}
 	}
 
-	private fun changeAmountColor(txt: TextView, clr: Int) {
+	private fun changeColorTxtStatusRequest(txt: TextView, clr: Int) {
 		val text = txt.text.toString()
 		val pivot = text.indexOf(":")
 		val spannableString = SpannableString(text)
 		val textPart =
-			ForegroundColorSpan(getMainActivity().getColorResource(R.color.sorting_txt_category))
+			ForegroundColorSpan(getMainActivity().getColorResource(R.color.txt_status_request))
 		val amountPart = ForegroundColorSpan(clr)
 		spannableString.setSpan(textPart, 0, pivot, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
 		spannableString.setSpan(
@@ -79,5 +100,6 @@ class RequestDetailFragment : DaggerFragment() {
 		)
 		txt.text = spannableString
 	}
+
 
 }

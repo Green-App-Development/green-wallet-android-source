@@ -122,6 +122,7 @@
 	<color name="app_icon_main">#20AE80</color>
 	<color name="ic_swap_arrow">#303030</color>
 	<color name="txt_request_id">#C9C9C9</color>
+	<color name="txt_status_request">#757575</color>
 
 
 </resources>
