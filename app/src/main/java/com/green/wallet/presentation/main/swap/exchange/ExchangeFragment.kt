@@ -3,22 +3,23 @@ package com.green.wallet.presentation.main.swap.exchange
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.fragment.app.Fragment
+import androidx.core.widget.addTextChangedListener
 import com.green.wallet.databinding.FragmentExchangeBinding
-import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.main.send.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
-import dagger.android.AndroidInjection
-import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -46,17 +47,14 @@ class ExchangeFragment : DaggerFragment() {
 	): View {
 		binding = FragmentExchangeBinding.inflate(layoutInflater)
 		binding.registerViews()
+		binding.registerFilters()
+		binding.initSpinners()
 		return binding.root
 	}
 
 	private fun FragmentExchangeBinding.registerViews() {
 
-		initDetailTransaction(container, txtDetailTransactions)
-		initDetailTransaction(container, imgArrowDownDetailTrans)
-		initChooseTokenSpinnerFrom(edtTokenFrom, tokenFromSpinner)
-		initChooseTokenSpinnerFrom(imgArrowFrom, tokenFromSpinner)
-		initChooseTokenSpinnerTo(edtTokenTo, tokenToSpinner)
-		initChooseTokenSpinnerTo(imgArrowTo, tokenToSpinner)
+		initDetailTransaction(container, txtDetailTransactions, imgArrowDownDetailTrans)
 		animManager.animateArrowIconCustomSpinner(
 			binding.tokenToSpinner,
 			imgArrowTo,
@@ -67,80 +65,140 @@ class ExchangeFragment : DaggerFragment() {
 			imgArrowFrom,
 			getMainActivity()
 		)
+
+		edtAmountFrom.addTextChangedListener {
+			val amount = StringBuilder(it.toString())
+			if (amount.toString().toDoubleOrNull() == null) {
+				amount.append(0, '0')
+			}
+			val double = amount.toString().toDoubleOrNull() ?: 0.0
+			constraintCommentMinAmount.visibility = if (double == 0.0) View.VISIBLE else View.GONE
+		}
+
+	}
+
+	private fun FragmentExchangeBinding.initSpinners() {
+		val tokenFromAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "XCC", "GAD"))
+		tokenFromSpinner.adapter = tokenFromAdapter
+		edtTokenFrom.setOnClickListener {
+			tokenFromSpinner.performClick()
+		}
+		imgArrowFrom.setOnClickListener {
+			tokenFromSpinner.performClick()
+		}
+		tokenFromSpinner.onItemSelectedListener =
+			object : AdapterView.OnItemSelectedListener {
+
+				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+					VLog.d("Selected item position : $p2")
+					tokenFromAdapter.selectedPosition = p2
+					binding.edtTokenFrom.text = tokenFromAdapter.dataOptions[p2]
+				}
+
+				override fun onNothingSelected(p0: AdapterView<*>?) {
+
+				}
+
+			}
+
+		val tokenToAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "XCC", "GAD"))
+		tokenToSpinner.adapter = tokenToAdapter
+		edtTokenTo.setOnClickListener {
+			tokenToSpinner.performClick()
+		}
+		imgArrowTo.setOnClickListener {
+			tokenToSpinner.performClick()
+		}
+		tokenToSpinner.onItemSelectedListener =
+			object : AdapterView.OnItemSelectedListener {
+
+				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+					VLog.d("Selected item position : $p2")
+					tokenToAdapter.selectedPosition = p2
+					binding.edtTokenTo.text = tokenFromAdapter.dataOptions[p2]
+				}
+
+				override fun onNothingSelected(p0: AdapterView<*>?) {
+
+				}
+
+			}
+
+		
 	}
 
 	var nextHeight = 418
 	var containerBigger = true
 	lateinit var anim: ValueAnimator
 
-	private fun initChooseTokenSpinnerFrom(viewClick: View, spinner: Spinner) {
-		val tokenAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "XCC", "GAD"))
-		spinner.adapter = tokenAdapter
-		viewClick.setOnClickListener {
-			spinner.performClick()
-		}
-		spinner.onItemSelectedListener =
-			object : AdapterView.OnItemSelectedListener {
-
-				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-					VLog.d("Selected item position : $p2")
-					tokenAdapter.selectedPosition = p2
-					binding.edtTokenFrom.text = tokenAdapter.dataOptions[p2]
+	private fun FragmentExchangeBinding.registerFilters() {
+		val filterAmountEdtFrom = object : InputFilter {
+			override fun filter(
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Spanned?,
+				p4: Int,
+				p5: Int
+			): CharSequence {
+				if (p0 == null) return ""
+				val curText = edtAmountFrom.text.toString()
+				val locComo = curText.indexOf('.')
+				val cursor = edtAmountFrom.selectionStart
+				if (locComo == -1 || locComo == 0 || cursor <= locComo)
+					return p0
+				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
+				if (digitsAfterComo >= 2) {
+					return ""
 				}
-
-				override fun onNothingSelected(p0: AdapterView<*>?) {
-
-				}
-
+				VLog.d("Cur input amount from : $p0")
+				return p0
 			}
+		}
+		edtAmountFrom.filters = arrayOf(filterAmountEdtFrom)
 	}
 
-	private fun initChooseTokenSpinnerTo(viewClick: View, spinner: Spinner) {
-		val tokenAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "XCC", "GAD"))
-		spinner.adapter = tokenAdapter
-		viewClick.setOnClickListener {
-			spinner.performClick()
+	private fun initDetailTransaction(layout: View, viewClick: View, arrow: View) {
+		VLog.d("Change View Height : $nextHeight on ExchangeFragment")
+		if (nextHeight == 300) {
+			animManager.rotateBy180ForwardNoAnimation(
+				binding.imgArrowDownDetailTrans,
+				getMainActivity()
+			)
+			val params = binding.container.layoutParams
+			params.height = getMainActivity().convertDpToPixel(418)
+			binding.container.layoutParams = params
 		}
-		spinner.onItemSelectedListener =
-			object : AdapterView.OnItemSelectedListener {
-
-				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-					VLog.d("Selected item position : $p2")
-					tokenAdapter.selectedPosition = p2
-					binding.edtTokenTo.text = tokenAdapter.dataOptions[p2]
-				}
-
-				override fun onNothingSelected(p0: AdapterView<*>?) {
-
-				}
-
-			}
+		viewClick.setOnClickListener {
+			initAnimationCollapsingDetailTransaction(layout)
+		}
+		arrow.setOnClickListener {
+			initAnimationCollapsingDetailTransaction(layout)
+		}
 	}
 
-	private fun initDetailTransaction(layout: View, viewClick: View) {
-		viewClick.setOnClickListener {
-			if (this::anim.isInitialized && anim.isRunning)
-				return@setOnClickListener
-			val newHeightPixel = (nextHeight * resources.displayMetrics.density).toInt()
-			anim = ValueAnimator.ofInt(layout.height, newHeightPixel)
-			anim.duration = 500 // duration in milliseconds
-			anim.interpolator = DecelerateInterpolator()
-			anim.addUpdateListener {
-				val value = it.animatedValue as Int
-				layout.layoutParams.height = value
-				layout.requestLayout()
-			}
-			anim.start()
-			if (containerBigger) {
-				animManager.rotateBy180Forward(binding.imgArrowDownDetailTrans, getMainActivity())
-			} else
-				animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, getMainActivity())
-			containerBigger = !containerBigger
-			if (containerBigger) {
-				nextHeight = 418
-			} else {
-				nextHeight = 300
-			}
+	fun initAnimationCollapsingDetailTransaction(layout: View) {
+		if (this::anim.isInitialized && anim.isRunning)
+			return
+		val newHeightPixel = (nextHeight * resources.displayMetrics.density).toInt()
+		anim = ValueAnimator.ofInt(layout.height, newHeightPixel)
+		anim.duration = 500 // duration in milliseconds
+		anim.interpolator = DecelerateInterpolator()
+		anim.addUpdateListener {
+			val value = it.animatedValue as Int
+			layout.layoutParams.height = value
+			layout.requestLayout()
+		}
+		anim.start()
+		if (containerBigger) {
+			animManager.rotateBy180Forward(binding.imgArrowDownDetailTrans, getMainActivity())
+		} else
+			animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, getMainActivity())
+		containerBigger = !containerBigger
+		if (containerBigger) {
+			nextHeight = 418
+		} else {
+			nextHeight = 300
 		}
 	}
 
