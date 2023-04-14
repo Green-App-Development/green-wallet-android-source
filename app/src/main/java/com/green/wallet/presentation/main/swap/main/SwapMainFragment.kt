@@ -61,17 +61,22 @@ class SwapMainFragment : DaggerFragment() {
 	}
 
 	private var showingExchange = true
+	private var hasBeenToRequest = false
 
 	private fun FragmentSwapMainBinding.registerClicks() {
 		txtExchange.setOnClickListener {
 			if (showingExchange) return@setOnClickListener
 			showingExchange = true
-			navController.navigate(R.id.fragment_exchange)
+			navController.popBackStack()
 		}
 		txtMyRequests.setOnClickListener {
 			if (!showingExchange) return@setOnClickListener
 			showingExchange = false
-			navController.navigate(R.id.fragment_request)
+			if (!hasBeenToRequest)
+				navController.navigate(R.id.fragment_request)
+			else
+				navController.popBackStack()
+			hasBeenToRequest = true
 		}
 	}
 

@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.main.swap.requestdetail
 
 import android.os.Bundle
+import android.text.InputFilter
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
 import com.example.common.tools.convertStringToRequestStatus
 import com.example.common.tools.getRequestStatusColor
 import com.example.common.tools.getRequestStatusTranslation
@@ -19,6 +21,10 @@ import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_exchange.*
+import kotlinx.android.synthetic.main.fragment_send.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class RequestDetailFragment : DaggerFragment() {
 
@@ -54,7 +60,16 @@ class RequestDetailFragment : DaggerFragment() {
 			statusCancelled()
 		}
 		binding.initUpdateRequestItemViews()
+		binding.registerClicks()
 	}
+
+
+	private fun FragmentRequestDetailsBinding.registerClicks() {
+		backLayout.setOnClickListener {
+			getMainActivity().popBackStackOnce()
+		}
+	}
+
 
 	private fun FragmentRequestDetailsBinding.initUpdateRequestItemViews() {
 		txtStatus.text = "Статус: ${getRequestStatusTranslation(status)}"
@@ -64,16 +79,39 @@ class RequestDetailFragment : DaggerFragment() {
 			RequestStatus.InProgress -> {
 				layoutInProgress.visibility = View.VISIBLE
 				params.bottomToTop = R.id.layout_in_progress
+				startTempTimer(edtFinishTranTime)
 			}
 			RequestStatus.Waiting -> {
 				layoutWaiting.visibility = View.VISIBLE
 				params.bottomToTop = R.id.layout_waiting
+				startTempTimer(edtAutoCancelTime)
 			}
 			else -> {
 				params.bottomToBottom = R.id.root
 			}
 		}
 		scrollViewProperties.layoutParams = params
+	}
+
+
+	fun startTempTimer(txt: TextView) {
+		lifecycleScope.launch {
+			var totalSeconds = 60 * 15
+			while (totalSeconds >= 0) {
+				val minutes = totalSeconds / 60
+				val seconds = totalSeconds % 60
+				txt.text = "${addZeroToFrontIfNeeded(minutes)}:${addZeroToFrontIfNeeded(seconds)}"
+				totalSeconds--
+				delay(1000)
+			}
+		}
+	}
+
+	fun addZeroToFrontIfNeeded(num: Int): String {
+		val str = "$num"
+		if (str.length == 2)
+			return str
+		return "0$str"
 	}
 
 	private fun statusCancelled() {

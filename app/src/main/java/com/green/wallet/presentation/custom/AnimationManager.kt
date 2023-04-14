@@ -31,6 +31,13 @@ class AnimationManager @Inject constructor(private var context: Context) {
 	}
 
 
+	fun rotateBy180ForwardNoAnimation(v: View, activity: Activity) {
+		val animation = AnimationUtils.loadAnimation(activity, R.anim.rotate_forward_180_no_anim)
+		animation.fillAfter = true
+		animation.isFillEnabled = true
+		v.startAnimation(animation)
+	}
+
 	fun animateArrowIconCustomSpinner(spinner: CustomSpinner, icon: ImageView, activity: Activity) {
 		spinner.setSpinnerEventsListener(object : CustomSpinner.OnSpinnerEventsListener {
 			override fun onSpinnerOpened(spin: Spinner?) {

@@ -70,17 +70,20 @@
 					app:layout_constraintTop_toTopOf="parent" />
 
 			<EditText
-					android:id="@+id/editTextFrom"
-					android:layout_width="40dp"
+					android:id="@+id/edtAmountFrom"
+					android:layout_width="0dp"
 					android:layout_height="40dp"
 					android:layout_marginStart="10dp"
 					android:background="@android:color/transparent"
+					android:inputType="numberDecimal"
+					android:maxLines="1"
+					android:singleLine="true"
 					android:text="0"
 					android:textColor="@color/secondary_text_color"
 					android:textSize="18sp"
+					app:layout_constraintEnd_toStartOf="@+id/view8"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/txtYouSending" />
-
 
 			<TextView
 					android:id="@+id/edtChosenToken"
@@ -137,6 +140,7 @@
 					app:layout_constraintTop_toTopOf="@+id/edtTokenFrom" />
 
 			<View
+					android:id="@+id/view8"
 					android:layout_width="1dp"
 					android:layout_height="0dp"
 					android:layout_marginTop="7dp"
@@ -185,7 +189,7 @@
 				android:layout_height="wrap_content"
 				android:layout_marginStart="7dp"
 				android:layout_marginTop="-5dp"
-				android:visibility="visible"
+				android:visibility="gone"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@id/layout_exchange_from">
 
@@ -247,15 +251,19 @@
 					app:layout_constraintTop_toTopOf="parent" />
 
 			<EditText
-					android:id="@+id/editTextTo"
-					android:layout_width="40dp"
+					android:id="@+id/edtAmountTo"
+					android:layout_width="0dp"
 					android:layout_height="40dp"
 					android:layout_marginStart="10dp"
 					android:background="@android:color/transparent"
 					android:enabled="false"
+					android:inputType="numberDecimal"
+					android:maxLines="1"
+					android:singleLine="true"
 					android:text="0"
 					android:textColor="@color/secondary_text_color"
 					android:textSize="18sp"
+					app:layout_constraintEnd_toStartOf="@+id/guideline62"
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/txtYouReceiving" />
 
