@@ -72,11 +72,7 @@ class SwapMainFragment : DaggerFragment() {
 		txtMyRequests.setOnClickListener {
 			if (!showingExchange) return@setOnClickListener
 			showingExchange = false
-			if (!hasBeenToRequest)
-				navController.navigate(R.id.fragment_request)
-			else
-				navController.popBackStack()
-			hasBeenToRequest = true
+			navController.navigate(R.id.fragment_request)
 		}
 	}
 

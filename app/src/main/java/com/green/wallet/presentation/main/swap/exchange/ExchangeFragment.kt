@@ -10,10 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
-import android.widget.ImageView
-import android.widget.Spinner
-import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import com.green.wallet.databinding.FragmentExchangeBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.convertDpToPixel
@@ -21,6 +19,8 @@ import com.green.wallet.presentation.main.send.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExchangeFragment : DaggerFragment() {
@@ -78,7 +78,9 @@ class ExchangeFragment : DaggerFragment() {
 	}
 
 	private fun FragmentExchangeBinding.initSpinners() {
-		val tokenFromAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "XCC", "GAD"))
+		val tokenFromAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "USDT"))
+		val tokenToAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "USDT"))
+		tokenToSpinner.adapter = tokenToAdapter
 		tokenFromSpinner.adapter = tokenFromAdapter
 		edtTokenFrom.setOnClickListener {
 			tokenFromSpinner.performClick()
@@ -86,36 +88,36 @@ class ExchangeFragment : DaggerFragment() {
 		imgArrowFrom.setOnClickListener {
 			tokenFromSpinner.performClick()
 		}
-		tokenFromSpinner.onItemSelectedListener =
-			object : AdapterView.OnItemSelectedListener {
-
-				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-					VLog.d("Selected item position : $p2")
-					tokenFromAdapter.selectedPosition = p2
-					binding.edtTokenFrom.text = tokenFromAdapter.dataOptions[p2]
-				}
-
-				override fun onNothingSelected(p0: AdapterView<*>?) {
-
-				}
-
-			}
-
-		val tokenToAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "XCC", "GAD"))
-		tokenToSpinner.adapter = tokenToAdapter
 		edtTokenTo.setOnClickListener {
 			tokenToSpinner.performClick()
 		}
 		imgArrowTo.setOnClickListener {
 			tokenToSpinner.performClick()
 		}
+		tokenFromSpinner.onItemSelectedListener =
+			object : AdapterView.OnItemSelectedListener {
+
+				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+					VLog.d("Selected item position : $p2 On From")
+					tokenFromAdapter.selectedPosition = p2
+					tokenToSpinner.setSelection(if (p2 == 0) 1 else 0)
+					updateTokenTxtViews(tokenFromAdapter, tokenToAdapter)
+				}
+
+				override fun onNothingSelected(p0: AdapterView<*>?) {
+
+				}
+
+			}
+		tokenToSpinner.setSelection(1)
 		tokenToSpinner.onItemSelectedListener =
 			object : AdapterView.OnItemSelectedListener {
 
 				override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-					VLog.d("Selected item position : $p2")
+					VLog.d("Selected item position : $p2 On To")
 					tokenToAdapter.selectedPosition = p2
-					binding.edtTokenTo.text = tokenFromAdapter.dataOptions[p2]
+					tokenFromSpinner.setSelection(if (p2 == 0) 1 else 0)
+					updateTokenTxtViews(tokenFromAdapter, tokenToAdapter)
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -124,7 +126,39 @@ class ExchangeFragment : DaggerFragment() {
 
 			}
 
-		
+		imgSwap.setOnClickListener {
+
+		}
+
+	}
+
+	private fun updateTokenTxtViews(
+		fromAdapter: TokenSpinnerAdapter,
+		toAdapter: TokenSpinnerAdapter
+	) {
+		binding.apply {
+			edtTokenFrom.text = fromAdapter.dataOptions[fromAdapter.selectedPosition]
+			edtTokenTo.text = toAdapter.dataOptions[toAdapter.selectedPosition]
+		}
+	}
+
+	fun changingOptionsOnSpinner(
+		firstSpinner: Boolean,
+		fromAdapter: TokenSpinnerAdapter,
+		toAdapter: TokenSpinnerAdapter
+	) {
+		if (firstSpinner) {
+			toAdapter.selectedPosition = if (fromAdapter.selectedPosition == 0) 1 else 0
+			binding.edtTokenTo.text = toAdapter.dataOptions[toAdapter.selectedPosition]
+		} else {
+			fromAdapter.selectedPosition = if (toAdapter.selectedPosition == 0) 1 else 0
+			binding.edtTokenFrom.text = fromAdapter.dataOptions[fromAdapter.selectedPosition]
+		}
+		binding.apply {
+			edtFromNetwork.text =
+				if (fromAdapter.selectedPosition == 0) "Chia Network" else "TRC-20"
+			edtToNetwork.text = if (toAdapter.selectedPosition == 0) "Chia Network" else "TRC-20"
+		}
 	}
 
 	var nextHeight = 418
