@@ -21,6 +21,6 @@
 	<item
 			android:id="@+id/swap"
 			android:icon="@drawable/ic_horizontal"
-			android:title="swap" />
+			android:title="@string/swap_main_btn" />
 
 </menu>

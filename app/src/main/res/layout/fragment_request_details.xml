@@ -111,7 +111,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Дата"
+						android:text="@string/date_flow"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -143,7 +143,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Адрес эскроу"
+						android:text="@string/escrow_address"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -180,12 +180,13 @@
 					android:layout_height="wrap_content">
 
 				<TextView
+						android:id="@+id/txtSent"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Отправлено"
+						android:text="@string/sent_flow"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -213,12 +214,13 @@
 					android:layout_height="wrap_content">
 
 				<TextView
+						android:id="@+id/txtReceive"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Получено"
+						android:text="@string/received_flow"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -250,7 +252,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Адрес получения"
+						android:text="@string/receive_address"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -291,7 +293,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Курс обмена"
+						android:text="@string/exchan_rate"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -324,7 +326,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Hash транзакция"
+						android:text="@string/hash_trans"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -365,7 +367,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Комиссия сети Chia"
+						android:text="@string/chia_net_commission"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -397,7 +399,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Комиссия сети Tron"
+						android:text="@string/tron_net_commission"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -429,7 +431,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Комиссия за обмен"
+						android:text="@string/exchan_commission_fee"
 						android:textColor="@color/secondary_text_color" />
 
 				<View
@@ -519,7 +521,7 @@
 					android:id="@+id/txtAutoCancel"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:text="Автоотмена через:"
+					android:text=""
 					android:textColor="@color/hint_color"
 					android:textFontWeight="500"
 					android:textSize="16sp" />
@@ -547,7 +549,7 @@
 				android:layout_marginBottom="10dp"
 				android:background="@drawable/btn_background_draw"
 				android:enabled="true"
-				android:text="Оплатить"
+				android:text="@string/pay_btn"
 				android:textAllCaps="false"
 				app:layout_constraintBottom_toBottomOf="parent"
 				app:layout_constraintEnd_toEndOf="parent"

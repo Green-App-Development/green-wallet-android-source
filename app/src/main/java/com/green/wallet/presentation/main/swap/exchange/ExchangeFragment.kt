@@ -11,16 +11,16 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.lifecycleScope
+import com.green.wallet.R
 import com.green.wallet.databinding.FragmentExchangeBinding
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.main.send.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExchangeFragment : DaggerFragment() {
@@ -30,6 +30,8 @@ class ExchangeFragment : DaggerFragment() {
 	@Inject
 	lateinit var animManager: AnimationManager
 
+	@Inject
+	lateinit var dialogManager: DialogManager
 
 	override fun onAttach(context: Context) {
 		super.onAttach(context)
@@ -74,6 +76,27 @@ class ExchangeFragment : DaggerFragment() {
 			val double = amount.toString().toDoubleOrNull() ?: 0.0
 			constraintCommentMinAmount.visibility = if (double == 0.0) View.VISIBLE else View.GONE
 		}
+
+		icQuestion.setOnClickListener {
+			getMainActivity().apply {
+				dialogManager.showQuestionDialogExchange(
+					this,
+					"Фиксированный курс",
+					"Сумма к получению останется неизменной независимо от изменений на рынке.\n" +
+							"\n" +
+							"Фиксированный курс обновляется каждые 30 сек.",
+					getStringResource(R.string.ok_button)
+				) {
+
+				}
+			}
+		}
+
+		txtMinSumRequired.text =
+			"${getMainActivity().getStringResource(R.string.min_sum)}: 36.70 USDT TRC-20"
+		val second = getMainActivity().getStringResource(R.string.sec_rate_update)
+		val threeLetter = second.substring(0, Math.min(second.length, 3))
+		edtUpdateCourse.text = "3 $threeLetter"
 
 	}
 
@@ -127,7 +150,9 @@ class ExchangeFragment : DaggerFragment() {
 			}
 
 		imgSwap.setOnClickListener {
-
+			val temp = tokenFromSpinner.selectedItemPosition
+			tokenFromSpinner.setSelection(tokenToSpinner.selectedItemPosition)
+			tokenToSpinner.setSelection(temp)
 		}
 
 	}
@@ -139,22 +164,6 @@ class ExchangeFragment : DaggerFragment() {
 		binding.apply {
 			edtTokenFrom.text = fromAdapter.dataOptions[fromAdapter.selectedPosition]
 			edtTokenTo.text = toAdapter.dataOptions[toAdapter.selectedPosition]
-		}
-	}
-
-	fun changingOptionsOnSpinner(
-		firstSpinner: Boolean,
-		fromAdapter: TokenSpinnerAdapter,
-		toAdapter: TokenSpinnerAdapter
-	) {
-		if (firstSpinner) {
-			toAdapter.selectedPosition = if (fromAdapter.selectedPosition == 0) 1 else 0
-			binding.edtTokenTo.text = toAdapter.dataOptions[toAdapter.selectedPosition]
-		} else {
-			fromAdapter.selectedPosition = if (toAdapter.selectedPosition == 0) 1 else 0
-			binding.edtTokenFrom.text = fromAdapter.dataOptions[fromAdapter.selectedPosition]
-		}
-		binding.apply {
 			edtFromNetwork.text =
 				if (fromAdapter.selectedPosition == 0) "Chia Network" else "TRC-20"
 			edtToNetwork.text = if (toAdapter.selectedPosition == 0) "Chia Network" else "TRC-20"

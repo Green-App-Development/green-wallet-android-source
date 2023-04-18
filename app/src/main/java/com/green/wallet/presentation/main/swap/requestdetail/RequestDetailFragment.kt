@@ -16,10 +16,7 @@ import com.example.common.tools.getRequestStatusColor
 import com.example.common.tools.getRequestStatusTranslation
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestDetailsBinding
-import com.green.wallet.presentation.tools.RequestStatus
-import com.green.wallet.presentation.tools.VLog
-import com.green.wallet.presentation.tools.getColorResource
-import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_exchange.*
 import kotlinx.android.synthetic.main.fragment_send.*
@@ -72,7 +69,13 @@ class RequestDetailFragment : DaggerFragment() {
 
 
 	private fun FragmentRequestDetailsBinding.initUpdateRequestItemViews() {
-		txtStatus.text = "Статус: ${getRequestStatusTranslation(status)}"
+		txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
+			getRequestStatusTranslation(
+				getMainActivity(),
+				status
+			)
+		}"
+		txtRequestHash.text = getMainActivity().getStringResource(R.string.order_title) + " #001766"
 		changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
 		val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
 		when (status) {
@@ -91,6 +94,17 @@ class RequestDetailFragment : DaggerFragment() {
 			}
 		}
 		scrollViewProperties.layoutParams = params
+		txtAutoCancel.text = "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
+
+		if (status == RequestStatus.Waiting)
+			txtSent.text = getMainActivity().getStringResource(R.string.need_to_send)
+		if (status == RequestStatus.InProgress || status == RequestStatus.Waiting) {
+			txtReceive.text = getMainActivity().getStringResource(R.string.you_will_receive)
+		}
+
+		txtFinishTran.text =
+			getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
+
 	}
 
 

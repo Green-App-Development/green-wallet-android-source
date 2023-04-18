@@ -17,6 +17,7 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.RequestStatus
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
+import com.green.wallet.presentation.tools.getStringResource
 
 class RequestItemAdapter(
 	val activity: MainActivity,
@@ -55,31 +56,37 @@ class RequestItemAdapter(
 		val txtDate = v.findViewById<TextView>(R.id.txtDate)
 
 		fun onBind(item: RequestItem) {
-			hashId.text = "Заявка #${item.id}"
+			hashId.text = "${activity.getStringResource(R.string.order_title)} #${item.id}"
 			when (item.status) {
 				RequestStatus.Waiting -> {
-					txtSend.text = "Нужно отправить: -${item.send} USDT"
-					txtReceive.text = "Вы получите: +${item.receive} XCH"
+					txtSend.text =
+						"${activity.getStringResource(R.string.need_to_send)}: -${item.send} USDT"
+					txtReceive.text =
+						"${activity.getStringResource(R.string.you_will_receive)}: +${item.receive} XCH"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_blue))
-					txtStatus.text = "ожидает оплаты"
+					txtStatus.text = activity.getStringResource(R.string.awaiting_payment)
 				}
 				RequestStatus.Cancelled -> {
-					txtSend.text = "Отправлено: -"
-					txtReceive.text = "Получено: -"
+					txtSend.text = "${activity.getStringResource(R.string.sent_flow)}: -"
+					txtReceive.text = "${activity.getStringResource(R.string.received_flow)}: -"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_red))
-					txtStatus.text = "отменена"
+					txtStatus.text = activity.getString(R.string.status_canceled)
 				}
 				RequestStatus.Completed -> {
-					txtSend.text = "Отправлено: -${item.send} XCH"
-					txtReceive.text = "Получено: +${item.receive} USDT"
+					txtSend.text =
+						"${activity.getStringResource(R.string.sent_flow)}: -${item.send} XCH"
+					txtReceive.text =
+						"${activity.getStringResource(R.string.received_flow)}: +${item.receive} USDT"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_green))
-					txtStatus.text = "выполнена"
+					txtStatus.text = activity.getStringResource(R.string.status_completed)
 				}
 				RequestStatus.InProgress -> {
-					txtSend.text = "Вы отправили: -${item.send} USDT"
-					txtReceive.text = "Вы получите: +${item.receive} XCH"
+					txtSend.text =
+						"${activity.getStringResource(R.string.you_sent_flow)}: -${item.send} USDT"
+					txtReceive.text =
+						"${activity.getStringResource(R.string.you_will_receive)}: +${item.receive} XCH"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_orange))
-					txtStatus.text = "в процессе"
+					txtStatus.text = activity.getStringResource(R.string.status_in_process)
 				}
 			}
 			changeAmountColor(txtSend, activity.getColorResource(R.color.red_mnemonic))
