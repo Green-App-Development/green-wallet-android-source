@@ -13,6 +13,7 @@ import com.green.wallet.R
 import com.green.wallet.presentation.tools.RequestStatus
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
+import com.green.wallet.presentation.tools.getStringResource
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
@@ -176,12 +177,14 @@ fun convertStringToRequestStatus(status: String): RequestStatus {
 	return RequestStatus.InProgress
 }
 
-fun getRequestStatusTranslation(status: RequestStatus): String {
-	return when (status) {
-		RequestStatus.InProgress -> "В процессе"
-		RequestStatus.Waiting -> "Ожидает оплаты"
-		RequestStatus.Completed -> "Выполнена"
-		else -> "Отменена"
+fun getRequestStatusTranslation(activity: Activity, status: RequestStatus): String {
+	activity.apply {
+		return when (status) {
+			RequestStatus.InProgress -> getStringResource(R.string.status_in_process)
+			RequestStatus.Waiting -> getStringResource(R.string.awaiting_payment)
+			RequestStatus.Completed -> getStringResource(R.string.status_completed)
+			else -> getStringResource(R.string.status_canceled)
+		}
 	}
 }
 

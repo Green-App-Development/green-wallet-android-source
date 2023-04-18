@@ -350,7 +350,42 @@
 	<string name="nft_dex_soon_text" />
 	<string name="nft_markets_soon_text" />
 	<string name="not_list_text" />
-
-
+	<string name="swap_main_btn" />
+	<string name="exchange_main" />
+	<string name="my_orders" />
+	<string name="fixed_rate" />
+	<string name="you_send" />
+	<string name="you_receive" />
+	<string name="trans_details" />
+	<string name="exchange_now_btn" />
+	<string name="swap_title" />
+	<string name="rate_update" />
+	<string name="exchan_commission_fee" />
+	<string name="network_commission_fee" />
+	<string name="min_sum" />
+	<string name="order_title" />
+	<string name="status_title" />
+	<string name="awaiting_payment" />
+	<string name="date_flow" />
+	<string name="escrow_address" />
+	<string name="need_to_send" />
+	<string name="you_will_receive" />
+	<string name="receive_address" />
+	<string name="exchan_rate" />
+	<string name="hash_trans" />
+	<string name="chia_net_commission" />
+	<string name="tron_net_commission" />
+	<string name="auto_cancel" />
+	<string name="pay_btn" />
+	<string name="select_payment" />
+	<string name="sent_flow" />
+	<string name="received_flow" />
+	<string name="you_sent_flow" />
+	<string name="status_completed" />
+	<string name="status_in_process" />
+	<string name="status_canceled" />
+	<string name="see_more_flow" />
+	<string name="sec_rate_update"/>
+	<string name="completion_oper_flow"/>
 
 </resources>
