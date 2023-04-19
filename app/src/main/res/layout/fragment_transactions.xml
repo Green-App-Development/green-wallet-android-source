@@ -338,20 +338,20 @@
 				app:layout_constraintTop_toBottomOf="@+id/root_transaction_item">
 
 
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="45dp"
-					android:background="@color/bcg_transaction_item"
-					android:foreground="?android:attr/selectableItemBackground"
-					app:layout_constraintTop_toBottomOf="@+id/linear_sorting_by_status">
+<!--			<RelativeLayout-->
+<!--					android:layout_width="match_parent"-->
+<!--					android:layout_height="45dp"-->
+<!--					android:background="@color/bcg_transaction_item"-->
+<!--					android:foreground="?android:attr/selectableItemBackground"-->
+<!--					app:layout_constraintTop_toBottomOf="@+id/linear_sorting_by_status">-->
 
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/transaction_divider" />
+<!--				<View-->
+<!--						android:layout_width="match_parent"-->
+<!--						android:layout_height="1dp"-->
+<!--						android:layout_alignParentBottom="true"-->
+<!--						android:background="@color/transaction_divider" />-->
 
-			</RelativeLayout>
+<!--			</RelativeLayout>-->
 
 
 		</LinearLayout>
