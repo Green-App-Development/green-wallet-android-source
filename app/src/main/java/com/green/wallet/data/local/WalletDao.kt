@@ -1,12 +1,11 @@
 package com.green.wallet.data.local
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.presentation.tools.NetworkType
 import kotlinx.coroutines.flow.Flow
 import java.util.*
-import kotlin.collections.HashMap
 
 
 @Dao

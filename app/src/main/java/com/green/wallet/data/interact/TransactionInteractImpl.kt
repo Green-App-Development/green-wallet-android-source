@@ -1,5 +1,6 @@
 package com.green.wallet.data.interact
 
+import androidx.paging.*
 import com.green.wallet.data.local.TransactionDao
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Transaction
@@ -101,6 +102,46 @@ class TransactionInteractImpl @Inject constructor(
 		).map { it.amount + it.fee_amount }.sum()
 
 		return doubleArrayOf(amountByCurSendingToken, amountByNetworkType)
+	}
+
+	override fun getTransactionsFlowByProvidedParametersPagingSource(
+		fkAddress: String?,
+		amount: Double?,
+		networkType: String?,
+		status: Status?,
+		at_least_created_at: Long?,
+		yesterday: Long?,
+		today: Long?,
+		tokenCode: String?
+	): Flow<PagingData<Transaction>> {
+		val pagingSourceFactory = {
+			transactionDao.getALlTransactionsFlowByGivenParametersPagingSource(
+				fkAddress,
+				amount,
+				networkType,
+				status,
+				at_least_created_at,
+				yesterday,
+				today,
+				tokenCode
+			)
+		}
+
+		val transactionFlow = Pager(
+			config = PagingConfig(pageSize = 20),
+			pagingSourceFactory = pagingSourceFactory
+		).flow.map { pagingData ->
+			pagingData.map { transactionEntity ->
+				transactionEntity.toTransaction(
+					transactionEntity.created_at_time +
+							prefs.getSettingLong(
+								PrefsManager.TIME_DIFFERENCE,
+								System.currentTimeMillis()
+							)
+				)
+			}
+		}
+		return transactionFlow
 	}
 
 
