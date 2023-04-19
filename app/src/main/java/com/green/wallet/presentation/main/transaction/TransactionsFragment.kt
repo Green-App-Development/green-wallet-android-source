@@ -253,7 +253,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			delay(50)
 			val recHeight = binding.placeHolderLinearView.height
 			val dp = curActivity().pxToDp(recHeight)
-			val atLeastItemCount = (dp / 45) - 4
+			val atLeastItemCount = (dp / 45) - 3
 			VLog.d("Number of empty item to add is : $atLeastItemCount")
 			repeat(atLeastItemCount) {
 				val emptyView =
