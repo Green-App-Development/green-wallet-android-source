@@ -1,9 +1,10 @@
 package com.green.wallet.data.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.IGNORE
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.IGNORE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.presentation.tools.Status
@@ -90,6 +91,19 @@ interface TransactionDao {
 		amount: Double,
 		height: Long
 	): Optional<TransactionEntity>
+
+
+	@Query("SELECT * FROM TransactionEntity WHERE (:fkAddress IS NULL OR fkAddress=:fkAddress) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) AND (:tokenCode IS NULL OR code LIKE '%' || :tokenCode || '%') ORDER BY created_at_time DESC")
+	fun getALlTransactionsFlowByGivenParametersPagingSource(
+		fkAddress: String?,
+		qAmount: Double?,
+		networkType: String?,
+		status: Status?,
+		at_least_created_time: Long?,
+		yesterday: Long?,
+		today: Long?,
+		tokenCode: String?
+	): PagingSource<Int, TransactionEntity>
 
 
 }

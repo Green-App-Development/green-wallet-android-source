@@ -2,6 +2,7 @@ package com.green.wallet.presentation.main.transaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.tools.Status
@@ -90,6 +91,42 @@ class TransactionsViewModel @Inject constructor(
 			tokenCode
 		)
 	}
+
+
+
+	fun getAllQueriedFlowTransactionPagingSource(
+		fkAddress: String?,
+		amount: Double?,
+		networkType: String?,
+		status: Status?,
+		at_least_created_at: Long?,
+		yesterdayStart: Long?,
+		yesterdayEnd: Long?,
+		tokenCode:String?
+	): Flow<PagingData<Transaction>> {
+		VLog.d(
+			"FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
+				formattedTime(
+					at_least_created_at ?: 0
+				)
+			}  yesterdayStart : ${formattedTime(yesterdayStart ?: 0)}  : yesterdayEnd : ${
+				formattedTime(
+					yesterdayEnd ?: 0
+				)
+			}"
+		)
+		return transactionInteract.getTransactionsFlowByProvidedParametersPagingSource(
+			fkAddress,
+			amount,
+			networkType,
+			status,
+			at_least_created_at,
+			yesterdayStart,
+			yesterdayEnd,
+			tokenCode
+		)
+	}
+
 
 
 

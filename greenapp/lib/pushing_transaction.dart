@@ -333,7 +333,7 @@ class PushingTransaction {
         for (final coin in filteredCoins) {
           futures.add(getCatCoinsDetail(
               coin: coin, httpUrl: httpUrl, catCoins: catCoins));
-          if (futures.length == 3) {
+          if (futures.length == 1) {
             debugPrint(
                 "Filled  futures with ${futures.length} wait for them to complete");
             await Future.wait(futures);

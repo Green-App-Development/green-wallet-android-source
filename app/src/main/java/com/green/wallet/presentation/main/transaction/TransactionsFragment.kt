@@ -16,7 +16,10 @@ import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTransactionsBinding
 import com.green.wallet.domain.domainmodel.Transaction
@@ -53,6 +56,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	private val binding by viewBinding(FragmentTransactionsBinding::bind)
 
 	private lateinit var transactionItemAdapter: TransactionItemAdapter
+	private lateinit var transAdapterPaging: TransPagingAdapter
 
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
@@ -102,9 +106,27 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		initNetworkTypeAdapter()
 		initStatusHorizontalView()
 		initSortingByStatusClicks()
-		initTransactionItemAdapter()
+//		initTransactionItemAdapter()
+		initTransactionItemAdapterPagingSource()
 		sortingByHeightAndSum()
 		initSwipeRefreshLayout()
+		addEmptyTransPlaceHolder()
+	}
+
+	private fun initTransactionItemAdapterPagingSource() {
+		transAdapterPaging = TransPagingAdapter(getMainActivity(), this)
+		binding.recTransactionItems.apply {
+			adapter = transAdapterPaging
+			layoutManager = LinearLayoutManager(curActivity())
+		}
+		transAdapterPaging.registerAdapterDataObserver(object :
+			RecyclerView.AdapterDataObserver() {
+			override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+				if (positionStart == 0) {
+					binding.recTransactionItems.layoutManager?.scrollToPosition(0)
+				}
+			}
+		})
 	}
 
 
@@ -131,29 +153,62 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 	private fun updateTransactions() {
 		updateTransJob?.cancel()
+//		updateTransJob = lifecycleScope.launch {
+//			viewModel.getAllQueriedFlowTransactionList(
+//				currentAddress,
+//				getCurSearchAmount(),
+//				getCurChosenNetworkType(),
+//				getCurChosenStatus(),
+//				getCurSearchTransByDateCreatedExceptYesterday(),
+//				getCurSearchByForYesterdayStart(),
+//				getCurSearchByForYesterdayEnds(),
+//				getTokenCode()
+//			).collectLatest { transList ->
+//				binding.apply {
+//					if (transList.isNotEmpty()) {
+//						recTransactionItems.visibility = View.VISIBLE
+//						txtNoTrans.visibility = View.GONE
+//						updateTransactionItems(transList)
+//					} else {
+//						recTransactionItems.visibility = View.GONE
+//						txtNoTrans.visibility = View.VISIBLE
+//					}
+//				}
+//			}
+//		}
 		updateTransJob = lifecycleScope.launch {
-			viewModel.getAllQueriedFlowTransactionList(
-				currentAddress,
-				getCurSearchAmount(),
-				getCurChosenNetworkType(),
-				getCurChosenStatus(),
-				getCurSearchTransByDateCreatedExceptYesterday(),
-				getCurSearchByForYesterdayStart(),
-				getCurSearchByForYesterdayEnds(),
-				getTokenCode()
-			).collectLatest { transList ->
-				binding.apply {
-					if (transList.isNotEmpty()) {
-						recTransactionItems.visibility = View.VISIBLE
-						txtNoTrans.visibility = View.GONE
-						updateTransactionItems(transList)
-					} else {
-						recTransactionItems.visibility = View.GONE
-						txtNoTrans.visibility = View.VISIBLE
+			launch {
+				viewModel.getAllQueriedFlowTransactionPagingSource(
+					currentAddress,
+					getCurSearchAmount(),
+					getCurChosenNetworkType(),
+					getCurChosenStatus(),
+					getCurSearchTransByDateCreatedExceptYesterday(),
+					getCurSearchByForYesterdayStart(),
+					getCurSearchByForYesterdayEnds(),
+					getTokenCode()
+				).collectLatest { pagingData ->
+					VLog.d("PagingData got called : $pagingData")
+					transAdapterPaging.submitData(pagingData)
+				}
+			}
+			transAdapterPaging.loadStateFlow.collectLatest {
+				if (it.append is LoadState.NotLoading && it.append.endOfPaginationReached) {
+					binding.apply {
+						if (transAdapterPaging.itemCount >= 1) {
+							recTransactionItems.visibility = View.VISIBLE
+							txtNoTrans.visibility = View.GONE
+							placeHolderLinearView.visibility = View.VISIBLE
+						} else {
+							recTransactionItems.visibility = View.GONE
+							txtNoTrans.visibility = View.VISIBLE
+							placeHolderLinearView.visibility = View.GONE
+						}
 					}
 				}
 			}
 		}
+
 	}
 
 	private fun getTokenCode(): String? {
@@ -188,12 +243,29 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		val dp = curActivity().pxToDp(recHeight)
 		val atLeastItemCount = (dp / 45) - 2
 		VLog.d("At Least Item Count of RecyclerView Items : $atLeastItemCount")
-		for (tran in transList) {
-			VLog.d("Update Trans Adapter : $tran")
-		}
 		transactionItemAdapter.itemCountFitsScreen = atLeastItemCount
 		transactionItemAdapter.updateTransactionList(transList)
 		transactionItemAdapter.notifyDataSetChanged()
+	}
+
+	private fun addEmptyTransPlaceHolder() {
+		lifecycleScope.launch {
+			delay(50)
+			val recHeight = binding.placeHolderLinearView.height
+			val dp = curActivity().pxToDp(recHeight)
+			val atLeastItemCount = (dp / 45) - 4
+			VLog.d("Number of empty item to add is : $atLeastItemCount")
+			repeat(atLeastItemCount) {
+				val emptyView =
+					layoutInflater.inflate(R.layout.empty_tran_view_place_holder, null, false)
+				val layoutParams = LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					getMainActivity().convertDpToPixel(45)
+				)
+				emptyView.layoutParams = layoutParams
+				binding.placeHolderLinearView.addView(emptyView)
+			}
+		}
 	}
 
 
