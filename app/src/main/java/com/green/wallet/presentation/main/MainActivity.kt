@@ -35,6 +35,7 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.main.address.AddressFragment
 import com.green.wallet.presentation.main.address.EditAddressFragment
+import com.green.wallet.presentation.main.btmdialogs.BtmChooseDAppsPayment
 import com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork
 import com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogNewOrImport
 import com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment
@@ -446,7 +447,8 @@ class MainActivity : BaseActivity() {
 					fragmentNFTDetails,
 					fragmentSendNFT,
 					addressFragment,
-					fragmentRequestDetail
+					fragmentRequestDetail,
+					btmChooseDApps
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -830,7 +832,7 @@ class MainActivity : BaseActivity() {
 	fun move2RequestDetailsFragment(status: RequestStatus) {
 		val bundle = bundleOf()
 		bundle.putString(RequestDetailFragment.KEY_ID, status.name)
-		navController.navigate(fragmentRequestDetail,bundle)
+		navController.navigate(fragmentRequestDetail, bundle)
 	}
 
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {
@@ -856,6 +858,14 @@ class MainActivity : BaseActivity() {
 			delay(100)
 			move2NewOrImportWallet(curChosenNetworkTypePosForBackImport)
 		}
+	}
+
+	fun move2BtmDialogPayment(address: String, amount: Double) {
+		val bundle = bundleOf(
+			BtmChooseDAppsPayment.ADDRESS_KEY to address,
+			BtmChooseDAppsPayment.AMOUNT_KEY to amount
+		)
+		navController.navigate(btmChooseDApps, bundle)
 	}
 
 	fun move2WalletSettings(address: String) {

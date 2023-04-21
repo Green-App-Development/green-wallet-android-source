@@ -226,6 +226,12 @@
 			tools:layout="@layout/dialog_choose_network" />
 
 	<dialog
+			android:id="@+id/btmChooseDApps"
+			android:name="com.green.wallet.presentation.main.btmdialogs.BtmChooseDAppsPayment"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_choose_d_apps" />
+
+	<dialog
 			android:id="@+id/btmSheetDialogNewOrImport"
 			android:name="com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
 			android:label="btmDialog"
