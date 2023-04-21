@@ -10,3 +10,4 @@ export 'src/plot_nft/index.dart';
 export 'src/singleton/index.dart';
 export 'src/standard/index.dart';
 export 'src/utils.dart';
+export 'src/offers_ozone/index.dart';

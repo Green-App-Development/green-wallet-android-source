@@ -81,6 +81,22 @@ class Program with ToBytesMixin {
     }
   }
 
+  /// represent Program.at(), Take a string of only `f` and `r` characters and follow the corresponding path.
+  Program filterAt(String filter) {
+    Program v = this;
+    final path = filter.toLowerCase().split("");
+    for (var member in path) {
+      if (member == "f") {
+        v = v.first();
+      } else if (member == "r") {
+        v = v.rest();
+      } else {
+        throw Exception("`at` got illegal character `${member}`. Only `f` & `r` allowed");
+      }
+    }
+    return v;
+  }
+
   // TODO(nvjoshi2): dont want to keep reloading this every time
   factory Program.deserializeHexFilePath(String pathToFile) {
     var filePath = path.join(path.current, pathToFile);
