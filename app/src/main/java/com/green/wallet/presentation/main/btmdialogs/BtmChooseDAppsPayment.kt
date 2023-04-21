@@ -1,5 +1,8 @@
 package com.green.wallet.presentation.main.btmdialogs
 
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,14 +44,18 @@ class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 	private fun registerClicks() {
 		binding.apply {
 
-			relItemMetaMask.setOnClickListener {
-
-			}
-
+			val address = ""
+			val amount = 0.001
 			relItemTrust.setOnClickListener {
-
+				val deepLink =
+					"https://link.trustwallet.com/send?coin=ethereum&address=$address&amount=$amount&referrer=com.green.wallet"
+				navigateToOtherApp(deepLink)
 			}
-
+			relItemMetaMask.setOnClickListener {
+				val deepLink =
+					"https://metamask.app.link/send/transaction?to=$address&value=$amount"
+				navigateToOtherApp(deepLink)
+			}
 			relPayAddress.setOnClickListener {
 
 			}
@@ -61,6 +68,10 @@ class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 
 	private fun curActivity() = requireActivity() as MainActivity
 
+	private fun navigateToOtherApp(deepLink: String) {
+		val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
+		startActivity(intent)
+	}
 
 }
 
