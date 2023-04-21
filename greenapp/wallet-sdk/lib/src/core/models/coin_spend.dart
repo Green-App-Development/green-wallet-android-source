@@ -2,8 +2,10 @@
 
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 import 'package:chia_crypto_utils/src/core/service/base_wallet.dart';
+import 'package:chia_crypto_utils/src/offers_ozone/models/full_coin.dart' as fullCoin;
 import 'package:chia_crypto_utils/src/standard/puzzles/p2_delegated_puzzle_or_hidden_puzzle/p2_delegated_puzzle_or_hidden_puzzle.clvm.hex.dart';
 import 'package:hex/hex.dart';
+
 
 class CoinSpend with ToBytesMixin {
   CoinPrototype coin;
@@ -64,6 +66,10 @@ class CoinSpend with ToBytesMixin {
         Bytes(solution.serialize());
   }
 
+  Puzzlehash? getTailHash() {
+    return fullCoin.getTailHash(this);
+  }
+
   factory CoinSpend.fromJson(Map<String, dynamic> json) {
     return CoinSpend(
       coin: CoinPrototype.fromJson(json['coin'] as Map<String, dynamic>),
@@ -79,9 +85,22 @@ class CoinSpend with ToBytesMixin {
       return SpendType.standard;
     }
     if (uncurriedPuzzleSource == catProgram.toSource()) {
-      return SpendType.cat;
+      return SpendType.cat2;
     }
     throw UnimplementedError('Unimplemented spend type');
+  }
+
+
+  Program toProgram() {
+    Bytes coinBytes = coin.toBytes();
+    if (coin is CatCoin) {
+      coinBytes = (coin as CatCoin).toCoinPrototype().toBytes();
+    }
+    return Program.list([
+      Program.fromBytes(coinBytes),
+      Program.fromBytes(puzzleReveal.serialize()),
+      Program.fromBytes(solution.serialize()),
+    ]);
   }
 
   static CoinSpend fromProgram(Program program) {
@@ -92,9 +111,21 @@ class CoinSpend with ToBytesMixin {
     return CoinSpend(coin: coin, puzzleReveal: puzzleReveal, solution: solution);
   }
 
+
+
   @override
   String toString() =>
       'CoinSpend(coin: $coin, puzzleReveal: $puzzleReveal, solution: $solution)';
 }
 
-enum SpendType { standard, cat, nft }
+enum SpendType {
+  unknown("unknown"),
+  standard('xch'),
+  cat1("cat1"),
+  cat2("cat"),
+  nft("nft"),
+  did('did');
+
+  const SpendType(this.value);
+  final String value;
+}

@@ -1,4 +1,5 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
+import 'package:chia_crypto_utils/src/core/models/outer_puzzle.dart';
 import 'package:chia_crypto_utils/src/nft1.0/index.dart';
 
 DeconstructedUpdateMetadataPuzzle? mathMetadataLayerPuzzle(Program puzzle) {

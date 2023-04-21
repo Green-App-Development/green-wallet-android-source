@@ -33,7 +33,7 @@ class Program with ToBytesMixin {
   Bytes? _atom;
   Position? position;
 
-  static int cost = 11000000000;
+  static const int cost = 11000000000;
   static Program nil = Program.fromBytes([]);
 
   @override

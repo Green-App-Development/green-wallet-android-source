@@ -1,4 +1,6 @@
-import '../../../chia_crypto_utils.dart';
+import 'package:chia_crypto_utils/chia_crypto_utils.dart';
+
+import '../index.dart';
 
 export '../puzzles/nft_ownership_layer/nft_ownership_layer.clvm.hex.dart';
 export '../puzzles/nft_state_layer/nft_state_layer.clvm.hex.dart';

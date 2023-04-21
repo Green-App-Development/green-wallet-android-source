@@ -47,6 +47,18 @@ class Payment {
           programList.length > 2 ? programList[2].toList().map((p) => p.atom).toList() : <Bytes>[],
     );
   }
+
+  factory Payment.fromCondition(Program condition) {
+    final conditionsList = condition.rest().first().toList();
+    final puzzleHash = Puzzlehash(conditionsList[0].atom);
+    final amountBytes = conditionsList[1].toBigInt();
+    var memos = <Bytes>[];
+    if (conditionsList.length > 2) {
+      memos = conditionsList[2].toList().map((e) => e.atom).toList();
+    }
+    return Payment(amountBytes.toInt(), puzzleHash, memos: memos);
+  }
+
   @override
   String toString() => 'Payment(amount: $amount, puzzlehash: $puzzlehash, memos: $memos)';
 
