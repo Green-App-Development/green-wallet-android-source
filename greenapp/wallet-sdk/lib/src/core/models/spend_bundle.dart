@@ -12,6 +12,7 @@ class SpendBundle with ToBytesMixin {
   final JacobianPoint? aggregatedSignature;
 
   bool get isSigned => aggregatedSignature != null;
+  List<CoinPrototype> get removals => coins;
 
   List<Program> get outputConditions {
     final conditions = <Program>[];
@@ -140,6 +141,14 @@ class SpendBundle with ToBytesMixin {
   @override
   String toString() =>
       'SpendBundle(coinSpends: $coinSpends, aggregatedSignature: $aggregatedSignature)';
+
+
+  static SpendBundle aggregate(List<SpendBundle> bundleList) {
+    final aggregatedSpendBundle = bundleList.fold<SpendBundle>(
+        SpendBundle(coinSpends: []), (previousValue, element) => previousValue + element);
+
+    return aggregatedSpendBundle;
+  }
 
   @override
   int get hashCode {

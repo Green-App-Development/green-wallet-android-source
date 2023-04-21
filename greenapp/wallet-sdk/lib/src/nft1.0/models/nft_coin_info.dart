@@ -1,4 +1,5 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
+import 'package:chia_crypto_utils/src/nft1.0/index.dart';
 
 class NFTCoinInfo extends Coin {
   /// The launcher coin ID of the NFT
