@@ -84,6 +84,14 @@ class CoinSpend with ToBytesMixin {
     throw UnimplementedError('Unimplemented spend type');
   }
 
+  static CoinSpend fromProgram(Program program) {
+    final args = program.toList();
+    final coin = CoinPrototype.fromBytes(args[0].atom);
+    final puzzleReveal = Program.deserialize(args[1].atom);
+    final solution = Program.deserialize(args[2].atom);
+    return CoinSpend(coin: coin, puzzleReveal: puzzleReveal, solution: solution);
+  }
+
   @override
   String toString() =>
       'CoinSpend(coin: $coin, puzzleReveal: $puzzleReveal, solution: $solution)';
