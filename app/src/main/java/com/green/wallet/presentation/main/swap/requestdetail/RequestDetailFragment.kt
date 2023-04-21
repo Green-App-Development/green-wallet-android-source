@@ -60,11 +60,16 @@ class RequestDetailFragment : DaggerFragment() {
 		binding.registerClicks()
 	}
 
-
 	private fun FragmentRequestDetailsBinding.registerClicks() {
+
 		backLayout.setOnClickListener {
 			getMainActivity().popBackStackOnce()
 		}
+
+		btnPay.setOnClickListener {
+			getMainActivity().move2BtmDialogPayment("", 0.003)
+		}
+
 	}
 
 

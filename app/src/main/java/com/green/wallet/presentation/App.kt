@@ -1,5 +1,8 @@
 package com.green.wallet.presentation
 
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -97,6 +100,29 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
+		testingMethod()
+	}
+
+	private fun testingMethod() {
+		CoroutineScope(Dispatchers.Main).launch {
+			delay(5000)
+//			val recipientAddress = "0x1234567890123456789012345678901234567890"
+//			val amountToSend = "0.5"
+//			val deepLink = "https://link.trustwallet.com/send?coin=ethereum&address=$recipientAddress&amount=$amountToSend&referrer=com.green.wallet"
+//
+//			val recipientAddress = "0x1234567890123456789012345678901234567890"
+//			val amountInWei = "500000000000000000" // 0.5 ETH in wei
+//			val gasLimit = "21000"
+//			val gasPriceInWei = "1000000000" // 1 Gwei
+//			val data = "" // optional data payload
+//			val ensDomain = "" // optional ENS domain name
+//
+//			val deepLink =
+//				"https://metamask.app.link/send/transaction?to=$recipientAddress&value=$amountInWei&gas=$gasLimit&gasPrice=$gasPriceInWei&data=$data&ensDomain=$ensDomain"
+//			val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
+//			intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+//			startActivity(intent)
+		}
 	}
 
 

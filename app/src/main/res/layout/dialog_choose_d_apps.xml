@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/dialog_bg"
+			android:orientation="vertical">
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:src="@drawable/home_indicator" />
+
+		<TextView
+				android:id="@+id/txtSelectNetwork"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp"
+				android:text="Выберите способ оплаты"
+				android:textColor="@color/green"
+				android:textSize="20sp"
+				android:textStyle="bold" />
+
+		<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp">
+
+			<RelativeLayout
+					android:id="@+id/rel_item_trust"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp">
+
+				<ImageView
+						android:id="@+id/imgTrust"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:src="@drawable/ic_trust_wallet" />
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="15dp"
+						android:layout_toEndOf="@+id/imgTrust"
+						android:text="Trust Wallet"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="600"
+						android:textSize="20sp" />
+
+			</RelativeLayout>
+
+			<View
+					android:id="@+id/item_divider"
+					android:layout_width="match_parent"
+					android:layout_height="1dp"
+					android:layout_below="@+id/rel_item_trust"
+					android:layout_marginTop="10dp"
+					android:background="@color/network_item_line_divider" />
+
+		</RelativeLayout>
+
+		<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+			<RelativeLayout
+					android:id="@+id/rel_item_meta_mask"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp">
+
+				<ImageView
+						android:id="@+id/imgMetaMask"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:src="@drawable/ic_meta_mask" />
+
+
+				<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="15dp"
+						android:layout_toEndOf="@+id/imgMetaMask"
+						android:text="Metamask"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="600"
+						android:textSize="20sp" />
+
+
+			</RelativeLayout>
+
+			<View
+					android:layout_width="match_parent"
+					android:layout_height="1dp"
+					android:layout_below="@+id/rel_item_meta_mask"
+					android:layout_marginTop="10dp"
+					android:background="@color/network_item_line_divider" />
+
+		</RelativeLayout>
+
+		<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content">
+
+			<RelativeLayout
+					android:id="@+id/rel_pay_address"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="10dp">
+
+				<RelativeLayout
+						android:id="@+id/imgOurQrCode"
+						android:layout_width="44dp"
+						android:layout_height="44dp"
+						android:layout_centerVertical="true">
+
+					<ImageView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:src="@drawable/ic_logo_qr" />
+
+					<ImageView
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_centerInParent="true"
+							android:src="@drawable/ic_circle_green" />
+
+				</RelativeLayout>
+
+				<LinearLayout
+						android:id="@+id/linear_chia"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_centerVertical="true"
+						android:layout_marginStart="15dp"
+						android:layout_toEndOf="@+id/imgOurQrCode"
+						android:orientation="vertical">
+
+					<TextView
+							android:id="@+id/txtNameNetwork"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="Оплата по адресу"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="600"
+							android:textSize="20sp" />
+
+
+				</LinearLayout>
+
+			</RelativeLayout>
+
+		</RelativeLayout>
+
+	</LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
