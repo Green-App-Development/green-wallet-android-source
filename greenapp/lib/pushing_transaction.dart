@@ -12,7 +12,7 @@ import 'package:http/io_client.dart';
 
 class PushingTransaction {
   static const MethodChannel _channel =
-      MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
+  MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
 
   final cachedWalletChains = Map<String, WalletKeychain>();
 
@@ -22,14 +22,15 @@ class PushingTransaction {
         case "generateHash":
           {
             var mnemonic =
-                call.arguments['mnemonic'].toString().split(' ').toList();
+            call.arguments['mnemonic'].toString().split(' ').toList();
             var prefix = call.arguments['prefix'].toString();
             var def_tokens =
-                call.arguments['tokens'].toString().split(' ').toList();
+            call.arguments['tokens'].toString().split(' ').toList();
             var observer = call.arguments['observer'];
             var non_observer = call.arguments['non_observer'];
             print(
-                'Generated Keys got called on flutter from android : with argument : ${call.arguments}');
+                'Generated Keys got called on flutter from android : with argument : ${call
+                    .arguments}');
             try {
               generateKeys(
                   mnemonic, prefix, def_tokens, observer, non_observer);
@@ -41,14 +42,15 @@ class PushingTransaction {
         case "generateHashImport":
           {
             var mnemonic =
-                call.arguments['mnemonic'].toString().split(' ').toList();
+            call.arguments['mnemonic'].toString().split(' ').toList();
             var prefix = call.arguments['prefix'].toString();
             var def_tokens =
-                call.arguments['tokens'].toString().split(' ').toList();
+            call.arguments['tokens'].toString().split(' ').toList();
             var observer = call.arguments['observer'];
             var non_observer = call.arguments['non_observer'];
             print(
-                'Generated Keys got called on flutter from android : with argument : ${call.arguments}');
+                'Generated Keys got called on flutter from android : with argument : ${call
+                    .arguments}');
             try {
               generateKeysImport(
                   mnemonic, prefix, def_tokens, observer, non_observer);
@@ -66,7 +68,7 @@ class PushingTransaction {
                   fee: args['fee'],
                   amount: args['amount'],
                   mnemonic:
-                      args['mnemonicString'].toString().split(' ').toList(),
+                  args['mnemonicString'].toString().split(' ').toList(),
                   httpUrl: args['url'],
                   destAddress: args['dest'],
                   networkType: args['network_type'],
@@ -88,7 +90,7 @@ class PushingTransaction {
                   fee: args['fee'],
                   amount: args['amount'],
                   mnemonic:
-                      args['mnemonicString'].toString().split(' ').toList(),
+                  args['mnemonicString'].toString().split(' ').toList(),
                   httpUrl: args['url'],
                   destAddress: args['dest'],
                   networkType: args['network_type'],
@@ -107,7 +109,8 @@ class PushingTransaction {
           {
             var args = call.arguments;
             print(
-                "GenerateWrappedCatPuzzle got called on flutter with arguments : ${call.arguments}");
+                "GenerateWrappedCatPuzzle got called on flutter with arguments : ${call
+                    .arguments}");
             generateCATPuzzleHash(
                 args["puzzle_hashes"].split(' '), args["asset_id"].toString());
           }
@@ -116,10 +119,11 @@ class PushingTransaction {
           {
             var args = call.arguments;
             debugPrint(
-                "Change settings wallet hashes with arguments ${call.arguments}");
+                "Change settings wallet hashes with arguments ${call
+                    .arguments}");
             changeSettingsWalletPuzzleHashes(
                 mnemonics:
-                    args['mnemonicString'].toString().split(' ').toList(),
+                args['mnemonicString'].toString().split(' ').toList(),
                 observer: int.parse(args['observer'].toString()),
                 non_observer: int.parse(args['non_observer'].toString()),
                 asset_ids: args['asset_ids'].toString().split(' ').toList());
@@ -129,7 +133,8 @@ class PushingTransaction {
           {
             var args = call.arguments;
             print(
-                "Async GenerateWrappedCatPuzzle got called on flutter with arguments : ${call.arguments}");
+                "Async GenerateWrappedCatPuzzle got called on flutter with arguments : ${call
+                    .arguments}");
             asyncCATPuzzleHash(
                 args["puzzle_hashes"].split(' '), args["asset_id"].toString());
           }
@@ -146,19 +151,20 @@ class PushingTransaction {
           break;
       }
     });
+    testingMethod();
   }
 
-  Future<void> cachedWalletKeyChain(
-      List<String> mnemonics, int observer, int nonObserver) async {
+  Future<void> cachedWalletKeyChain(List<String> mnemonics, int observer,
+      int nonObserver) async {
     try {
       var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
       final maxNum = max(observer, nonObserver);
       final walletsSetList = <WalletSet>[];
       KeychainCoreSecret keychainSecret =
-          KeychainCoreSecret.fromMnemonic(mnemonics);
+      KeychainCoreSecret.fromMnemonic(mnemonics);
       for (var i = 0; i < maxNum; i++) {
         final set1 =
-            WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+        WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
         walletsSetList.add(set1);
       }
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
@@ -168,19 +174,18 @@ class PushingTransaction {
     }
   }
 
-  void changeSettingsWalletPuzzleHashes(
-      {required List<String> mnemonics,
-      required int observer,
-      required int non_observer,
-      required List<String> asset_ids}) {
+  void changeSettingsWalletPuzzleHashes({required List<String> mnemonics,
+    required int observer,
+    required int non_observer,
+    required List<String> asset_ids}) {
     try {
       KeychainCoreSecret keychainSecret =
-          KeychainCoreSecret.fromMnemonic(mnemonics);
+      KeychainCoreSecret.fromMnemonic(mnemonics);
       final maxNum = max(observer, non_observer);
       final walletsSetList = <WalletSet>[];
       for (var i = 0; i < maxNum; i++) {
         final set1 =
-            WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+        WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
         walletsSetList.add(set1);
       }
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
@@ -200,8 +205,8 @@ class PushingTransaction {
         main_puzzle_hashes.forEach((main_hash) {
           if (asset_id.isNotEmpty)
             outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                    Puzzlehash.fromHex(main_hash.toHex()),
-                    Puzzlehash.fromHex(asset_id))
+                Puzzlehash.fromHex(main_hash.toHex()),
+                Puzzlehash.fromHex(asset_id))
                 .toHex());
         });
         mapToAndroid[asset_id] = outer_hashes;
@@ -214,28 +219,29 @@ class PushingTransaction {
     }
   }
 
-  Future generateSpendBundleForToken(
-      {required int fee,
-      required int amount,
-      required List<String> mnemonic,
-      required String httpUrl,
-      required String destAddress,
-      required String networkType,
-      required String asset_id,
-      required String spentCoinsJson,
-      required int observer,
-      required int nonObserver}) async {
+  Future generateSpendBundleForToken({required int fee,
+    required int amount,
+    required List<String> mnemonic,
+    required String httpUrl,
+    required String destAddress,
+    required String networkType,
+    required String asset_id,
+    required String spentCoinsJson,
+    required int observer,
+    required int nonObserver}) async {
     try {
       print(
           "flutter arguments for token fee : $fee amount : $amount  mnemonic : $mnemonic url : $httpUrl dest : $destAddress isTypeNetwork : $networkType asset_id : $asset_id spentCoinJson : $spentCoinsJson observer : "
-          "$observer non-observer : $nonObserver");
-      var stopwatch = Stopwatch()..start();
+              "$observer non-observer : $nonObserver");
+      var stopwatch = Stopwatch()
+        ..start();
       var key = "${mnemonic.join(" ")}_${observer}_$nonObserver";
       var keyChain = cachedWalletChains[key] ??
           generateKeyChain(mnemonic, observer, nonObserver);
 
       debugPrint(
-          'Time taken: ${stopwatch.elapsedMilliseconds / 1000}s  to initialize keyChain');
+          'Time taken: ${stopwatch.elapsedMilliseconds /
+              1000}s  to initialize keyChain');
 
       final keyChainCAT = keyChain
         ..addOuterPuzzleHashesForAssetId(Puzzlehash.fromHex(asset_id));
@@ -266,20 +272,23 @@ class PushingTransaction {
 
       CatWalletService catWalletService = CatWalletService();
 
-      stopwatch = Stopwatch()..start();
+      stopwatch = Stopwatch()
+        ..start();
       Map<String, dynamic> body = {
         "puzzle_hashes": myOuterPuzzlehashes.map((e) => e.toHex()).toList()
       };
 
       final responseDataCAT =
-          await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(body));
+      await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(body));
 
       debugPrint(
-          "My Response From retrieving cat  : ${responseDataCAT.body}, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
+          "My Response From retrieving cat  : ${responseDataCAT
+              .body}, to get unspent coins ${stopwatch.elapsedMilliseconds /
+              1000}s");
 
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];
@@ -319,7 +328,7 @@ class PushingTransaction {
         var sum = 0;
         for (final coin in allCatCoins) {
           var coinIsSpent =
-              spentCoinsParents.contains(coin.parentCoinInfo.toString());
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
           if (coin.amount != 0 && !coinIsSpent) {
             filteredCoins.add(coin);
             sum += coin.amount;
@@ -335,7 +344,8 @@ class PushingTransaction {
               coin: coin, httpUrl: httpUrl, catCoins: catCoins));
           if (futures.length >= 1) {
             debugPrint(
-                "Filled  futures with ${futures.length} wait for them to complete");
+                "Filled  futures with ${futures
+                    .length} wait for them to complete");
             await Future.wait(futures);
             futures.clear();
           }
@@ -353,7 +363,7 @@ class PushingTransaction {
 
         var dest_puzzle_has = Address(destAddress).toPuzzlehash();
         var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
-                dest_puzzle_has, Puzzlehash.fromHex(asset_id))
+            dest_puzzle_has, Puzzlehash.fromHex(asset_id))
             .toHex();
 
         _channel.invokeMethod('getSpendBundle', {
@@ -372,49 +382,52 @@ class PushingTransaction {
     }
   }
 
-  Future<void> getCatCoinsDetail(
-      {required Coin coin,
-      required String httpUrl,
-      required List<CatCoin> catCoins}) async {
+  Future<void> getCatCoinsDetail({required Coin coin,
+    required String httpUrl,
+    required List<CatCoin> catCoins}) async {
     Map<String, dynamic> bodyParentCoinInfo = {
       "name": coin.parentCoinInfo.toString()
     };
     final bodyParentCoinInfoRes =
-        await post(Uri.parse("$httpUrl/get_coin_record_by_name"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(bodyParentCoinInfo));
-    var parentCoin = CoinRecordResponse.fromJson(
+    await post(Uri.parse("$httpUrl/get_coin_record_by_name"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodyParentCoinInfo));
+    var parentCoin = CoinRecordResponse
+        .fromJson(
       jsonDecode(bodyParentCoinInfoRes.body) as Map<String, dynamic>,
-    ).coinRecord!.toCoin();
+    )
+        .coinRecord!
+        .toCoin();
     Map<String, dynamic> bodyParentCoinSpentBody = {
       'coin_id': parentCoin.id.toHex(),
       'height': parentCoin.spentBlockIndex,
     };
     final bodyParentCoinSpentRes =
-        await post(Uri.parse("$httpUrl/get_puzzle_and_solution"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(bodyParentCoinSpentBody));
-    var parentCoinSpend = CoinSpendResponse.fromJson(
+    await post(Uri.parse("$httpUrl/get_puzzle_and_solution"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodyParentCoinSpentBody));
+    var parentCoinSpend = CoinSpendResponse
+        .fromJson(
       jsonDecode(bodyParentCoinSpentRes.body) as Map<String, dynamic>,
-    ).coinSpend;
+    )
+        .coinSpend;
     catCoins.add(CatCoin(
       parentCoinSpend: parentCoinSpend!,
       coin: coin,
     ));
   }
 
-  Future<void> getStandardCoinsForFee(
-      {required WalletKeychain keyChain,
-      required int observer,
-      required int non_observer,
-      required String httpUrl,
-      required List<String> spentCoinsParents,
-      required List<Coin> standardCoinsForFee,
-      required int fee}) async {
+  Future<void> getStandardCoinsForFee({required WalletKeychain keyChain,
+    required int observer,
+    required int non_observer,
+    required String httpUrl,
+    required List<String> spentCoinsParents,
+    required List<Coin> standardCoinsForFee,
+    required int fee}) async {
     var main_puzzle_hashes = keyChain.hardenedMap.keys
         .map((e) => e.toHex())
         .toList()
@@ -427,14 +440,14 @@ class PushingTransaction {
       "puzzle_hashes": main_puzzle_hashes
     };
     final responseDataForStandardCoins =
-        await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(standardCoinBody));
+    await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(standardCoinBody));
     List<Coin> feeStandardCoinsTotal = [
       for (final item
-          in jsonDecode(responseDataForStandardCoins.body)['coin_records'])
+      in jsonDecode(responseDataForStandardCoins.body)['coin_records'])
         Coin.fromChiaCoinRecordJson(item)
     ];
     var feeSum = 0;
@@ -445,7 +458,7 @@ class PushingTransaction {
         "Getting standard coins for fee : $standardCoinsForFee when sending token");
     for (var coin in feeStandardCoinsTotal) {
       var feeCoinSpent =
-          spentCoinsParents.contains(coin.parentCoinInfo.toString());
+      spentCoinsParents.contains(coin.parentCoinInfo.toString());
       debugPrint(
           "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
       if (coin.amount != 0 && !feeCoinSpent) {
@@ -458,16 +471,15 @@ class PushingTransaction {
     }
   }
 
-  Future generateSpendBundleXCH(
-      {required int fee,
-      required int amount,
-      required List<String> mnemonic,
-      required String httpUrl,
-      required String destAddress,
-      required String networkType,
-      required String spentCoinsJson,
-      required int observer,
-      required int nonObserver}) async {
+  Future generateSpendBundleXCH({required int fee,
+    required int amount,
+    required List<String> mnemonic,
+    required String httpUrl,
+    required String destAddress,
+    required String networkType,
+    required String spentCoinsJson,
+    required int observer,
+    required int nonObserver}) async {
     try {
       debugPrint(
           "fee : $fee amount : $amount  mnemonic : $mnemonic url : $httpUrl dest : $destAddress isTypeNetwork : $networkType  hashCounter : $observer");
@@ -494,7 +506,7 @@ class PushingTransaction {
       NetworkContext().setBlockchainNetwork(blockchainNetworks[chosenNetwork]!);
       StandardWalletService standardWalletService = StandardWalletService();
       List<Puzzlehash> myPuzzlehashes =
-          keychain.unhardenedMap.keys.toList().sublist(0, observer);
+      keychain.unhardenedMap.keys.toList().sublist(0, observer);
 
       myPuzzlehashes
           .addAll(keychain.hardenedMap.keys.toList().sublist(0, nonObserver));
@@ -506,11 +518,11 @@ class PushingTransaction {
       var destPuzzleHash = Address(destAddress).toPuzzlehash();
 
       final responseData =
-          await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(body));
+      await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(body));
 
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];
@@ -538,9 +550,10 @@ class PushingTransaction {
         var total = amount + fee;
         for (final coin in allCoins) {
           var isCoinSpent =
-              spentCoinsParents.contains(coin.parentCoinInfo.toString());
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
           debugPrint(
-              "AlreadySpentCoins Contains on sending xch : $isCoinSpent  ${coin.parentCoinInfo} in $spentCoinsParents");
+              "AlreadySpentCoins Contains on sending xch : $isCoinSpent  ${coin
+                  .parentCoinInfo} in $spentCoinsParents");
           if (!isCoinSpent) {
             sum += coin.amount;
             requiredCoins.add(coin);
@@ -577,12 +590,12 @@ class PushingTransaction {
       List<String> def_tokens, int observer, int non_observer) {
     try {
       KeychainCoreSecret keychainSecret =
-          KeychainCoreSecret.fromMnemonic(mnemonic);
+      KeychainCoreSecret.fromMnemonic(mnemonic);
       var max_hash = max(observer, non_observer);
       final walletsSetList = <WalletSet>[];
       for (var i = 0; i < max_hash; i++) {
         final set1 =
-            WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+        WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
         walletsSetList.add(set1);
       }
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
@@ -627,18 +640,20 @@ class PushingTransaction {
       List<String> def_tokens, int observer, int non_observer) {
     try {
       KeychainCoreSecret keychainSecret =
-          KeychainCoreSecret.fromMnemonic(mnemonic);
+      KeychainCoreSecret.fromMnemonic(mnemonic);
       var max_hash = max(observer, non_observer);
       final walletsSetList = <WalletSet>[];
-      var stopwatch = Stopwatch()..start();
+      var stopwatch = Stopwatch()
+        ..start();
       for (var i = 0; i < max_hash; i++) {
         final set1 =
-            WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+        WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
         walletsSetList.add(set1);
       }
       stopwatch.stop();
       debugPrint(
-          'Time taken: ${stopwatch.elapsedMilliseconds / 1000}s to initialize walletSetList');
+          'Time taken: ${stopwatch.elapsedMilliseconds /
+              1000}s to initialize walletSetList');
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
       var key = "${mnemonic.join(' ')}_${observer}_$non_observer";
       cachedWalletChains[key] = keychain;
@@ -658,21 +673,23 @@ class PushingTransaction {
           main_puzzle_hashes.map((e) => e.toHex()).toList();
 
       debugPrint("Map to Android : $mapToAndroid");
-      stopwatch = Stopwatch()..start();
+      stopwatch = Stopwatch()
+        ..start();
       def_tokens.forEach((asset_id) {
         List<String> outer_hashes = [];
         main_puzzle_hashes.forEach((main_hash) {
           if (asset_id.isNotEmpty)
             outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                    Puzzlehash.fromHex(main_hash.toHex()),
-                    Puzzlehash.fromHex(asset_id))
+                Puzzlehash.fromHex(main_hash.toHex()),
+                Puzzlehash.fromHex(asset_id))
                 .toHex());
         });
         mapToAndroid[asset_id] = outer_hashes;
       });
       stopwatch.stop();
       debugPrint(
-          'Time taken: ${stopwatch.elapsedMilliseconds / 1000}s  to generate all cat hashes');
+          'Time taken: ${stopwatch.elapsedMilliseconds /
+              1000}s  to generate all cat hashes');
 
       _channel.invokeMethod("getHash", mapToAndroid);
     } catch (ex) {
@@ -680,10 +697,10 @@ class PushingTransaction {
     }
   }
 
-  WalletKeychain generateKeyChain(
-      List<String> mnemonic, int observer, int non_observer) {
+  WalletKeychain generateKeyChain(List<String> mnemonic, int observer,
+      int non_observer) {
     KeychainCoreSecret keychainSecret =
-        KeychainCoreSecret.fromMnemonic(mnemonic);
+    KeychainCoreSecret.fromMnemonic(mnemonic);
     var counter = max(observer, non_observer);
     final walletsSetList = <WalletSet>[];
     for (var i = 0; i < counter; i++) {
@@ -716,7 +733,7 @@ class PushingTransaction {
 
       Map<String, dynamic> body = {
         "puzzle_hashes":
-            myOuterPuzzlehashes.map<String>((e) => e.toHex()).toList()
+        myOuterPuzzlehashes.map<String>((e) => e.toHex()).toList()
       };
       debugPrint("Puzzle_Hashes for CAT coins : $myOuterPuzzlehashes");
       final responseData = await post(
@@ -731,7 +748,8 @@ class PushingTransaction {
       debugPrint("Response Data on Flutter ${responseData.body}");
       if (responseData.statusCode == 200) {
         debugPrint(
-            "Got Result 200 OK from response on flutter side : ${responseData.body}");
+            "Got Result 200 OK from response on flutter side : ${responseData
+                .body}");
       } else {
         debugPrint("StatusCode is not ok  : ${responseData.body}");
       }
@@ -741,10 +759,10 @@ class PushingTransaction {
     }
   }
 
-  WalletKeychain generateKeyChainForAssets(
-      List<String> mnemonic, String asset_id, int hash_counter) {
+  WalletKeychain generateKeyChainForAssets(List<String> mnemonic,
+      String asset_id, int hash_counter) {
     KeychainCoreSecret keychainSecret =
-        KeychainCoreSecret.fromMnemonic(mnemonic);
+    KeychainCoreSecret.fromMnemonic(mnemonic);
 
     final walletsSetList = <WalletSet>[];
     for (var i = 0; i < hash_counter; i++) {
@@ -758,19 +776,8 @@ class PushingTransaction {
     return keychain;
   }
 
-  void getPuzzleHashCAT() async {
-    var assetId =
-        "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02";
-
-    var outer_hashe = WalletKeychain.makeOuterPuzzleHash(
-            Puzzlehash.fromHex(
-                "069207980d2a4822c0e0bb57c88b7f85fcd30927e685b73597ddb34a27887dd9"),
-            Puzzlehash.fromHex(assetId))
-        .toHex();
-
-    debugPrint("Outer Hash : $outer_hashe");
-
-    var mnemonics = [
+  void testingMethod() async {
+    var mnemonic = [
       "blast",
       "song",
       "refuse",
@@ -784,29 +791,16 @@ class PushingTransaction {
       "broom",
       "vanish"
     ];
+    KeychainCoreSecret keychainSecret =
+    KeychainCoreSecret.fromMnemonic(mnemonic);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 1; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList);
 
-    var observer = 2;
-    var non_observer = 3;
 
-    final keyChainCat = generateKeyChainForAssets(mnemonics,
-        "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02", 1);
-    debugPrint("Start generating hashes");
-    Stopwatch stopwatch = new Stopwatch()..start();
-    final keyChain = generateKeyChain(mnemonics, 1, 2);
-    var setUnhardened =
-        keyChain.unhardenedMap.keys.map((e) => e.toHex()).toSet();
-    debugPrint("Testing Unhardened Size : ${setUnhardened.length}");
-    setUnhardened.forEach((element) {
-      debugPrint("Testing Unhardened : $element");
-    });
-
-    var setHardened = keyChain.hardenedMap.keys.map((e) => e.toHex()).toSet();
-    debugPrint("Testing Hardened Size : ${setHardened.length}");
-    setHardened.forEach((element) {
-      debugPrint("Testing Hardened : $element");
-    });
-    stopwatch.stop();
-    debugPrint("End generating hashes : ${stopwatch.elapsed}");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
@@ -814,7 +808,7 @@ class PushingTransaction {
     main_puzzle_hashes.forEach((element) {
       if (element.isNotEmpty) {
         outer_puzzle_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                Puzzlehash.fromHex(element), Puzzlehash.fromHex(asset_id))
+            Puzzlehash.fromHex(element), Puzzlehash.fromHex(asset_id))
             .toHex());
       }
     });
@@ -822,16 +816,20 @@ class PushingTransaction {
         .invokeMethod('generate_outer_hash', {asset_id: outer_puzzle_hashes});
   }
 
-  Future<void> asyncCATPuzzleHash(
-      List<String> main_puzzle_hashes, String asset_id) async {
+  Future<void> asyncCATPuzzleHash(List<String> main_puzzle_hashes,
+      String asset_id) async {
     final List<String> outer_puzzle_hashes = [];
     main_puzzle_hashes.forEach((element) {
       if (element.isNotEmpty) {
         outer_puzzle_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                Puzzlehash.fromHex(element), Puzzlehash.fromHex(asset_id))
+            Puzzlehash.fromHex(element), Puzzlehash.fromHex(asset_id))
             .toHex());
       }
     });
     _channel.invokeMethod('$asset_id', {asset_id: outer_puzzle_hashes});
   }
+
+
+
+
 }

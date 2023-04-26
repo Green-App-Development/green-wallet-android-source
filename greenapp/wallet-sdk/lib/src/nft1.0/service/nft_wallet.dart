@@ -5,12 +5,11 @@ import 'package:chia_crypto_utils/src/core/models/conditions/announcement.dart';
 import 'package:chia_crypto_utils/src/core/models/conditions/assert_puzzle_condition.dart';
 import 'package:chia_crypto_utils/src/core/models/outer_puzzle.dart';
 import 'package:chia_crypto_utils/src/core/service/conditions_utils.dart';
+import 'package:chia_crypto_utils/src/did/index.dart';
 import 'package:chia_crypto_utils/src/did/services/did_wallet.dart';
 import 'package:chia_crypto_utils/src/nft1.0/index.dart';
 import 'package:chia_crypto_utils/src/offers_ozone/utils/build_keychain.dart' show BuildKeychain;
 import 'package:tuple/tuple.dart';
-
-import 'package:chia_crypto_utils/src/did/index.dart';
 //import '../../did/puzzles/did_puzzles.dart' as didPuzzles;
 
 class NftWallet extends BaseWalletService {

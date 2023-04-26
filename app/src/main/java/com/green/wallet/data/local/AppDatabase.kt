@@ -7,7 +7,7 @@ import com.green.wallet.data.local.entity.*
 
 @Database(
 	entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class, SpentCoinsEntity::class, FaqItemEntity::class],
-	version = 25,
+	version = 26,
 	exportSchema = false
 )
 @TypeConverters(Converters::class)

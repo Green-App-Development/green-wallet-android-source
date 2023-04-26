@@ -448,7 +448,8 @@ class MainActivity : BaseActivity() {
 					fragmentSendNFT,
 					addressFragment,
 					fragmentRequestDetail,
-					btmChooseDApps
+					btmChooseDApps,
+					fragmentQrCodeSend
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -639,6 +640,10 @@ class MainActivity : BaseActivity() {
 
 	fun move2SwapFragment() {
 		navController.navigate(fragmentSwapMain)
+	}
+
+	fun move2QRSendFragment(){
+		navController.navigate(fragmentQrCodeSend)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {

@@ -279,4 +279,10 @@
 			android:label="Request Detail"
 			tools:layout="@layout/fragment_request_details" />
 
+	<fragment
+			android:id="@+id/fragmentQrCodeSend"
+			android:name="com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend"
+			android:label=""
+			tools:layout="@layout/fragment_qrcode_send" />
+
 </navigation>

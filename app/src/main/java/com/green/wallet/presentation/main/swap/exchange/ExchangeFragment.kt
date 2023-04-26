@@ -16,7 +16,7 @@ import com.green.wallet.databinding.FragmentExchangeBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.convertDpToPixel
-import com.green.wallet.presentation.main.send.TokenSpinnerAdapter
+import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
@@ -158,8 +158,8 @@ class ExchangeFragment : DaggerFragment() {
 	}
 
 	private fun updateTokenTxtViews(
-		fromAdapter: TokenSpinnerAdapter,
-		toAdapter: TokenSpinnerAdapter
+        fromAdapter: TokenSpinnerAdapter,
+        toAdapter: TokenSpinnerAdapter
 	) {
 		binding.apply {
 			edtTokenFrom.text = fromAdapter.dataOptions[fromAdapter.selectedPosition]

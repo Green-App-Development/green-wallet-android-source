@@ -12,6 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.green.wallet.R
 import com.green.wallet.databinding.DialogChooseDAppsBinding
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.tools.getMainActivity
 
 class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 
@@ -57,7 +58,7 @@ class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 				navigateToOtherApp(deepLink)
 			}
 			relPayAddress.setOnClickListener {
-
+				curActivity().move2QRSendFragment()
 			}
 		}
 	}

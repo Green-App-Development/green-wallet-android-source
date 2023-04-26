@@ -207,12 +207,12 @@ class VerificationFragment : DaggerDialogFragment() {
 		methodChannel.setMethodCallHandler { call, callBack ->
 			if (call.method == "getHash") {
 				val arguments = (call.arguments as HashMap<*, *>)
+				VLog.d("Method from flutter side on android : $arguments")
 				val fingerPrint = arguments["fingerPrint"]!!.toString().toLong()
 				val address = arguments["address"]!!.toString()
 				val main_hashes = arguments["main_puzzle_hashes"] as List<String>
 				val newWallet = Wallet(
 					fingerPrint,
-					"",
 					main_hashes,
 					address,
 					mnemonics,
