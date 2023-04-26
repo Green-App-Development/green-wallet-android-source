@@ -4,14 +4,19 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity()
+@Entity
 data class NFTInfoEntity(
 	@PrimaryKey(autoGenerate = false)
 	val nft_coin_hash: String,
-	val launcher_id:String,
-	val owner_did:String,
-	val minter_did:String,
-	val royalty_percentage:Int,
-	val mint_height:Int,
-	val
-	)
+	val launcher_id: String,
+	val owner_did: String,
+	val minter_did: String,
+	val royalty_percentage: Int,
+	val mint_height: Int,
+	val data_url: String,
+	val data_hash: String,
+	val meta_hash: String,
+	val meta_url: String,
+	val license_url: String,
+	val license_hash: String
+)
