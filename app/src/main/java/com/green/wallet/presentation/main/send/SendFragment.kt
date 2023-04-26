@@ -77,7 +77,6 @@ class SendFragment : DaggerFragment() {
 		const val SHOULD_BE_EMPTY = "should_be_empty"
 	}
 
-
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	private val viewModel: SendFragmentViewModel by viewModels { viewModelFactory }

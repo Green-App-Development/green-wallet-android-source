@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.send
+package com.green.wallet.presentation.main.swap
 
 import android.annotation.SuppressLint
 import android.content.Context
