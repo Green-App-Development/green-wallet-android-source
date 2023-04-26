@@ -18,10 +18,7 @@ import com.green.wallet.data.network.dto.spendbundle.SpenBunde
 import com.green.wallet.data.network.dto.spendbundle.SpendBundle
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Wallet
-import com.green.wallet.domain.interact.BlockChainInteract
-import com.green.wallet.domain.interact.GreenAppInteract
-import com.green.wallet.domain.interact.PrefsInteract
-import com.green.wallet.domain.interact.SpentCoinsInteract
+import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
@@ -51,6 +48,7 @@ class BlockChainInteractImpl @Inject constructor(
 	private val spentCoinsInteract: SpentCoinsInteract,
 	private val spentCoinsDao: SpentCoinsDao,
 	private val greenAppInteract: GreenAppInteract,
+	private val nftInteract: NFTInteract,
 	private val context: Context
 ) :
 	BlockChainInteract {

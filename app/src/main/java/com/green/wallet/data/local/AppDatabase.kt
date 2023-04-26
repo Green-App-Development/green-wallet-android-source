@@ -6,8 +6,13 @@ import androidx.room.TypeConverters
 import com.green.wallet.data.local.entity.*
 
 @Database(
-	entities = [AddressEntity::class, WalletEntity::class, TransactionEntity::class, NotifOtherEntity::class, TokenEntity::class, SpentCoinsEntity::class, FaqItemEntity::class],
-	version = 26,
+	entities = [
+		AddressEntity::class, WalletEntity::class, TransactionEntity::class,
+		NotifOtherEntity::class, TokenEntity::class,
+		SpentCoinsEntity::class, FaqItemEntity::class,
+		NFTInfoEntity::class, NFTCoinEntity::class
+	],
+	version = 27,
 	exportSchema = false
 )
 @TypeConverters(Converters::class)
