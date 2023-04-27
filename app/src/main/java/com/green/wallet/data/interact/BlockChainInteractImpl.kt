@@ -2,15 +2,18 @@ package com.green.wallet.data.interact
 
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
 import com.green.wallet.data.local.*
+import com.green.wallet.data.local.entity.NFTCoinEntity
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.network.BlockChainService
+import com.green.wallet.data.network.dto.coinSolution.ParentCoinRecordResponse
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.network.dto.spendbundle.CoinDto
 import com.green.wallet.data.network.dto.spendbundle.CoinSpend
@@ -49,7 +52,8 @@ class BlockChainInteractImpl @Inject constructor(
 	private val spentCoinsDao: SpentCoinsDao,
 	private val greenAppInteract: GreenAppInteract,
 	private val nftInteract: NFTInteract,
-	private val context: Context
+	private val context: Context,
+	private val nftCoinsDao: NftCoinsDao
 ) :
 	BlockChainInteract {
 
@@ -135,8 +139,105 @@ class BlockChainInteractImpl @Inject constructor(
 				updateInProgressTransactions()
 				updateWalletBalanceWithTransactions(wallet)
 				updateTokenBalanceWithFullNode(wallet)
+				updateWalletNFTBalance(wallet)
 			}
 		}
+	}
+
+	private suspend fun updateWalletNFTBalance(wallet: WalletEntity) {
+		try {
+			if (isThisChivesNetwork(wallet.networkType)) return
+			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+				?: throw Exception("Exception in converting json str to networkItem")
+			val curBlockChainService =
+				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+					.create(BlockChainService::class.java)
+			for (hash in wallet.puzzle_hashes) {
+				nftBalanceByHash(hash, curBlockChainService)
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred with updating wallet nft balance by individ hash : ${ex.message}")
+		}
+	}
+
+	private suspend fun nftBalanceByHash(hash: String, service: BlockChainService) {
+		try {
+			val body = hashMapOf<String, Any>()
+			body["hint"] =
+				hash
+			body["include_spent_coins"] = false
+			val res = service.getCoinRecordsByHint(body)
+			if (res.isSuccessful) {
+				val coinRecords = res.body()!!.coin_records
+				for (coin in coinRecords) {
+					val parent_coin = getNftParentCoin(
+						coin.coin.parent_coin_info,
+						coin.confirmed_block_index,
+						service
+					)
+					if (parent_coin != null) {
+						val nftCoinEntity = NFTCoinEntity(
+							coin.coin.parent_coin_info,
+							coin.coin.puzzle_hash,
+							1,
+							coin.confirmed_block_index,
+							coin.spent_block_index,
+							coin.timestamp,
+							parent_coin.coin_solution.coin.parent_coin_info,
+							parent_coin.coin_solution.coin.puzzle_hash,
+							parent_coin.coin_solution.puzzle_reveal,
+							parent_coin.coin_solution.solution
+						)
+						nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
+						val methodChannel = MethodChannel(
+							(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
+							METHOD_CHANNEL_GENERATE_HASH
+						)
+						methodChannel.setMethodCallHandler { method, result ->
+							if (method.method == "unCurriedNFTInfo") {
+								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
+								val args = method.arguments as HashMap<String, Any>
+								val nft_hash = args["nft_hash"].toString()
+								val nftInfoJson = args["nftInfo"].toString()
+								
+							}
+						}
+						withContext(Dispatchers.Main) {
+							val map = hashMapOf<String, Any>()
+							map["coin"] = gson.toJson(coin)
+							map["parent_coin"] = gson.toJson(parent_coin)
+							VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
+							methodChannel.invokeMethod("unCurryNft", map)
+						}
+					}
+				}
+			} else {
+				VLog.d("Request nft coin records is no success : ${res.code()}")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred with nft balance by hash : ${ex.message}")
+		}
+	}
+
+	private suspend fun getNftParentCoin(
+		coin_hash: String,
+		height: Long,
+		service: BlockChainService
+	): ParentCoinRecordResponse? {
+		try {
+			val body = hashMapOf<String, Any>()
+			body["coin_id"] = coin_hash
+			body["height"] = height
+			val res = service.getPuzzleAndSolution(body)
+			if (res.isSuccessful) {
+				return res.body()!!
+			} else {
+				VLog.d("Request is no success : ${res.errorBody()}")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception in getting parent coin of nft : ${ex.message}")
+		}
+		return null
 	}
 
 	private suspend fun updateInProgressTransactions() {

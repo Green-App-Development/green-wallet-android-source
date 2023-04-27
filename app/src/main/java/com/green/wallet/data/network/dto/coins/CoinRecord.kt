@@ -5,6 +5,6 @@ data class CoinRecord(
     val coinbase: Boolean,
     val confirmed_block_index: Long,
     val spent: Boolean,
-    val spent_block_index: Int,
+    val spent_block_index: Long,
     val timestamp: Long
 )
