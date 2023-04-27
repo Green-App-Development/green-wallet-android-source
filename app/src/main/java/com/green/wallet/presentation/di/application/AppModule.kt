@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.green.wallet.data.local.AppDatabase
 import com.green.wallet.presentation.tools.VLog
 import com.google.gson.Gson
+import com.green.wallet.data.local.NftCoinsDao
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -44,6 +45,10 @@ class AppModule {
 
 	@Provides
 	fun provideFAQDao(appDatabase: AppDatabase) = appDatabase.faqDao
+
+	@Provides
+	fun provideNFtCoinsDao(appDatabase: AppDatabase) = appDatabase.nftCoinsDao
+
 
 	@Provides
 	fun provideHandler(): CoroutineExceptionHandler {

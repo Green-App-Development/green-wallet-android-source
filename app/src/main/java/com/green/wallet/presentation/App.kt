@@ -107,8 +107,6 @@ class App : DaggerApplication() {
 		CoroutineScope(Dispatchers.Main).launch {
 			delay(5000)
 
-
-
 		}
 	}
 

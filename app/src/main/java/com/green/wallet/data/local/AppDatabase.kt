@@ -25,6 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val tokenDao: TokenDao
 	abstract val spentCoinsDao: SpentCoinsDao
 	abstract val faqDao: FAQDao
+	abstract val nftCoinsDao: NftCoinsDao
 
 	companion object {
 		const val APP_DB_NAME = "green_app_database_name"
