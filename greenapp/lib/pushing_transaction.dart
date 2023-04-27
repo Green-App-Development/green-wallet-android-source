@@ -834,7 +834,6 @@ class PushingTransaction {
       final nftUncurried = UncurriedNFT.uncurry(
         puzzleReveal,
       );
-      // debugPrint("NftUncurried in flutter side : $nftUncurried");
       final info = NFTInfo.fromUncurried(
         uncurriedNFT: nftUncurried,
         currentCoin: parentSpendCoin.coin,
@@ -849,27 +848,28 @@ class PushingTransaction {
           amount: (0.000100000000 * pow(10, 23)).toInt(),
         ), //Coin
       );
+      debugPrint("Final UnCurried NFT : ${info.toMap()}");
       Map<String, dynamic> mapToAndroid = {};
-      mapToAndroid["nft_hash"] = coin.parentCoinInfo;
-      mapToAndroid["launcherId"]=info.launcherId;
-      mapToAndroid["nftCoinId"]=info.nftCoinId;
-      mapToAndroid["didOwner"]=info.didOwner;
-      mapToAndroid["royaltyPercentage"]=info.royaltyPercentage;
-      mapToAndroid["royaltyAddress"]=info.royaltyAddress;
-      mapToAndroid["dataUris"]=info.dataUris;
-      mapToAndroid["dataHash"]=info.dataHash;
-      mapToAndroid["metadataUris"]=info.metadataUris;
-      mapToAndroid["metadataHash"]=info.metadataHash;
-      mapToAndroid["licenseUris"]=info.licenseUris;
-      mapToAndroid["licenseHash"]=info.licenseHash;
-      mapToAndroid["seriesTotal"]=info.seriesTotal;
-      mapToAndroid["seriesNumber"]=info.seriesNumber;
-      mapToAndroid["chainInfo"]=info.chainInfo;
-      mapToAndroid["mintHeight"]=info.mintHeight;
-      mapToAndroid["supportsDid"]=info.supportsDid;
-      mapToAndroid["pendingTransaction"]=info.pendingTransaction;
-      mapToAndroid["p2Puzzlehash"]=info.p2Puzzlehash;
-      mapToAndroid["launcherPuzzlehash"]=info.launcherPuzzlehash;
+      mapToAndroid["nft_hash"] = coin.parentCoinInfo.toHex();
+      mapToAndroid["launcherId"] = info.launcherId.toHex();
+      mapToAndroid["nftCoinId"] = info.nftCoinId.toHex();
+      mapToAndroid["didOwner"] = info.didOwner?.toHex();
+      mapToAndroid["royaltyPercentage"] = info.royaltyPercentage.toString();
+      mapToAndroid["royaltyAddress"] = info.royaltyAddress.toString();
+      mapToAndroid["dataUris"] = info.dataUris.toList();
+      mapToAndroid["dataHash"] = info.dataHash;
+      mapToAndroid["metadataUris"] = info.metadataUris.toList();
+      mapToAndroid["metadataHash"] = info.metadataHash;
+      mapToAndroid["licenseUris"] = info.licenseUris.toList();
+      mapToAndroid["licenseHash"] = info.licenseHash;
+      mapToAndroid["seriesTotal"] = info.seriesTotal;
+      mapToAndroid["seriesNumber"] = info.seriesNumber;
+      mapToAndroid["chainInfo"] = info.chainInfo;
+      mapToAndroid["mintHeight"] = info.mintHeight;
+      mapToAndroid["supportsDid"] = info.supportsDid.toString();
+      mapToAndroid["pendingTransaction"] = info.pendingTransaction.toString();
+      mapToAndroid["p2Puzzlehash"] = info.p2Puzzlehash.toHex();
+      mapToAndroid["launcherPuzzlehash"] = info.launcherPuzzlehash.toString();
       _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
     } catch (ex) {
       debugPrint("Exception in unCurrying nft coin: ${ex.toString()}");
