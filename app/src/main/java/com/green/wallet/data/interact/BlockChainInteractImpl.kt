@@ -198,8 +198,7 @@ class BlockChainInteractImpl @Inject constructor(
 								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
 								val args = method.arguments as HashMap<String, Any>
 								val nft_hash = args["nft_hash"].toString()
-								val nftInfoJson = args["nftInfo"].toString()
-								
+
 							}
 						}
 						withContext(Dispatchers.Main) {
