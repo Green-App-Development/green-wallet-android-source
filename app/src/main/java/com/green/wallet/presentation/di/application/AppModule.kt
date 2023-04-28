@@ -49,6 +49,9 @@ class AppModule {
 	@Provides
 	fun provideNFtCoinsDao(appDatabase: AppDatabase) = appDatabase.nftCoinsDao
 
+	@Provides
+	fun provideNFtInfoDao(appDatabase: AppDatabase) = appDatabase.nftInfoDao
+
 
 	@Provides
 	fun provideHandler(): CoroutineExceptionHandler {

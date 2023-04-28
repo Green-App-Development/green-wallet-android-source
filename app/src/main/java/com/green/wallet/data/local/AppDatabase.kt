@@ -12,7 +12,7 @@ import com.green.wallet.data.local.entity.*
 		SpentCoinsEntity::class, FaqItemEntity::class,
 		NFTInfoEntity::class, NFTCoinEntity::class
 	],
-	version = 27,
+	version = 29,
 	exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -26,6 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val spentCoinsDao: SpentCoinsDao
 	abstract val faqDao: FAQDao
 	abstract val nftCoinsDao: NftCoinsDao
+	abstract val nftInfoDao:NftInfoDao
 
 	companion object {
 		const val APP_DB_NAME = "green_app_database_name"

@@ -1,15 +1,7 @@
-package com.green.wallet.data.local.entity
-
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
+package com.green.wallet.domain.domainmodel
 
 
-@Entity(
-	tableName = "NFTInfoEntity"
-)
-data class NFTInfoEntity(
-	@PrimaryKey(autoGenerate = false)
+data class NFTInfo(
 	val nft_coin_hash: String,
 	val nft_id: String,
 	val launcher_id: String,
