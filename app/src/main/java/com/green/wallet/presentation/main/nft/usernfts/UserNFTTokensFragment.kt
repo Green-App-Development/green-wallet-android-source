@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentUserNftBinding
-import com.green.wallet.domain.domainmodel.NFTToken
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.convertPixelToDp
 import com.green.wallet.presentation.main.MainActivity
@@ -60,21 +60,9 @@ class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked 
 			txtNoNFTPlaceHolder.visibility = View.GONE
 			constraintCommentExploreMarkets.visibility = View.GONE
 
-			val data = mutableListOf<NFTToken>()
-			(1..12).forEach {
-				data.add(
-					NFTToken(
-						R.drawable.img_duck,
-						"GAD NFT Collection #$it",
-						"GAD NFT collection"
-					)
-				)
-			}
-
 			recViewNft.layoutManager = GridLayoutManager(curActivity(), 2)
 			recViewNft.setHasFixedSize(true)
 			recViewNft.adapter = nftAdapter
-			nftAdapter.updateNFTTokenList(data)
 
 		}
 	}

@@ -3,6 +3,7 @@ package com.green.wallet.data.local
 import androidx.room.*
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import com.green.wallet.data.local.entity.WalletEntity
+import com.green.wallet.data.local.relations.WalletWithNFT
 import com.green.wallet.presentation.tools.NetworkType
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -133,5 +134,8 @@ interface WalletDao {
 		address: String
 	)
 
+	@Transaction
+	@Query("SELECT fingerPrint,mnemonics,observer_hash,non_observer_hash,address FROM WalletEntity WHERE homeAdded>0  ORDER BY homeAdded ASC")
+	fun getFLowOfWalletListWithNFTCoins(): Flow<List<WalletWithNFT>>
 
 }

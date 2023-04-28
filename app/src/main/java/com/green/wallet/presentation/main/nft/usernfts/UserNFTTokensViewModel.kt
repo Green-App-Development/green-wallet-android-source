@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 
 
-class UserNFTTokensViewModel @Inject constructor(): ViewModel() {
+class UserNFTTokensViewModel  @Inject constructor(
 
-
+) : ViewModel() {
 
 
 }

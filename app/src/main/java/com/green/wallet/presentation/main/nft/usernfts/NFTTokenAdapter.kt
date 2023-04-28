@@ -9,15 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.green.wallet.R
-import com.green.wallet.domain.domainmodel.NFTToken
+import com.green.wallet.domain.domainmodel.NFTInfo
 
 
 class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
 	RecyclerView.Adapter<NFTTokenAdapter.NFTTokenViewHolder>() {
 
-	private var nftList = listOf<NFTToken>()
+	private var nftList = listOf<NFTInfo>()
 
-	fun updateNFTTokenList(data: List<NFTToken>) {
+	fun updateNFTTokenList(data: List<NFTInfo>) {
 		val diffResult = DiffUtil.calculateDiff(NFTTokenUtilCallBack(nftList, data))
 		nftList = data
 		diffResult.dispatchUpdatesTo(this)
@@ -45,14 +45,14 @@ class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
 		private val emptyView = v.findViewById<View>(R.id.emptyView)
 		private val rootNFTToken = v.findViewById<RelativeLayout>(R.id.root_nft_token)
 
-		fun onBind(nftToken: NFTToken, position: Int) {
-			nftName.setText(nftToken.name)
-			nftCategory.setText(nftToken.categoryType)
-			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
-
-			rootNFTToken.setOnClickListener {
-				nftTokenClicked.onNFTToken()
-			}
+		fun onBind(nftToken: NFTInfo, position: Int) {
+//			nftName.setText(nftToken.name)
+//			nftCategory.setText(nftToken.categoryType)
+//			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
+//
+//			rootNFTToken.setOnClickListener {
+//				nftTokenClicked.onNFTToken()
+//			}
 
 		}
 
@@ -61,8 +61,8 @@ class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
 
 
 	inner class NFTTokenUtilCallBack(
-		val oldNFTList: List<NFTToken>,
-		val newNFTToken: List<NFTToken>
+		val oldNFTList: List<NFTInfo>,
+		val newNFTToken: List<NFTInfo>
 	) :
 		DiffUtil.Callback() {
 

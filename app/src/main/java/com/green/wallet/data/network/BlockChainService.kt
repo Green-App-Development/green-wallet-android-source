@@ -6,7 +6,9 @@ import com.google.gson.JsonObject
 import com.green.wallet.data.network.dto.coinSolution.ParentCoinRecordResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Url
 
 
 interface BlockChainService {
@@ -37,5 +39,8 @@ interface BlockChainService {
 
 	@POST("get_puzzle_and_solution")
 	suspend fun getPuzzleAndSolution(@Body body: HashMap<String, Any>): Response<ParentCoinRecordResponse>
+
+	@GET
+	suspend fun getMetaDataNFTJson(@Url url: String): Response<JsonObject>
 
 }

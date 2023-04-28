@@ -62,6 +62,9 @@ class App : DaggerApplication() {
 	lateinit var notificationHelper: NotificationHelper
 
 	@Inject
+	lateinit var nftInteract: NFTInteract
+
+	@Inject
 	lateinit var walletInteract: WalletInteract
 
 	lateinit var appComponent: AppComponent
@@ -105,8 +108,7 @@ class App : DaggerApplication() {
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.Main).launch {
-			delay(5000)
-
+			nftInteract.getHomeAddedWalletWithNFTTokensFlow()
 		}
 	}
 
