@@ -1,11 +1,11 @@
 package com.green.wallet.domain.interact
 
-import com.green.wallet.domain.domainmodel.WalletWithNFT
+import com.green.wallet.domain.domainmodel.WalletWithNFTAndCoins
 import kotlinx.coroutines.flow.Flow
 
 interface NFTInteract {
 
-	suspend fun getHomeAddedWalletWithNFTTokensFlow(): Flow<List<WalletWithNFT>>
+    fun getHomeAddedWalletWithNFTTokensFlow(): Flow<List<WalletWithNFTAndCoins>>
 
 
 }

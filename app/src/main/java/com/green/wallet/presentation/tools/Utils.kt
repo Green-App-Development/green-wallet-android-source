@@ -199,8 +199,10 @@ fun getRequestStatusColor(status: RequestStatus, activity: Activity): Int {
 	)
 }
 
-
-
+fun convertArrayStringToList(str:String):List<String>{
+	val withoutBrakes = str.substring(1, str.length - 1)
+	return withoutBrakes.split(",").map { it.trim() }.toList()
+}
 
 
 
