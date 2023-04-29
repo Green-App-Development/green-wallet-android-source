@@ -1,29 +1,59 @@
 package com.green.wallet.data.interact
 
+import androidx.work.impl.model.Preference
+import com.example.common.tools.convertArrayStringToList
+import com.green.wallet.data.local.NftCoinsDao
+import com.green.wallet.data.local.NftInfoDao
 import com.green.wallet.data.local.WalletDao
-import com.green.wallet.domain.domainmodel.WalletWithNFT
+import com.green.wallet.data.local.relations.WalletWithNFT
+import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.NFTCoin
+import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.WalletWithNFTAndCoins
 import com.green.wallet.domain.interact.NFTInteract
-import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.presentation.custom.AESEncryptor
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class NFtInteractImpl @Inject constructor(
-	private val walletDao: WalletDao
+    private val walletDao: WalletDao,
+    private val nftInfoDao: NftInfoDao,
+    private val nftCoinDao: NftCoinsDao,
+    private val encryptor: AESEncryptor,
+    private val prefs: PrefsInteract
 ) : NFTInteract {
 
 
-	override suspend fun getHomeAddedWalletWithNFTTokensFlow(): Flow<List<WalletWithNFT>> {
-		val walletFlow = walletDao.getFLowOfWalletListWithNFTCoins()
-		walletFlow.collectLatest {
-			VLog.d("Wallet With NFT : $it and its hash : ${it[0].non_observer_hash}")
-		}
-		return flow {
+    override fun getHomeAddedWalletWithNFTTokensFlow(): Flow<List<WalletWithNFTAndCoins>> {
+        return walletDao.getFLowOfWalletListWithNFTCoins().map {
+            it.map { mapWalletNFTCoins(it) }
+        }
+    }
 
-		}
-	}
+    private suspend fun mapWalletNFTCoins(it: WalletWithNFT): WalletWithNFTAndCoins {
+        val nftInfos = mutableListOf<NFTInfo>()
+        val nftCoins = mutableListOf<NFTCoin>()
+        for (nftCoin in it.nftCoins) {
+            val optNftInfo = nftInfoDao.getNftInfoEntityByNftCoinHash(nftCoin.coin_info)
+            if (optNftInfo.isPresent) {
+                nftInfos.add(optNftInfo.get().toNFTInfo())
+                nftCoins.add(nftCoin.toNftCoin())
+            }
+        }
+        val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
+        val mnemonics = convertArrayStringToList(encryptor.decrypt(it.mnemonics, key!!))
+        return WalletWithNFTAndCoins(
+            mnemonics,
+            it.fingerPrint,
+            it.address,
+            it.observer_hash,
+            it.non_observer_hash,
+            nftInfos,
+            nftCoins
+        )
+    }
 
 
 }
