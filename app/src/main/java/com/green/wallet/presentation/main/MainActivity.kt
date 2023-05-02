@@ -27,6 +27,7 @@ import com.green.wallet.R
 import com.green.wallet.R.id.*
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
 import com.green.wallet.presentation.custom.*
@@ -48,6 +49,7 @@ import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
 import com.green.wallet.presentation.main.importtoken.ImportTokenFragment
 import com.green.wallet.presentation.main.managewallet.ManageWalletFragment
+import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
 import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensFragment
 import com.green.wallet.presentation.main.notification.NotifFragment.Companion.SHOW_GREEN_APP_NOTIF
 import com.green.wallet.presentation.main.receive.ReceiveFragment
@@ -562,8 +564,11 @@ class MainActivity : BaseActivity() {
 		navController.navigate(action_walletFragment_to_allWalletFragment)
 	}
 
-	fun move2NFTDetailsFragment() {
-		navController.navigate(fragmentNFTDetails)
+	fun move2NFTDetailsFragment(nft: NFTInfo) {
+		val bundle = Bundle().apply {
+			putParcelable(NFTDetailsFragment.NFT_KEY, nft)
+		}
+		navController.navigate(fragmentNFTDetails, bundle)
 	}
 
 	fun move2ManageWalletFragment(id: Int) {
@@ -642,7 +647,7 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentSwapMain)
 	}
 
-	fun move2QRSendFragment(){
+	fun move2QRSendFragment() {
 		navController.navigate(fragmentQrCodeSend)
 	}
 

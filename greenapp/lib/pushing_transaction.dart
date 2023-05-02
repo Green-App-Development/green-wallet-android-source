@@ -837,7 +837,7 @@ class PushingTransaction {
       final info = NFTInfo.fromUncurried(
         uncurriedNFT: nftUncurried,
         currentCoin: parentSpendCoin.coin,
-        addressPrefix: "txch",
+        addressPrefix: "xch",
         genesisCoin: Coin(
           confirmedBlockIndex: coin.confirmedBlockIndex,
           spentBlockIndex: coin.spentBlockIndex,
@@ -845,7 +845,7 @@ class PushingTransaction {
           timestamp: coin.timestamp,
           parentCoinInfo: coin.parentCoinInfo,
           puzzlehash: coin.puzzlehash,
-          amount: (0.000100000000 * pow(10, 23)).toInt(),
+          amount: (coin.amount * pow(10, 23)).toInt(),
         ), //Coin
       );
       debugPrint("Final UnCurried NFT : ${info.toMap()}");
@@ -873,6 +873,7 @@ class PushingTransaction {
       _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
     } catch (ex) {
       debugPrint("Exception in unCurrying nft coin: ${ex.toString()}");
+      _channel.invokeMethod("exceptionNFT");
     }
   }
 }

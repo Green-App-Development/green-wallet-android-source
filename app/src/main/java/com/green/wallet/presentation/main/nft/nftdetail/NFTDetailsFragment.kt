@@ -12,8 +12,10 @@ import android.widget.RelativeLayout
 import androidx.lifecycle.lifecycleScope
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.databinding.FragmentNftDetailBinding
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.main.MainActivity
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_send_nft.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -22,9 +24,18 @@ class NFTDetailsFragment : DaggerFragment() {
 
 	private lateinit var binding: FragmentNftDetailBinding
 
+	companion object {
+		const val NFT_KEY = "nft_key"
+	}
+
+	lateinit var nftInfo: NFTInfo
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
+		arguments?.let {
+			val nftInfo = it.getParcelable<NFTInfo>(NFT_KEY)
+			VLog.d("NFT Details on Fragment : $nftInfo")
+		}
 	}
 
 	override fun onCreateView(
@@ -39,7 +50,7 @@ class NFTDetailsFragment : DaggerFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding.registerClicks()
-
+		binding.updateViews()
 	}
 
 
@@ -81,6 +92,16 @@ class NFTDetailsFragment : DaggerFragment() {
 			copyToClipBoardShowCopied("Sample Copied")
 		}
 
+	}
+
+	fun FragmentNftDetailBinding.updateViews() {
+		if (this@NFTDetailsFragment::nftInfo.isInitialized) {
+			edtNFTName.text = nftInfo.name
+			edtNftDescription.text = nftInfo.description
+			edtNftCollection.text = nftInfo.collection
+			edtNFTID.text = nftInfo.nft_id
+
+		}
 	}
 
 	private fun copyToClipBoardShowCopied(text: String) {

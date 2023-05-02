@@ -152,6 +152,12 @@ fun isThisChivesNetwork(networkType: String): Boolean {
 	return networkType.lowercase().contains("chives")
 }
 
+fun getNetworkFromAddress(address: String):String {
+	if (address.contains("xch"))
+		return "Chia"
+	return "Chives"
+}
+
 fun dpFromPx(context: Context, px: Float): Float {
 	return px / context.getResources().getDisplayMetrics().density
 }
@@ -218,7 +224,7 @@ fun Context.convertDpToPixel(dp: Int): Int {
 }
 
 fun Context.convertPixelToDp(pixel: Float): Int {
-	return pixel.toInt()/ resources.displayMetrics.density.toInt()
+	return pixel.toInt() / resources.displayMetrics.density.toInt()
 }
 
 
