@@ -180,7 +180,7 @@
 			app:layout_constraintTop_toTopOf="parent">
 
 		<TextView
-				android:id="@+id/txtCoin"
+				android:id="@+id/txtNetwork"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="Chia"

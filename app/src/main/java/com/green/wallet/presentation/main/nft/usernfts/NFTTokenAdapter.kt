@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getDrawableResource
 import kotlinx.android.synthetic.main.fragment_faq.view.*
 
 
@@ -53,15 +54,15 @@ class NFTTokenAdapter(
 		private val rootNFTToken = v.findViewById<RelativeLayout>(R.id.root_nft_token)
 
 		fun onBind(nftInfo: NFTInfo, position: Int) {
-			VLog.d("NFtProperties on view holder : ${nftInfo.properties}")
+			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
 			nftName.text = nftInfo.name
 			nftCategory.text = nftInfo.collection
 			Glide.with(activity).load(nftInfo.data_url)
+				.placeholder(activity.getDrawableResource(R.drawable.img_nft))
 				.into(img_nft)
 			rootNFTToken.setOnClickListener {
 				nftTokenClicked.onNFTToken(nftInfo)
 			}
-
 
 		}
 

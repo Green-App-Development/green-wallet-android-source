@@ -67,7 +67,7 @@
 			app:layout_constraintTop_toBottomOf="@+id/back_layout">
 
 		<TextView
-				android:id="@+id/txtAllNFTS"
+				android:id="@+id/edtNFTName"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="GAD NFT Collection #187"

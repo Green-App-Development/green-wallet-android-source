@@ -8,16 +8,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentUserNftBinding
-import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.domain.domainmodel.WalletWithNFTAndCoins
+import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.convertPixelToDp
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.main.importtoken.ImportTokenViewModel
 import com.green.wallet.presentation.main.send.NetworkAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
@@ -25,7 +23,6 @@ import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,6 +36,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 	@Inject
 	lateinit var factory: ViewModelFactory
 	private val vm: UserNFTTokensViewModel by viewModels { factory }
+	private var prevChooseItemPosViewPager = 0
 
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,9 +64,11 @@ class UserNFTTokensFragment : DaggerFragment() {
 	private fun initViewPager() {
 		kotlin.runCatching {
 			lifecycleScope.launch {
-				vm.getHomeAddedWalletWithNFT().collect {
-					VLog.d("Retrieving walletListWithNFTAndCoins : $it")
-					initNFTUpdateViewPager(it)
+				repeatOnLifecycle(Lifecycle.State.STARTED) {
+					vm.getHomeAddedWalletWithNFT().collect {
+						VLog.d("Retrieving walletListWithNFTAndCoins : $it")
+						initNFTUpdateViewPager(it)
+					}
 				}
 			}
 		}.onFailure {
@@ -76,11 +76,33 @@ class UserNFTTokensFragment : DaggerFragment() {
 		}
 	}
 
-	private fun initNFTUpdateViewPager(walletList: List<WalletWithNFTAndCoins>) {
+	private fun initNFTUpdateViewPager(walletList: List<WalletWithNFTInfo>) {
 		val nftViewPagerAdapter = WalletNFTViewPagerAdapter(getMainActivity(), walletList)
+		if (prevChooseItemPosViewPager >= walletList.size)
+			prevChooseItemPosViewPager = 0
 		binding.apply {
 			nftViewPager.adapter = nftViewPagerAdapter
+			nftViewPager.setCurrentItem(prevChooseItemPosViewPager, true)
 			pageIndicator.count = walletList.size
+			nftViewPager.addOnPageChangeListener(object : OnPageChangeListener {
+				override fun onPageScrolled(
+					position: Int,
+					positionOffset: Float,
+					positionOffsetPixels: Int
+				) {
+
+				}
+
+				override fun onPageSelected(position: Int) {
+					pageIndicator.setSelected(position)
+					prevChooseItemPosViewPager = position
+				}
+
+				override fun onPageScrollStateChanged(state: Int) {
+
+				}
+
+			})
 		}
 	}
 

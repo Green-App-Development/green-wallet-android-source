@@ -1,27 +1,25 @@
 package com.green.wallet.presentation.main.nft.usernfts
 
-import android.app.Activity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.PagerAdapter
 import com.green.wallet.databinding.ItemWalletNftViewPagerBinding
 import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.domain.domainmodel.WalletWithNFTAndCoins
-import com.green.wallet.presentation.custom.convertPixelToDp
+import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
+import com.green.wallet.presentation.custom.getNetworkFromAddress
+import com.green.wallet.presentation.custom.hidePublicKey
+import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.VLog
-import kotlinx.coroutines.Job
 
 class WalletNFTViewPagerAdapter(
-	private val activity: Activity,
-	private val walletList: List<WalletWithNFTAndCoins>
+	private val activity: MainActivity,
+	private val walletList: List<WalletWithNFTInfo>
 ) : PagerAdapter(), NFTTokenAdapter.NFTTokenClicked {
 
 
@@ -50,8 +48,8 @@ class WalletNFTViewPagerAdapter(
 
 	private fun ItemWalletNftViewPagerBinding.registerViews(position: Int) {
 		val nftWallet = walletList[position]
-		VLog.d("NFTWalletViewPager register views pos : $position and mapSize : ${nftWallet.nftMap.size}")
-		if (nftWallet.nftMap.isNotEmpty()) {
+		VLog.d("NFTWalletViewPager register views pos : $position and mapSize : ${nftWallet.nftInfos.size}")
+		if (nftWallet.nftInfos.isNotEmpty()) {
 			btnExploreMarkets.visibility = View.GONE
 			txtNoNFTPlaceHolder.visibility = View.GONE
 			linearDummyNftImg1.visibility = View.GONE
@@ -60,7 +58,7 @@ class WalletNFTViewPagerAdapter(
 			val nftAdapter = NFTTokenAdapter(this@WalletNFTViewPagerAdapter, activity)
 			recViewNft.adapter = nftAdapter
 			recViewNft.layoutManager = GridLayoutManager(activity, 2)
-			nftAdapter.updateNFTTokenList(nftWallet.nftMap.values.toList())
+			nftAdapter.updateNFTTokenList(nftWallet.nftInfos)
 		} else {
 			recViewNft.visibility = View.GONE
 			btnExploreMarkets.visibility = View.VISIBLE
@@ -75,6 +73,10 @@ class WalletNFTViewPagerAdapter(
 				}, 2000L)
 			}
 		}
+		txtNetwork.text = getNetworkFromAddress(nftWallet.address)
+		txtHiddenPublicKey.text = hidePublicKey(nftWallet.fingerPrint)
+
+
 	}
 
 	override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
@@ -82,7 +84,7 @@ class WalletNFTViewPagerAdapter(
 	}
 
 	override fun onNFTToken(nft: NFTInfo) {
-
+		activity.move2NFTDetailsFragment(nft)
 	}
 
 

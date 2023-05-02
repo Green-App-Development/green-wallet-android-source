@@ -145,7 +145,7 @@ class UncurriedNFT {
       singletonLauncherId = singletonStruct.rest().first();
       launcherPuzzhash = singletonStruct.rest().rest();
     } catch (e) {
-      throw ArgumentError('Cannot uncurry singleton top layer: Args ${curried_args}');
+      throw ArgumentError('Cannot uncurry singleton top layer: Args $curried_args');
     }
 
     final uncurred = curried_args[1].uncurry();

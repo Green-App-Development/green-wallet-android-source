@@ -198,7 +198,6 @@ class BlockChainInteractImpl @Inject constructor(
 							parent_coin.coin_solution.puzzle_reveal,
 							parent_coin.coin_solution.solution
 						)
-						nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
 						val methodChannel = MethodChannel(
 							(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
 							METHOD_CHANNEL_GENERATE_HASH
@@ -207,8 +206,14 @@ class BlockChainInteractImpl @Inject constructor(
 							if (method.method == "unCurriedNFTInfo") {
 								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
 								CoroutineScope(Dispatchers.IO).launch {
-									retrieveNFTPropertiesAndSave(method, coin.coin.parent_coin_info)
+									retrieveNFTPropertiesAndSave(
+										method,
+										coin.coin.parent_coin_info,
+										nftCoinEntity
+									)
 								}
+							} else if (method.method == "exceptionNFT") {
+
 							}
 						}
 						withContext(Dispatchers.Main) {
@@ -218,7 +223,7 @@ class BlockChainInteractImpl @Inject constructor(
 							VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
 							methodChannel.invokeMethod("unCurryNft", map)
 						}
-						delay(3000)
+						delay(2000)
 					}
 				}
 			} else {
@@ -229,7 +234,11 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
-	private suspend fun retrieveNFTPropertiesAndSave(method: MethodCall, coin_hash: String) {
+	private suspend fun retrieveNFTPropertiesAndSave(
+		method: MethodCall,
+		coin_hash: String,
+		nftCoinEntity: NFTCoinEntity
+	) {
 		val args = method.arguments as HashMap<String, Any>
 		val launcher_id = args["launcherId"].toString()
 		val nft_id = args["nftCoinId"].toString()
@@ -262,9 +271,11 @@ class BlockChainInteractImpl @Inject constructor(
 			description = description,
 			collection = collection,
 			properties = properties,
-			name = name
+			name = name,
+			address_fk = nftCoinEntity.address_fk
 		)
 		nftInfoDao.insertNftInfoEntity(nftInfoEntity)
+		nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
 	}
 
 	private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any> {
