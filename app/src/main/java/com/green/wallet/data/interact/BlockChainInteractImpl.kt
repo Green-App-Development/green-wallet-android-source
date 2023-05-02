@@ -218,6 +218,7 @@ class BlockChainInteractImpl @Inject constructor(
 							VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
 							methodChannel.invokeMethod("unCurryNft", map)
 						}
+						delay(3000)
 					}
 				}
 			} else {

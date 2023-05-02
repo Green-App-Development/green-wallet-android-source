@@ -120,21 +120,21 @@ class UncurriedNFT {
     late Program singletonLauncherId;
     late Program launcherPuzzhash;
 
-    Program dataUris = Program.list([]);
-    Program dataHash = Program.fromInt(0);
-    Program metaUris = Program.list([]);
-    Program metaHash = Program.fromInt(0);
-    Program licenseUris = Program.list([]);
-    Program licenseHash = Program.fromInt(0);
-    Program seriesNumber = Program.fromInt(1);
-    Program seriesTotal = Program.fromInt(0);
+    var dataUris = Program.list([]);
+    var dataHash = Program.fromInt(0);
+    var metaUris = Program.list([]);
+    var metaHash = Program.fromInt(0);
+    var licenseUris = Program.list([]);
+    var licenseHash = Program.fromInt(0);
+    var seriesNumber = Program.fromInt(1);
+    var seriesTotal = Program.fromInt(0);
 
     final uncurried = puzzle.uncurry();
     final mod = uncurried.program;
     final curried_args = uncurried.arguments;
     // print(mod.serializeHex());
     if (mod.hash() != SINGLETON_TOP_LAYER_MOD_V1_1_HASH) {
-      throw ArgumentError("Cannot uncurry NFT puzzle, failed on singleton top layer: Mod ${mod}");
+      throw ArgumentError('Cannot uncurry NFT puzzle, failed on singleton top layer: Mod ${mod}');
     }
 
     try {
@@ -145,7 +145,7 @@ class UncurriedNFT {
       singletonLauncherId = singletonStruct.rest().first();
       launcherPuzzhash = singletonStruct.rest().rest();
     } catch (e) {
-      throw ArgumentError("Cannot uncurry singleton top layer: Args ${curried_args}");
+      throw ArgumentError('Cannot uncurry singleton top layer: Args ${curried_args}');
     }
 
     final uncurred = curried_args[1].uncurry();
@@ -153,7 +153,7 @@ class UncurriedNFT {
     final nftArgs = uncurred.arguments;
 
     if (nftMod.toSource() != nftStateLayerProgram.toSource()) {
-      throw ArgumentError("Cannot uncurry NFT puzzle, failed on NFT state layer: Mod ${mod}");
+      throw ArgumentError('Cannot uncurry NFT puzzle, failed on NFT state layer: Mod ${mod}');
     }
     try {
       final nftModHash = nftArgs[0];

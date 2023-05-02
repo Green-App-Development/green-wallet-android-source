@@ -49,8 +49,8 @@ class WalletNFTViewPagerAdapter(
 	}
 
 	private fun ItemWalletNftViewPagerBinding.registerViews(position: Int) {
-		VLog.d("NFTWalletViewPager register views pos : $position")
 		val nftWallet = walletList[position]
+		VLog.d("NFTWalletViewPager register views pos : $position and mapSize : ${nftWallet.nftMap.size}")
 		if (nftWallet.nftMap.isNotEmpty()) {
 			btnExploreMarkets.visibility = View.GONE
 			txtNoNFTPlaceHolder.visibility = View.GONE
