@@ -2,7 +2,7 @@ package com.green.wallet.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import com.green.wallet.domain.domainmodel.NFTCoin
 
@@ -19,7 +19,7 @@ import com.green.wallet.domain.domainmodel.NFTCoin
     ]
 )
 data class NFTCoinEntity(
-    @PrimaryKey(false)
+    @PrimaryKey(autoGenerate = false)
     val coin_info: String,
     val address_fk: String,
     val coin_hash: String,

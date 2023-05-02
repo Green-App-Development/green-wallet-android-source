@@ -6,9 +6,10 @@ import javax.inject.Inject
 
 
 class UserNFTTokensViewModel @Inject constructor(
-    private val nftInteract: NFTInteract
+	private val nftInteract: NFTInteract
 ) : ViewModel() {
 
 
+	fun getHomeAddedWalletWithNFT() = nftInteract.getHomeAddedWalletWithNFTTokensFlow()
 
 }

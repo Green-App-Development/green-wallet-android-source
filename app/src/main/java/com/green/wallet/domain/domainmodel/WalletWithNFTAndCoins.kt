@@ -1,11 +1,10 @@
 package com.green.wallet.domain.domainmodel
 
-class WalletWithNFTAndCoins(
+data class WalletWithNFTAndCoins(
 	val mnemonics: List<String>,
 	val fingerPrint: Long,
 	val address: String,
 	val observer: Int,
 	val non_observer: Int,
-	val nftInfoList: List<NFTInfo>,
-	val nftCoinList:List<NFTCoin>
+	val nftMap: HashMap<NFTCoin, NFTInfo>
 )

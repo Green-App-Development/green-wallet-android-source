@@ -108,7 +108,7 @@ class App : DaggerApplication() {
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.Main).launch {
-			nftInteract.getHomeAddedWalletWithNFTTokensFlow()
+//			nftInteract.getHomeAddedWalletWithNFTTokensFlow()
 		}
 	}
 

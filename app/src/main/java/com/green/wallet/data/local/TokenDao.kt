@@ -9,7 +9,7 @@ import java.util.*
 interface TokenDao {
 
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	@Insert(onConflict = OnConflictStrategy.IGNORE)
 	suspend fun insertToken(tokenEntity: TokenEntity)
 
 	@Query("UPDATE TokenEntity SET price=:price WHERE code=:code")

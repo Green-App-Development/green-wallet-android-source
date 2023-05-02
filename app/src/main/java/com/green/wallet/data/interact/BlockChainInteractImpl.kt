@@ -207,7 +207,7 @@ class BlockChainInteractImpl @Inject constructor(
 							if (method.method == "unCurriedNFTInfo") {
 								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
 								CoroutineScope(Dispatchers.IO).launch {
-									retrieveNFTPropertiesAndSave(method)
+									retrieveNFTPropertiesAndSave(method, coin.coin.parent_coin_info)
 								}
 							}
 						}
@@ -228,9 +228,8 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
-	private suspend fun retrieveNFTPropertiesAndSave(method: MethodCall) {
+	private suspend fun retrieveNFTPropertiesAndSave(method: MethodCall, coin_hash: String) {
 		val args = method.arguments as HashMap<String, Any>
-		val nft_hash = args["nft_hash"].toString()
 		val launcher_id = args["launcherId"].toString()
 		val nft_id = args["nftCoinId"].toString()
 		val owner_id = args["didOwner"].toString()
@@ -245,9 +244,10 @@ class BlockChainInteractImpl @Inject constructor(
 		val metaData = getMetaDataNFT(meta_data_url)
 		val description = metaData["description"].toString()
 		val collection = metaData["collection"].toString()
+		val name = metaData["name"].toString()
 		val properties = metaData["attributes"] as HashMap<String, String>
 		val nftInfoEntity = NFTInfoEntity(
-			nft_coin_hash = nft_hash,
+			nft_coin_hash = coin_hash,
 			nft_id = nft_id,
 			launcher_id = launcher_id,
 			owner_did = owner_id,
@@ -260,7 +260,8 @@ class BlockChainInteractImpl @Inject constructor(
 			meta_url = meta_data_url,
 			description = description,
 			collection = collection,
-			properties = properties
+			properties = properties,
+			name = name
 		)
 		nftInfoDao.insertNftInfoEntity(nftInfoEntity)
 	}
@@ -272,14 +273,16 @@ class BlockChainInteractImpl @Inject constructor(
 		val resJson = res.body()!!.asJsonObject
 		val resMap = hashMapOf<String, Any>()
 		val description = resJson["description"].toString()
-		val collection = resJson["collection"].asJsonObject["name"]
+		val collection = resJson["collection"].asJsonObject["name"].toString()
 		val name = resJson["name"].toString()
-		resMap["description"] = description
-		resMap["collection"] = collection
-		resMap["name"] = name
+		resMap["description"] = description.substring(1, description.length - 1)
+		resMap["collection"] = collection.substring(1, collection.length - 1)
+		resMap["name"] = name.substring(1, name.length - 1)
 		val attributeMap = hashMapOf<String, String>()
 		val attJsonArray = resJson["attributes"].asJsonArray
 		for (attr in attJsonArray) {
+			attr.asJsonObject["trait_type"] ?: continue
+			attr.asJsonObject["value"] ?: continue
 			val trait = attr.asJsonObject["trait_type"].toString()
 			val value = attr.asJsonObject["value"].toString()
 			VLog.d("TraitType : $trait and Value : $value of nft attributes")
