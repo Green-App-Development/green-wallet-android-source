@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.nft.usernfts
 
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,17 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.presentation.tools.VLog
+import kotlinx.android.synthetic.main.fragment_faq.view.*
 
 
-class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
+class NFTTokenAdapter(
+	private val nftTokenClicked: NFTTokenClicked,
+	private val activity: Activity
+) :
 	RecyclerView.Adapter<NFTTokenAdapter.NFTTokenViewHolder>() {
 
 	private var nftList = listOf<NFTInfo>()
@@ -45,14 +52,15 @@ class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
 		private val emptyView = v.findViewById<View>(R.id.emptyView)
 		private val rootNFTToken = v.findViewById<RelativeLayout>(R.id.root_nft_token)
 
-		fun onBind(nftToken: NFTInfo, position: Int) {
-//			nftName.setText(nftToken.name)
-//			nftCategory.setText(nftToken.categoryType)
-//			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
-//
-//			rootNFTToken.setOnClickListener {
-//				nftTokenClicked.onNFTToken()
-//			}
+		fun onBind(nftInfo: NFTInfo, position: Int) {
+			VLog.d("NFtProperties on view holder : ${nftInfo.properties}")
+			nftName.text = nftInfo.name
+			nftCategory.text = nftInfo.collection
+			Glide.with(activity).load(nftInfo.data_url)
+				.into(img_nft)
+			rootNFTToken.setOnClickListener {
+				nftTokenClicked.onNFTToken(nftInfo)
+			}
 
 		}
 
@@ -85,7 +93,7 @@ class NFTTokenAdapter(private val nftTokenClicked: NFTTokenClicked) :
 	}
 
 	interface NFTTokenClicked {
-		fun onNFTToken()
+		fun onNFTToken(nft: NFTInfo)
 	}
 
 }

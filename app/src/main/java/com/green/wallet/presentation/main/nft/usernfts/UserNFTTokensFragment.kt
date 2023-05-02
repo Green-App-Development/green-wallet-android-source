@@ -4,33 +4,42 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentUserNftBinding
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.WalletWithNFTAndCoins
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.convertPixelToDp
+import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.importtoken.ImportTokenViewModel
 import com.green.wallet.presentation.main.send.NetworkAdapter
+import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked {
+class UserNFTTokensFragment : DaggerFragment() {
 
 	private lateinit var binding: FragmentUserNftBinding
 
 	@Inject
 	lateinit var animManager: AnimationManager
 
-	private val nftAdapter by lazy {
-		NFTTokenAdapter(this)
-	}
+	@Inject
+	lateinit var factory: ViewModelFactory
+	private val vm: UserNFTTokensViewModel by viewModels { factory }
+
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -50,20 +59,28 @@ class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked 
 		super.onViewCreated(view, savedInstanceState)
 		binding.registerClicks()
 		updateViewDetails()
+		initViewPager()
 
 	}
 
-	private fun dummyNFTData() {
+	private fun initViewPager() {
+		kotlin.runCatching {
+			lifecycleScope.launch {
+				vm.getHomeAddedWalletWithNFT().collect {
+					VLog.d("Retrieving walletListWithNFTAndCoins : $it")
+					initNFTUpdateViewPager(it)
+				}
+			}
+		}.onFailure {
+			VLog.d("Exception in nft view pager adapter : ${it.message}")
+		}
+	}
+
+	private fun initNFTUpdateViewPager(walletList: List<WalletWithNFTAndCoins>) {
+		val nftViewPagerAdapter = WalletNFTViewPagerAdapter(getMainActivity(), walletList)
 		binding.apply {
-			btnExploreMarkets.visibility = View.GONE
-//			placeHolderNoNFTs.visibility = View.GONE
-			txtNoNFTPlaceHolder.visibility = View.GONE
-			constraintCommentExploreMarkets.visibility = View.GONE
-
-			recViewNft.layoutManager = GridLayoutManager(curActivity(), 2)
-			recViewNft.setHasFixedSize(true)
-			recViewNft.adapter = nftAdapter
-
+			nftViewPager.adapter = nftViewPagerAdapter
+			pageIndicator.count = walletList.size
 		}
 	}
 
@@ -75,7 +92,6 @@ class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked 
 				listOf(curActivity().getStringResource(R.string.all_nfts))
 			)
 		binding.nftTypeSpinner.adapter = nftAdapter
-
 
 	}
 
@@ -98,7 +114,7 @@ class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked 
 		)
 
 		btnExploreMarkets.setOnClickListener {
-			dummyNFTData()
+
 		}
 
 	}
@@ -117,10 +133,5 @@ class UserNFTTokensFragment : DaggerFragment(), NFTTokenAdapter.NFTTokenClicked 
 			binding.constraintBtmNavViewComment.visibility = View.GONE
 		}
 	}
-
-	override fun onNFTToken() {
-		curActivity().move2NFTDetailsFragment()
-	}
-
 
 }

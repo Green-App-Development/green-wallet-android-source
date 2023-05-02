@@ -23,7 +23,8 @@ data class NFTInfoEntity(
     val meta_url: String,
     val description: String,
     val collection: String,
-    val properties: HashMap<String, String>
+    val properties: HashMap<String, String>,
+	val name:String
 ) {
     fun toNFTInfo() = NFTInfo(
         nft_coin_hash,
@@ -39,6 +40,7 @@ data class NFTInfoEntity(
         meta_url,
         description,
         collection,
-        properties
+        properties,
+		name
     )
 }

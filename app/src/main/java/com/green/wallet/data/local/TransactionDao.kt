@@ -3,8 +3,7 @@ package com.green.wallet.data.local
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.Companion.IGNORE
-import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.presentation.tools.Status
@@ -19,7 +18,7 @@ interface TransactionDao {
 	@Insert(onConflict = IGNORE)
 	suspend fun insertTransaction(trans: TransactionEntity)
 
-	@Insert(onConflict = REPLACE)
+	@Insert(onConflict = IGNORE)
 	suspend fun insertTransactions(transList: List<TransactionEntity>)
 
 	@Query("SELECT * FROM TransactionEntity ORDER BY created_at_time DESC")

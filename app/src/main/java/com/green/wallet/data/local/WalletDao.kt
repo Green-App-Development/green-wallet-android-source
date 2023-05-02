@@ -1,7 +1,7 @@
 package com.green.wallet.data.local
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.Companion.REPLACE
+import androidx.room.OnConflictStrategy.IGNORE
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.local.relations.WalletWithNFT
 import com.green.wallet.presentation.tools.NetworkType
@@ -12,7 +12,7 @@ import java.util.*
 @Dao
 interface WalletDao {
 
-	@Insert(onConflict = REPLACE)
+	@Insert(onConflict = IGNORE)
 	suspend fun insertWallet(walletEntity: WalletEntity): Long
 
 	@Delete

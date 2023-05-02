@@ -15,5 +15,6 @@ data class NFTInfo(
 	val meta_url: String,
 	val description: String,
 	val collection: String,
-	val properties: HashMap<String, String>
+	val properties: HashMap<String, String>,
+	val name:String
 )
