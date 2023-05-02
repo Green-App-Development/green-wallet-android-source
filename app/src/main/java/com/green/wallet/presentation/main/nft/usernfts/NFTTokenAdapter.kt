@@ -62,6 +62,7 @@ class NFTTokenAdapter(
 				nftTokenClicked.onNFTToken(nftInfo)
 			}
 
+
 		}
 
 
