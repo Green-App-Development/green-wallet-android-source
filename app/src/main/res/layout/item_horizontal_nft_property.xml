@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/bcg_nft_property"
+		android:gravity="center_vertical"
+		android:minWidth="90dp"
+		android:orientation="vertical"
+		android:paddingStart="8dp"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp">
+
+	<TextView
+			android:id="@+id/edtPropertyKey"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/nft_apy"
+			android:textColor="@color/secondary_text_color"
+			android:textSize="10sp" />
+
+	<TextView
+			android:id="@+id/edtPropertyValue"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="9.5%"
+			android:textColor="@color/secondary_text_color"
+			android:textSize="14sp" />
+
+</LinearLayout>
