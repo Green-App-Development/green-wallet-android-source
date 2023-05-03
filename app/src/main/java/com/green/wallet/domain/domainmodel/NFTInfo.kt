@@ -19,7 +19,8 @@ data class NFTInfo(
 	val description: String,
 	val collection: String,
 	val properties: HashMap<String, String>,
-	val name: String
+	val name: String,
+	val fk_address: String
 ) : Parcelable {
 
 	constructor(parcel: Parcel) : this(
@@ -37,7 +38,8 @@ data class NFTInfo(
 		parcel.readString()!!,
 		parcel.readString()!!,
 		parcel.readHashMap(String::class.java.classLoader) as HashMap<String, String>,
-		parcel.readString()!!
+		parcel.readString()!!,
+		parcel.readString()!!,
 	)
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -56,6 +58,7 @@ data class NFTInfo(
 		parcel.writeString(collection)
 		parcel.writeMap(properties)
 		parcel.writeString(name)
+		parcel.writeString(fk_address)
 	}
 
 	override fun describeContents(): Int {

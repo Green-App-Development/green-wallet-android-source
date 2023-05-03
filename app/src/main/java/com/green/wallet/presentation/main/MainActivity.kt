@@ -50,6 +50,7 @@ import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
 import com.green.wallet.presentation.main.importtoken.ImportTokenFragment
 import com.green.wallet.presentation.main.managewallet.ManageWalletFragment
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
+import com.green.wallet.presentation.main.nft.nftsend.NFTSendFragment
 import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensFragment
 import com.green.wallet.presentation.main.notification.NotifFragment.Companion.SHOW_GREEN_APP_NOTIF
 import com.green.wallet.presentation.main.receive.ReceiveFragment
@@ -834,8 +835,11 @@ class MainActivity : BaseActivity() {
 		move2NewOrImportWallet(networkType)
 	}
 
-	fun move2SendNFTFragment() {
-		navController.navigate(fragmentSendNFT)
+	fun move2SendNFTFragment(nft:NFTInfo) {
+		val bundle = Bundle().apply {
+			putParcelable(NFTSendFragment.NFT_KEY, nft)
+		}
+		navController.navigate(fragmentSendNFT,bundle)
 	}
 
 	//temp passing status

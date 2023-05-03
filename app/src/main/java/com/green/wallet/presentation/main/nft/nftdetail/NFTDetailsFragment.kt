@@ -10,10 +10,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
+import com.example.common.tools.formatString
+import com.green.wallet.R
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.databinding.FragmentNftDetailBinding
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.nft.usernfts.NFTTokenAdapter
+import com.green.wallet.presentation.tools.getDrawableResource
+import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_send_nft.*
 import kotlinx.coroutines.delay
@@ -34,6 +42,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
 			val nftInfo = it.getParcelable<NFTInfo>(NFT_KEY)
+			this.nftInfo = nftInfo!!
 			VLog.d("NFT Details on Fragment : $nftInfo")
 		}
 	}
@@ -57,22 +66,22 @@ class NFTDetailsFragment : DaggerFragment() {
 	fun FragmentNftDetailBinding.registerClicks() {
 
 
-//		scrollNFTProperties.setOnScrollChangeListener { view, curX, curY, oldX, oldY ->
-//			if (curY > oldY) {
-//				//down
-//				val diff = Math.abs(curY - oldY)
-//				if (diff >= 10)
-//					moveRelativeLayoutToBtmSlowly(relativeLayoutBtnSend)
-//			} else {
-//				//up
-//				val diff = Math.abs(curY - oldY)
-//				if (diff >= 10)
-//					moveRelativeLayoutFromBtmSlowly(relativeLayoutBtnSend)
-//			}
-//		}
+		scrollNFTProperties.setOnScrollChangeListener { view, curX, curY, oldX, oldY ->
+			if (curY > oldY) {
+				//down
+				val diff = Math.abs(curY - oldY)
+				if (diff >= 10)
+					moveRelativeLayoutToBtmSlowly(relativeLayoutBtnSend)
+			} else {
+				//up
+				val diff = Math.abs(curY - oldY)
+				if (diff >= 10)
+					moveRelativeLayoutFromBtmSlowly(relativeLayoutBtnSend)
+			}
+		}
 
 		btnSend.setOnClickListener {
-			curActivity().move2SendNFTFragment()
+			curActivity().move2SendNFTFragment(nftInfo)
 		}
 
 		backLayout.setOnClickListener {
@@ -81,26 +90,51 @@ class NFTDetailsFragment : DaggerFragment() {
 
 
 		imgCpyDataUrl.setOnClickListener {
-			copyToClipBoardShowCopied("Sample Copied")
+			copyToClipBoardShowCopied(nftInfo.data_url)
 		}
 
 		imgCpyMetadataUrl.setOnClickListener {
-			copyToClipBoardShowCopied("Sample Copied")
+			copyToClipBoardShowCopied(nftInfo.meta_url)
 		}
 
 		imgCpyNftId.setOnClickListener {
-			copyToClipBoardShowCopied("Sample Copied")
+			copyToClipBoardShowCopied(nftInfo.nft_id)
 		}
 
 	}
 
 	fun FragmentNftDetailBinding.updateViews() {
-		if (this@NFTDetailsFragment::nftInfo.isInitialized) {
-			edtNFTName.text = nftInfo.name
-			edtNftDescription.text = nftInfo.description
-			edtNftCollection.text = nftInfo.collection
-			edtNFTID.text = nftInfo.nft_id
+		VLog.d("Update views  on nft details fragment -> $nftInfo")
+		initUpdatePropertiesRecView()
+		edtNFTName.text = nftInfo.name
+		edtNftDescription.text = nftInfo.description
+		edtNftCollection.text = nftInfo.collection
+		edtNFTID.text = formatString(8, nftInfo.nft_id, 4)
+		edtLaunchedID.text = formatString(4, nftInfo.launcher_id, 4)
+		edtOwnerID.text = "Unassigned"
+		edtMinterDID.text = ""
+		edtRoyaltyPercentage.text = "${nftInfo.royalty_percentage}%"
+		edtMinterBlockHeight.text = "${nftInfo.mint_height}"
+		edtDataUrl1.text = formatString(15, nftInfo.data_url, 0)
+		edtDataHash.text = formatString(6, nftInfo.data_hash, 4)
+		edtMetaData1.text = formatString(15, nftInfo.meta_url, 0)
+		edtMetadataHash.text = formatString(6, nftInfo.data_hash, 4)
+		Glide.with(getMainActivity()).load(nftInfo.data_url)
+			.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
+			.into(imgNft)
+	}
 
+	private fun initUpdatePropertiesRecView() {
+		binding.apply {
+			val adapter = NftPropertiesAdapter(nftInfo.properties)
+			recViewPropertiesNft.layoutManager = GridLayoutManager(getMainActivity(), 2)
+			recViewPropertiesNft.adapter = adapter
+			adapter.updateNFTPropertyList(nftInfo.properties.keys.toList())
+			val params = recViewPropertiesNft.layoutParams
+			val len = nftInfo.properties.size
+			params.height =
+				getMainActivity().convertDpToPixel(78 * if (len % 2 == 0) len / 2 else len / 2 + 1)
+			recViewPropertiesNft.layoutParams = params
 		}
 	}
 
@@ -135,7 +169,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		animator.start()
 	}
 
-	fun `moveRelativeLayoutFromBtmSlowly`(relLayout: RelativeLayout) {
+	fun moveRelativeLayoutFromBtmSlowly(relLayout: RelativeLayout) {
 		if (!isHiddenRelLayoutBtnSend)
 			return
 		isHiddenRelLayoutBtnSend = false
@@ -144,6 +178,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		animator.duration = 1000
 		animator.start()
 	}
+
 
 	fun curActivity() = requireActivity() as MainActivity
 

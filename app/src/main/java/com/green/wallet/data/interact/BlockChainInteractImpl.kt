@@ -177,7 +177,7 @@ class BlockChainInteractImpl @Inject constructor(
 				val coinRecords = res.body()!!.coin_records
 				for (coin in coinRecords) {
 					val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-					if (nftCoin.isPresent)
+					if (nftCoin.isPresent || coin.coin.amount != 1L)
 						continue
 					val parent_coin = getNftParentCoin(
 						coin.coin.parent_coin_info,
@@ -295,8 +295,8 @@ class BlockChainInteractImpl @Inject constructor(
 		for (attr in attJsonArray) {
 			attr.asJsonObject["trait_type"] ?: continue
 			attr.asJsonObject["value"] ?: continue
-			val trait = attr.asJsonObject["trait_type"].toString()
-			val value = attr.asJsonObject["value"].toString()
+			val trait = attr.asJsonObject["trait_type"].asString
+			val value = attr.asJsonObject["value"].asString
 			VLog.d("TraitType : $trait and Value : $value of nft attributes")
 			attributeMap[trait] = value
 		}

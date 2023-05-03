@@ -15,23 +15,34 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.addingDoubleDotsTxt
+import com.example.common.tools.formatString
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSendNftBinding
+import com.green.wallet.domain.domainmodel.NFTCoin
+import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.presentation.App
+import com.green.wallet.presentation.custom.DialogManager
+import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.getShortNetworkType
-import com.green.wallet.presentation.tools.getColorResource
-import com.green.wallet.presentation.tools.getMainActivity
-import com.green.wallet.presentation.tools.getStringResource
+import com.green.wallet.presentation.di.factory.ViewModelFactory
+import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
+import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensViewModel
+import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
+import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.dialog_confirm_send_nft.*
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class NFTSendFragment : DaggerFragment() {
@@ -40,10 +51,27 @@ class NFTSendFragment : DaggerFragment() {
 
 	private val twoEdtsFilled = mutableSetOf<Int>()
 
+	companion object {
+		const val NFT_KEY = "nft_key"
+	}
+
+	lateinit var nftInfo: NFTInfo
+
+	@Inject
+	lateinit var factory: ViewModelFactory
+	private val vm: NFTSendViewModel by viewModels { factory }
+
+
+	@Inject
+	lateinit var dialogManager: DialogManager
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
+		arguments?.let {
+			val nftInfo = it.getParcelable<NFTInfo>(NFTDetailsFragment.NFT_KEY)
+			this.nftInfo = nftInfo!!
+			VLog.d("NFT Details on Fragment : $nftInfo")
+		}
 	}
 
 	override fun onCreateView(
@@ -59,7 +87,9 @@ class NFTSendFragment : DaggerFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding.registerClicks()
+		binding.updateViews()
 		getQrCodeDecoded()
+		vm.initNFTCoin(nftInfo)
 	}
 
 	fun FragmentSendNftBinding.registerClicks() {
@@ -138,9 +168,43 @@ class NFTSendFragment : DaggerFragment() {
 		}
 
 		imgCopyNftId.setOnClickListener {
-			copyToClipBoardShowCopied("Sample Copied")
+			copyToClipBoardShowCopied(nftInfo.nft_id)
 		}
 
+	}
+
+	fun FragmentSendNftBinding.updateViews() {
+		edtNFTName.text = nftInfo.name
+		edtNFTCollection.text = nftInfo.collection
+		edtNftID.text = formatString(15, nftInfo.nft_id, 4)
+		var firstView = true
+		for ((key, value) in nftInfo.properties) {
+			containerProperties.addView(generateLinearLayoutProperties(firstView, key, value))
+			firstView = false
+		}
+	}
+
+	private fun generateLinearLayoutProperties(
+		firstView: Boolean,
+		key: String,
+		value: String
+	): View {
+		val linearLayout = LayoutInflater.from(getMainActivity())
+			.inflate(R.layout.item_horizontal_nft_property, binding.containerProperties, false)
+		val txtKey = linearLayout.findViewById<TextView>(R.id.edtPropertyKey)
+		val txtValue = linearLayout.findViewById<TextView>(R.id.edtPropertyValue)
+		txtKey.text = key
+		txtValue.text = value
+		txtKey.id = View.generateViewId()
+		txtValue.id = View.generateViewId()
+		val layoutParams = LinearLayout.LayoutParams(
+			LinearLayout.LayoutParams.MATCH_PARENT,
+			LinearLayout.LayoutParams.MATCH_PARENT
+		)
+		if (!firstView)
+			layoutParams.marginStart = getMainActivity().convertDpToPixel(3)
+		linearLayout.layoutParams = layoutParams
+		return linearLayout
 	}
 
 	private fun copyToClipBoardShowCopied(text: String) {
@@ -185,6 +249,8 @@ class NFTSendFragment : DaggerFragment() {
 
 			findViewById<Button>(R.id.btnConfirm).setOnClickListener {
 				dialog.dismiss()
+				getMainActivity().showEnterPasswordFragment(reason = ReasonEnterCode.SEND_MONEY)
+				waitingResponseEntPassCodeFragment()
 			}
 
 			findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
@@ -195,6 +261,67 @@ class NFTSendFragment : DaggerFragment() {
 
 	}
 
+	private var passcodeJob: Job? = null
+
+	private fun waitingResponseEntPassCodeFragment() {
+		passcodeJob?.cancel()
+		passcodeJob = lifecycleScope.launch {
+			getMainActivity().mainViewModel.money_send_success.collect {
+				if (it) {
+					VLog.d("Success entering the passcode : $it")
+					delay(500)
+					dialogManager.showProgress(getMainActivity())
+					initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+					getMainActivity().mainViewModel.send_money_false()
+				}
+			}
+		}
+	}
+
+	private var genSpendBundleJob: Job? = null
+
+	private val handler = CoroutineExceptionHandler { _, ex ->
+		VLog.d("Exception caught on send  nft fragment : ${ex.message} ")
+		dialogManager.hidePrevDialogs()
+		showFailedSendingTransaction()
+	}
+
+	private fun initFlutterToGenerateSpendBundle(toAddress: String) {
+		genSpendBundleJob?.cancel()
+		genSpendBundleJob = lifecycleScope.launch(handler) {
+			val methodChannel = MethodChannel(
+				(getMainActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
+				METHOD_CHANNEL_GENERATE_HASH
+			)
+			methodChannel.setMethodCallHandler { method, callBack ->
+				if (method.method == "nftSpendBundle") {
+
+				}
+			}
+			val args = hashMapOf<String, Any>()
+			val wallet = vm.wallet
+			args["observer"] = wallet.observerHash
+			args["nonObserver"] = wallet.nonObserverHash
+			args[""]
+		}
+	}
+
+	private fun showFailedSendingTransaction() {
+		dialogManager.hidePrevDialogs()
+		getMainActivity().apply {
+			if (!this.isFinishing) {
+				dialogManager.showFailureDialog(
+					this,
+					getStringResource(R.string.pop_up_failed_error_title),
+					getStringResource(R.string.send_token_pop_up_transaction_fail_error_description),
+					getStringResource(R.string.pop_up_failed_error_return_btn)
+				) {
+
+				}
+			}
+		}
+	}
+
 	private fun initConfirmDialogDetails(dialog: Dialog) {
 		dialog.apply {
 			var commissionText = binding.edtEnterCommission.text.toString()
@@ -203,6 +330,9 @@ class NFTSendFragment : DaggerFragment() {
 			findViewById<TextView>(R.id.edtConfirmSendNftAddress).text =
 				binding.edtAddressWallet.text.toString()
 			findViewById<TextView>(R.id.edtCommission).text = commissionText
+			findViewById<TextView>(R.id.edtNFTName).text = nftInfo.name
+			findViewById<TextView>(R.id.edtNFTCollection).text = nftInfo.collection
+			findViewById<TextView>(R.id.edtNftID).text = nftInfo.nft_id
 		}
 	}
 

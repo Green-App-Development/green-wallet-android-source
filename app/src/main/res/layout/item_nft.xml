@@ -28,9 +28,9 @@
 
 			<ImageView
 					android:id="@+id/img_nft"
-					android:layout_width="wrap_content"
+					android:layout_width="match_parent"
 					android:layout_height="170dp"
-					android:scaleType="fitCenter"
+					android:scaleType="fitXY"
 					android:src="@drawable/img_place_holder_nft" />
 
 			<View
