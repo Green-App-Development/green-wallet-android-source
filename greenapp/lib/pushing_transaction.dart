@@ -153,6 +153,25 @@ class PushingTransaction {
             unCurryNFTCoin(nftCoin: nftCoin, nftParentCoinJson: nftParentCoin);
             break;
           }
+        case "generateNftSpendBundle":
+          {
+            var args = call.arguments;
+            debugPrint("generateNftSpendBundle got called with args : $args");
+            var nftCoin = args["coin"].toString();
+            var nftParentCoin = args["parent_coin"].toString();
+            var mnemonics = args["mnemonics"].toString().split(' ');
+            var observer = int.parse(args["observer"].toString());
+            var non_observer = int.parse(args["non_observer"].toString());
+            var destAddress = args["destAddress"].toString();
+            generateNFTSpendBundle(
+                nftCoinJson: nftCoin,
+                nftParentCoinJson: nftParentCoin,
+                mnemonics: mnemonics,
+                observer: observer,
+                non_observer: non_observer,
+                destAddress: destAddress);
+            break;
+          }
       }
     });
     testingMethod();
@@ -875,5 +894,48 @@ class PushingTransaction {
       debugPrint("Exception in unCurrying nft coin: ${ex.toString()}");
       _channel.invokeMethod("exceptionNFT");
     }
+  }
+
+  Future<void> generateNFTSpendBundle(
+      {required String nftCoinJson,
+      required String nftParentCoinJson,
+      required List<String> mnemonics,
+      required int observer,
+      required int non_observer,
+      required String destAddress}) async {
+    var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
+
+    final keychain = cachedWalletChains[key] ??
+        generateKeyChain(mnemonics, observer, non_observer);
+
+    var coinMap = json.decode(nftCoinJson) as Map<String, dynamic>;
+    var nftParentCoin = json.decode(nftParentCoinJson) as Map<String, dynamic>;
+
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+    final coin = Coin.fromChiaCoinRecordJson(coinMap);
+    final parentSpendCoin = CoinSpend.fromJson(nftParentCoin);
+
+    debugPrint(
+        "NFtParentCoin after decoding and parsing : $coin $parentSpendCoin");
+
+    var fullCoin = FullCoin(coin: coin, parentCoinSpend: parentSpendCoin);
+
+    final result = await NftWallet().getNFTFullCoinInfo(
+      fullCoin,
+      buildKeychain: (phs) async => keychain,
+    );
+    var destPuzzleHash = Address(destAddress).toPuzzlehash();
+
+    final fullNFTCoinInfo = result.item1;
+    final transferBundle = NftWallet().createTransferSpendBundle(
+        nftCoin: fullNFTCoinInfo.toNftCoinInfo(),
+        keychain: keychain,
+        targetPuzzleHash: destPuzzleHash,
+        standardCoinsForFee: [],
+        fee: 0);
+    var transferJson = transferBundle.toJson();
+    debugPrint("TransferBundle for nft : $transferJson");
+    _channel.invokeMethod("nftSpendBundle", {"spendBundle": transferJson});
   }
 }

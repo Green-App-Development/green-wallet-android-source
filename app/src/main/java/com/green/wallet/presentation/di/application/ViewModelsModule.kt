@@ -16,6 +16,7 @@ import com.green.wallet.presentation.main.importtoken.ImportTokenViewModel
 import com.green.wallet.presentation.main.language.MainLanguageViewModel
 import com.green.wallet.presentation.main.managewallet.ManageWalletViewModel
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsViewModel
+import com.green.wallet.presentation.main.nft.nftsend.NFTSendViewModel
 import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensViewModel
 import com.green.wallet.presentation.main.notification.NotifViewModel
 import com.green.wallet.presentation.main.receive.ReceiveViewModel
@@ -158,6 +159,13 @@ abstract class ViewModelsModule {
 	@Binds
 	@ViewModelKey(SwapMainViewModel::class)
 	abstract fun bindingSwapViewModel(viewModel: SwapMainViewModel): ViewModel
+
+
+	@IntoMap
+	@Binds
+	@ViewModelKey(NFTSendViewModel::class)
+	abstract fun bindingNFTSendViewModel(viewModel: NFTSendViewModel): ViewModel
+
 
 
 

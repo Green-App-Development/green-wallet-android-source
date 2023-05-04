@@ -36,6 +36,7 @@ data class NFTInfoEntity(
 	val name: String,
 	val address_fk: String
 ) {
+
 	fun toNFTInfo() = NFTInfo(
 		nft_coin_hash,
 		nft_id,
@@ -51,6 +52,8 @@ data class NFTInfoEntity(
 		description,
 		collection,
 		properties,
-		name
+		name,
+		address_fk
 	)
+
 }

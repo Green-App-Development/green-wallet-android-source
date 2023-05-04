@@ -13,5 +13,6 @@ data class NFTCoin(
     val parent_coin_info: String,
     val parent_coin_hash: String,
     val puzzle_reveal: String,
-    val solution: String
+    val solution: String,
+	val coin_base:Boolean
 )

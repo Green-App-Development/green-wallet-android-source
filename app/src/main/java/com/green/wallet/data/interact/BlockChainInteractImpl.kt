@@ -196,7 +196,8 @@ class BlockChainInteractImpl @Inject constructor(
 							parent_coin.coin_solution.coin.parent_coin_info,
 							parent_coin.coin_solution.coin.puzzle_hash,
 							parent_coin.coin_solution.puzzle_reveal,
-							parent_coin.coin_solution.solution
+							parent_coin.coin_solution.solution,
+							coin.coinbase
 						)
 						val methodChannel = MethodChannel(
 							(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
@@ -223,7 +224,7 @@ class BlockChainInteractImpl @Inject constructor(
 							VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
 							methodChannel.invokeMethod("unCurryNft", map)
 						}
-						delay(2000)
+						delay(3000)
 					}
 				}
 			} else {

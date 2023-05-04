@@ -136,6 +136,7 @@
 										android:layout_width="match_parent"
 										android:layout_height="130dp"
 										android:scaleType="centerCrop"
+										android:id="@+id/img_nft"
 										android:src="@drawable/img_nft" />
 
 							</androidx.cardview.widget.CardView>
@@ -182,7 +183,7 @@
 										android:textSize="14sp" />
 
 								<TextView
-										android:id="@+id/txtNftID"
+										android:id="@+id/edtNFTId"
 										android:layout_width="wrap_content"
 										android:layout_height="wrap_content"
 										android:layout_marginTop="8dp"
