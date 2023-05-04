@@ -19,9 +19,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.example.common.tools.addingDoubleDotsTxt
 import com.example.common.tools.formatString
+import com.google.gson.Gson
 import com.green.wallet.R
+import com.green.wallet.data.network.dto.coinSolution.Coin
+import com.green.wallet.data.network.dto.coinSolution.CoinSolution
+import com.green.wallet.data.network.dto.coins.CoinRecord
 import com.green.wallet.databinding.FragmentSendNftBinding
 import com.green.wallet.domain.domainmodel.NFTCoin
 import com.green.wallet.domain.domainmodel.NFTInfo
@@ -29,6 +34,7 @@ import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.convertDpToPixel
+import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
@@ -42,6 +48,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.HashMap
 import javax.inject.Inject
 
 
@@ -60,7 +67,6 @@ class NFTSendFragment : DaggerFragment() {
 	@Inject
 	lateinit var factory: ViewModelFactory
 	private val vm: NFTSendViewModel by viewModels { factory }
-
 
 	@Inject
 	lateinit var dialogManager: DialogManager
@@ -182,6 +188,9 @@ class NFTSendFragment : DaggerFragment() {
 			containerProperties.addView(generateLinearLayoutProperties(firstView, key, value))
 			firstView = false
 		}
+		Glide.with(getMainActivity()).load(nftInfo.data_url)
+			.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
+			.into(imgNft)
 	}
 
 	private fun generateLinearLayoutProperties(
@@ -295,14 +304,45 @@ class NFTSendFragment : DaggerFragment() {
 			)
 			methodChannel.setMethodCallHandler { method, callBack ->
 				if (method.method == "nftSpendBundle") {
-
+					dialogManager.hidePrevDialogs()
+					val spendBundleJson =
+						(method.arguments as HashMap<*, *>)["spendBundle"].toString()
+					VLog.d("SpendBundleJson for NFT : $spendBundleJson")
 				}
 			}
 			val args = hashMapOf<String, Any>()
 			val wallet = vm.wallet
+			val nftCoin = vm.nftCoin
+			val coin = CoinRecord(
+				coin = com.green.wallet.data.network.dto.coins.Coin(
+					amount = 1,
+					parent_coin_info = nftCoin.parent_coin_info,
+					puzzle_hash = nftCoin.coin_hash
+				),
+				coinbase = nftCoin.coin_base,
+				confirmed_block_index = nftCoin.confirmed_block_index,
+				spent = false,
+				spent_block_index = nftCoin.spent_block_index,
+				timestamp = nftCoin.time_stamp
+			)
+			val parentCoin = CoinSolution(
+				coin = Coin(
+					amount = 1,
+					parent_coin_info = nftCoin.parent_coin_hash,
+					puzzle_hash = nftCoin.parent_coin_hash
+				),
+				puzzle_reveal = nftCoin.puzzle_reveal,
+				solution = nftCoin.solution
+			)
+			val gson = Gson()
 			args["observer"] = wallet.observerHash
-			args["nonObserver"] = wallet.nonObserverHash
-			args[""]
+			args["non_observer"] = wallet.nonObserverHash
+			args["destAddress"] = toAddress
+			args["mnemonics"] = convertListToStringWithSpace(wallet.mnemonics)
+			args["coin"] = gson.toJson(coin)
+			args["parent_coin"] = gson.toJson(parentCoin)
+
+			methodChannel.invokeMethod("generateNftSpendBundle", args)
 		}
 	}
 
@@ -331,7 +371,7 @@ class NFTSendFragment : DaggerFragment() {
 				binding.edtAddressWallet.text.toString()
 			findViewById<TextView>(R.id.edtCommission).text = commissionText
 			findViewById<TextView>(R.id.edtNFTName).text = nftInfo.name
-			findViewById<TextView>(R.id.edtNFTCollection).text = nftInfo.collection
+			findViewById<TextView>(R.id.edtNftCollection).text = nftInfo.collection
 			findViewById<TextView>(R.id.edtNftID).text = nftInfo.nft_id
 		}
 	}
