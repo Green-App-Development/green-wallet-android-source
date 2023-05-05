@@ -3,6 +3,7 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 import 'package:chia_crypto_utils/src/core/service/base_wallet.dart';
 import 'package:chia_crypto_utils/src/offers_ozone/models/full_coin.dart' as fullCoin;
+import '../../did/puzzles/did_puzzles.dart' as didPuzzles;
 import 'package:chia_crypto_utils/src/standard/puzzles/p2_delegated_puzzle_or_hidden_puzzle/p2_delegated_puzzle_or_hidden_puzzle.clvm.hex.dart';
 import 'package:hex/hex.dart';
 
@@ -79,15 +80,32 @@ class CoinSpend with ToBytesMixin {
   }
 
   SpendType get type {
-    final uncurriedPuzzleSource = puzzleReveal.uncurry().program.toSource();
-    if (uncurriedPuzzleSource ==
-        p2DelegatedPuzzleOrHiddenPuzzleProgram.toSource()) {
+    final uncurried = puzzleReveal.uncurry();
+    final uncurriedPuzzleSource = uncurried.program.toSource();
+    if (uncurriedPuzzleSource == p2DelegatedPuzzleOrHiddenPuzzleProgram.toSource()) {
       return SpendType.standard;
     }
-    if (uncurriedPuzzleSource == catProgram.toSource()) {
+    if (uncurriedPuzzleSource == CAT_MOD.toSource()) {
       return SpendType.cat2;
     }
-    throw UnimplementedError('Unimplemented spend type');
+    if (uncurriedPuzzleSource == LEGACY_CAT_MOD.toSource()) {
+      return SpendType.cat1;
+    }
+    if (uncurriedPuzzleSource == SINGLETON_TOP_LAYER_MOD_v1_1.toSource()) {
+      final nftUncurried = UncurriedNFT.tryUncurry(puzzleReveal);
+      if (nftUncurried != null) {
+        return SpendType.nft;
+      }
+
+      final args = uncurried.arguments;
+
+      final uncurriedDid = didPuzzles.uncurryInnerpuz(args[1]);
+      if (uncurriedDid != null) {
+        return SpendType.did;
+      }
+    }
+    return SpendType.unknown;
+    //throw UnimplementedError('Unimplemented spend type');
   }
 
 

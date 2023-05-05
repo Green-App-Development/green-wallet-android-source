@@ -10,6 +10,8 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
+import 'nft_service.dart';
+
 class PushingTransaction {
   static const MethodChannel _channel =
       MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
@@ -788,28 +790,94 @@ class PushingTransaction {
   }
 
   void testingMethod() async {
+    final fullNodeUtils = FullNodeUtilsWindows(Network.mainnet);
+
     var mnemonic = [
-      "blast",
-      "song",
-      "refuse",
-      "excess",
-      "filter",
-      "unhappy",
-      "tag",
-      "extra",
-      "bless",
-      "grain",
-      "broom",
-      "vanish"
+      "faint",
+      "step",
+      "noise",
+      "upper",
+      "anchor",
+      "audit",
+      "make",
+      "will",
+      "buyer",
+      "shed",
+      "cliff",
+      "chalk"
     ];
+
+    ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
+
+    final fullNodeRpc = FullNodeHttpRpc(fullNodeUtils.url);
+
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
     final walletsSetList = <WalletSet>[];
-    for (var i = 0; i < 1; i++) {
+    for (var i = 0; i < 2; i++) {
       final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
       walletsSetList.add(set1);
     }
     final keychain = WalletKeychain.fromWalletSets(walletsSetList);
+
+    final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+
+    final nftService =
+        NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+
+    var nftCoins = await nftService.getNFTCoins();
+    debugPrint("NFTCoins after retrieving : $nftCoins");
+    final nftCoin = nftCoins[0];
+    final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+    debugPrint("NFTFullCoin : $nftFullCoin");
+    var bundleNFT = NftWallet().createTransferSpendBundle(
+      nftCoin: nftFullCoin.toNftCoinInfo(),
+      keychain: keychain,
+      targetPuzzleHash: Address(
+              "xch10w7fx4wv3jajp4r27jn37tj790qjhvm673yzrva7n4cesd7xekds5yhrsx")
+          .toPuzzlehash(),
+      standardCoinsForFee: [],
+      fee: 0,
+      changePuzzlehash: keychain.puzzlehashes[0],
+    );
+    var bundleNFTJson = bundleNFT.toJson();
+    print("BundleNFTJson : $bundleNFTJson");
+    _channel.invokeMethod('nftSpendBundle', {
+      "spendBundle": bundleNFTJson
+    });
+
+    print("Puzzle Hash Hint : ${keychain.puzzlehashes.first.toHex()}");
+
+    Map<String, dynamic> body = {
+      "hint": keychain.puzzlehashes.first.toHex(),
+      "include_spent_coins": false
+    };
+
+    final response = await post(
+        Uri.parse(
+            "https://chia.green-app.io/full-node/get_coin_records_by_hint"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(body));
+
+    var resCoinRecords = CoinRecordsResponse.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
+    print("NFT Coin Records : ${resCoinRecords.coinRecords}");
+    var allNftCoins =
+        resCoinRecords.coinRecords.map((record) => record.toCoin()).toList();
+    List<FullCoin> fullCoins = [];
+    List<Future<void>> futures = [];
+
+    for (final coin in allNftCoins) {
+      futures.add(getFullCoinsDetail(
+          coin: coin,
+          httpUrl: "https://chia.green-app.io/full-node",
+          fullCoins: fullCoins));
+      await Future.wait(futures);
+    }
+    print("NFTCoins after hydration : $allNftCoins");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
@@ -937,5 +1005,148 @@ class PushingTransaction {
     var transferJson = transferBundle.toJson();
     debugPrint("TransferBundle for nft : $transferJson");
     _channel.invokeMethod("nftSpendBundle", {"spendBundle": transferJson});
+  }
+
+  Future<void> getFullCoinsDetail(
+      {required Coin coin,
+      required String httpUrl,
+      required List<FullCoin> fullCoins}) async {
+    Map<String, dynamic> bodyParentCoinInfo = {
+      "name": coin.parentCoinInfo.toString()
+    };
+    final bodyParentCoinInfoRes =
+        await post(Uri.parse("$httpUrl/get_coin_record_by_name"),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(bodyParentCoinInfo));
+    var parentCoin = CoinRecordResponse.fromJson(
+      jsonDecode(bodyParentCoinInfoRes.body) as Map<String, dynamic>,
+    ).coinRecord!.toCoin();
+    Map<String, dynamic> bodyParentCoinSpentBody = {
+      'coin_id': parentCoin.id.toHex(),
+      'height': parentCoin.spentBlockIndex,
+    };
+    final bodyParentCoinSpentRes =
+        await post(Uri.parse("$httpUrl/get_puzzle_and_solution"),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(bodyParentCoinSpentBody));
+    var parentCoinSpend = CoinSpendResponse.fromJson(
+      jsonDecode(bodyParentCoinSpentRes.body) as Map<String, dynamic>,
+    ).coinSpend;
+    fullCoins.add(FullCoin(
+      parentCoinSpend: parentCoinSpend!,
+      coin: coin,
+    ));
+  }
+
+  Future<FullNFTCoinInfo> convertFullCoin(
+      FullCoin coin, WalletKeychain keychain) async {
+    final nftInfo =
+        await NftWallet().getNFTFullCoinInfo(coin, buildKeychain: (phs) async {
+      final founded = phs.where((element) =>
+          keychain.getWalletVector(
+            element,
+          ) !=
+          null);
+      if (founded.length == phs.length) {
+        return keychain;
+      }
+      return null;
+    });
+    FullNFTCoinInfo nftFullInfo = nftInfo.item1;
+    if (nftInfo.item1.minterDid == null) {
+      final did = await getMinterNft(Puzzlehash(nftInfo.item1.launcherId));
+      if (did != null) {
+        nftFullInfo = nftFullInfo.copyWith(minterDid: did.didId);
+      }
+      print("Minter DID is null");
+    }
+    return nftFullInfo;
+  }
+
+  Future<DidInfo?> getMinterNft(
+    Puzzlehash launcherId,
+  ) async {
+    final body = <String, dynamic>{
+      'parent_ids': [launcherId].map((parentId) => parentId.toHex()).toList(),
+    };
+    body['include_spent_coins'] = true;
+
+    final response = await post(
+        Uri.parse(
+            'https://chia.green-app.io/full-node/get_coin_records_by_parent_ids'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(body));
+
+    final mainChildrens = CoinRecordsResponse.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    ).coinRecords.map((record) => record.toCoin()).toList();
+
+    // final mainHidratedCoins = await fullNode.hydrateFullCoins(mainChildrens);
+    //
+    // if (mainHidratedCoins.isEmpty) {
+    //   throw Exception("Can't be found the NFT coin with launcher ${launcherId}");
+    // }
+    // FullCoin nftCoin = mainHidratedCoins.first;
+    // print(nftCoin.type);
+    // final foundedCoins = await fullNode.getAllLinageSingletonCoin(nftCoin);
+    // final eveCcoin = foundedCoins.first;
+    // final uncurriedNft = UncurriedNFT.tryUncurry(eveCcoin.parentCoinSpend!.puzzleReveal);
+    // if (uncurriedNft!.supportDid) {
+    //   final minterDid = NftService()
+    //       .getnewOwnerDid(unft: uncurriedNft, solution: eveCcoin.parentCoinSpend!.solution);
+    //   if (minterDid != null) {
+    //     return DidService(fullNode: fullNode, keychain: keychain)
+    //         .getDidInfoByLauncherId(Puzzlehash(minterDid));
+    //   }
+    // }
+    return null;
+  }
+}
+
+class FullNodeUtilsWindows {
+  static const String defaultUrl = 'https://localhost:8555';
+
+  final String url;
+  final Network network;
+
+  FullNodeUtilsWindows(this.network, {this.url = defaultUrl});
+
+  Bytes get certBytes {
+    return _getAuthFileBytes('$sslPath\\private_full_node.crt');
+  }
+
+  String get checkNetworkMessage =>
+      'Check if your full node is runing on $network';
+
+  Bytes get keyBytes {
+    return _getAuthFileBytes('$sslPath\\private_full_node.key');
+  }
+
+  String get sslPath =>
+      '${Platform.environment['HOMEPATH']}\\.chia\\mainnet\\config\\ssl\\full_node';
+
+  Future<void> checkIsRunning() async {
+    final fullNodeRpc = FullNodeHttpRpc(
+      url,
+      certBytes: certBytes,
+      keyBytes: keyBytes,
+    );
+
+    final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    await fullNode.getBlockchainState();
+  }
+
+  static Bytes _getAuthFileBytes(String pathToFile) {
+    LoggingContext()
+      ..info(null, highLog: 'auth file loaded: $pathToFile')
+      ..info(null, highLog: 'file contents:')
+      ..info(null, highLog: File(pathToFile).readAsStringSync());
+    return Bytes(File(pathToFile).readAsBytesSync());
   }
 }
