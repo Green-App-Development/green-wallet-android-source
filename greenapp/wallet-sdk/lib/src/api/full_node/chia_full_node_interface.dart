@@ -41,6 +41,133 @@ class ChiaFullNodeInterface {
     return recordsResponse.coinRecords.map((record) => record.toCoin()).toList();
   }
 
+  Future<List<FullCoin>> getNftCoinsByInnerPuzzleHashes(
+      List<Puzzlehash> puzzlehashes, {
+        int? startHeight,
+        int? endHeight,
+        bool includeSpentCoins = false,
+      }) =>
+      getFullCoinsByInnerPuzzleHashes(
+        puzzlehashes,
+        [SpendType.nft],
+        startHeight: startHeight,
+        endHeight: endHeight,
+        includeSpentCoins: includeSpentCoins,
+      );
+
+  Future<List<FullCoin>> getDidCoinsByInnerPuzzleHashes(
+      List<Puzzlehash> puzzlehashes, {
+        int? startHeight,
+        int? endHeight,
+        bool includeSpentCoins = false,
+      }) =>
+      getFullCoinsByInnerPuzzleHashes(
+        puzzlehashes,
+        [SpendType.did],
+        startHeight: startHeight,
+        endHeight: endHeight,
+        includeSpentCoins: includeSpentCoins,
+      );
+
+  Future<List<FullCoin>> getFullCoinsByInnerPuzzleHashes(
+      List<Puzzlehash> puzzlehashes,
+      List<SpendType> types, {
+        int? startHeight,
+        int? endHeight,
+        bool includeSpentCoins = false,
+      }) async {
+    final List<Coin> allCoins = [];
+
+    for (final ph in puzzlehashes) {
+      final coins = await getCoinsByMemo(
+        ph,
+        endHeight: endHeight,
+        includeSpentCoins: includeSpentCoins,
+        startHeight: startHeight,
+      );
+
+      allCoins.addAll(coins);
+    }
+
+    final founded = await hydrateFullCoins(allCoins);
+    return founded.where((element) => types.contains(element.type)).toList();
+  }
+
+  Future<List<Coin>> getCoinsByMemo(
+      Bytes memo, {
+        int? startHeight,
+        int? endHeight,
+        bool includeSpentCoins = false,
+      }) async {
+    final coinRecordsResponse = await fullNode.getCoinsByHint(
+      memo,
+      endHeight: endHeight,
+      includeSpentCoins: includeSpentCoins,
+      startHeight: startHeight,
+    );
+    mapResponseToError(coinRecordsResponse);
+
+    return coinRecordsResponse.coinRecords.map((record) => record.toCoin()).toList();
+  }
+
+  Future<FullCoin> getLasUnespentSingletonCoin(FullCoin parentCoin) async {
+    Coin lastCoin = parentCoin.coin;
+
+    while (lastCoin.spentBlockIndex != 0) {
+      final children = await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
+      if (children.isEmpty) {
+        throw Exception("Can't found the children of coin ${lastCoin.id.toHex()}");
+      }
+      if (children.length == 1) {
+        lastCoin = children.first;
+      } else {
+        print("Warning: would not be more than one children");
+        lastCoin = children.first;
+      }
+    }
+    final hydrated = await hydrateFullCoins([lastCoin]);
+    return hydrated.first;
+  }
+
+  Future<List<FullCoin>> getAllLinageSingletonCoin(FullCoin parentCoin) async {
+    Coin lastCoin = parentCoin.coin;
+    List<Coin> allCoins = [];
+
+    while (lastCoin.spentBlockIndex != 0) {
+      final children = await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
+      if (children.isEmpty) {
+        throw Exception("Can't found the children of coin ${lastCoin.id.toHex()}");
+      }
+      if (children.length == 1) {
+        lastCoin = children.first;
+      } else {
+        print("Warning: would not be more than one children");
+        lastCoin = children.first;
+      }
+      allCoins.add(lastCoin);
+    }
+    final hydrated = await hydrateFullCoins(allCoins);
+    return hydrated;
+  }
+
+
+  Future<List<FullCoin>> hydrateFullCoins(List<Coin> unHydratedCatCoins) async {
+    final catCoins = <FullCoin>[];
+    for (final coin in unHydratedCatCoins) {
+      final parentCoin = await getCoinById(coin.parentCoinInfo);
+      final parentCoinSpend = await getCoinSpend(parentCoin!);
+
+      catCoins.add(
+        FullCoin(
+          parentCoinSpend: parentCoinSpend!,
+          coin: coin,
+        ),
+      );
+    }
+
+    return catCoins;
+  }
+
   Future<int> getBalance(
     List<Puzzlehash> puzzlehashes, {
     int? startHeight,
@@ -54,6 +181,8 @@ class ChiaFullNodeInterface {
     final balance = coins.fold(0, (int previousValue, coin) => previousValue + coin.amount);
     return balance;
   }
+
+
 
   Future<ChiaBaseResponse> pushTransaction(SpendBundle spendBundle) async {
     final response = await fullNode.pushTransaction(spendBundle);
@@ -96,15 +225,6 @@ class ChiaFullNodeInterface {
       startHeight: startHeight,
       endHeight: endHeight,
       includeSpentCoins: includeSpentCoins,
-    );
-    mapResponseToError(coinRecordsResponse);
-
-    return coinRecordsResponse.coinRecords.map((record) => record.toCoin()).toList();
-  }
-
-  Future<List<Coin>> getCoinsByMemo(Bytes memo) async {
-    final coinRecordsResponse = await fullNode.getCoinsByHint(
-      memo,
     );
     mapResponseToError(coinRecordsResponse);
 

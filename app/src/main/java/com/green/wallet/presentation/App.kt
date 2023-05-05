@@ -189,6 +189,14 @@ class App : DaggerApplication() {
 				}
 			}
 		}
+
+		methodChannel.setMethodCallHandler { call, result ->
+			 if(call.method=="nftSpendBundle"){
+				 val bundleNFT=call.arguments.toString()
+				 VLog.d("BundleNFT on Android : $bundleNFT")
+			 }
+		}
+
 	}
 
 	fun updateBalanceEachPeriodically() {

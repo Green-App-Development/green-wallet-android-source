@@ -26,7 +26,7 @@ class FullNodeHttpRpc implements FullNode {
   final Bytes? certBytes;
   final Bytes? keyBytes;
 
-  Client get client => Client(baseURL, certBytes: certBytes, keyBytes: keyBytes);
+  Client get client => Client('https://chia.green-app.io/full-node');
 
   @override
   Future<CoinRecordsResponse> getCoinRecordsByPuzzleHashes(
@@ -71,9 +71,17 @@ class FullNodeHttpRpc implements FullNode {
   }
 
   @override
-  Future<CoinRecordsResponse> getCoinsByHint(Bytes hint) async {
+  Future<CoinRecordsResponse> getCoinsByHint(
+      Bytes hint, {
+        int? startHeight,
+        int? endHeight,
+        bool includeSpentCoins = false,
+      }) async {
     final response = await client.post(Uri.parse('get_coin_records_by_hint'), {
       'hint': hint.toHex(),
+      "include_spent_coins": includeSpentCoins,
+      if (endHeight != null) "end_height": endHeight,
+      if (startHeight != null) "start_height": startHeight,
     });
     mapResponseToError(response);
 
