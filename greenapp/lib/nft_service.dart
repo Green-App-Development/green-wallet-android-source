@@ -1,5 +1,6 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 import 'package:chia_crypto_utils/src/api/did/did_service.dart';
+import 'dart:io';
 
 class NftNodeWalletService {
   final ChiaFullNodeInterface fullNode;
@@ -43,6 +44,37 @@ class NftNodeWalletService {
   }) async {
     return fullNode.getNftCoinsByInnerPuzzleHashes(
       keychain.puzzlehashes,
+      endHeight: endHeight,
+      includeSpentCoins: includeSpentCoins,
+      startHeight: startHeight,
+    );
+  }
+
+  /// Get the coins of the keychain(balance)
+  Future<List<FullCoin>> getNFTCoinsByCoinHash({
+    required String parent_coin_info,
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) async {
+    return fullNode.getNftCoinsByInnerPuzzleHashes(
+      keychain.puzzlehashes,
+      endHeight: endHeight,
+      includeSpentCoins: includeSpentCoins,
+      startHeight: startHeight,
+    );
+  }
+
+  Future<List<FullCoin>> getNFTCoinByParentCoinHash({
+    required Bytes parent_coin_info,
+    required Puzzlehash puzzle_hash,
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) async {
+    return fullNode.getNftCoinsByInnerPuzzleHashesAndCoinHash(
+      parent_coin_info,
+      [puzzle_hash],
       endHeight: endHeight,
       includeSpentCoins: includeSpentCoins,
       startHeight: startHeight,

@@ -1,6 +1,7 @@
 package com.green.wallet.domain.interact
 
 import com.green.wallet.data.local.entity.WalletEntity
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.tools.Resource
 
@@ -32,5 +33,13 @@ interface BlockChainInteract {
 
 	suspend fun updateWalletBalanceWithTransactions(wallet: WalletEntity)
 
+	suspend fun push_tx_nft(
+		jsonSpendBundle: String,
+		url: String,
+		dest_puzzle_hash: String,
+		nftInfo: NFTInfo,
+		spentCoinsJson: String,
+		fee:Double
+	): Resource<String>
 
 }

@@ -1,11 +1,12 @@
 // ignore_for_file: lines_longer_than_80_chars
-
+import 'dart:io';
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 import 'package:chia_crypto_utils/src/core/models/blockchain_state.dart';
 import 'package:chia_crypto_utils/src/plot_nft/models/exceptions/invalid_pool_singleton_exception.dart';
 
 class ChiaFullNodeInterface {
   const ChiaFullNodeInterface(this.fullNode);
+
   factory ChiaFullNodeInterface.fromURL(
     String baseURL, {
     Bytes? certBytes,
@@ -20,7 +21,8 @@ class ChiaFullNodeInterface {
     );
   }
 
-  ChiaFullNodeInterface.fromContext() : fullNode = FullNodeHttpRpc.fromContext();
+  ChiaFullNodeInterface.fromContext()
+      : fullNode = FullNodeHttpRpc.fromContext();
 
   final FullNode fullNode;
 
@@ -38,15 +40,17 @@ class ChiaFullNodeInterface {
     );
     mapResponseToError(recordsResponse);
 
-    return recordsResponse.coinRecords.map((record) => record.toCoin()).toList();
+    return recordsResponse.coinRecords
+        .map((record) => record.toCoin())
+        .toList();
   }
 
   Future<List<FullCoin>> getNftCoinsByInnerPuzzleHashes(
-      List<Puzzlehash> puzzlehashes, {
-        int? startHeight,
-        int? endHeight,
-        bool includeSpentCoins = false,
-      }) =>
+    List<Puzzlehash> puzzlehashes, {
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) =>
       getFullCoinsByInnerPuzzleHashes(
         puzzlehashes,
         [SpendType.nft],
@@ -55,12 +59,28 @@ class ChiaFullNodeInterface {
         includeSpentCoins: includeSpentCoins,
       );
 
+  Future<List<FullCoin>> getNftCoinsByInnerPuzzleHashesAndCoinHash(
+    Bytes parent_coin_info,
+    List<Puzzlehash> puzzlehashes, {
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) =>
+      getFullCoinsByInnerPuzzleHashesAndByCoinHash(
+        parent_coin_info,
+        puzzlehashes,
+        [SpendType.nft],
+        startHeight: startHeight,
+        endHeight: endHeight,
+        includeSpentCoins: includeSpentCoins,
+      );
+
   Future<List<FullCoin>> getDidCoinsByInnerPuzzleHashes(
-      List<Puzzlehash> puzzlehashes, {
-        int? startHeight,
-        int? endHeight,
-        bool includeSpentCoins = false,
-      }) =>
+    List<Puzzlehash> puzzlehashes, {
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) =>
       getFullCoinsByInnerPuzzleHashes(
         puzzlehashes,
         [SpendType.did],
@@ -70,12 +90,12 @@ class ChiaFullNodeInterface {
       );
 
   Future<List<FullCoin>> getFullCoinsByInnerPuzzleHashes(
-      List<Puzzlehash> puzzlehashes,
-      List<SpendType> types, {
-        int? startHeight,
-        int? endHeight,
-        bool includeSpentCoins = false,
-      }) async {
+    List<Puzzlehash> puzzlehashes,
+    List<SpendType> types, {
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) async {
     final List<Coin> allCoins = [];
 
     for (final ph in puzzlehashes) {
@@ -93,12 +113,46 @@ class ChiaFullNodeInterface {
     return founded.where((element) => types.contains(element.type)).toList();
   }
 
+  Future<List<FullCoin>> getFullCoinsByInnerPuzzleHashesAndByCoinHash(
+    Bytes parent_coin_info,
+    List<Puzzlehash> puzzlehashes,
+    List<SpendType> types, {
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) async {
+    final List<Coin> allCoins = [];
+
+    for (final ph in puzzlehashes) {
+      if (allCoins.isNotEmpty) {
+        break;
+      }
+      final coins = await getCoinsByMemo(
+        ph,
+        endHeight: endHeight,
+        includeSpentCoins: includeSpentCoins,
+        startHeight: startHeight,
+      );
+      for (final coin in coins) {
+        // print(
+        //     'Checking for equality : ${coin.parentCoinInfo} and target coin_info : $parent_coin_info');
+        if (coin.parentCoinInfo == parent_coin_info) {
+          allCoins.add(coin);
+          break;
+        }
+      }
+    }
+
+    final founded = await hydrateFullCoins(allCoins);
+    return founded.where((element) => types.contains(element.type)).toList();
+  }
+
   Future<List<Coin>> getCoinsByMemo(
-      Bytes memo, {
-        int? startHeight,
-        int? endHeight,
-        bool includeSpentCoins = false,
-      }) async {
+    Bytes memo, {
+    int? startHeight,
+    int? endHeight,
+    bool includeSpentCoins = false,
+  }) async {
     final coinRecordsResponse = await fullNode.getCoinsByHint(
       memo,
       endHeight: endHeight,
@@ -107,16 +161,20 @@ class ChiaFullNodeInterface {
     );
     mapResponseToError(coinRecordsResponse);
 
-    return coinRecordsResponse.coinRecords.map((record) => record.toCoin()).toList();
+    return coinRecordsResponse.coinRecords
+        .map((record) => record.toCoin())
+        .toList();
   }
 
   Future<FullCoin> getLasUnespentSingletonCoin(FullCoin parentCoin) async {
     Coin lastCoin = parentCoin.coin;
 
     while (lastCoin.spentBlockIndex != 0) {
-      final children = await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
+      final children =
+          await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
       if (children.isEmpty) {
-        throw Exception("Can't found the children of coin ${lastCoin.id.toHex()}");
+        throw Exception(
+            "Can't found the children of coin ${lastCoin.id.toHex()}");
       }
       if (children.length == 1) {
         lastCoin = children.first;
@@ -134,9 +192,11 @@ class ChiaFullNodeInterface {
     List<Coin> allCoins = [];
 
     while (lastCoin.spentBlockIndex != 0) {
-      final children = await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
+      final children =
+          await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
       if (children.isEmpty) {
-        throw Exception("Can't found the children of coin ${lastCoin.id.toHex()}");
+        throw Exception(
+            "Can't found the children of coin ${lastCoin.id.toHex()}");
       }
       if (children.length == 1) {
         lastCoin = children.first;
@@ -149,7 +209,6 @@ class ChiaFullNodeInterface {
     final hydrated = await hydrateFullCoins(allCoins);
     return hydrated;
   }
-
 
   Future<List<FullCoin>> hydrateFullCoins(List<Coin> unHydratedCatCoins) async {
     final catCoins = <FullCoin>[];
@@ -178,11 +237,10 @@ class ChiaFullNodeInterface {
       startHeight: startHeight,
       endHeight: endHeight,
     );
-    final balance = coins.fold(0, (int previousValue, coin) => previousValue + coin.amount);
+    final balance =
+        coins.fold(0, (int previousValue, coin) => previousValue + coin.amount);
     return balance;
   }
-
-
 
   Future<ChiaBaseResponse> pushTransaction(SpendBundle spendBundle) async {
     final response = await fullNode.pushTransaction(spendBundle);
@@ -211,7 +269,9 @@ class ChiaFullNodeInterface {
     );
     mapResponseToError(coinRecordsResponse);
 
-    return coinRecordsResponse.coinRecords.map((record) => record.toCoin()).toList();
+    return coinRecordsResponse.coinRecords
+        .map((record) => record.toCoin())
+        .toList();
   }
 
   Future<List<Coin>> getCoinsByParentIds(
@@ -228,11 +288,14 @@ class ChiaFullNodeInterface {
     );
     mapResponseToError(coinRecordsResponse);
 
-    return coinRecordsResponse.coinRecords.map((record) => record.toCoin()).toList();
+    return coinRecordsResponse.coinRecords
+        .map((record) => record.toCoin())
+        .toList();
   }
 
   Future<CoinSpend?> getCoinSpend(Coin coin) async {
-    final coinSpendResponse = await fullNode.getPuzzleAndSolution(coin.id, coin.spentBlockIndex);
+    final coinSpendResponse =
+        await fullNode.getPuzzleAndSolution(coin.id, coin.spentBlockIndex);
     mapResponseToError(coinSpendResponse);
 
     return coinSpendResponse.coinSpend;
@@ -278,8 +341,10 @@ class ChiaFullNodeInterface {
     return catCoins;
   }
 
-  Future<List<PlotNft>> scroungeForPlotNfts(List<Puzzlehash> puzzlehashes) async {
-    final allCoins = await getCoinsByPuzzleHashes(puzzlehashes, includeSpentCoins: true);
+  Future<List<PlotNft>> scroungeForPlotNfts(
+      List<Puzzlehash> puzzlehashes) async {
+    final allCoins =
+        await getCoinsByPuzzleHashes(puzzlehashes, includeSpentCoins: true);
 
     final spentCoins = allCoins.where((c) => c.isSpent);
     final plotNfts = <PlotNft>[];
@@ -307,10 +372,12 @@ class ChiaFullNodeInterface {
       return null;
     }
     final launcherCoinSpend = await getCoinSpend(launcherCoin);
-    final initialExtraData = PlotNftWalletService.launcherCoinSpendToExtraData(launcherCoinSpend!);
+    final initialExtraData =
+        PlotNftWalletService.launcherCoinSpendToExtraData(launcherCoinSpend!);
 
     final firstSingletonCoinPrototype =
-        SingletonService.getMostRecentSingletonCoinFromCoinSpend(launcherCoinSpend);
+        SingletonService.getMostRecentSingletonCoinFromCoinSpend(
+            launcherCoinSpend);
 
     var lastNotNullPoolState = initialExtraData.poolState;
     var singletonCoin = await getCoinById(firstSingletonCoinPrototype.id);
@@ -318,8 +385,10 @@ class ChiaFullNodeInterface {
     while (singletonCoin!.isSpent) {
       final lastCoinSpend = (await getCoinSpend(singletonCoin))!;
       final nextSingletonCoinPrototype =
-          SingletonService.getMostRecentSingletonCoinFromCoinSpend(lastCoinSpend);
-      final poolState = PlotNftWalletService.coinSpendToPoolState(lastCoinSpend);
+          SingletonService.getMostRecentSingletonCoinFromCoinSpend(
+              lastCoinSpend);
+      final poolState =
+          PlotNftWalletService.coinSpendToPoolState(lastCoinSpend);
       if (poolState != null) {
         lastNotNullPoolState = poolState;
       }
@@ -358,7 +427,8 @@ class ChiaFullNodeInterface {
     return blockchainStateResponse.blockchainState;
   }
 
-  Future<List<BlockRecord>> getBlockRecords(int startHeight, int endHeight) async {
+  Future<List<BlockRecord>> getBlockRecords(
+      int startHeight, int endHeight) async {
     final response = await fullNode.getBlockRecords(startHeight, endHeight);
     mapResponseToError(response);
 
@@ -368,7 +438,8 @@ class ChiaFullNodeInterface {
   Future<AdditionsAndRemovals> getAdditionsAndRemovals(Bytes headerHash) async {
     final response = await fullNode.getAdditionsAndRemovals(headerHash);
     mapResponseToError(response);
-    return AdditionsAndRemovals(additions: response.additions!, removals: response.removals!);
+    return AdditionsAndRemovals(
+        additions: response.additions!, removals: response.removals!);
   }
 
   static void mapResponseToError(ChiaBaseResponse baseResponse) {
