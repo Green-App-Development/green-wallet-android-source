@@ -28,17 +28,11 @@ import com.green.wallet.data.network.dto.coinSolution.Coin
 import com.green.wallet.data.network.dto.coinSolution.CoinSolution
 import com.green.wallet.data.network.dto.coins.CoinRecord
 import com.green.wallet.databinding.FragmentSendNftBinding
-import com.green.wallet.domain.domainmodel.NFTCoin
 import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.App
-import com.green.wallet.presentation.custom.DialogManager
-import com.green.wallet.presentation.custom.convertDpToPixel
-import com.green.wallet.presentation.custom.convertListToStringWithSpace
-import com.green.wallet.presentation.custom.getShortNetworkType
+import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
-import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensViewModel
 import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
@@ -302,21 +296,15 @@ class NFTSendFragment : DaggerFragment() {
 				(getMainActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
 				METHOD_CHANNEL_GENERATE_HASH
 			)
-			methodChannel.setMethodCallHandler { method, callBack ->
-				if (method.method == "nftSpendBundle") {
-					dialogManager.hidePrevDialogs()
-					val spendBundleJson =
-						(method.arguments as HashMap<*, *>)["spendBundle"].toString()
-					VLog.d("SpendBundleJson for NFT : $spendBundleJson")
-				}
-			}
-			val args = hashMapOf<String, Any>()
+
+			val argsFlut = hashMapOf<String, Any>()
 			val wallet = vm.wallet
 			val nftCoin = vm.nftCoin
+			val alreadySpentCoins = vm.alreadySpentCoins
 			val coin = CoinRecord(
 				coin = com.green.wallet.data.network.dto.coins.Coin(
 					amount = 1,
-					parent_coin_info = nftCoin.parent_coin_info,
+					parent_coin_info = nftCoin.coin_info,
 					puzzle_hash = nftCoin.coin_hash
 				),
 				coinbase = nftCoin.coin_base,
@@ -334,15 +322,63 @@ class NFTSendFragment : DaggerFragment() {
 				puzzle_reveal = nftCoin.puzzle_reveal,
 				solution = nftCoin.solution
 			)
+			val enteredFee = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
+			val fee =
+				Math.round(
+					enteredFee
+				) * if (isThisChivesNetwork(
+						wallet.networkType
+					)
+				) Math.pow(
+					10.0,
+					8.0
+				) else Math.pow(
+					10.0,
+					12.0
+				)
 			val gson = Gson()
-			args["observer"] = wallet.observerHash
-			args["non_observer"] = wallet.nonObserverHash
-			args["destAddress"] = toAddress
-			args["mnemonics"] = convertListToStringWithSpace(wallet.mnemonics)
-			args["coin"] = gson.toJson(coin)
-			args["parent_coin"] = gson.toJson(parentCoin)
+			argsFlut["observer"] = wallet.observerHash
+			argsFlut["non_observer"] = wallet.nonObserverHash
+			argsFlut["destAddress"] = toAddress
+			argsFlut["mnemonics"] = convertListToStringWithSpace(wallet.mnemonics)
+			argsFlut["coin"] = gson.toJson(coin)
+			argsFlut["base_url"] = vm.base_url
+			argsFlut["spentCoins"] = Gson().toJson(alreadySpentCoins)
+			argsFlut["address_fk"] = nftInfo.fk_address
+			argsFlut["fee"] = fee
 
-			methodChannel.invokeMethod("generateNftSpendBundle", args)
+			methodChannel.setMethodCallHandler { method, callBack ->
+				if (method.method == "nftSpendBundle") {
+
+					dialogManager.hidePrevDialogs()
+					VLog.d("SpendBundleJson for NFT from flutter : ${method.arguments}")
+					val argAnd = (method.arguments as HashMap<*, *>)
+					val spendBundleJson =
+						argAnd["spendBundle"].toString()
+					val dest_puzzle_hash =
+						argAnd["dest_puzzle_hash"].toString()
+					val spentCoinsJson =
+						argAnd["spentCoins"].toString()
+
+					vm.sendNFTBundle(
+						spendBundleJson,
+						dest_puzzle_hash,
+						spentCoinsJson,
+						nftInfo,
+						enteredFee
+					)
+
+				} else if (method.method == "failedNFT") {
+					showFailedSendingTransaction()
+					Toast.makeText(
+						getMainActivity(),
+						"Exception : ${method.arguments}",
+						Toast.LENGTH_LONG
+					).show()
+				}
+			}
+
+			methodChannel.invokeMethod("generateNftSpendBundle", argsFlut)
 		}
 	}
 

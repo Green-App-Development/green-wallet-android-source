@@ -157,26 +157,37 @@ class PushingTransaction {
           }
         case "generateNftSpendBundle":
           {
-            var args = call.arguments;
-            debugPrint("generateNftSpendBundle got called with args : $args");
-            var nftCoin = args["coin"].toString();
-            var nftParentCoin = args["parent_coin"].toString();
-            var mnemonics = args["mnemonics"].toString().split(' ');
-            var observer = int.parse(args["observer"].toString());
-            var non_observer = int.parse(args["non_observer"].toString());
-            var destAddress = args["destAddress"].toString();
-            generateNFTSpendBundle(
-                nftCoinJson: nftCoin,
-                nftParentCoinJson: nftParentCoin,
-                mnemonics: mnemonics,
-                observer: observer,
-                non_observer: non_observer,
-                destAddress: destAddress);
-            break;
+            try {
+              var args = call.arguments;
+              debugPrint("generateNftSpendBundle got called with args : $args");
+              var nftCoin = args["coin"].toString();
+              var mnemonics = args["mnemonics"].toString().split(' ');
+              var observer = int.parse(args["observer"].toString());
+              var non_observer = int.parse(args["non_observer"].toString());
+              var destAddress = args["destAddress"].toString();
+              var fee = args['fee'];
+              var spentXCHCoins = args['spentCoins'];
+              var base_url = args["base_url"];
+              var address_fk = args["address_fk"];
+              generateNFTSpendBundle(
+                  nftCoinJson: nftCoin,
+                  mnemonics: mnemonics,
+                  observer: observer,
+                  non_observer: non_observer,
+                  destAddress: destAddress,
+                  fee: fee,
+                  spentCoinsJson: spentXCHCoins,
+                  base_url: base_url,
+                  address_fk: address_fk);
+              break;
+            } catch (ex) {
+              debugPrint("Exception in parsing args from android : $ex");
+              _channel.invokeMethod("nftSpendBundle");
+            }
           }
       }
     });
-    testingMethod();
+    // testingMethod();
   }
 
   Future<void> cachedWalletKeyChain(
@@ -477,8 +488,8 @@ class PushingTransaction {
     for (var coin in feeStandardCoinsTotal) {
       var feeCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      debugPrint(
-          "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
+      // debugPrint(
+      //     "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
       if (coin.amount != 0 && !feeCoinSpent) {
         feeSum += coin.amount;
         standardCoinsForFee.add(coin);
@@ -790,7 +801,6 @@ class PushingTransaction {
   }
 
   void testingMethod() async {
-    final fullNodeUtils = FullNodeUtilsWindows(Network.mainnet);
 
     var mnemonic = [
       "faint",
@@ -809,7 +819,7 @@ class PushingTransaction {
 
     ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
 
-    final fullNodeRpc = FullNodeHttpRpc(fullNodeUtils.url);
+    final fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -842,9 +852,7 @@ class PushingTransaction {
     );
     var bundleNFTJson = bundleNFT.toJson();
     print("BundleNFTJson : $bundleNFTJson");
-    _channel.invokeMethod('nftSpendBundle', {
-      "spendBundle": bundleNFTJson
-    });
+    _channel.invokeMethod('nftSpendBundle', {"spendBundle": bundleNFTJson});
 
     print("Puzzle Hash Hint : ${keychain.puzzlehashes.first.toHex()}");
 
@@ -966,45 +974,85 @@ class PushingTransaction {
 
   Future<void> generateNFTSpendBundle(
       {required String nftCoinJson,
-      required String nftParentCoinJson,
       required List<String> mnemonics,
       required int observer,
       required int non_observer,
-      required String destAddress}) async {
-    var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
+      required String destAddress,
+      required int fee,
+      required String spentCoinsJson,
+      required String base_url,
+      required String address_fk}) async {
+    try {
+      var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
 
-    final keychain = cachedWalletChains[key] ??
-        generateKeyChain(mnemonics, observer, non_observer);
+      final keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, non_observer);
 
-    var coinMap = json.decode(nftCoinJson) as Map<String, dynamic>;
-    var nftParentCoin = json.decode(nftParentCoinJson) as Map<String, dynamic>;
+      var coinMap = json.decode(nftCoinJson) as Map<String, dynamic>;
 
-    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+      NetworkContext()
+          .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    final coin = Coin.fromChiaCoinRecordJson(coinMap);
-    final parentSpendCoin = CoinSpend.fromJson(nftParentCoin);
+      final coin = Coin.fromChiaCoinRecordJson(coinMap);
+      debugPrint("NFTCoin to Send after decoding and parsing : $coin");
 
-    debugPrint(
-        "NFtParentCoin after decoding and parsing : $coin $parentSpendCoin");
+      final fullNodeRpc = FullNodeHttpRpc(base_url);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
 
-    var fullCoin = FullCoin(coin: coin, parentCoinSpend: parentSpendCoin);
+      List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
+      List<String> spentCoinsParents = [];
+      for (var item in spentCoinsJsonDecoded) {
+        var parent_coin_info = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parent_coin_info);
+      }
+      List<Future<void>> futures = [];
+      List<Coin> standardCoinsForFee = [];
+      if (fee > 0) {
+        futures.add(getStandardCoinsForFee(
+            keyChain: keychain,
+            observer: observer,
+            non_observer: non_observer,
+            httpUrl: base_url,
+            spentCoinsParents: spentCoinsParents,
+            standardCoinsForFee: standardCoinsForFee,
+            fee: fee));
+      }
 
-    final result = await NftWallet().getNFTFullCoinInfo(
-      fullCoin,
-      buildKeychain: (phs) async => keychain,
-    );
-    var destPuzzleHash = Address(destAddress).toPuzzlehash();
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
 
-    final fullNFTCoinInfo = result.item1;
-    final transferBundle = NftWallet().createTransferSpendBundle(
-        nftCoin: fullNFTCoinInfo.toNftCoinInfo(),
+      var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+          parent_coin_info: coin.parentCoinInfo,
+          puzzle_hash: Address(address_fk).toPuzzlehash());
+
+      final nftCoin = nftCoins[0];
+      debugPrint("Found NFTCoin to send  $nftCoin");
+
+      final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+      debugPrint("Converting to FullNFTCoin : $nftFullCoin");
+
+      final destPuzzleHash=Address(destAddress).toPuzzlehash();
+
+      var bundleNFT = NftWallet().createTransferSpendBundle(
+        nftCoin: nftFullCoin.toNftCoinInfo(),
         keychain: keychain,
         targetPuzzleHash: destPuzzleHash,
-        standardCoinsForFee: [],
-        fee: 0);
-    var transferJson = transferBundle.toJson();
-    debugPrint("TransferBundle for nft : $transferJson");
-    _channel.invokeMethod("nftSpendBundle", {"spendBundle": transferJson});
+        standardCoinsForFee: standardCoinsForFee,
+        fee: fee,
+        changePuzzlehash: keychain.puzzlehashes[0],
+      );
+      var bundleNFTJson = bundleNFT.toJson();
+
+      _channel.invokeMethod('nftSpendBundle', {
+        "spendBundle": bundleNFTJson,
+        "dest_puzzle_hash": destPuzzleHash.toHex(),
+        "spentCoins": jsonEncode(standardCoinsForFee)
+      });
+
+    } catch (ex) {
+      debugPrint("Exception in sending nft token : $ex");
+      _channel.invokeMethod("failedNFT","Sorry, something went wrong : $ex");
+    }
   }
 
   Future<void> getFullCoinsDetail(
@@ -1106,47 +1154,5 @@ class PushingTransaction {
     //   }
     // }
     return null;
-  }
-}
-
-class FullNodeUtilsWindows {
-  static const String defaultUrl = 'https://localhost:8555';
-
-  final String url;
-  final Network network;
-
-  FullNodeUtilsWindows(this.network, {this.url = defaultUrl});
-
-  Bytes get certBytes {
-    return _getAuthFileBytes('$sslPath\\private_full_node.crt');
-  }
-
-  String get checkNetworkMessage =>
-      'Check if your full node is runing on $network';
-
-  Bytes get keyBytes {
-    return _getAuthFileBytes('$sslPath\\private_full_node.key');
-  }
-
-  String get sslPath =>
-      '${Platform.environment['HOMEPATH']}\\.chia\\mainnet\\config\\ssl\\full_node';
-
-  Future<void> checkIsRunning() async {
-    final fullNodeRpc = FullNodeHttpRpc(
-      url,
-      certBytes: certBytes,
-      keyBytes: keyBytes,
-    );
-
-    final fullNode = ChiaFullNodeInterface(fullNodeRpc);
-    await fullNode.getBlockchainState();
-  }
-
-  static Bytes _getAuthFileBytes(String pathToFile) {
-    LoggingContext()
-      ..info(null, highLog: 'auth file loaded: $pathToFile')
-      ..info(null, highLog: 'file contents:')
-      ..info(null, highLog: File(pathToFile).readAsStringSync());
-    return Bytes(File(pathToFile).readAsBytesSync());
   }
 }

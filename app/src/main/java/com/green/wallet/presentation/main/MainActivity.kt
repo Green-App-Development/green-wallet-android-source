@@ -169,7 +169,8 @@ class MainActivity : BaseActivity() {
 			val shouldStopUpdateBalance = setOf(
 				sendFragment, impMnemonicFragment,
 				verificationFragment,
-				entPasscodeFrMain
+				entPasscodeFrMain,
+				fragmentSendNFT
 			)
 			if (shouldStopUpdateBalance.contains(dest.id)) {
 				VLog.d("ShouldStopUpdateBalance destination on MainActivity")

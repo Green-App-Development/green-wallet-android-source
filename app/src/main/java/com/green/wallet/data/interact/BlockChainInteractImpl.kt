@@ -21,6 +21,7 @@ import com.green.wallet.data.network.dto.spendbundle.CoinSpend
 import com.green.wallet.data.network.dto.spendbundle.SpenBunde
 import com.green.wallet.data.network.dto.spendbundle.SpendBundle
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
@@ -56,21 +57,18 @@ class BlockChainInteractImpl @Inject constructor(
 	private val context: Context,
 	private val nftCoinsDao: NftCoinsDao,
 	private val nftInfoDao: NftInfoDao
-) :
-	BlockChainInteract {
+) : BlockChainInteract {
 
 	private val mutexUpdateBalance = Mutex()
 
 	@RequiresApi(Build.VERSION_CODES.N)
 	override suspend fun saveNewWallet(
-		wallet: Wallet,
-		imported: Boolean
+		wallet: Wallet, imported: Boolean
 	): Resource<String> {
 		val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
 		val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
 		var savedTime = greenAppInteract.getServerTime()
-		if (savedTime == -1L)
-			savedTime = System.currentTimeMillis()
+		if (savedTime == -1L) savedTime = System.currentTimeMillis()
 		val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
@@ -108,8 +106,7 @@ class BlockChainInteractImpl @Inject constructor(
 							VLog.d("HashList Imported on creating new wallet : $hashListImported")
 							CoroutineScope(Dispatchers.IO).launch {
 								walletDao.updateChiaNetworkHashListImportedByAddress(
-									wallet.address,
-									hashListImported
+									wallet.address, hashListImported
 								)
 							}
 						}
@@ -151,9 +148,8 @@ class BlockChainInteractImpl @Inject constructor(
 			if (isThisChivesNetwork(wallet.networkType)) return
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			for (hash in wallet.puzzle_hashes) {
 				nftBalanceByHash(wallet.address, hash, curBlockChainService)
 			}
@@ -163,26 +159,20 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	private suspend fun nftBalanceByHash(
-		address: String,
-		hash: String,
-		service: BlockChainService
+		address: String, hash: String, service: BlockChainService
 	) {
 		try {
 			val body = hashMapOf<String, Any>()
-			body["hint"] =
-				hash
+			body["hint"] = hash
 			body["include_spent_coins"] = false
 			val res = service.getCoinRecordsByHint(body)
 			if (res.isSuccessful) {
 				val coinRecords = res.body()!!.coin_records
 				for (coin in coinRecords) {
 					val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-					if (nftCoin.isPresent || coin.coin.amount != 1L)
-						continue
+					if (nftCoin.isPresent || coin.coin.amount != 1L) continue
 					val parent_coin = getNftParentCoin(
-						coin.coin.parent_coin_info,
-						coin.confirmed_block_index,
-						service
+						coin.coin.parent_coin_info, coin.confirmed_block_index, service
 					)
 					if (parent_coin != null) {
 						val nftCoinEntity = NFTCoinEntity(
@@ -199,6 +189,7 @@ class BlockChainInteractImpl @Inject constructor(
 							parent_coin.coin_solution.solution,
 							coin.coinbase
 						)
+						VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
 						val methodChannel = MethodChannel(
 							(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
 							METHOD_CHANNEL_GENERATE_HASH
@@ -208,9 +199,7 @@ class BlockChainInteractImpl @Inject constructor(
 								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
 								CoroutineScope(Dispatchers.IO).launch {
 									retrieveNFTPropertiesAndSave(
-										method,
-										coin.coin.parent_coin_info,
-										nftCoinEntity
+										method, coin.coin.parent_coin_info, nftCoinEntity
 									)
 								}
 							} else if (method.method == "exceptionNFT") {
@@ -236,9 +225,7 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	private suspend fun retrieveNFTPropertiesAndSave(
-		method: MethodCall,
-		coin_hash: String,
-		nftCoinEntity: NFTCoinEntity
+		method: MethodCall, coin_hash: String, nftCoinEntity: NFTCoinEntity
 	) {
 		val args = method.arguments as HashMap<String, Any>
 		val launcher_id = args["launcherId"].toString()
@@ -306,9 +293,7 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	private suspend fun getNftParentCoin(
-		coin_hash: String,
-		height: Long,
-		service: BlockChainService
+		coin_hash: String, height: Long, service: BlockChainService
 	): ParentCoinRecordResponse? {
 		try {
 			val body = hashMapOf<String, Any>()
@@ -330,28 +315,30 @@ class BlockChainInteractImpl @Inject constructor(
 		try {
 			val inProgressTrans = transactionDao.getTransactionsByStatus(Status.InProgress)
 			for (tran in inProgressTrans) {
-				val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
-				VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
-				if (unSpentCoinRecordHeight != -1L) {
-					transactionDao.updateTransactionStatusHeight(
-						Status.Outgoing,
-						unSpentCoinRecordHeight,
-						tran.transaction_id
-					)
-					val deleteSpentCoinsRow =
-						spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
-					VLog.d("Affected rows when deleting spentCoins : $deleteSpentCoinsRow")
-					val formatted = formattedDoubleAmountWithPrecision(tran.amount)
-					val resLanguageResource =
-						prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
-					val resMap = Converters.stringToHashMap(resLanguageResource)
-					val outgoing_transaction =
-						resMap["push_notifications_outgoing"]
-							?: "Outgoing transaction"
-					notificationHelper.callGreenAppNotificationMessages(
-						"$outgoing_transaction : $formatted ${tran.code}",
-						System.currentTimeMillis()
-					)
+				if (tran.code != "NFT") {
+					val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
+					VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
+					if (unSpentCoinRecordHeight != -1L) {
+						transactionDao.updateTransactionStatusHeight(
+							Status.Outgoing, unSpentCoinRecordHeight, tran.transaction_id
+						)
+						val deleteSpentCoinsRow =
+							spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
+						VLog.d("Affected rows when deleting spentCoins : $deleteSpentCoinsRow")
+						val formatted = formattedDoubleAmountWithPrecision(tran.amount)
+						val resLanguageResource =
+							prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+						val resMap = Converters.stringToHashMap(resLanguageResource)
+						val outgoing_transaction =
+							resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
+						notificationHelper.callGreenAppNotificationMessages(
+							"$outgoing_transaction : $formatted ${tran.code}",
+							System.currentTimeMillis()
+						)
+					}
+				} else {
+					//in case of nft
+
 				}
 			}
 		} catch (ex: java.lang.Exception) {
@@ -363,12 +350,10 @@ class BlockChainInteractImpl @Inject constructor(
 		try {
 			val networkItem = getNetworkItemFromPrefs(tran.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hash"] =
-				tran.to_dest_hash
+			body["puzzle_hash"] = tran.to_dest_hash
 			body["include_spent_coins"] = false
 			val division = getTokenPrecisionByCode(tran.code)
 			val request = curBlockChainService.queryBalanceWithSorting(body)
@@ -377,13 +362,10 @@ class BlockChainInteractImpl @Inject constructor(
 					request.body()!!.coin_records.sortedWith { p0, p1 -> if (p0.timestamp >= p1.timestamp) 1 else -1 }
 //				VLog.d("CoinRecordsIncreasing to confirm incoming transaction : $coinRecordsIncreasing")
 				for (record in coinRecordsIncreasing) {
-					val coinAmount =
-						record.coin.amount / division
+					val coinAmount = record.coin.amount / division
 					val timeStamp = record.timestamp
 //					VLog.d("TimeStamp of updating trans : timeStamp : ${timeStamp} trantime : ${tran.created_at_time}, CoinAmount : $coinAmount , TranCoinAmount : ${tran.amount}")
-					if (coinAmount == tran.amount && timeStamp >=
-						tran.created_at_time / 1000 - 120
-					) {
+					if (coinAmount == tran.amount && timeStamp >= tran.created_at_time / 1000 - 120) {
 						return record.confirmed_block_index
 					}
 				}
@@ -394,6 +376,9 @@ class BlockChainInteractImpl @Inject constructor(
 		return -1
 	}
 
+	private suspend fun searchForSpentNFTByPuzzleHashAndCoin() {
+
+	}
 
 	override suspend fun push_tx(
 		jsonSpendBundle: String,
@@ -410,13 +395,11 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 		try {
 			val serverTime = greenAppInteract.getServerTime()
-			if (serverTime == -1L)
-				throw  ServerMaintenanceExceptions()
+			if (serverTime == -1L) throw  ServerMaintenanceExceptions()
 			val timeBeforePushingTrans = serverTime - 60 * 1000
 			VLog.d("Push method got called in data layer code : $networkType")
 			val curBlockChainService =
-				retrofitBuilder.baseUrl("$url/").build()
-					.create(BlockChainService::class.java)
+				retrofitBuilder.baseUrl("$url/").build().create(BlockChainService::class.java)
 
 			val spendBundleJson = JSONObject(jsonSpendBundle)
 			val agg_signature = spendBundleJson.getString("aggregated_signature")
@@ -467,10 +450,7 @@ class BlockChainInteractImpl @Inject constructor(
 						address
 					)
 					spentCoinsInteract.insertSpentCoinsJson(
-						spentCoinsToken,
-						timeBeforePushingTrans,
-						code,
-						address
+						spentCoinsToken, timeBeforePushingTrans, code, address
 					)
 					return Resource.success("OK")
 				}
@@ -496,19 +476,15 @@ class BlockChainInteractImpl @Inject constructor(
 			if (isThisChivesNetwork(wallet.networkType)) return
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
 			val job = CoroutineScope(Dispatchers.IO).launch {
 				for ((asset_id, puzzle_hashes) in wallet.hashListImported) {
 					launch {
 						VLog.d("Launched job to get balance for $asset_id and Puzzle Hash : $puzzle_hashes")
 						updateTokenBalanceIndividually(
-							curBlockChainService,
-							asset_id,
-							puzzle_hashes,
-							hashWithAmount
+							curBlockChainService, asset_id, puzzle_hashes, hashWithAmount
 						)
 					}
 				}
@@ -527,8 +503,7 @@ class BlockChainInteractImpl @Inject constructor(
 		hashWithAmount: HashMap<String, Double>
 	) {
 		val body = hashMapOf<String, Any>()
-		body["puzzle_hashes"] =
-			puzzle_hashes
+		body["puzzle_hashes"] = puzzle_hashes
 		body["include_spent_coins"] = false
 		val division = 1000.0
 		var balance = 0L
@@ -538,8 +513,7 @@ class BlockChainInteractImpl @Inject constructor(
 			for (coin in coinRecordsJsonArray) {
 				val curAmount = coin.coin.amount
 				val spent = coin.spent
-				if (!spent)
-					balance += curAmount
+				if (!spent) balance += curAmount
 			}
 		}
 		val newAmount = balance / division
@@ -552,14 +526,12 @@ class BlockChainInteractImpl @Inject constructor(
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
 
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
 			for ((asset_id, puzzle_hashes) in wallet.hashListImported) {
 				val body = hashMapOf<String, Any>()
-				body["puzzle_hashes"] =
-					puzzle_hashes
+				body["puzzle_hashes"] = puzzle_hashes
 				body["include_spent_coins"] = false
 				val division = 1000.0
 				var balance = 0L
@@ -570,18 +542,14 @@ class BlockChainInteractImpl @Inject constructor(
 					for (coin in coinRecordsJsonArray) {
 						val curAmount = coin.coin.amount
 						val spent = coin.spent
-						if (!spent)
-							balance += curAmount
+						if (!spent) balance += curAmount
 					}
 				}
 				val newAmount = balance / division
 				hashWithAmount[asset_id] = newAmount
 				if (newAmount != prevAmount) {
 					getIncomingTransactionNotifForToken(
-						puzzle_hashes,
-						wallet,
-						curBlockChainService,
-						asset_id
+						puzzle_hashes, wallet, curBlockChainService, asset_id
 					)
 //					outgoingTransactionManager.checkOutGoingTransactions(puzzle_hashes,prevStartHeight,wallet,curBlockChainService,
 //						getTokenPrecisionByCode(tokeEntity.code), tokenCode = tokeEntity.code)
@@ -603,8 +571,7 @@ class BlockChainInteractImpl @Inject constructor(
 	) {
 		try {
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hashes"] =
-				puzzleHashes
+			body["puzzle_hashes"] = puzzleHashes
 			body["include_spent_coins"] = false
 			val division = 1000.0
 			val code = tokenDao.getTokenByHash(assetId).get().code
@@ -617,8 +584,7 @@ class BlockChainInteractImpl @Inject constructor(
 					val height = record.confirmed_block_index
 					val parent_coin_info = record.coin.parent_coin_info
 					val parent_puzzle_hash = getParentCoinsSpentAmountAndHashValue(
-						parent_coin_info,
-						curBlockChainService
+						parent_coin_info, curBlockChainService
 					)!!["puzzle_hash"] as String
 					val transExistByParentInfo =
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
@@ -647,8 +613,7 @@ class BlockChainInteractImpl @Inject constructor(
 							prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
 						val resMap = Converters.stringToHashMap(resLanguageResource)
 						val incoming_transaction =
-							resMap["push_notifications_incoming"]
-								?: "Incoming transaction"
+							resMap["push_notifications_incoming"] ?: "Incoming transaction"
 						notificationHelper.callGreenAppNotificationMessages(
 							"$incoming_transaction : $formatted $tokenCode",
 							System.currentTimeMillis()
@@ -674,21 +639,16 @@ class BlockChainInteractImpl @Inject constructor(
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
 
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hashes"] =
-				wallet.puzzle_hashes
+			body["puzzle_hashes"] = wallet.puzzle_hashes
 			body["include_spent_coins"] = false
-			val division =
-				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
-					10.0,
-					8.0
-				) else Math.pow(
-					10.0,
-					12.0
-				)
+			val division = if (isThisChivesNetwork(wallet.networkType)) Math.pow(
+				10.0, 8.0
+			) else Math.pow(
+				10.0, 12.0
+			)
 			var balance = 0L
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			var newStartHeight = Long.MAX_VALUE
@@ -698,11 +658,9 @@ class BlockChainInteractImpl @Inject constructor(
 					val curAmount = coin.coin.amount
 					val spent = coin.spent
 					newStartHeight = Math.min(newStartHeight, coin.confirmed_block_index)
-					if (!spent)
-						balance += curAmount
+					if (!spent) balance += curAmount
 				}
-				val prevBalance =
-					walletDao.getWalletByAddress(wallet.address).get(0).balance
+				val prevBalance = walletDao.getWalletByAddress(wallet.address).get(0).balance
 				val newBalance = balance / division
 				VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance and newStartHeight : $newStartHeight")
 				walletDao.updateWalletBalanceByAddress(newBalance, wallet.address)
@@ -719,23 +677,18 @@ class BlockChainInteractImpl @Inject constructor(
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
 
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			val tokensStartHeight = wallet.tokensStartHeight
 			val prevStartHeight = tokensStartHeight[getShortNetworkType(wallet.networkType)] ?: 0
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hashes"] =
-				wallet.puzzle_hashes
+			body["puzzle_hashes"] = wallet.puzzle_hashes
 			body["include_spent_coins"] = false
-			val division =
-				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
-					10.0,
-					8.0
-				) else Math.pow(
-					10.0,
-					12.0
-				)
+			val division = if (isThisChivesNetwork(wallet.networkType)) Math.pow(
+				10.0, 8.0
+			) else Math.pow(
+				10.0, 12.0
+			)
 			var balance = 0L
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			var newStartHeight = Long.MAX_VALUE
@@ -745,17 +698,14 @@ class BlockChainInteractImpl @Inject constructor(
 					val curAmount = coin.coin.amount
 					val spent = coin.spent
 					newStartHeight = Math.min(newStartHeight, coin.confirmed_block_index)
-					if (!spent)
-						balance += curAmount
+					if (!spent) balance += curAmount
 				}
-				val prevBalance =
-					walletDao.getWalletByAddress(wallet.address).get(0).balance
+				val prevBalance = walletDao.getWalletByAddress(wallet.address).get(0).balance
 				val newBalance = balance / division
 				VLog.d("Updating balance for wallet : ${wallet.fingerPrint} from $prevBalance to balance : $newBalance and newStartHeight : $newStartHeight")
 				if (prevBalance != newBalance) {
 					VLog.d("CurBalance is not the same as the previous one for wallet : ${wallet.fingerPrint}")
-					tokensStartHeight[getShortNetworkType(wallet.networkType)] =
-						newStartHeight
+					tokensStartHeight[getShortNetworkType(wallet.networkType)] = newStartHeight
 					walletDao.updateWalletBalanceByAddress(newBalance, wallet.address)
 					updateIncomingTransactions(wallet)
 //					outgoingTransactionManager.checkOutGoingTransactions(wallet.puzzle_hashes,
@@ -771,26 +721,90 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
+	override suspend fun push_tx_nft(
+		jsonSpendBundle: String,
+		url: String,
+		dest_puzzle_hash: String,
+		nftInfo: NFTInfo,
+		spentCoinsJson: String,
+		fee: Double
+	): Resource<String> {
+		try {
+			val serverTime = greenAppInteract.getServerTime()
+			if (serverTime == -1L) throw  ServerMaintenanceExceptions()
+			val timeBeforePushingTrans = serverTime - 60 * 1000
+			val curBlockChainService =
+				retrofitBuilder.baseUrl("$url/").build().create(BlockChainService::class.java)
+			val spendBundleJson = JSONObject(jsonSpendBundle)
+			val agg_signature = spendBundleJson.getString("aggregated_signature")
+			val coinSpends = mutableListOf<CoinSpend>()
+			val coinSpendsSize = spendBundleJson.getJSONArray("coin_spends").length()
+			for (i in 0 until coinSpendsSize) {
+				val coin_spend =
+					JSONObject(spendBundleJson.getJSONArray("coin_spends")[i].toString())
+
+				val puzzle_reveal = coin_spend.getString("puzzle_reveal")
+				val solution = coin_spend.getString("solution")
+				val coinJSON = JSONObject(coin_spend.get("coin").toString())
+				val parent_coin_info = "0x" + coinJSON.getString("parent_coin_info")
+				val puzzle_hash = "0x" + coinJSON.getString("puzzle_hash")
+				val amount = coinJSON.getLong("amount")
+				val coin = CoinDto(amount, parent_coin_info, puzzle_hash)
+				val coinSpend = CoinSpend(coin, puzzle_reveal, solution)
+				coinSpends.add(coinSpend)
+			}
+			val spendBundle = SpendBundle(agg_signature, coinSpends.toList())
+			val spenBundle = SpenBunde(spendBundle)
+			VLog.d("SpendBundle Sending to server push_tx : $spenBundle")
+			val res = curBlockChainService.pushTransaction(spenBundle)
+			if (res.isSuccessful) {
+				val status = res.body()!!.status
+				if (status == "SUCCESS") {
+
+					val trans = TransactionEntity(
+						nftInfo.nft_coin_hash,
+						1.0,
+						timeBeforePushingTrans,
+						0,
+						Status.InProgress,
+						"Chia",
+						dest_puzzle_hash,
+						fkAddress = nftInfo.fk_address,
+						fee,
+						"NFT"
+					)
+					transactionDao.insertTransaction(trans)
+					spentCoinsInteract.insertSpentCoinsJson(
+						spentCoinsJson,
+						timeBeforePushingTrans,
+						"NFT",
+						nftInfo.fk_address
+					)
+
+					return Resource.success("OK")
+				}
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception in push tx nft : $ex")
+		}
+		return Resource.error(Exception("No"))
+	}
+
 	suspend fun updateIncomingTransactions(wallet: WalletEntity) {
 		try {
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
 
-			val curBlockChainService =
-				retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-					.create(BlockChainService::class.java)
+			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+				.create(BlockChainService::class.java)
 			val body = hashMapOf<String, Any>()
-			body["puzzle_hashes"] =
-				wallet.puzzle_hashes
+			body["puzzle_hashes"] = wallet.puzzle_hashes
 			body["include_spent_coins"] = false
-			val division =
-				if (isThisChivesNetwork(wallet.networkType)) Math.pow(
-					10.0,
-					8.0
-				) else Math.pow(
-					10.0,
-					12.0
-				)
+			val division = if (isThisChivesNetwork(wallet.networkType)) Math.pow(
+				10.0, 8.0
+			) else Math.pow(
+				10.0, 12.0
+			)
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			if (request.isSuccessful) {
 				val coinRecordsJsonArray = request.body()!!.coin_records
@@ -800,8 +814,7 @@ class BlockChainInteractImpl @Inject constructor(
 					val height = record.confirmed_block_index
 					val parent_coin_info = record.coin.parent_coin_info
 					val parent_puzzle_hash = getParentCoinsSpentAmountAndHashValue(
-						parent_coin_info,
-						curBlockChainService
+						parent_coin_info, curBlockChainService
 					)!!["puzzle_hash"] as String
 					val transExistByParentInfo =
 						transactionDao.checkTransactionByIDExistInDB(parent_coin_info)
@@ -830,8 +843,7 @@ class BlockChainInteractImpl @Inject constructor(
 						if (resLanguageResource.isEmpty()) return
 						val resMap = Converters.stringToHashMap(resLanguageResource)
 						val incoming_transaction =
-							resMap["push_notifications_incoming"]
-								?: "Incoming transaction"
+							resMap["push_notifications_incoming"] ?: "Incoming transaction"
 						notificationHelper.callGreenAppNotificationMessages(
 							"$incoming_transaction : $formatted ${getShortNetworkType(wallet.networkType)}",
 							System.currentTimeMillis()
@@ -852,8 +864,7 @@ class BlockChainInteractImpl @Inject constructor(
 	}
 
 	suspend fun getParentCoinsSpentAmountAndHashValue(
-		parent_info: String,
-		service: BlockChainService
+		parent_info: String, service: BlockChainService
 	): HashMap<Any, Any>? {
 		val res = hashMapOf<Any, Any>()
 		val body = hashMapOf<String, Any>()
