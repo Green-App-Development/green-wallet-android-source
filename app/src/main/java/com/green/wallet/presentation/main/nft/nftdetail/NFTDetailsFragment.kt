@@ -175,7 +175,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		isHiddenRelLayoutBtnSend = false
 		val animator =
 			ObjectAnimator.ofFloat(relLayout, "translationY", relLayout.height.toFloat(), 0f)
-		animator.duration = 1000
+		animator.duration = 500
 		animator.start()
 	}
 

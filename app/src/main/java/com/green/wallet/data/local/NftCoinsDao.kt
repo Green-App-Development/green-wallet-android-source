@@ -17,5 +17,7 @@ interface NftCoinsDao {
 	@Query("SELECT * FROM NFTCoinEntity WHERE coin_info=:nft_hash")
 	suspend fun getNFTCoinByParentCoinInfo(nft_hash: String): Optional<NFTCoinEntity>
 
+	@Query("DELETE FROM NFTCoinEntity WHERE coin_info=:nft_hash")
+	suspend fun deleteNFTCoinEntityByCoinInfo(nft_hash: String):Int
 
 }
