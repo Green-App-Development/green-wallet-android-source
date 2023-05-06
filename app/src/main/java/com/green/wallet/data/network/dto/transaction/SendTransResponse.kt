@@ -19,24 +19,6 @@ data class SendTransResponse(
 	val fee_amount: Double
 ) {
 
-	fun toTransactionEntity(
-		toAddress: String,
-		fkAddress: String,
-		networkType: String,
-		created_at_time: Long,
-		amount: Double
-	) = TransactionEntity(
-		transaction_id,
-		amount,
-		created_at_time,
-		confirmed_at_height,
-		Status.InProgress,
-		networkType,
-		toAddress,
-		fkAddress,
-		fee_amount,
-		networkType
-	)
 
 
 }

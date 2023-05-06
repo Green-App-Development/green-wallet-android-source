@@ -39,7 +39,8 @@ interface BlockChainInteract {
 		dest_puzzle_hash: String,
 		nftInfo: NFTInfo,
 		spentCoinsJson: String,
-		fee:Double
+		fee:Double,
+		confirm_height:Int
 	): Resource<String>
 
 }
