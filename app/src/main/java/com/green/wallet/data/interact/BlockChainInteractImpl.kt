@@ -151,7 +151,7 @@ class BlockChainInteractImpl @Inject constructor(
             val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
                 .create(BlockChainService::class.java)
             for (hash in wallet.puzzle_hashes) {
-                nftBalanceByHash(wallet.address, hash, curBlockChainService)
+                nftBalanceByHash(wallet, hash, curBlockChainService)
             }
         } catch (ex: Exception) {
             VLog.d("Exception occurred with updating wallet nft balance by individ hash : ${ex.message}")
@@ -159,7 +159,7 @@ class BlockChainInteractImpl @Inject constructor(
     }
 
     private suspend fun nftBalanceByHash(
-        address: String, hash: String, service: BlockChainService
+        wallet: WalletEntity, hash: String, service: BlockChainService
     ) {
         try {
             val body = hashMapOf<String, Any>()
@@ -177,7 +177,7 @@ class BlockChainInteractImpl @Inject constructor(
                     if (parent_coin != null) {
                         val nftCoinEntity = NFTCoinEntity(
                             coin.coin.parent_coin_info,
-                            address_fk = address,
+                            address_fk = wallet.address,
                             coin.coin.puzzle_hash,
                             1,
                             coin.confirmed_block_index,
@@ -200,7 +200,7 @@ class BlockChainInteractImpl @Inject constructor(
                                 VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
                                 CoroutineScope(Dispatchers.IO).launch {
                                     retrieveNFTPropertiesAndSave(
-                                        method, coin.coin.parent_coin_info, nftCoinEntity
+                                        method, coin.coin.parent_coin_info, nftCoinEntity, wallet
                                     )
                                 }
                             } else if (method.method == "exceptionNFT") {
@@ -226,7 +226,7 @@ class BlockChainInteractImpl @Inject constructor(
     }
 
     private suspend fun retrieveNFTPropertiesAndSave(
-        method: MethodCall, coin_hash: String, nftCoinEntity: NFTCoinEntity
+        method: MethodCall, coin_hash: String, nftCoinEntity: NFTCoinEntity, wallet: WalletEntity
     ) {
         val args = method.arguments as HashMap<String, Any>
         val launcher_id = args["launcherId"].toString()
@@ -265,6 +265,17 @@ class BlockChainInteractImpl @Inject constructor(
         )
         nftInfoDao.insertNftInfoEntity(nftInfoEntity)
         nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
+        if (nftCoinEntity.time_stamp * 1000L >= wallet.savedTime) {
+            val resLanguageResource =
+                prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+            val resMap = Converters.stringToHashMap(resLanguageResource)
+            val incoming_transaction =
+                resMap["push_notifications_incoming"] ?: "Incoming transaction"
+            notificationHelper.callGreenAppNotificationMessages(
+                "$incoming_transaction : 1 NFT",
+                System.currentTimeMillis()
+            )
+        }
     }
 
     private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any> {
@@ -344,7 +355,9 @@ class BlockChainInteractImpl @Inject constructor(
                         transactionDao.updateTransactionStatusHeight(
                             Status.Outgoing, height.toLong(), tran.transaction_id
                         )
-                        VLog.d("Updating nft transaction height : ${tran.transaction_id}")
+                        var c = nftInfoDao.deleteNFTInfoById(tran.transaction_id)
+                        c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.transaction_id)
+                        VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
                         val deleteSpentCoinsRow =
                             spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
                         VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")
@@ -774,7 +787,7 @@ class BlockChainInteractImpl @Inject constructor(
         spentCoinsJson: String,
         fee: Double,
         confirm_height: Int,
-        networkType:String
+        networkType: String
     ): Resource<String> {
         try {
             val serverTime = greenAppInteract.getServerTime()
