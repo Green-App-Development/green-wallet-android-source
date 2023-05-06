@@ -773,7 +773,8 @@ class BlockChainInteractImpl @Inject constructor(
         nftInfo: NFTInfo,
         spentCoinsJson: String,
         fee: Double,
-        confirm_height: Int
+        confirm_height: Int,
+        networkType:String
     ): Resource<String> {
         try {
             val serverTime = greenAppInteract.getServerTime()
@@ -813,7 +814,7 @@ class BlockChainInteractImpl @Inject constructor(
                         timeBeforePushingTrans,
                         0,
                         Status.InProgress,
-                        "Chia",
+                        networkType,
                         dest_puzzle_hash,
                         fkAddress = nftInfo.fk_address,
                         fee,
