@@ -14,6 +14,7 @@ import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
+import com.green.wallet.presentation.tools.NetworkType
 import com.green.wallet.presentation.tools.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -61,7 +62,8 @@ class NFTSendViewModel @Inject constructor(
 		spentCoinsJson: String,
 		nftInfo: NFTInfo,
 		fee_amount:Double,
-		confirm_height:Int
+		confirm_height:Int,
+		networkType: String
 	) {
 		viewModelScope.launch {
 			val res = blockChainInteract.push_tx_nft(
@@ -71,7 +73,8 @@ class NFTSendViewModel @Inject constructor(
 				nftInfo,
 				spentCoinsJson,
 				fee_amount,
-				confirm_height
+				confirm_height,
+				networkType
 			)
 			sendNFTState.value=res
 		}

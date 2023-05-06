@@ -324,7 +324,7 @@ class NFTSendFragment : DaggerFragment() {
 			)
 			val enteredFee = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
 			val fee =
-				Math.round(
+				(Math.round(
 					enteredFee
 				) * if (isThisChivesNetwork(
 						wallet.networkType
@@ -335,7 +335,7 @@ class NFTSendFragment : DaggerFragment() {
 				) else Math.pow(
 					10.0,
 					12.0
-				)
+				)).toLong()
 			val gson = Gson()
 			argsFlut["observer"] = wallet.observerHash
 			argsFlut["non_observer"] = wallet.nonObserverHash
@@ -364,7 +364,8 @@ class NFTSendFragment : DaggerFragment() {
 						spentCoinsJson,
 						nftInfo,
 						enteredFee,
-						nftCoin.confirmed_block_index.toInt()
+						nftCoin.confirmed_block_index.toInt(),
+						wallet.networkType
 					)
 
 				} else if (method.method == "failedNFT") {

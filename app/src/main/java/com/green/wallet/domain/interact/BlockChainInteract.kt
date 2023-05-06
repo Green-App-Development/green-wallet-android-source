@@ -40,7 +40,8 @@ interface BlockChainInteract {
 		nftInfo: NFTInfo,
 		spentCoinsJson: String,
 		fee:Double,
-		confirm_height:Int
+		confirm_height:Int,
+		networkType: String
 	): Resource<String>
 
 }
