@@ -60,7 +60,8 @@ class NFTSendViewModel @Inject constructor(
 		destPuzzleHash: String,
 		spentCoinsJson: String,
 		nftInfo: NFTInfo,
-		fee_amount:Double
+		fee_amount:Double,
+		confirm_height:Int
 	) {
 		viewModelScope.launch {
 			val res = blockChainInteract.push_tx_nft(
@@ -69,7 +70,8 @@ class NFTSendViewModel @Inject constructor(
 				destPuzzleHash,
 				nftInfo,
 				spentCoinsJson,
-				fee_amount
+				fee_amount,
+				confirm_height
 			)
 			sendNFTState.value=res
 		}

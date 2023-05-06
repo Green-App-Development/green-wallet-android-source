@@ -355,17 +355,16 @@ class NFTSendFragment : DaggerFragment() {
 					val argAnd = (method.arguments as HashMap<*, *>)
 					val spendBundleJson =
 						argAnd["spendBundle"].toString()
-					val dest_puzzle_hash =
-						argAnd["dest_puzzle_hash"].toString()
 					val spentCoinsJson =
 						argAnd["spentCoins"].toString()
 
 					vm.sendNFTBundle(
 						spendBundleJson,
-						dest_puzzle_hash,
+						nftCoin.puzzle_hash,
 						spentCoinsJson,
 						nftInfo,
-						enteredFee
+						enteredFee,
+						nftCoin.confirmed_block_index.toInt()
 					)
 
 				} else if (method.method == "failedNFT") {
