@@ -5,14 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
-import com.green.wallet.domain.domainmodel.NFTCoin
-import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.domain.domainmodel.SpentCoin
-import com.green.wallet.domain.domainmodel.Wallet
-import com.green.wallet.domain.interact.BlockChainInteract
-import com.green.wallet.domain.interact.NFTInteract
-import com.green.wallet.domain.interact.SpentCoinsInteract
-import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.domain.domainmodel.*
+import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.tools.NetworkType
 import com.green.wallet.presentation.tools.Resource
@@ -26,7 +20,8 @@ class NFTSendViewModel @Inject constructor(
 	private val walletInteract: WalletInteract,
 	private val spentCoinsInteract: SpentCoinsInteract,
 	private val prefsManager: PrefsManager,
-	private val blockChainInteract: BlockChainInteract
+	private val blockChainInteract: BlockChainInteract,
+	private val addressInteract:AddressInteract
 ) : ViewModel() {
 
 	lateinit var wallet: Wallet
@@ -55,6 +50,11 @@ class NFTSendViewModel @Inject constructor(
 
 	var sendNFTState = MutableStateFlow<Resource<String>?>(null)
 		private set
+
+	suspend fun checkIfAddressExistInDb(address: String) =
+		addressInteract.checkIfAddressAlreadyExist(address = address)
+
+	suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
 
 	fun sendNFTBundle(
 		spendBundleJson: String,

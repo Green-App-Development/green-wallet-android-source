@@ -271,6 +271,20 @@ class BlockChainInteractImpl @Inject constructor(
             val resMap = Converters.stringToHashMap(resLanguageResource)
             val incoming_transaction =
                 resMap["push_notifications_incoming"] ?: "Incoming transaction"
+            val tran=TransactionEntity(
+                transaction_id=UUID.randomUUID().toString(),
+                amount=1.0,
+                created_at_time = nftCoinEntity.time_stamp*1000L,
+                height=nftCoinEntity.confirmed_block_index,
+                status=Status.Incoming,
+                networkType = wallet.networkType,
+                to_dest_hash=wallet.puzzle_hashes[0],
+                fkAddress = wallet.address,
+                fee_amount=0.0,
+                code ="NFT",
+                confirm_height=0
+            )
+            transactionDao.insertTransaction(tran)
             notificationHelper.callGreenAppNotificationMessages(
                 "$incoming_transaction : 1 NFT",
                 System.currentTimeMillis()
@@ -351,12 +365,13 @@ class BlockChainInteractImpl @Inject constructor(
                 } else {
                     //in case of nft
                     val height = searchForSpentNFTByPuzzleHashAndCoin(tran)
+                    VLog.d("Height of unspent tran $tran : $height")
                     if (height != 0) {
                         transactionDao.updateTransactionStatusHeight(
-                            Status.Outgoing, height.toLong(), tran.transaction_id
+                            Status.Outgoing, height.toLong(), tran.nft_coin_hash
                         )
-                        var c = nftInfoDao.deleteNFTInfoById(tran.transaction_id)
-                        c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.transaction_id)
+                        var c = nftInfoDao.deleteNFTInfoById(tran.nft_coin_hash)
+                        c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
                         VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
                         val deleteSpentCoinsRow =
                             spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
@@ -425,7 +440,7 @@ class BlockChainInteractImpl @Inject constructor(
             if (res.isSuccessful) {
                 val coinRecords = res.body()!!.coin_records
                 for (coinNFT in coinRecords) {
-                    if (coinNFT.coin.parent_coin_info == tran.transaction_id && coinNFT.spent_block_index != 0L) {
+                    if (coinNFT.coin.parent_coin_info == tran.nft_coin_hash && coinNFT.spent_block_index != 0L) {
                         return coinNFT.spent_block_index.toInt()
                     }
                 }
@@ -822,7 +837,7 @@ class BlockChainInteractImpl @Inject constructor(
                 if (status == "SUCCESS") {
 
                     val trans = TransactionEntity(
-                        nftInfo.nft_coin_hash,
+                        UUID.randomUUID().toString(),
                         1.0,
                         timeBeforePushingTrans,
                         0,
@@ -832,9 +847,11 @@ class BlockChainInteractImpl @Inject constructor(
                         fkAddress = nftInfo.fk_address,
                         fee,
                         "NFT",
-                        confirm_height
+                        confirm_height,
+                        nft_coin_hash=nftInfo.nft_coin_hash
                     )
-                    transactionDao.insertTransaction(trans)
+                    val inserted=transactionDao.insertTransaction(trans)
+                    VLog.d("Inserting transaction after pushing : $trans, Inserted : $inserted")
                     spentCoinsInteract.insertSpentCoinsJson(
                         spentCoinsJson,
                         timeBeforePushingTrans,
