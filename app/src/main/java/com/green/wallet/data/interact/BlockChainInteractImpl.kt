@@ -341,52 +341,54 @@ class BlockChainInteractImpl @Inject constructor(
         try {
             val inProgressTrans = transactionDao.getTransactionsByStatus(Status.InProgress)
             for (tran in inProgressTrans) {
-                if (tran.code != "NFT") {
-                    val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
-                    VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
-                    if (unSpentCoinRecordHeight != -1L) {
-                        transactionDao.updateTransactionStatusHeight(
-                            Status.Outgoing, unSpentCoinRecordHeight, tran.transaction_id
-                        )
-                        val deleteSpentCoinsRow =
-                            spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
-                        VLog.d("Affected rows when deleting spentCoins : $deleteSpentCoinsRow")
-                        val formatted = formattedDoubleAmountWithPrecision(tran.amount)
-                        val resLanguageResource =
-                            prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
-                        val resMap = Converters.stringToHashMap(resLanguageResource)
-                        val outgoing_transaction =
-                            resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
-                        notificationHelper.callGreenAppNotificationMessages(
-                            "$outgoing_transaction : $formatted ${tran.code}",
-                            System.currentTimeMillis()
-                        )
-                    }
+                if (tran.code == "NFT") {
+					//in case of nft
+					val height = searchForSpentNFTByPuzzleHashAndCoin(tran)
+					VLog.d("Height of unspent tran $tran : $height")
+					if (height != 0) {
+						transactionDao.updateTransactionStatusHeightNFT(
+							Status.Outgoing, height.toLong(), tran.nft_coin_hash
+						)
+						var c = nftInfoDao.deleteNFTInfoById(tran.nft_coin_hash)
+						c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
+						VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
+						val deleteSpentCoinsRow =
+							spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
+						VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")
+						val formatted = formattedDoubleAmountWithPrecision(tran.amount)
+						val resLanguageResource =
+							prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+						val resMap = Converters.stringToHashMap(resLanguageResource)
+						val outgoing_transaction =
+							resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
+						notificationHelper.callGreenAppNotificationMessages(
+							"$outgoing_transaction : $formatted ${tran.code}",
+							System.currentTimeMillis()
+						)
+					}
+
                 } else {
-                    //in case of nft
-                    val height = searchForSpentNFTByPuzzleHashAndCoin(tran)
-                    VLog.d("Height of unspent tran $tran : $height")
-                    if (height != 0) {
-                        transactionDao.updateTransactionStatusHeight(
-                            Status.Outgoing, height.toLong(), tran.nft_coin_hash
-                        )
-                        var c = nftInfoDao.deleteNFTInfoById(tran.nft_coin_hash)
-                        c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
-                        VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
-                        val deleteSpentCoinsRow =
-                            spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
-                        VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")
-                        val formatted = formattedDoubleAmountWithPrecision(tran.amount)
-                        val resLanguageResource =
-                            prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
-                        val resMap = Converters.stringToHashMap(resLanguageResource)
-                        val outgoing_transaction =
-                            resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
-                        notificationHelper.callGreenAppNotificationMessages(
-                            "$outgoing_transaction : $formatted ${tran.code}",
-                            System.currentTimeMillis()
-                        )
-                    }
+
+					val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
+					VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
+					if (unSpentCoinRecordHeight != -1L) {
+						transactionDao.updateTransactionStatusHeight(
+							Status.Outgoing, unSpentCoinRecordHeight, tran.transaction_id
+						)
+						val deleteSpentCoinsRow =
+							spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
+						VLog.d("Affected rows when deleting spentCoins : $deleteSpentCoinsRow")
+						val formatted = formattedDoubleAmountWithPrecision(tran.amount)
+						val resLanguageResource =
+							prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+						val resMap = Converters.stringToHashMap(resLanguageResource)
+						val outgoing_transaction =
+							resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
+						notificationHelper.callGreenAppNotificationMessages(
+							"$outgoing_transaction : $formatted ${tran.code}",
+							System.currentTimeMillis()
+						)
+					}
                 }
             }
         } catch (ex: java.lang.Exception) {

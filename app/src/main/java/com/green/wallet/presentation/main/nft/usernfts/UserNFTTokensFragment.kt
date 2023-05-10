@@ -21,9 +21,7 @@ import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class UserNFTTokensFragment : DaggerFragment() {
@@ -106,7 +104,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 		}
 	}
 
-	private fun updateViewDetails() {
+	private fun  updateViewDetails() {
 		//nftAdapter
 		val nftAdapter =
 			NetworkAdapter(
