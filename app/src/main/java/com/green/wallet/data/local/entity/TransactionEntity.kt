@@ -58,7 +58,8 @@ data class TransactionEntity(
             to_dest_hash,
             fkAddress,
             fee_amount,
-            code
+            code,
+			nft_coin_hash
         )
 
 }

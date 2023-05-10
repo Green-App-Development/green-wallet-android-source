@@ -26,7 +26,7 @@ class FullNodeHttpRpc implements FullNode {
   final Bytes? certBytes;
   final Bytes? keyBytes;
 
-  Client get client => Client(baseURL);
+  Client get client => Client('https://chia.green-app.io/full-node');
 
   @override
   Future<CoinRecordsResponse> getCoinRecordsByPuzzleHashes(

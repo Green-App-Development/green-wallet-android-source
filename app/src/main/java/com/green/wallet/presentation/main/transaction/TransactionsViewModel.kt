@@ -7,6 +7,7 @@ import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.tools.Status
 import com.example.common.tools.*
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,12 +21,12 @@ class TransactionsViewModel @Inject constructor(
 	private val blockChainInteract: BlockChainInteract,
 	private val walletInteract: WalletInteract,
 	private val greenAppInteract: GreenAppInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract
+	private val nftInteract: NFTInteract
 ) :
 	ViewModel() {
 
-	private val _transactionList = MutableStateFlow<List<Transaction>?>(null)
-	val transactionList = _transactionList.asStateFlow()
+	private val _nftInfoState = MutableStateFlow<NFTInfo?>(null)
+	val nftInfoState = _nftInfoState.asStateFlow()
 
 	suspend fun getAllQueriedTransactionList(
 		fkAddress: String?,
@@ -67,7 +68,7 @@ class TransactionsViewModel @Inject constructor(
 		at_least_created_at: Long?,
 		yesterdayStart: Long?,
 		yesterdayEnd: Long?,
-		tokenCode:String?
+		tokenCode: String?
 	): Flow<List<Transaction>> {
 		VLog.d(
 			"FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
@@ -93,7 +94,6 @@ class TransactionsViewModel @Inject constructor(
 	}
 
 
-
 	fun getAllQueriedFlowTransactionPagingSource(
 		fkAddress: String?,
 		amount: Double?,
@@ -102,7 +102,7 @@ class TransactionsViewModel @Inject constructor(
 		at_least_created_at: Long?,
 		yesterdayStart: Long?,
 		yesterdayEnd: Long?,
-		tokenCode:String?
+		tokenCode: String?
 	): Flow<PagingData<Transaction>> {
 		VLog.d(
 			"FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
@@ -128,8 +128,6 @@ class TransactionsViewModel @Inject constructor(
 	}
 
 
-
-
 	suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
 	fun swipedRefreshClicked(onFinished: () -> Unit) {
@@ -137,6 +135,13 @@ class TransactionsViewModel @Inject constructor(
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
 			greenAppInteract.requestOtherNotifItems()
 			onFinished()
+		}
+	}
+
+	fun initNFTInfoByHash(hash: String) {
+		viewModelScope.launch {
+			val nftInfo=nftInteract.getNftINFOByHash(hash)
+			_nftInfoState.emit(nftInfo)
 		}
 	}
 
