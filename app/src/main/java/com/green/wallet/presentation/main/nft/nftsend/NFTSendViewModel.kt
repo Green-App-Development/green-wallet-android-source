@@ -7,11 +7,15 @@ import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.*
 import com.green.wallet.domain.interact.*
+import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.tools.NetworkType
 import com.green.wallet.presentation.tools.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 
@@ -21,13 +25,15 @@ class NFTSendViewModel @Inject constructor(
 	private val spentCoinsInteract: SpentCoinsInteract,
 	private val prefsManager: PrefsManager,
 	private val blockChainInteract: BlockChainInteract,
-	private val addressInteract:AddressInteract
+	private val addressInteract: AddressInteract,
 ) : ViewModel() {
 
 	lateinit var wallet: Wallet
 	lateinit var nftCoin: NFTCoin
 	var alreadySpentCoins = listOf<SpentCoin>()
 	lateinit var base_url: String
+	private val _spendableBalance = MutableStateFlow("0")
+	val spendableBalance = _spendableBalance.asStateFlow()
 
 	init {
 
@@ -45,6 +51,27 @@ class NFTSendViewModel @Inject constructor(
 			val item =
 				prefsManager.getObjectString(getPreferenceKeyForNetworkItem(wallet.networkType))
 			base_url = Gson().fromJson(item, NetworkItem::class.java).full_node
+			initCalculateSpendableBalance(wallet)
+		}
+	}
+
+	private suspend fun initCalculateSpendableBalance(wallet: Wallet) {
+		spentCoinsInteract.getSumSpentCoinsForSpendableBalance(
+			wallet.networkType,
+			wallet.address,
+			"XCH"
+		).collectLatest {
+			var bigDecimalSpendableAmount =
+				(BigDecimal("${wallet.balance}").subtract(BigDecimal("${it[0]}"))).toDouble()
+			if (bigDecimalSpendableAmount < 0.0)
+				bigDecimalSpendableAmount = 0.0
+			var spendableAmountString =
+				formattedDoubleAmountWithPrecision(bigDecimalSpendableAmount)
+			if (Math.round(bigDecimalSpendableAmount)
+					.toDouble() == bigDecimalSpendableAmount || bigDecimalSpendableAmount == 0.0
+			)
+				spendableAmountString = "${Math.round(bigDecimalSpendableAmount)}"
+			_spendableBalance.emit(spendableAmountString)
 		}
 	}
 
@@ -61,8 +88,8 @@ class NFTSendViewModel @Inject constructor(
 		destPuzzleHash: String,
 		spentCoinsJson: String,
 		nftInfo: NFTInfo,
-		fee_amount:Double,
-		confirm_height:Int,
+		fee_amount: Double,
+		confirm_height: Int,
 		networkType: String
 	) {
 		viewModelScope.launch {
@@ -76,7 +103,7 @@ class NFTSendViewModel @Inject constructor(
 				confirm_height,
 				networkType
 			)
-			sendNFTState.value=res
+			sendNFTState.value = res
 		}
 	}
 

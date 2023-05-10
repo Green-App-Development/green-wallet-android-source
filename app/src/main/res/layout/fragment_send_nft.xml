@@ -458,7 +458,7 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:layout_marginBottom="5dp"
-								android:text="Spendable Balance"
+								android:text="@string/spendable_balance"
 								android:textColor="@color/greey"
 								android:visibility="gone" />
 

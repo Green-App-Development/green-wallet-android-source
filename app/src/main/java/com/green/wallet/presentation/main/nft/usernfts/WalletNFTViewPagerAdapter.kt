@@ -76,7 +76,6 @@ class WalletNFTViewPagerAdapter(
 		txtNetwork.text = getNetworkFromAddress(nftWallet.address)
 		txtHiddenPublicKey.text = hidePublicKey(nftWallet.fingerPrint)
 
-
 	}
 
 	override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
