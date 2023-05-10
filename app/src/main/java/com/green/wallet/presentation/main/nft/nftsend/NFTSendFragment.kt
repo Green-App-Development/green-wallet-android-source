@@ -69,6 +69,7 @@ class NFTSendFragment : DaggerFragment() {
 
 	@Inject
 	lateinit var dialogManager: DialogManager
+	private var spendableAmount = 0.0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -110,6 +111,7 @@ class NFTSendFragment : DaggerFragment() {
 							insertAddressEntityIfBoxChecked()
 							showSuccessSendMoneyDialog()
 						}
+
 						Resource.State.ERROR -> {
 							dialogManager.hidePrevDialogs()
 							val error = it.error
@@ -120,6 +122,7 @@ class NFTSendFragment : DaggerFragment() {
 							)
 							sendJobState?.cancel()
 						}
+
 						Resource.State.LOADING -> {
 
 						}
@@ -197,7 +200,7 @@ class NFTSendFragment : DaggerFragment() {
 				view3.setBackgroundColor(getMainActivity().getColorResource(R.color.green))
 				enterCommissionToken.apply {
 					setTextColor(getMainActivity().getColorResource(R.color.green))
-					text = getShortNetworkType("XCH")
+					text = "XCH"
 				}
 				txtRecommendedCommission.visibility = View.VISIBLE
 			} else if (edtEnterCommission.text.toString().isEmpty()) {
@@ -246,6 +249,10 @@ class NFTSendFragment : DaggerFragment() {
 			copyToClipBoardShowCopied(nftInfo.nft_id)
 		}
 
+		edtEnterCommission.addTextChangedListener {
+			enableBtnContinueTwoEdtsFilled()
+		}
+
 	}
 
 	fun FragmentSendNftBinding.updateViews() {
@@ -266,6 +273,7 @@ class NFTSendFragment : DaggerFragment() {
 				vm.spendableBalance.collectLatest {
 					val txtSpendableBalance =
 						getMainActivity().getStringResource(R.string.spendable_balance)
+					spendableAmount = it.toDouble()
 					binding.txtSpendableBalanceCommission.setText(
 						"$txtSpendableBalance: $it"
 					)
@@ -273,6 +281,20 @@ class NFTSendFragment : DaggerFragment() {
 			}
 		}
 
+	}
+
+	private fun notEnoughAmountWarningTextFee() {
+		binding.apply {
+			edtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.red_mnemonic))
+			txtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.red_mnemonic))
+		}
+	}
+
+	private fun hideNotEnoughAmountWarningFee() {
+		binding.apply {
+			edtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.secondary_text_color))
+			txtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.green))
+		}
 	}
 
 	private fun generateLinearLayoutProperties(
@@ -544,7 +566,16 @@ class NFTSendFragment : DaggerFragment() {
 
 
 	private fun enableBtnContinueTwoEdtsFilled() {
-		binding.btnContinue.isEnabled = twoEdtsFilled.size >= 1
+		val amount = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
+		var enabled = true
+		if (amount > spendableAmount) {
+			notEnoughAmountWarningTextFee()
+			enabled = false
+		} else {
+			hideNotEnoughAmountWarningFee()
+		}
+		VLog.d("After checking to send Amount : $amount Enabled : $enabled and Spendable : $spendableAmount")
+		binding.btnContinue.isEnabled = twoEdtsFilled.size >= 1 && enabled
 	}
 
 

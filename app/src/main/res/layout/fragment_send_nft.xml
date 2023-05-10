@@ -498,7 +498,7 @@
 									android:layout_height="wrap_content"
 									android:layout_alignParentEnd="true"
 									android:layout_centerVertical="true"
-									android:text="-"
+									android:text="XCH"
 									android:textColor="@color/enter_commission_token"
 									android:textFontWeight="400"
 									android:textSize="16sp" />
