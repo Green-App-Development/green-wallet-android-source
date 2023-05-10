@@ -1017,7 +1017,7 @@ class PushingTransaction {
             standardCoinsForFee: standardCoinsForFee,
             fee: fee));
       }
-
+      await Future.wait(futures);
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
 
