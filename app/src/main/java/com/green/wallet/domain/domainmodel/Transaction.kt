@@ -14,5 +14,6 @@ data class Transaction(
 	val to_dest_hash: String,
 	val fkAddress: String,
 	val fee_amount: Double,
-	var code:String
+	var code:String,
+	val nft_coin_hash:String
 )

@@ -518,7 +518,10 @@ class NFTSendFragment : DaggerFragment() {
 			findViewById<TextView>(R.id.edtCommission).text = commissionText
 			findViewById<TextView>(R.id.edtNFTName).text = nftInfo.name
 			findViewById<TextView>(R.id.edtNftCollection).text = nftInfo.collection
-			findViewById<TextView>(R.id.edtNftID).text = nftInfo.nft_id
+			findViewById<TextView>(R.id.edtNftID).text = formatString(10,nftInfo.nft_id,4)
+			Glide.with(getMainActivity()).load(nftInfo.data_url)
+				.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
+				.into(findViewById(R.id.img_nft))
 		}
 	}
 

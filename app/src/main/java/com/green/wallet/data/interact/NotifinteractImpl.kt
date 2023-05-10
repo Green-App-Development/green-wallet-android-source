@@ -44,7 +44,7 @@ class NotifinteractImpl @Inject constructor(
 			today
 		).filter { it.status != Status.InProgress }
 
-		val notifItems = transactionsList.map { trans ->
+		val notifItems = transactionsList.filter { it.code != "NFT" }.map { trans ->
 
 			val amountInUSD = tokenDAO.getTokenByCode(trans.code).get().price * trans.amount
 

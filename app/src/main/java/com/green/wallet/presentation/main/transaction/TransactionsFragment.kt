@@ -15,11 +15,14 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTransactionsBinding
 import com.green.wallet.domain.domainmodel.Transaction
@@ -28,11 +31,15 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.viewBinding
 import com.example.common.tools.*
+import com.green.wallet.databinding.DialogTranNftDetailsBinding
 import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.dialog_tran_nft_details.edtNFTName
+import kotlinx.android.synthetic.main.dialog_tran_nft_details.edtNftCollection
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -360,12 +367,15 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			Status.Incoming.toString() -> {
 				Status.Incoming
 			}
+
 			Status.Outgoing.toString() -> {
 				Status.Outgoing
 			}
+
 			Status.InProgress.toString() -> {
 				Status.InProgress
 			}
+
 			else -> {
 				null
 			}
@@ -477,25 +487,93 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	}
 
 	private fun showTransactionDetails(transaction: Transaction) {
+		if (transaction.code == "NFT") {
+			showTransactionsNFTDetails(transaction)
+		} else {
+			val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
+			dialog.setContentView(R.layout.dialog_transaction_details)
+			val width = resources.displayMetrics.widthPixels
+			dialog.apply {
+				addingDoubleDotsTxt(findViewById(R.id.txtDate))
+				addingDoubleDotsTxt(findViewById(R.id.txtCountCoins))
+				addingDoubleDotsTxt(findViewById(R.id.txtCommission))
+				addingDoubleDotsTxt(findViewById(R.id.txtHeightBlocks))
+				findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
+					dialog.dismiss()
+				}
+			}
+			initTransDetails(dialog, transaction)
+			dialog.window?.setLayout(
+				width,
+				WindowManager.LayoutParams.WRAP_CONTENT
+			)
+			dialog.show()
+		}
+	}
+
+	private fun showTransactionsNFTDetails(transaction: Transaction) {
 		val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
-		dialog.setContentView(R.layout.dialog_transaction_details)
+		val binding = DialogTranNftDetailsBinding.inflate(layoutInflater)
+		dialog.setContentView(binding.root)
 		val width = resources.displayMetrics.widthPixels
-		dialog.apply {
-			addingDoubleDotsTxt(findViewById(R.id.txtDate))
-			addingDoubleDotsTxt(findViewById(R.id.txtCountCoins))
-			addingDoubleDotsTxt(findViewById(R.id.txtCommission))
-			addingDoubleDotsTxt(findViewById(R.id.txtHeightBlocks))
-			findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
+		binding.apply {
+			addingDoubleDotsTxt(txtNFTDate)
+			addingDoubleDotsTxt(txtNftCommission)
+			addingDoubleDotsTxt(txtNFTBlockHeight)
+			backLayout.setOnClickListener {
 				dialog.dismiss()
 			}
 		}
-		initTransDetails(dialog, transaction)
+		initTransDetailsNFT(binding, transaction)
 		dialog.window?.setLayout(
 			width,
 			WindowManager.LayoutParams.WRAP_CONTENT
 		)
 		dialog.show()
 	}
+
+	@SuppressLint("SetTextI18n")
+	private fun initTransDetailsNFT(
+		binding: DialogTranNftDetailsBinding,
+		transaction: Transaction
+	) {
+		binding.apply {
+			val formattedDate = formattedDateForTransaction(
+				curActivity(),
+				transaction.created_at_time
+			)
+
+			VLog.d("Formatted date for tran details : $formattedDate")
+			binding.apply {
+				edtNFTDate.text = formattedDate
+				edtCommission.text =
+					"${formattedDoubleAmountWithPrecision(transaction.fee_amount)} ${
+						getShortNetworkType(
+							transaction.networkType
+						)
+					}"
+				edtNFTBlockHeight.text = transaction.confirmed_at_height.toString()
+
+				viewModel.initNFTInfoByHash(transaction.nft_coin_hash)
+				lifecycleScope.launch {
+					repeatOnLifecycle(Lifecycle.State.STARTED) {
+						viewModel.nftInfoState.collectLatest {
+							it?.let { nft ->
+								edtNFTName.text=nft.name
+								edtNftCollection.text=nft.collection
+								edtNftID.text= formatString(10,nft.nft_id,4)
+								Glide.with(getMainActivity()).load(nft.data_url)
+									.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
+									.into(imgNft)
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+
 
 	@SuppressLint("SetTextI18n")
 	private fun initTransDetails(dialog: Dialog, transaction: Transaction) {
