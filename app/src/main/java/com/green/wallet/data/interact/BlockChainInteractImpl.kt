@@ -241,6 +241,10 @@ class BlockChainInteractImpl @Inject constructor(
 		val meta_hash = args["metadataHash"].toString()
 		VLog.d("Meta data url of nft : $meta_data_url")
 		val metaData = getMetaDataNFT(meta_data_url)
+		if (metaData == null) {
+			VLog.d("Meta Data of nft is null")
+			return
+		}
 		val description = metaData["description"].toString()
 		val collection = metaData["collection"].toString()
 		val name = metaData["name"].toString()
@@ -293,30 +297,34 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
-	private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any> {
-		val res = retrofitBuilder.build().create(BlockChainService::class.java)
-			.getMetaDataNFTJson(metaDataUrlJson)
-		VLog.d("MetaDataJson NFT : ${res.body()}")
-		val resJson = res.body()!!.asJsonObject
-		val resMap = hashMapOf<String, Any>()
-		val description = resJson["description"].toString()
-		val collection = resJson["collection"].asJsonObject["name"].toString()
-		val name = resJson["name"].toString()
-		resMap["description"] = description.substring(1, description.length - 1)
-		resMap["collection"] = collection.substring(1, collection.length - 1)
-		resMap["name"] = name.substring(1, name.length - 1)
-		val attributeMap = hashMapOf<String, String>()
-		val attJsonArray = resJson["attributes"].asJsonArray
-		for (attr in attJsonArray) {
-			attr.asJsonObject["trait_type"] ?: continue
-			attr.asJsonObject["value"] ?: continue
-			val trait = attr.asJsonObject["trait_type"].asString
-			val value = attr.asJsonObject["value"].asString
-			VLog.d("TraitType : $trait and Value : $value of nft attributes")
-			attributeMap[trait] = value
+	private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any>? {
+		try {
+			val res = retrofitBuilder.build().create(BlockChainService::class.java)
+				.getMetaDataNFTJson(metaDataUrlJson)
+			VLog.d("MetaDataJson NFT : ${res.body()}")
+			val resJson = res.body()!!.asJsonObject
+			val resMap = hashMapOf<String, Any>()
+			val description = resJson["description"].toString()
+			val collection = resJson["collection"].asJsonObject["name"].toString()
+			val name = resJson["name"].toString()
+			resMap["description"] = description.substring(1, description.length - 1)
+			resMap["collection"] = collection.substring(1, collection.length - 1)
+			resMap["name"] = name.substring(1, name.length - 1)
+			val attributeMap = hashMapOf<String, String>()
+			val attJsonArray = resJson["attributes"].asJsonArray
+			for (attr in attJsonArray) {
+				attr.asJsonObject["trait_type"] ?: continue
+				attr.asJsonObject["value"] ?: continue
+				val trait = attr.asJsonObject["trait_type"].asString
+				val value = attr.asJsonObject["value"].asString
+				VLog.d("TraitType : $trait and Value : $value of nft attributes")
+				attributeMap[trait] = value
+			}
+			resMap["attributes"] = attributeMap
+			return resMap
+		} catch (ex: Exception) {
+			return null
 		}
-		resMap["attributes"] = attributeMap
-		return resMap
 	}
 
 	private suspend fun getNftParentCoin(
@@ -350,9 +358,7 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.updateTransactionStatusHeightNFT(
 							Status.Outgoing, height.toLong(), tran.nft_coin_hash
 						)
-						var c = nftInfoDao.deleteNFTInfoById(tran.nft_coin_hash)
-						c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
-						VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
+						VLog.d("Updating nft transaction height : ${tran.transaction_id}")
 						val deleteSpentCoinsRow =
 							spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
 						VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")

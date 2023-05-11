@@ -134,8 +134,8 @@ class ChiaFullNodeInterface {
         startHeight: startHeight,
       );
       for (final coin in coins) {
-        // print(
-        //     'Checking for equality : ${coin.parentCoinInfo} and target coin_info : $parent_coin_info');
+        print(
+            'Checking for equality : ${coin.parentCoinInfo} and target coin_info : $parent_coin_info');
         if (coin.parentCoinInfo == parent_coin_info) {
           allCoins.add(coin);
           break;
