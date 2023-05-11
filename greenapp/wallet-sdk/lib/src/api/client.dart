@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
+import 'package:http/http.dart' as http;
+
 
 class Client {
   Client(this.baseURL, {Bytes? certBytes, Bytes? keyBytes}) {
@@ -14,7 +16,7 @@ class Client {
         : null;
     final httpClient = HttpClient(context: context)
       ..badCertificateCallback = (cert, host, port) => true;
-
+    httpClient.maxConnectionsPerHost=20;
     this.httpClient = httpClient;
   }
 
@@ -48,12 +50,18 @@ class Client {
     return Response(stringData, response.statusCode);
   }
 
-  Future<Response> post(
+  Future<Response> postCustom(
     Uri url,
     Object requestBody, {
     Map<String, String> additionalHeaders = const {},
   }) async {
     try {
+
+      // var httpResponse =await http.post(Uri.parse('$baseURL/$url'),
+      //     headers: <String, String>{
+      //       'Content-Type': 'application/json; charset=UTF-8',
+      //     },
+      //     body: jsonEncode(requestBody));
 
       final requestUri = Uri.parse('$baseURL/$url');
 
@@ -70,14 +78,14 @@ class Client {
 
       final response = await request.close();
       final stringData = await response.transform(utf8.decoder).join();
-
       logResponse(response, stringData);
-
+      // print('MyHttpResponseBody : ${httpResponse.body} and Expected : $stringData');
+      print('Request post being made with url : $requestUri');
       return Response(stringData, response.statusCode);
     } on SocketException catch (e) {
       LoggingContext().error(e.toString());
       print(
-          'Not Running Exception with method : $url and requestBody : $requestBody',);
+          'Not Running Exception with method : $url and requestBody : $requestBody and Exception ${e.message}',);
       throw NotRunningException(baseURL);
     } on HttpException catch (e) {
       LoggingContext().error(e.toString());

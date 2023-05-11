@@ -28,7 +28,7 @@ class PoolHttpREST {
   }
 
   Future<AddFarmerResponse> addFarmer(PostFarmerPayload payload, JacobianPoint signature) async {
-    final response = await client.post(Uri.parse('farmer'), <String, dynamic>{
+    final response = await client.postCustom(Uri.parse('farmer'), <String, dynamic>{
       'payload': payload.toJson(),
       'signature': signature.toHexWithPrefix(),
     });
