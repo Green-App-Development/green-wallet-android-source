@@ -37,7 +37,8 @@ class Client {
     additionalHeaders.forEach((key, value) {
       request.headers.add(key, value);
     });
-    request.headers.contentType = ContentType('application', 'json', charset: 'utf-8');
+    request.headers.contentType =
+        ContentType('application', 'json', charset: 'utf-8');
 
     final response = await request.close();
     final stringData = await response.transform(utf8.decoder).join();
@@ -53,6 +54,7 @@ class Client {
     Map<String, String> additionalHeaders = const {},
   }) async {
     try {
+
       final requestUri = Uri.parse('$baseURL/$url');
 
       logRequest(requestUri, requestBody);
@@ -62,7 +64,8 @@ class Client {
       additionalHeaders.forEach((key, value) {
         request.headers.add(key, value);
       });
-      request.headers.contentType = ContentType('application', 'json', charset: 'utf-8');
+      request.headers.contentType =
+          ContentType('application', 'json', charset: 'utf-8');
       request.write(jsonEncode(requestBody));
 
       final response = await request.close();
@@ -73,11 +76,15 @@ class Client {
       return Response(stringData, response.statusCode);
     } on SocketException catch (e) {
       LoggingContext().error(e.toString());
+      print(
+          'Not Running Exception with method : $url and requestBody : $requestBody',);
       throw NotRunningException(baseURL);
     } on HttpException catch (e) {
       LoggingContext().error(e.toString());
 
-      if (e.toString().contains('Connection closed before full header was received')) {
+      if (e
+          .toString()
+          .contains('Connection closed before full header was received')) {
         throw BadAuthenticationException();
       }
       rethrow;
@@ -146,7 +153,8 @@ class Client {
           : null,
       'certificate': response.certificate != null
           ? <String, dynamic>{
-              'end_validity': response.certificate!.endValidity.toIso8601String(),
+              'end_validity':
+                  response.certificate!.endValidity.toIso8601String(),
               'issuer': response.certificate!.issuer,
               'pem': response.certificate!.pem,
             }
@@ -179,5 +187,6 @@ class Response {
   int statusCode;
 
   @override
-  String toString() => 'Response(body: ${body.trim()}, statusCode: $statusCode)';
+  String toString() =>
+      'Response(body: ${body.trim()}, statusCode: $statusCode)';
 }

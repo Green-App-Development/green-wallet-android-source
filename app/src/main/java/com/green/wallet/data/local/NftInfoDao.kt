@@ -18,5 +18,7 @@ interface NftInfoDao {
     @Query("DELETE FROM NFTInfoEntity WHERE nft_coin_hash=:nft_coin_hash")
     suspend fun deleteNFTInfoById(nft_coin_hash: String): Int
 
+	@Query("UPDATE NFTInfoEntity SET spent=:spent WHERE nft_coin_hash=:nft_coin_hash")
+	suspend fun updateSpentNFTInfoByNFTCoinHash(spent:Boolean,nft_coin_hash:String):Int
 
 }

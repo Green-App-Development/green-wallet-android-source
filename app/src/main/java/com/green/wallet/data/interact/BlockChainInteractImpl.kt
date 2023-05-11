@@ -158,6 +158,7 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
+	private var waitingUnCurry = false
 	private suspend fun nftBalanceByHash(
 		wallet: WalletEntity, hash: String, service: BlockChainService
 	) {
@@ -195,6 +196,7 @@ class BlockChainInteractImpl @Inject constructor(
 							(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
 							METHOD_CHANNEL_GENERATE_HASH
 						)
+						waitingUnCurry = true
 						methodChannel.setMethodCallHandler { method, result ->
 							if (method.method == "unCurriedNFTInfo") {
 								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
@@ -202,9 +204,11 @@ class BlockChainInteractImpl @Inject constructor(
 									retrieveNFTPropertiesAndSave(
 										method, coin.coin.parent_coin_info, nftCoinEntity, wallet
 									)
+									waitingUnCurry = false
 								}
 							} else if (method.method == "exceptionNFT") {
-
+								VLog.d("Exception called getting unCurried nft : ${method.arguments}")
+								waitingUnCurry = false
 							}
 						}
 						withContext(Dispatchers.Main) {
@@ -214,7 +218,14 @@ class BlockChainInteractImpl @Inject constructor(
 							VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
 							methodChannel.invokeMethod("unCurryNft", map)
 						}
-						delay(3000)
+						var c = 0
+						while (waitingUnCurry) {
+							VLog.d("Waiting UnCurry NFT counter : $c")
+							delay(1000)
+							c++
+							if (c >= 10)
+								break
+						}
 					}
 				}
 			} else {
@@ -265,7 +276,8 @@ class BlockChainInteractImpl @Inject constructor(
 			collection = collection,
 			properties = properties,
 			name = name,
-			address_fk = nftCoinEntity.address_fk
+			address_fk = nftCoinEntity.address_fk,
+			spent = false
 		)
 		nftInfoDao.insertNftInfoEntity(nftInfoEntity)
 		nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
@@ -358,7 +370,9 @@ class BlockChainInteractImpl @Inject constructor(
 						transactionDao.updateTransactionStatusHeightNFT(
 							Status.Outgoing, height.toLong(), tran.nft_coin_hash
 						)
-						VLog.d("Updating nft transaction height : ${tran.transaction_id}")
+						var c = nftInfoDao.updateSpentNFTInfoByNFTCoinHash(true, tran.nft_coin_hash)
+						c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
+						VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
 						val deleteSpentCoinsRow =
 							spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
 						VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")
@@ -735,7 +749,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			var newStartHeight = Long.MAX_VALUE
 			if (request.isSuccessful) {
-				VLog.d("Got coin records : ${request.body()!!.coin_records}")
+//				VLog.d("Got coin records : ${request.body()!!.coin_records}")
 				for (coin in request.body()!!.coin_records) {
 					val curAmount = coin.coin.amount
 					val spent = coin.spent
@@ -775,7 +789,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val request = curBlockChainService.queryBalanceByPuzzleHashes(body)
 			var newStartHeight = Long.MAX_VALUE
 			if (request.isSuccessful) {
-				VLog.d("Got coin records : ${request.body()!!.coin_records}")
+//				VLog.d("Got coin records : ${request.body()!!.coin_records}")
 				for (coin in request.body()!!.coin_records) {
 					val curAmount = coin.coin.amount
 					val spent = coin.spent
@@ -864,7 +878,7 @@ class BlockChainInteractImpl @Inject constructor(
 					spentCoinsInteract.insertSpentCoinsJson(
 						spentCoinsJson,
 						timeBeforePushingTrans,
-						"NFT",
+						"XCH",
 						nftInfo.fk_address
 					)
 					return Resource.success("OK")
