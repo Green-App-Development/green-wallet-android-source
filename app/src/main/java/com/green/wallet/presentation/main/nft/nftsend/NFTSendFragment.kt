@@ -455,7 +455,7 @@ class NFTSendFragment : DaggerFragment() {
 			argsFlut["coin"] = gson.toJson(coin)
 			argsFlut["base_url"] = vm.base_url
 			argsFlut["spentCoins"] = Gson().toJson(alreadySpentCoins)
-			argsFlut["address_fk"] = nftInfo.fk_address
+			argsFlut["fromAddress"] = nftCoin.puzzle_hash
 			argsFlut["fee"] = fee
 
 			methodChannel.setMethodCallHandler { method, callBack ->

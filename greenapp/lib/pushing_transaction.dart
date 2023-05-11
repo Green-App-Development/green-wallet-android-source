@@ -168,7 +168,7 @@ class PushingTransaction {
               var fee = args['fee'];
               var spentXCHCoins = args['spentCoins'];
               var base_url = args["base_url"];
-              var address_fk = args["address_fk"];
+              var fromAddress = args["fromAddress"];
               generateNFTSpendBundle(
                   nftCoinJson: nftCoin,
                   mnemonics: mnemonics,
@@ -178,7 +178,7 @@ class PushingTransaction {
                   fee: fee,
                   spentCoinsJson: spentXCHCoins,
                   base_url: base_url,
-                  address_fk: address_fk);
+                  fromAddress: fromAddress);
               break;
             } catch (ex) {
               debugPrint("Exception in parsing args from android : $ex");
@@ -980,7 +980,7 @@ class PushingTransaction {
       required int fee,
       required String spentCoinsJson,
       required String base_url,
-      required String address_fk}) async {
+      required String fromAddress}) async {
     try {
       var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
 
@@ -1017,13 +1017,13 @@ class PushingTransaction {
             standardCoinsForFee: standardCoinsForFee,
             fee: fee));
       }
-      await Future.wait(futures);
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
-
+      debugPrint("PuzzleHash to get nft coins: ${Puzzlehash.fromHex(fromAddress)}");
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
           parent_coin_info: coin.parentCoinInfo,
-          puzzle_hash: Address(address_fk).toPuzzlehash());
+          puzzle_hash: Puzzlehash.fromHex(fromAddress)
+      );
 
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
