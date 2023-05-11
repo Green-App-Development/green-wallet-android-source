@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,10 @@ import android.widget.RelativeLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.common.tools.formatString
 import com.green.wallet.R
 import com.green.wallet.presentation.tools.VLog
@@ -119,9 +124,32 @@ class NFTDetailsFragment : DaggerFragment() {
 		edtDataHash.text = formatString(6, nftInfo.data_hash, 4)
 		edtMetaData1.text = formatString(15, nftInfo.meta_url, 0)
 		edtMetadataHash.text = formatString(6, nftInfo.data_hash, 4)
-		Glide.with(getMainActivity()).load(nftInfo.data_url)
-			.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
-			.into(imgNft)
+
+//		Glide.with(getMainActivity()).load(nftInfo.data_url)
+//			.listener(object : RequestListener<Drawable> {
+//				override fun onLoadFailed(
+//					e: GlideException?,
+//					model: Any?,
+//					target: Target<Drawable>?,
+//					isFirstResource: Boolean
+//				): Boolean {
+//					return false
+//				}
+//
+//				override fun onResourceReady(
+//					resource: Drawable?,
+//					model: Any?,
+//					target: Target<Drawable>?,
+//					dataSource: DataSource?,
+//					isFirstResource: Boolean
+//				): Boolean {
+//					imgNftCard.visibility = View.VISIBLE
+//					progressBar.visibility = View.GONE
+//					return false
+//				}
+//
+//			})
+//			.into(imgNft)
 	}
 
 	private fun initUpdatePropertiesRecView() {
