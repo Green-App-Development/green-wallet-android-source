@@ -967,7 +967,7 @@ class PushingTransaction {
       _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
     } catch (ex) {
       debugPrint("Exception in unCurrying nft coin: ${ex.toString()}");
-      _channel.invokeMethod("exceptionNFT");
+      _channel.invokeMethod("exceptionNFT", ex.toString());
     }
   }
 
@@ -1019,11 +1019,11 @@ class PushingTransaction {
       }
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
-      debugPrint("PuzzleHash to get nft coins: ${Puzzlehash.fromHex(fromAddress)}");
+      debugPrint(
+          "PuzzleHash to get nft coins: ${Puzzlehash.fromHex(fromAddress)}");
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
           parent_coin_info: coin.parentCoinInfo,
-          puzzle_hash: Puzzlehash.fromHex(fromAddress)
-      );
+          puzzle_hash: Puzzlehash.fromHex(fromAddress));
 
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");

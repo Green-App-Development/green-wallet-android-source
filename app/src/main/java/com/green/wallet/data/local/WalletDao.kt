@@ -135,7 +135,7 @@ interface WalletDao {
 	)
 
 	@Transaction
-	@Query("SELECT fingerPrint,mnemonics,observer_hash,non_observer_hash,address FROM WalletEntity WHERE homeAdded>0  ORDER BY homeAdded ASC")
+	@Query("SELECT fingerPrint,mnemonics,observer_hash,non_observer_hash,address FROM WalletEntity WHERE homeAdded>0 ORDER BY homeAdded ASC")
 	fun getFLowOfWalletListWithNFTCoins(): Flow<List<WalletWithNFTInfoRelation>>
 
 
