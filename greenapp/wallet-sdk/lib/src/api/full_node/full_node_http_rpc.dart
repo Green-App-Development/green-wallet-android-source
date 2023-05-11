@@ -46,7 +46,7 @@ class FullNodeHttpRpc implements FullNode {
     }
     body['include_spent_coins'] = includeSpentCoins;
 
-    final response = await client.post(
+    final response = await client.postCustom(
       Uri.parse('get_coin_records_by_puzzle_hashes'),
       body,
     );
@@ -59,7 +59,7 @@ class FullNodeHttpRpc implements FullNode {
 
   @override
   Future<ChiaBaseResponse> pushTransaction(SpendBundle spendBundle) async {
-    final response = await client.post(
+    final response = await client.postCustom(
       Uri.parse('push_tx'),
       {'spend_bundle': spendBundle.toJson()},
     );
@@ -77,7 +77,7 @@ class FullNodeHttpRpc implements FullNode {
         int? endHeight,
         bool includeSpentCoins = false,
       }) async {
-    final response = await client.post(Uri.parse('get_coin_records_by_hint'), {
+    final response = await client.postCustom(Uri.parse('get_coin_records_by_hint'), {
       'hint': hint.toHex(),
       "include_spent_coins": includeSpentCoins,
       if (endHeight != null) "end_height": endHeight,
@@ -107,7 +107,7 @@ class FullNodeHttpRpc implements FullNode {
       body['end_height'] = endHeight;
     }
     body['include_spent_coins'] = includeSpentCoins;
-    final response = await client.post(Uri.parse('get_coin_records_by_parent_ids'), body);
+    final response = await client.postCustom(Uri.parse('get_coin_records_by_parent_ids'), body);
     mapResponseToError(response);
 
     return CoinRecordsResponse.fromJson(
@@ -117,7 +117,7 @@ class FullNodeHttpRpc implements FullNode {
 
   @override
   Future<CoinRecordResponse> getCoinByName(Bytes coinId) async {
-    final response = await client.post(Uri.parse('get_coin_record_by_name'), {
+    final response = await client.postCustom(Uri.parse('get_coin_record_by_name'), {
       'name': coinId.toHex(),
     });
     mapResponseToError(response);
@@ -144,7 +144,7 @@ class FullNodeHttpRpc implements FullNode {
       body['end_height'] = endHeight;
     }
     body['include_spent_coins'] = includeSpentCoins;
-    final response = await client.post(Uri.parse('get_coin_records_by_names'), body);
+    final response = await client.postCustom(Uri.parse('get_coin_records_by_names'), body);
     mapResponseToError(response);
 
     return CoinRecordsResponse.fromJson(
@@ -157,7 +157,7 @@ class FullNodeHttpRpc implements FullNode {
     Bytes coinId,
     int height,
   ) async {
-    final response = await client.post(Uri.parse('get_puzzle_and_solution'), {
+    final response = await client.postCustom(Uri.parse('get_puzzle_and_solution'), {
       'coin_id': coinId.toHex(),
       'height': height,
     });
@@ -170,7 +170,7 @@ class FullNodeHttpRpc implements FullNode {
 
   @override
   Future<BlockchainStateResponse> getBlockchainState() async {
-    final response = await client.post(Uri.parse('get_blockchain_state'), <dynamic, dynamic>{});
+    final response = await client.postCustom(Uri.parse('get_blockchain_state'), <dynamic, dynamic>{});
     mapResponseToError(response);
 
     return BlockchainStateResponse.fromJson(
@@ -180,7 +180,7 @@ class FullNodeHttpRpc implements FullNode {
 
   @override
   Future<GetAdditionsAndRemovalsResponse> getAdditionsAndRemovals(Bytes headerHash) async {
-    final response = await client.post(
+    final response = await client.postCustom(
       Uri.parse('get_additions_and_removals'),
       <String, dynamic>{'header_hash': headerHash.toHex()},
     );
@@ -193,7 +193,7 @@ class FullNodeHttpRpc implements FullNode {
 
   @override
   Future<GetBlockRecordByHeightResponse> getBlockRecordByHeight(int height) async {
-    final response = await client.post(
+    final response = await client.postCustom(
       Uri.parse('get_block_record_by_height'),
       <String, dynamic>{'height': height},
     );
@@ -230,7 +230,7 @@ class FullNodeHttpRpc implements FullNode {
 
   @override
   Future<GetBlockRecordsResponse> getBlockRecords(int start, int end) async {
-    final response = await client.post(
+    final response = await client.postCustom(
       Uri.parse('get_block_records'),
       <String, dynamic>{
         'start': start,
