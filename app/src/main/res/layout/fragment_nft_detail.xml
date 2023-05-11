@@ -99,22 +99,40 @@
 				android:layout_height="wrap_content"
 				android:orientation="vertical">
 
-			<androidx.cardview.widget.CardView
+			<FrameLayout
 					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="12dp"
-					android:layout_marginEnd="12dp"
-					app:cardCornerRadius="15dp">
+					android:layout_height="wrap_content">
 
-				<ImageView
-						android:id="@+id/img_nft"
+				<androidx.cardview.widget.CardView
 						android:layout_width="match_parent"
 						android:layout_height="wrap_content"
-						android:scaleType="centerCrop"
-						android:adjustViewBounds="true"
-						android:src="@drawable/img_nft" />
+						android:id="@+id/img_nft_card"
+						android:layout_marginStart="12dp"
+						android:layout_marginEnd="12dp"
+						android:visibility="invisible"
+						app:cardCornerRadius="15dp">
 
-			</androidx.cardview.widget.CardView>
+					<ImageView
+							android:id="@+id/img_nft"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:adjustViewBounds="true"
+							android:src="@drawable/img_nft" />
+
+				</androidx.cardview.widget.CardView>
+
+				<com.google.android.material.progressindicator.CircularProgressIndicator
+						android:id="@+id/progress_bar"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:indeterminate="true"
+						app:indicatorColor="@color/green"
+						app:indicatorSize="60dp"
+						app:trackColor="@color/track_color"
+						app:trackThickness="3dp" />
+
+			</FrameLayout>
 
 
 			<TextView
