@@ -26,12 +26,30 @@
 				android:layout_height="wrap_content"
 				android:orientation="vertical">
 
-			<ImageView
-					android:id="@+id/img_nft"
+			<FrameLayout
+					android:id="@+id/place_holder_nft"
 					android:layout_width="match_parent"
 					android:layout_height="170dp"
-					android:scaleType="fitXY"
-					android:src="@drawable/img_place_holder_nft" />
+					android:src="@drawable/img_place_holder_nft">
+
+				<ImageView
+						android:id="@+id/img_nft"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:scaleType="fitXY" />
+
+				<com.google.android.material.progressindicator.CircularProgressIndicator
+						android:id="@+id/progress_bar"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:indeterminate="true"
+						app:indicatorColor="@color/green"
+						app:indicatorSize="33dp"
+						app:trackColor="@color/track_color"
+						app:trackThickness="1.5dp"  />
+
+			</FrameLayout>
 
 			<View
 					android:layout_width="wrap_content"
@@ -64,7 +82,7 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginStart="8dp"
-						android:layout_marginTop="5dp"
+						android:layout_marginTop="8dp"
 						android:gravity="center"
 						android:orientation="horizontal"
 						app:layout_constraintRight_toRightOf="parent"
