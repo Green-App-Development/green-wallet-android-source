@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.main.nft.usernfts
 
 import android.app.Activity
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getCustomProgressLayoutWithParams
 import com.green.wallet.presentation.tools.getDrawableResource
 import kotlinx.android.synthetic.main.fragment_faq.view.*
 
@@ -50,15 +57,37 @@ class NFTTokenAdapter(
 		private val nftCategory = v.findViewById<TextView>(R.id.txt_category_nft)
 		private val img_checked_nft = v.findViewById<ImageView>(R.id.img_nft_checked)
 		private val img_nft = v.findViewById<ImageView>(R.id.img_nft)
+		private val progress_bar = v.findViewById<CircularProgressIndicator>(R.id.progress_bar)
 		private val emptyView = v.findViewById<View>(R.id.emptyView)
 		private val rootNFTToken = v.findViewById<RelativeLayout>(R.id.root_nft_token)
 
 		fun onBind(nftInfo: NFTInfo, position: Int) {
-			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
+//			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
 			nftName.text = nftInfo.name
 			nftCategory.text = nftInfo.collection
 			Glide.with(activity).load(nftInfo.data_url)
-				.placeholder(activity.getDrawableResource(R.drawable.img_nft))
+				.listener(object : RequestListener<Drawable> {
+					override fun onLoadFailed(
+						e: GlideException?,
+						model: Any?,
+						target: Target<Drawable>?,
+						isFirstResource: Boolean
+					): Boolean {
+						return false
+					}
+
+					override fun onResourceReady(
+						resource: Drawable?,
+						model: Any?,
+						target: Target<Drawable>?,
+						dataSource: DataSource?,
+						isFirstResource: Boolean
+					): Boolean {
+						progress_bar.visibility = View.GONE
+						return false
+					}
+
+				})
 				.into(img_nft)
 			rootNFTToken.setOnClickListener {
 				nftTokenClicked.onNFTToken(nftInfo)
