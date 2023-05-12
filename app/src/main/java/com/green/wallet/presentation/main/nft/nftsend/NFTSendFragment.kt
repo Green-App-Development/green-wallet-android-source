@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,6 +24,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStateAtLeast
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.common.tools.addingDoubleDotsTxt
 import com.example.common.tools.formatString
 import com.google.gson.Gson
@@ -264,8 +269,31 @@ class NFTSendFragment : DaggerFragment() {
 			containerProperties.addView(generateLinearLayoutProperties(firstView, key, value))
 			firstView = false
 		}
+
 		Glide.with(getMainActivity()).load(nftInfo.data_url)
-			.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
+			.listener(object : RequestListener<Drawable> {
+				override fun onLoadFailed(
+					e: GlideException?,
+					model: Any?,
+					target: Target<Drawable>?,
+					isFirstResource: Boolean
+				): Boolean {
+					return false
+				}
+
+				override fun onResourceReady(
+					resource: Drawable?,
+					model: Any?,
+					target: Target<Drawable>?,
+					dataSource: DataSource?,
+					isFirstResource: Boolean
+				): Boolean {
+					imgCardNft.visibility = View.VISIBLE
+					frameProgressBar.visibility = View.GONE
+					return false
+				}
+
+			})
 			.into(imgNft)
 
 		lifecycleScope.launch {
