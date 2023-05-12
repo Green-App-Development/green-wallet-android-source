@@ -13,6 +13,7 @@ import com.green.wallet.R
 import com.green.wallet.databinding.FragmentUserNftBinding
 import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.ViewPagerPosition
 import com.green.wallet.presentation.custom.convertPixelToDp
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
@@ -30,6 +31,9 @@ class UserNFTTokensFragment : DaggerFragment() {
 
 	@Inject
 	lateinit var animManager: AnimationManager
+
+	@Inject
+	lateinit var viewPagerState: ViewPagerPosition
 
 	@Inject
 	lateinit var factory: ViewModelFactory
@@ -53,6 +57,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		VLog.d("View Created on UserNFT : $viewPagerState Pos : ${viewPagerState.pagerPosition}")
 		binding.registerClicks()
 		updateViewDetails()
 		initViewPager()
@@ -76,12 +81,15 @@ class UserNFTTokensFragment : DaggerFragment() {
 
 	private fun initNFTUpdateViewPager(walletList: List<WalletWithNFTInfo>) {
 		val nftViewPagerAdapter = WalletNFTViewPagerAdapter(getMainActivity(), walletList)
-		if (prevChooseItemPosViewPager >= walletList.size)
+		if (prevChooseItemPosViewPager >= walletList.size) {
 			prevChooseItemPosViewPager = 0
+			viewPagerState.pagerPosition = 0
+		}
 		binding.apply {
 			nftViewPager.adapter = nftViewPagerAdapter
-			nftViewPager.setCurrentItem(prevChooseItemPosViewPager, true)
+			nftViewPager.setCurrentItem(viewPagerState.pagerPosition, true)
 			pageIndicator.count = walletList.size
+			pageIndicator.setSelected(viewPagerState.pagerPosition)
 			nftViewPager.addOnPageChangeListener(object : OnPageChangeListener {
 				override fun onPageScrolled(
 					position: Int,
@@ -94,6 +102,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 				override fun onPageSelected(position: Int) {
 					pageIndicator.setSelected(position)
 					prevChooseItemPosViewPager = position
+					viewPagerState.pagerPosition = position
 				}
 
 				override fun onPageScrollStateChanged(state: Int) {
@@ -104,7 +113,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 		}
 	}
 
-	private fun  updateViewDetails() {
+	private fun updateViewDetails() {
 		//nftAdapter
 		val nftAdapter =
 			NetworkAdapter(

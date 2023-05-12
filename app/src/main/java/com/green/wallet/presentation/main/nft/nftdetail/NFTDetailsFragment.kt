@@ -125,31 +125,31 @@ class NFTDetailsFragment : DaggerFragment() {
 		edtMetaData1.text = formatString(15, nftInfo.meta_url, 0)
 		edtMetadataHash.text = formatString(6, nftInfo.data_hash, 4)
 
-//		Glide.with(getMainActivity()).load(nftInfo.data_url)
-//			.listener(object : RequestListener<Drawable> {
-//				override fun onLoadFailed(
-//					e: GlideException?,
-//					model: Any?,
-//					target: Target<Drawable>?,
-//					isFirstResource: Boolean
-//				): Boolean {
-//					return false
-//				}
-//
-//				override fun onResourceReady(
-//					resource: Drawable?,
-//					model: Any?,
-//					target: Target<Drawable>?,
-//					dataSource: DataSource?,
-//					isFirstResource: Boolean
-//				): Boolean {
-//					imgNftCard.visibility = View.VISIBLE
-//					progressBar.visibility = View.GONE
-//					return false
-//				}
-//
-//			})
-//			.into(imgNft)
+		Glide.with(getMainActivity()).load(nftInfo.data_url)
+			.listener(object : RequestListener<Drawable> {
+				override fun onLoadFailed(
+					e: GlideException?,
+					model: Any?,
+					target: Target<Drawable>?,
+					isFirstResource: Boolean
+				): Boolean {
+					return false
+				}
+
+				override fun onResourceReady(
+					resource: Drawable?,
+					model: Any?,
+					target: Target<Drawable>?,
+					dataSource: DataSource?,
+					isFirstResource: Boolean
+				): Boolean {
+					imgNftCard.visibility = View.VISIBLE
+					frameProgressBar.visibility = View.GONE
+					return false
+				}
+
+			})
+			.into(imgNft)
 	}
 
 	private fun initUpdatePropertiesRecView() {
