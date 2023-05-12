@@ -57,31 +57,31 @@ class Client {
   }) async {
     try {
 
-      // var httpResponse =await http.post(Uri.parse('$baseURL/$url'),
-      //     headers: <String, String>{
-      //       'Content-Type': 'application/json; charset=UTF-8',
-      //     },
-      //     body: jsonEncode(requestBody));
+      var httpResponse =await http.post(Uri.parse('$baseURL/$url'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(requestBody));
 
-      final requestUri = Uri.parse('$baseURL/$url');
-
-      logRequest(requestUri, requestBody);
-
-      final request = await httpClient.postUrl(requestUri);
-
-      additionalHeaders.forEach((key, value) {
-        request.headers.add(key, value);
-      });
-      request.headers.contentType =
-          ContentType('application', 'json', charset: 'utf-8');
-      request.write(jsonEncode(requestBody));
-
-      final response = await request.close();
-      final stringData = await response.transform(utf8.decoder).join();
-      logResponse(response, stringData);
-      // print('MyHttpResponseBody : ${httpResponse.body} and Expected : $stringData');
-      print('Request post being made with url : $requestUri');
-      return Response(stringData, response.statusCode);
+      // final requestUri = Uri.parse('$baseURL/$url');
+      //
+      // logRequest(requestUri, requestBody);
+      //
+      // final request = await httpClient.postUrl(requestUri);
+      //
+      // additionalHeaders.forEach((key, value) {
+      //   request.headers.add(key, value);
+      // });
+      // request.headers.contentType =
+      //     ContentType('application', 'json', charset: 'utf-8');
+      // request.write(jsonEncode(requestBody));
+      //
+      // final response = await request.close();
+      // final stringData = await response.transform(utf8.decoder).join();
+      // logResponse(response, stringData);
+      // // print('MyHttpResponseBody : ${httpResponse.body} and Expected : $stringData');
+      print('Request post being made with url : $baseURL/$url');
+      return Response(httpResponse.body, httpResponse.statusCode);
     } on SocketException catch (e) {
       LoggingContext().error(e.toString());
       print(
