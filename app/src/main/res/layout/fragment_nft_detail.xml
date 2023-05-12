@@ -647,7 +647,6 @@
 			android:layout_height="40dp"
 			android:layout_marginStart="15dp"
 			android:layout_marginEnd="15dp"
-			android:layout_marginBottom="-15dp"
 			android:background="@drawable/copied_bcg"
 			android:elevation="7dp"
 			android:visibility="gone"

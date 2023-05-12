@@ -13,10 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -47,11 +49,14 @@ import com.green.wallet.presentation.tools.Resource.Companion.error
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.dialog_confirm_send_nft.*
+import kotlinx.android.synthetic.main.fragment_send.txtAddressAlredyExistWarning
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -176,6 +181,22 @@ class NFTSendFragment : DaggerFragment() {
 	}
 
 	fun FragmentSendNftBinding.registerClicks() {
+
+		checkBoxAddAddress.setOnCheckedChangeListener(object :
+			CompoundButton.OnCheckedChangeListener {
+			override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
+				addNameAddressLay.visibility = if (p1) View.VISIBLE else View.GONE
+				txtAddressAlredyExistWarning.visibility = if (p1) View.VISIBLE else View.GONE
+				checkBoxAddAddress.setTextColor(
+					if (p1) ContextCompat.getColor(
+						getMainActivity(),
+						R.color.green
+					) else ContextCompat.getColor(getMainActivity(), R.color.checkbox_text_color)
+				)
+				if (p1)
+					checkAddressAlreadyExistInDB()
+			}
+		})
 
 		backLayout.setOnClickListener {
 			getMainActivity().popBackStackOnce()
@@ -325,6 +346,24 @@ class NFTSendFragment : DaggerFragment() {
 		}
 	}
 
+	private var addressAlreadyExist: Job? = null
+	private fun checkAddressAlreadyExistInDB() {
+		addressAlreadyExist?.cancel()
+		addressAlreadyExist = lifecycleScope.launch {
+			withContext(Dispatchers.IO) {
+				val addressList =
+					vm.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
+				VLog.d("AddressList by given address :  ${addressList.size}")
+				withContext(Dispatchers.Main) {
+					if (addressList.isNotEmpty()) {
+						txtAddressAlredyExistWarning.visibility = View.VISIBLE
+					} else {
+						txtAddressAlredyExistWarning.visibility = View.GONE
+					}
+				}
+			}
+		}
+	}
 	private fun generateLinearLayoutProperties(
 		firstView: Boolean,
 		key: String,
