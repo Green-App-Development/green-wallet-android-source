@@ -182,7 +182,7 @@ class PushingTransaction {
               break;
             } catch (ex) {
               debugPrint("Exception in parsing args from android : $ex");
-              _channel.invokeMethod("nftSpendBundle");
+              _channel.invokeMethod("failedNFT");
             }
           }
       }
@@ -309,19 +309,15 @@ class PushingTransaction {
       CatWalletService catWalletService = CatWalletService();
 
       stopwatch = Stopwatch()..start();
-      Map<String, dynamic> body = {
-        "puzzle_hashes": myOuterPuzzlehashes.map((e) => e.toHex()).toList()
-      };
+
+      final fullNodeRpc = FullNodeHttpRpc(httpUrl);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
 
       final responseDataCAT =
-          await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(body));
+          await fullNode.getCoinsByPuzzleHashes(myOuterPuzzlehashes);
 
       debugPrint(
-          "My Response From retrieving cat  : ${responseDataCAT.body}, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
+          "My Response From retrieving cat  : $responseDataCAT, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
 
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];
@@ -339,75 +335,64 @@ class PushingTransaction {
             httpUrl: httpUrl,
             spentCoinsParents: spentCoinsParents,
             standardCoinsForFee: standardCoinsForFee,
-            fee: fee));
+            fee: fee,
+            fullNode: fullNode));
       }
 
-      await Future.wait(futures);
       debugPrint("SpentCoinsPrototypes on sending : $spentCoinsParents");
 
-      if (responseDataCAT.statusCode == 200) {
-        List<Coin> allCatCoins = [
-          for (final item in jsonDecode(responseDataCAT.body)['coin_records'])
-            Coin.fromChiaCoinRecordJson(item)
-        ];
+      List<Coin> allCatCoins = responseDataCAT;
 
-        allCatCoins.sort((a, b) {
-          return b.amount.compareTo(a.amount);
-        });
+      allCatCoins.sort((a, b) {
+        return b.amount.compareTo(a.amount);
+      });
 
-        // debugPrint("AllCoins sorted by decreasing order : $allCatCoins");
+      // debugPrint("AllCoins sorted by decreasing order : $allCatCoins");
 
-        List<Coin> filteredCoins = [];
-        var sum = 0;
-        for (final coin in allCatCoins) {
-          var coinIsSpent =
-              spentCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (coin.amount != 0 && !coinIsSpent) {
-            filteredCoins.add(coin);
-            sum += coin.amount;
-            if (sum >= amount) {
-              break;
-            }
+      List<Coin> filteredCoins = [];
+      var sum = 0;
+      for (final coin in allCatCoins) {
+        var coinIsSpent =
+            spentCoinsParents.contains(coin.parentCoinInfo.toString());
+        if (coin.amount != 0 && !coinIsSpent) {
+          filteredCoins.add(coin);
+          sum += coin.amount;
+          if (sum >= amount) {
+            break;
           }
         }
-
-        List<CatCoin> catCoins = [];
-        for (final coin in filteredCoins) {
-          futures.add(getCatCoinsDetail(
-              coin: coin, httpUrl: httpUrl, catCoins: catCoins));
-          if (futures.length >= 1) {
-            debugPrint(
-                "Filled  futures with ${futures.length} wait for them to complete");
-            await Future.wait(futures);
-            futures.clear();
-          }
-        }
-        debugPrint("Sending cat coins future size : ${futures.length}");
-        await Future.wait(futures);
-        debugPrint("Sending cat coins : $catCoins");
-        final spendBundle = catWalletService.createSpendBundle(
-            payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
-            catCoinsInput: catCoins,
-            keychain: keyChainCAT,
-            changePuzzlehash: keyChainCAT.puzzlehashes[0],
-            fee: fee,
-            standardCoinsForFee: standardCoinsForFee);
-
-        var dest_puzzle_has = Address(destAddress).toPuzzlehash();
-        var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
-                dest_puzzle_has, Puzzlehash.fromHex(asset_id))
-            .toHex();
-
-        _channel.invokeMethod('getSpendBundle', {
-          "spendBundle": spendBundle.toJson(),
-          "dest_puzzle_hash": outer_dest_puzzle_hash,
-          "spentCoins": jsonEncode(standardCoinsForFee),
-          "spentTokens": jsonEncode(filteredCoins)
-        });
-      } else {
-        debugPrint("StatusCode is not ok  : ${responseDataCAT.body}");
-        throw Exception("Response on coin records is not ok");
       }
+
+      List<CatCoin> catCoins = [];
+      for (final coin in filteredCoins) {
+        futures.add(getCatCoinsDetail(
+            coin: coin,
+            httpUrl: httpUrl,
+            catCoins: catCoins,
+            fullNode: fullNode));
+      }
+      debugPrint("Sending cat coins future size : ${futures.length}");
+      await Future.wait(futures);
+      debugPrint("Sending cat coins : $catCoins");
+      final spendBundle = catWalletService.createSpendBundle(
+          payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
+          catCoinsInput: catCoins,
+          keychain: keyChainCAT,
+          changePuzzlehash: keyChainCAT.puzzlehashes[0],
+          fee: fee,
+          standardCoinsForFee: standardCoinsForFee);
+
+      var dest_puzzle_has = Address(destAddress).toPuzzlehash();
+      var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
+              dest_puzzle_has, Puzzlehash.fromHex(asset_id))
+          .toHex();
+
+      _channel.invokeMethod('getSpendBundle', {
+        "spendBundle": spendBundle.toJson(),
+        "dest_puzzle_hash": outer_dest_puzzle_hash,
+        "spentCoins": jsonEncode(standardCoinsForFee),
+        "spentTokens": jsonEncode(filteredCoins)
+      });
     } catch (e) {
       debugPrint("Caught exception in dart code for token" + e.toString());
       _channel.invokeMethod("exception", e.toString());
@@ -417,32 +402,11 @@ class PushingTransaction {
   Future<void> getCatCoinsDetail(
       {required Coin coin,
       required String httpUrl,
-      required List<CatCoin> catCoins}) async {
-    Map<String, dynamic> bodyParentCoinInfo = {
-      "name": coin.parentCoinInfo.toString()
-    };
-    final bodyParentCoinInfoRes =
-        await post(Uri.parse("$httpUrl/get_coin_record_by_name"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(bodyParentCoinInfo));
-    var parentCoin = CoinRecordResponse.fromJson(
-      jsonDecode(bodyParentCoinInfoRes.body) as Map<String, dynamic>,
-    ).coinRecord!.toCoin();
-    Map<String, dynamic> bodyParentCoinSpentBody = {
-      'coin_id': parentCoin.id.toHex(),
-      'height': parentCoin.spentBlockIndex,
-    };
-    final bodyParentCoinSpentRes =
-        await post(Uri.parse("$httpUrl/get_puzzle_and_solution"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(bodyParentCoinSpentBody));
-    var parentCoinSpend = CoinSpendResponse.fromJson(
-      jsonDecode(bodyParentCoinSpentRes.body) as Map<String, dynamic>,
-    ).coinSpend;
+      required List<CatCoin> catCoins,
+      required ChiaFullNodeInterface fullNode}) async {
+    final parentCoin = await fullNode.getCoinById(coin.parentCoinInfo);
+
+    final parentCoinSpend = await fullNode.getCoinSpend(parentCoin!);
     catCoins.add(CatCoin(
       parentCoinSpend: parentCoinSpend!,
       coin: coin,
@@ -456,29 +420,14 @@ class PushingTransaction {
       required String httpUrl,
       required List<String> spentCoinsParents,
       required List<Coin> standardCoinsForFee,
-      required int fee}) async {
+      required int fee,
+      required ChiaFullNodeInterface fullNode}) async {
     var main_puzzle_hashes = keyChain.hardenedMap.keys
-        .map((e) => e.toHex())
         .toList()
         .sublist(0, non_observer);
-    main_puzzle_hashes.addAll(keyChain.unhardenedMap.keys
-        .map((e) => e.toHex())
-        .toList()
+    main_puzzle_hashes.addAll(keyChain.unhardenedMap.keys.toList()
         .sublist(0, observer));
-    Map<String, dynamic> standardCoinBody = {
-      "puzzle_hashes": main_puzzle_hashes
-    };
-    final responseDataForStandardCoins =
-        await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(standardCoinBody));
-    List<Coin> feeStandardCoinsTotal = [
-      for (final item
-          in jsonDecode(responseDataForStandardCoins.body)['coin_records'])
-        Coin.fromChiaCoinRecordJson(item)
-    ];
+    List<Coin> feeStandardCoinsTotal = await fullNode.getCoinsByPuzzleHashes(main_puzzle_hashes);
     var feeSum = 0;
     feeStandardCoinsTotal.sort((a, b) {
       return b.amount.compareTo(a.amount);
@@ -1015,7 +964,9 @@ class PushingTransaction {
             httpUrl: base_url,
             spentCoinsParents: spentCoinsParents,
             standardCoinsForFee: standardCoinsForFee,
-            fee: fee));
+            fee: fee,
+            fullNode: fullNode
+        ));
       }
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
@@ -1024,12 +975,13 @@ class PushingTransaction {
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
           parent_coin_info: coin.parentCoinInfo,
           puzzle_hash: Puzzlehash.fromHex(fromAddress));
-
+      await Future.wait(futures);
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
 
       final nftFullCoin = await nftService.convertFullCoin(nftCoin);
       debugPrint("Converting to FullNFTCoin : $nftFullCoin");
+      debugPrint('Standard XCH for fee : ${standardCoinsForFee}') ;
 
       final destPuzzleHash = Address(destAddress).toPuzzlehash();
 
