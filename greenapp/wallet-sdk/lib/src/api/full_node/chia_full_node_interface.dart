@@ -176,7 +176,6 @@ class ChiaFullNodeInterface {
         throw Exception(
             "Can't found the children of coin ${lastCoin.id.toHex()}");
       }
-      await Future.delayed(const Duration(milliseconds: 100));
       if (children.length == 1) {
         lastCoin = children.first;
       } else {
@@ -195,7 +194,6 @@ class ChiaFullNodeInterface {
     while (lastCoin.spentBlockIndex != 0) {
       final children =
           await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);
-      await Future.delayed(const Duration(milliseconds: 100));
       if (children.isEmpty) {
         throw Exception(
             "Can't found the children of coin ${lastCoin.id.toHex()}");
