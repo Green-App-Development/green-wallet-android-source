@@ -77,53 +77,53 @@ class BlockChainInteractImpl @Inject constructor(
 					launch {
 						updateWalletBalance(walletEntity)
 					}
+					launch {
+						updateWalletNFTBalance(walletEntity)
+					}
 					updateTokenBalanceSpeedily(walletEntity)
 				}
 				job.join()
 			}
 			VLog.d("Time taken: ${timeTaken / 1000}s  to get balance")
-		} else {
-			//generating hashes for tokens later
-			CoroutineScope(Dispatchers.IO).launch {
-				launch {
-					updateWalletNFTBalance(walletEntity)
-				}
-				val hashListImported = hashMapOf<String, List<String>>()
-				val methodChannel = MethodChannel(
-					(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
-					METHOD_CHANNEL_GENERATE_HASH
-				)
-				val defaultTokenOnMainScreen = tokenDao.getTokensDefaultOnScreen().map { it.hash }
-				var counterTokenHash = 0
-				methodChannel.setMethodCallHandler { method, calLBack ->
-					VLog.d("Got back method from hash : ${method.method}")
-					val hashTokenMethod = method.method
-					if (defaultTokenOnMainScreen.contains(hashTokenMethod)) {
-						val args = method.arguments as HashMap<*, *>
-						val outer_hashes = args[hashTokenMethod]!! as List<String>
-						hashListImported[hashTokenMethod] = outer_hashes
-						counterTokenHash++
-						VLog.d("Got back counter token hash : $counterTokenHash")
-						if (counterTokenHash == defaultTokenOnMainScreen.size) {
-							VLog.d("HashList Imported on creating new wallet : $hashListImported")
-							CoroutineScope(Dispatchers.IO).launch {
-								walletDao.updateChiaNetworkHashListImportedByAddress(
-									wallet.address, hashListImported
-								)
-							}
+		}
+		//generating hashes for tokens later
+		CoroutineScope(Dispatchers.IO).launch {
+			val hashListImported = hashMapOf<String, List<String>>()
+			val methodChannel = MethodChannel(
+				(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
+				METHOD_CHANNEL_GENERATE_HASH
+			)
+			val defaultTokenOnMainScreen = tokenDao.getTokensDefaultOnScreen().map { it.hash }
+			var counterTokenHash = 0
+			methodChannel.setMethodCallHandler { method, calLBack ->
+				VLog.d("Got back method from hash : ${method.method}")
+				val hashTokenMethod = method.method
+				if (defaultTokenOnMainScreen.contains(hashTokenMethod)) {
+					val args = method.arguments as HashMap<*, *>
+					val outer_hashes = args[hashTokenMethod]!! as List<String>
+					hashListImported[hashTokenMethod] = outer_hashes
+					counterTokenHash++
+					VLog.d("Got back counter token hash : $counterTokenHash")
+					if (counterTokenHash == defaultTokenOnMainScreen.size) {
+						VLog.d("HashList Imported on creating new wallet : $hashListImported")
+						CoroutineScope(Dispatchers.IO).launch {
+							walletDao.updateChiaNetworkHashListImportedByAddress(
+								wallet.address, hashListImported
+							)
 						}
 					}
 				}
-				for (token in defaultTokenOnMainScreen) {
-					val map = hashMapOf<String, String>()
-					map["puzzle_hashes"] = convertListToStringWithSpace(wallet.puzzle_hashes)
-					map["asset_id"] = token
-					withContext(Dispatchers.Main) {
-						methodChannel.invokeMethod("asyncCatPuzzle", map)
-					}
+			}
+			for (token in defaultTokenOnMainScreen) {
+				val map = hashMapOf<String, String>()
+				map["puzzle_hashes"] = convertListToStringWithSpace(wallet.puzzle_hashes)
+				map["asset_id"] = token
+				withContext(Dispatchers.Main) {
+					methodChannel.invokeMethod("asyncCatPuzzle", map)
 				}
 			}
 		}
+
 		return Resource.success("OK")
 	}
 
