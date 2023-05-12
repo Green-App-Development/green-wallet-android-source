@@ -190,7 +190,6 @@ class ChiaFullNodeInterface {
   Future<List<FullCoin>> getAllLinageSingletonCoin(FullCoin parentCoin) async {
     Coin lastCoin = parentCoin.coin;
     List<Coin> allCoins = [];
-
     while (lastCoin.spentBlockIndex != 0) {
       final children =
           await getCoinsByParentIds([lastCoin.id], includeSpentCoins: true);

@@ -85,6 +85,9 @@ class BlockChainInteractImpl @Inject constructor(
 		} else {
 			//generating hashes for tokens later
 			CoroutineScope(Dispatchers.IO).launch {
+				launch {
+					updateWalletNFTBalance(walletEntity)
+				}
 				val hashListImported = hashMapOf<String, List<String>>()
 				val methodChannel = MethodChannel(
 					(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
@@ -92,7 +95,6 @@ class BlockChainInteractImpl @Inject constructor(
 				)
 				val defaultTokenOnMainScreen = tokenDao.getTokensDefaultOnScreen().map { it.hash }
 				var counterTokenHash = 0
-
 				methodChannel.setMethodCallHandler { method, calLBack ->
 					VLog.d("Got back method from hash : ${method.method}")
 					val hashTokenMethod = method.method

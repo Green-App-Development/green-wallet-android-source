@@ -434,10 +434,11 @@ class NFTSendFragment : DaggerFragment() {
 				solution = nftCoin.solution
 			)
 			val enteredFee = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
+			VLog.d("Entered Fee NFT Send Fragment : $enteredFee")
 			val fee =
 				(Math.round(
 					enteredFee
-				) * if (isThisChivesNetwork(
+				 * if (isThisChivesNetwork(
 						wallet.networkType
 					)
 				) Math.pow(
@@ -446,7 +447,7 @@ class NFTSendFragment : DaggerFragment() {
 				) else Math.pow(
 					10.0,
 					12.0
-				)).toLong()
+				)))
 			val gson = Gson()
 			argsFlut["observer"] = wallet.observerHash
 			argsFlut["non_observer"] = wallet.nonObserverHash
@@ -518,7 +519,7 @@ class NFTSendFragment : DaggerFragment() {
 			findViewById<TextView>(R.id.edtCommission).text = commissionText
 			findViewById<TextView>(R.id.edtNFTName).text = nftInfo.name
 			findViewById<TextView>(R.id.edtNftCollection).text = nftInfo.collection
-			findViewById<TextView>(R.id.edtNftID).text = formatString(10,nftInfo.nft_id,4)
+			findViewById<TextView>(R.id.edtNftID).text = formatString(10, nftInfo.nft_id, 4)
 			Glide.with(getMainActivity()).load(nftInfo.data_url)
 				.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
 				.into(findViewById(R.id.img_nft))
