@@ -182,7 +182,7 @@ class PushingTransaction {
               break;
             } catch (ex) {
               debugPrint("Exception in parsing args from android : $ex");
-              _channel.invokeMethod("failedNFT");
+              _channel.invokeMethod("nftSpendBundle");
             }
           }
       }
@@ -894,7 +894,7 @@ class PushingTransaction {
       debugPrint("Final UnCurried NFT : ${info.toMap()}");
       Map<String, dynamic> mapToAndroid = {};
       mapToAndroid["nft_hash"] = coin.parentCoinInfo.toHex();
-      mapToAndroid["launcherId"] = info.launcherId.toHex();
+      mapToAndroid["launcherId"] = NftAddress.fromPuzzlehash(info.launcherId).toString();
       mapToAndroid["nftCoinId"] = info.nftCoinId.toHex();
       mapToAndroid["didOwner"] = info.didOwner?.toHex();
       mapToAndroid["royaltyPercentage"] = info.royaltyPercentage.toString();
@@ -975,7 +975,6 @@ class PushingTransaction {
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
           parent_coin_info: coin.parentCoinInfo,
           puzzle_hash: Puzzlehash.fromHex(fromAddress));
-      await Future.wait(futures);
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
 
@@ -984,7 +983,7 @@ class PushingTransaction {
       debugPrint('Standard XCH for fee : ${standardCoinsForFee}') ;
 
       final destPuzzleHash = Address(destAddress).toPuzzlehash();
-
+      await Future.wait(futures);
       var bundleNFT = NftWallet().createTransferSpendBundle(
         nftCoin: nftFullCoin.toNftCoinInfo(),
         keychain: keychain,

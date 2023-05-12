@@ -26,13 +26,13 @@ class NftNodeWalletService {
       return null;
     });
     FullNFTCoinInfo nftFullInfo = nftInfo.item1;
-    if (nftInfo.item1.minterDid == null) {
-      final did = await getMinterNft(Puzzlehash(nftInfo.item1.launcherId));
-      if (did != null) {
-        nftFullInfo = nftFullInfo.copyWith(minterDid: did.didId);
-      }
-      print("Minter DID is null");
-    }
+    // if (nftInfo.item1.minterDid == null) {
+    //   final did = await getMinterNft(Puzzlehash(nftInfo.item1.launcherId));
+    //   if (did != null) {
+    //     nftFullInfo = nftFullInfo.copyWith(minterDid: did.didId);
+    //   }
+    //   print("Minter DID is null");
+    // }
     return nftFullInfo;
   }
 
