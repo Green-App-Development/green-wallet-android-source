@@ -677,10 +677,12 @@ class SendFragment : DaggerFragment() {
 					insertAddressEntityIfBoxChecked()
 					showSuccessSendMoneyDialog()
 				}
+
 				Resource.State.ERROR -> {
 					val error = res.error!!
 					manageExceptionDialogsForBlockChain(curActivity(), dialogManager, error)
 				}
+
 				Resource.State.LOADING -> {
 
 				}
@@ -910,24 +912,22 @@ class SendFragment : DaggerFragment() {
 
 
 	private fun FragmentSendBinding.registerCLicks() {
-		apply {
-			checkBoxAddAddress.setOnCheckedChangeListener(object :
-				CompoundButton.OnCheckedChangeListener {
-				override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
-					addNameAddressLay.visibility = if (p1) View.VISIBLE else View.GONE
-					txtAddressAlredyExistWarning.visibility = if (p1) View.VISIBLE else View.GONE
-					checkBoxAddAddress.setTextColor(
-						if (p1) ContextCompat.getColor(
-							curActivity(),
-							R.color.green
-						) else ContextCompat.getColor(curActivity(), R.color.checkbox_text_color)
-					)
-					if (p1)
-						checkAddressAlreadyExistInDB()
-				}
-			})
-		}
 
+		checkBoxAddAddress.setOnCheckedChangeListener(object :
+			CompoundButton.OnCheckedChangeListener {
+			override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
+				addNameAddressLay.visibility = if (p1) View.VISIBLE else View.GONE
+				txtAddressAlredyExistWarning.visibility = if (p1) View.VISIBLE else View.GONE
+				checkBoxAddAddress.setTextColor(
+					if (p1) ContextCompat.getColor(
+						curActivity(),
+						R.color.green
+					) else ContextCompat.getColor(curActivity(), R.color.checkbox_text_color)
+				)
+				if (p1)
+					checkAddressAlreadyExistInDB()
+			}
+		})
 
 		backLayout.setOnClickListener {
 			curActivity().popBackStackOnce()

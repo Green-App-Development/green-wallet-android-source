@@ -175,7 +175,7 @@ class BlockChainInteractImpl @Inject constructor(
 				val coinRecords = res.body()!!.coin_records
 				for (coin in coinRecords) {
 					val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-					if (nftCoin.isPresent && coin.coin.amount != 1L && false) continue
+					if (nftCoin.isPresent || coin.coin.amount != 1L) continue
 					val parent_coin = getNftParentCoin(
 						coin.coin.parent_coin_info, coin.confirmed_block_index, service
 					)
