@@ -72,13 +72,13 @@ class BlockChainInteractImpl @Inject constructor(
 		val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
+			CoroutineScope(Dispatchers.IO).launch {
+				updateWalletNFTBalance(walletEntity)
+			}
 			val timeTaken = measureTimeMillis {
 				val job = CoroutineScope(Dispatchers.IO).launch {
 					launch {
 						updateWalletBalance(walletEntity)
-					}
-					launch {
-						updateWalletNFTBalance(walletEntity)
 					}
 					launch {
 						updateTokenBalanceSpeedily(walletEntity)
@@ -175,7 +175,8 @@ class BlockChainInteractImpl @Inject constructor(
 				val coinRecords = res.body()!!.coin_records
 				for (coin in coinRecords) {
 					val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-					if (nftCoin.isPresent || coin.coin.amount != 1L) continue
+					if (coin.coin.amount != 1L) continue
+					if (nftCoin.isPresent) continue
 					val parent_coin = getNftParentCoin(
 						coin.coin.parent_coin_info, coin.confirmed_block_index, service
 					)
@@ -283,6 +284,7 @@ class BlockChainInteractImpl @Inject constructor(
 			address_fk = nftCoinEntity.address_fk,
 			spent = false
 		)
+		VLog.d("Inserting nftInfo to db : $nftInfoEntity")
 		nftInfoDao.insertNftInfoEntity(nftInfoEntity)
 		nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
 		if (nftCoinEntity.time_stamp * 1000L >= wallet.savedTime) {
