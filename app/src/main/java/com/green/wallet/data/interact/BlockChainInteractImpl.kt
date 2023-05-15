@@ -60,6 +60,10 @@ class BlockChainInteractImpl @Inject constructor(
 
 	private val mutexUpdateBalance = Mutex()
 
+	private val handler = CoroutineExceptionHandler { _, th ->
+		VLog.d("Exception caught with connection : ${th.message}")
+	}
+
 	@RequiresApi(Build.VERSION_CODES.N)
 	override suspend fun saveNewWallet(
 		wallet: Wallet, imported: Boolean
@@ -71,11 +75,11 @@ class BlockChainInteractImpl @Inject constructor(
 		val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
 		walletDao.insertWallet(walletEntity = walletEntity)
 		if (imported) {
-			CoroutineScope(Dispatchers.IO).launch {
+			CoroutineScope(Dispatchers.IO + handler).launch {
 				updateWalletNFTBalance(walletEntity)
 			}
 			val timeTaken = measureTimeMillis {
-				val job = CoroutineScope(Dispatchers.IO).launch {
+				val job = CoroutineScope(Dispatchers.IO + handler).launch {
 					launch {
 						updateWalletBalance(walletEntity)
 					}
@@ -88,7 +92,7 @@ class BlockChainInteractImpl @Inject constructor(
 			VLog.d("Time taken: ${timeTaken / 1000}s  to get balance")
 		}
 		//generating hashes for tokens later
-		CoroutineScope(Dispatchers.IO).launch {
+		CoroutineScope(Dispatchers.IO + handler).launch {
 			val hashListImported = hashMapOf<String, List<String>>()
 			val methodChannel = MethodChannel(
 				(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
@@ -284,6 +288,7 @@ class BlockChainInteractImpl @Inject constructor(
 			spent = false
 		)
 		VLog.d("Inserting nftInfo to db : $nftInfoEntity")
+		VLog.d("Inserting nftCoin to db : $nftCoinEntity")
 		nftInfoDao.insertNftInfoEntity(nftInfoEntity)
 		nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
 		if (nftCoinEntity.time_stamp * 1000L >= wallet.savedTime) {
