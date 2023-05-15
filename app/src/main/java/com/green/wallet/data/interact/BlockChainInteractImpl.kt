@@ -2,7 +2,6 @@ package com.green.wallet.data.interact
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.green.wallet.presentation.tools.VLog
@@ -373,8 +372,8 @@ class BlockChainInteractImpl @Inject constructor(
 					val height = searchForSpentNFTByPuzzleHashAndCoin(tran)
 					VLog.d("Height of unspent tran $tran : $height")
 					if (height != 0) {
-						transactionDao.updateTransactionStatusHeightNFT(
-							Status.Outgoing, height.toLong(), tran.nft_coin_hash
+						transactionDao.updateTransactionStatusHeightNFTByTimeCreated(
+							Status.Outgoing, height.toLong(), tran.created_at_time
 						)
 						var c = nftInfoDao.updateSpentNFTInfoByNFTCoinHash(true, tran.nft_coin_hash)
 						c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)

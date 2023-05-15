@@ -47,8 +47,8 @@ interface TransactionDao {
 	@Query("UPDATE TransactionEntity SET status=:status,height=:height WHERE transaction_id=:transaction_id")
 	suspend fun updateTransactionStatusHeight(status: Status, height: Long, transaction_id: String)
 
-	@Query("UPDATE TransactionEntity SET status=:status,height=:height WHERE nft_coin_hash=:nft_coin_hash")
-	suspend fun updateTransactionStatusHeightNFT(status: Status, height: Long, nft_coin_hash: String)
+	@Query("UPDATE TransactionEntity SET status=:status,height=:height WHERE created_at_time=:created_time")
+	suspend fun updateTransactionStatusHeightNFTByTimeCreated(status: Status, height: Long, created_time: Long)
 
 
 	@Query("SELECT * FROM TransactionEntity WHERE (:fkAddress IS NULL OR fkAddress=:fkAddress) AND (:networkType IS NULL OR network_type=:networkType) AND (:status IS NULL OR status=:status) AND (:qAmount IS NULL OR amount=:qAmount) AND (:at_least_created_time IS NULL OR created_at_time>=:at_least_created_time) AND (:yesterday IS NULL OR (created_at_time>=:yesterday AND created_at_time<=:today)) AND (:tokenCode IS NULL OR code LIKE '%' || :tokenCode || '%') ORDER BY created_at_time DESC")
