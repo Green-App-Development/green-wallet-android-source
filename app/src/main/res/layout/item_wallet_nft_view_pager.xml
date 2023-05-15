@@ -19,6 +19,7 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:padding="2dp"
+			android:visibility="gone"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="@+id/guideline10">
@@ -78,6 +79,7 @@
 			android:layout_height="wrap_content"
 			android:layout_marginTop="2dp"
 			android:orientation="horizontal"
+			android:visibility="gone"
 			app:layout_constraintLeft_toLeftOf="parent"
 			app:layout_constraintRight_toRightOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/linearDummyNftImg1">
@@ -229,7 +231,7 @@
 			android:background="@drawable/btn_background_draw"
 			android:text="@string/explore_btn"
 			android:textAllCaps="false"
-			android:visibility="visible"
+			android:visibility="gone"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintHorizontal_bias="0.0"
