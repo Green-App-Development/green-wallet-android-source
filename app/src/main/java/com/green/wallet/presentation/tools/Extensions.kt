@@ -120,6 +120,12 @@ fun Activity.pxToDp(px: Int): Int {
 	return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
 }
 
+fun Context.dpToPx(dp:Int):Int{
+	val density = resources.displayMetrics.density
+	val pxValue = (dp * density).toInt()
+	return pxValue
+}
+
 fun Activity.getResourceAnimation(resId: Int) = AnimationUtils.loadAnimation(this, resId)
 
 

@@ -214,7 +214,6 @@ class ChiaFullNodeInterface {
     for (final coin in unHydratedCatCoins) {
       final parentCoin = await getCoinById(coin.parentCoinInfo);
       final parentCoinSpend = await getCoinSpend(parentCoin!);
-
       catCoins.add(
         FullCoin(
           parentCoinSpend: parentCoinSpend!,

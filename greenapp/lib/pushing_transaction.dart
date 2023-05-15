@@ -422,12 +422,12 @@ class PushingTransaction {
       required List<Coin> standardCoinsForFee,
       required int fee,
       required ChiaFullNodeInterface fullNode}) async {
-    var main_puzzle_hashes = keyChain.hardenedMap.keys
-        .toList()
-        .sublist(0, non_observer);
-    main_puzzle_hashes.addAll(keyChain.unhardenedMap.keys.toList()
-        .sublist(0, observer));
-    List<Coin> feeStandardCoinsTotal = await fullNode.getCoinsByPuzzleHashes(main_puzzle_hashes);
+    var main_puzzle_hashes =
+        keyChain.hardenedMap.keys.toList().sublist(0, non_observer);
+    main_puzzle_hashes
+        .addAll(keyChain.unhardenedMap.keys.toList().sublist(0, observer));
+    List<Coin> feeStandardCoinsTotal =
+        await fullNode.getCoinsByPuzzleHashes(main_puzzle_hashes);
     var feeSum = 0;
     feeStandardCoinsTotal.sort((a, b) {
       return b.amount.compareTo(a.amount);
@@ -750,29 +750,44 @@ class PushingTransaction {
   }
 
   void testingMethod() async {
+    // var mnemonic = [
+    //   "faint",
+    //   "step",
+    //   "noise",
+    //   "upper",
+    //   "anchor",
+    //   "audit",
+    //   "make",
+    //   "will",
+    //   "buyer",
+    //   "shed",
+    //   "cliff",
+    //   "chalk"
+    // ];
+
     var mnemonic = [
-      "faint",
-      "step",
-      "noise",
-      "upper",
-      "anchor",
-      "audit",
-      "make",
-      "will",
-      "buyer",
-      "shed",
-      "cliff",
-      "chalk"
+      "blast",
+      "song",
+      "refuse",
+      "excess",
+      "filter",
+      "unhappy",
+      "tag",
+      "extra",
+      "bless",
+      "grain",
+      "broom",
+      "vanish"
     ];
 
     ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
 
-    final fullNodeRpc = FullNodeHttpRpc("");
+    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
     final walletsSetList = <WalletSet>[];
-    for (var i = 0; i < 2; i++) {
+    for (var i = 0; i < 5; i++) {
       final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
       walletsSetList.add(set1);
     }
@@ -782,58 +797,85 @@ class PushingTransaction {
 
     final nftService =
         NftNodeWalletService(fullNode: fullNode, keychain: keychain);
-
-    var nftCoins = await nftService.getNFTCoins();
+    debugPrint("Testing getting all nft coins");
+    var nftCoins = await nftService.getNFTCoinsByCoinHash(parent_coin_info: "0xe7dc1b830d0128832f868b1baf48c2eb15e07ff8a4bfadf19f347e930d921d24");
     debugPrint("NFTCoins after retrieving : $nftCoins");
     final nftCoin = nftCoins[0];
-    final nftFullCoin = await nftService.convertFullCoin(nftCoin);
-    debugPrint("NFTFullCoin : $nftFullCoin");
-    var bundleNFT = NftWallet().createTransferSpendBundle(
-      nftCoin: nftFullCoin.toNftCoinInfo(),
-      keychain: keychain,
-      targetPuzzleHash: Address(
-              "xch10w7fx4wv3jajp4r27jn37tj790qjhvm673yzrva7n4cesd7xekds5yhrsx")
-          .toPuzzlehash(),
-      standardCoinsForFee: [],
-      fee: 0,
-      changePuzzlehash: keychain.puzzlehashes[0],
+    var puzzleReveal = nftCoin.parentCoinSpend?.puzzleReveal;
+    final nftUncurried = UncurriedNFT.uncurry(
+      puzzleReveal!,
     );
-    var bundleNFTJson = bundleNFT.toJson();
-    print("BundleNFTJson : $bundleNFTJson");
-    _channel.invokeMethod('nftSpendBundle', {"spendBundle": bundleNFTJson});
 
-    print("Puzzle Hash Hint : ${keychain.puzzlehashes.first.toHex()}");
+    final info = NFTInfo.fromUncurried(
+        uncurriedNFT: nftUncurried,
+        currentCoin: nftCoin.parentCoinSpend!.coin,
+        addressPrefix: "xch",
+        genesisCoin: Coin(
+          confirmedBlockIndex: 1188709,
+          spentBlockIndex: 1195599,
+          coinbase: false,
+          timestamp: 1656647940,
+          parentCoinInfo: Bytes.fromHex(
+              "0x9c9c13437bd702e00a9b8fd7b713287a8f6e89fc05844570b59735244d95d0e9"),
+          puzzlehash: Address(
+                  "txch1nxvql6sfz7aj9u6r2s9lflaa98uv3vkuwhh20vsve0ktva6mahsq28pd2m")
+              .toPuzzlehash(),
+          amount: (0.000100000000 * pow(10, 23)).toInt(),
+        ));
 
-    Map<String, dynamic> body = {
-      "hint": keychain.puzzlehashes.first.toHex(),
-      "include_spent_coins": false
-    };
+    debugPrint("NFTInfo Testing :  " + info.toString());
+    // final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+    // debugPrint("NFTFullCoin : $nftFullCoin");
+    //
+    //
 
-    final response = await post(
-        Uri.parse(
-            "https://chia.green-app.io/full-node/get_coin_records_by_hint"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(body));
-
-    var resCoinRecords = CoinRecordsResponse.fromJson(
-      jsonDecode(response.body) as Map<String, dynamic>,
-    );
-    print("NFT Coin Records : ${resCoinRecords.coinRecords}");
-    var allNftCoins =
-        resCoinRecords.coinRecords.map((record) => record.toCoin()).toList();
-    List<FullCoin> fullCoins = [];
-    List<Future<void>> futures = [];
-
-    for (final coin in allNftCoins) {
-      futures.add(getFullCoinsDetail(
-          coin: coin,
-          httpUrl: "https://chia.green-app.io/full-node",
-          fullCoins: fullCoins));
-      await Future.wait(futures);
-    }
-    print("NFTCoins after hydration : $allNftCoins");
+    return;
+    // var bundleNFT = NftWallet().createTransferSpendBundle(
+    //   nftCoin: nftFullCoin.toNftCoinInfo(),
+    //   keychain: keychain,
+    //   targetPuzzleHash: Address(
+    //           "xch10w7fx4wv3jajp4r27jn37tj790qjhvm673yzrva7n4cesd7xekds5yhrsx")
+    //       .toPuzzlehash(),
+    //   standardCoinsForFee: [],
+    //   fee: 0,
+    //   changePuzzlehash: keychain.puzzlehashes[0],
+    // );
+    // var bundleNFTJson = bundleNFT.toJson();
+    // print("BundleNFTJson : $bundleNFTJson");
+    // _channel.invokeMethod('nftSpendBundle', {"spendBundle": bundleNFTJson});
+    //
+    // print("Puzzle Hash Hint : ${keychain.puzzlehashes.first.toHex()}");
+    //
+    // Map<String, dynamic> body = {
+    //   "hint": keychain.puzzlehashes.first.toHex(),
+    //   "include_spent_coins": false
+    // };
+    //
+    // final response = await post(
+    //     Uri.parse(
+    //         "https://chia.green-app.io/full-node/get_coin_records_by_hint"),
+    //     headers: <String, String>{
+    //       'Content-Type': 'application/json; charset=UTF-8',
+    //     },
+    //     body: jsonEncode(body));
+    //
+    // var resCoinRecords = CoinRecordsResponse.fromJson(
+    //   jsonDecode(response.body) as Map<String, dynamic>,
+    // );
+    // print("NFT Coin Records : ${resCoinRecords.coinRecords}");
+    // var allNftCoins =
+    //     resCoinRecords.coinRecords.map((record) => record.toCoin()).toList();
+    // List<FullCoin> fullCoins = [];
+    // List<Future<void>> futures = [];
+    //
+    // for (final coin in allNftCoins) {
+    //   futures.add(getFullCoinsDetail(
+    //       coin: coin,
+    //       httpUrl: "https://chia.green-app.io/full-node",
+    //       fullCoins: fullCoins));
+    //   await Future.wait(futures);
+    // }
+    // print("NFTCoins after hydration : $allNftCoins");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
@@ -894,7 +936,8 @@ class PushingTransaction {
       debugPrint("Final UnCurried NFT : ${info.toMap()}");
       Map<String, dynamic> mapToAndroid = {};
       mapToAndroid["nft_hash"] = coin.parentCoinInfo.toHex();
-      mapToAndroid["launcherId"] = NftAddress.fromPuzzlehash(info.launcherId).toString();
+      mapToAndroid["launcherId"] =
+          NftAddress.fromPuzzlehash(info.launcherId).toString();
       mapToAndroid["nftCoinId"] = info.nftCoinId.toHex();
       mapToAndroid["didOwner"] = info.didOwner?.toHex();
       mapToAndroid["royaltyPercentage"] = info.royaltyPercentage.toString();
@@ -965,8 +1008,7 @@ class PushingTransaction {
             spentCoinsParents: spentCoinsParents,
             standardCoinsForFee: standardCoinsForFee,
             fee: fee,
-            fullNode: fullNode
-        ));
+            fullNode: fullNode));
       }
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
@@ -980,7 +1022,7 @@ class PushingTransaction {
 
       final nftFullCoin = await nftService.convertFullCoin(nftCoin);
       debugPrint("Converting to FullNFTCoin : $nftFullCoin");
-      debugPrint('Standard XCH for fee : ${standardCoinsForFee}') ;
+      debugPrint('Standard XCH for fee : ${standardCoinsForFee}');
 
       final destPuzzleHash = Address(destAddress).toPuzzlehash();
       await Future.wait(futures);

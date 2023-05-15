@@ -13,6 +13,7 @@ import com.green.wallet.R
 import com.green.wallet.databinding.FragmentUserNftBinding
 import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.ViewPagerPosition
 import com.green.wallet.presentation.custom.convertPixelToDp
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -22,7 +23,9 @@ import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class UserNFTTokensFragment : DaggerFragment() {
@@ -116,11 +119,20 @@ class UserNFTTokensFragment : DaggerFragment() {
 	private fun updateViewDetails() {
 		//nftAdapter
 		val nftAdapter =
-			NetworkAdapter(
+			DynamicSpinnerAdapter(
+				150,
 				curActivity(),
 				listOf(curActivity().getStringResource(R.string.all_nfts))
 			)
 		binding.nftTypeSpinner.adapter = nftAdapter
+
+
+		//networkAdapter
+//		val networkAdapter = DynamicSpinnerAdapter(
+//			165,
+//			curActivity(),
+//			listOf()
+//		)
 
 	}
 
