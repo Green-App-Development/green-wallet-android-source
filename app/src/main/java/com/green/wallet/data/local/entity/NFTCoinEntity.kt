@@ -27,11 +27,6 @@ data class NFTCoinEntity(
     val confirmed_block_index: Long,
     val spent_block_index: Long,
     val time_stamp: Long,
-    val parent_coin_info: String,
-    val parent_coin_hash: String,
-    val puzzle_reveal: String,
-    val solution: String,
-    val coin_base: Boolean,
     val puzzle_hash: String
 ) {
     fun toNftCoin() = NFTCoin(
@@ -42,11 +37,6 @@ data class NFTCoinEntity(
         confirmed_block_index,
         spent_block_index,
         time_stamp,
-        parent_coin_info,
-        parent_coin_hash,
-        puzzle_reveal,
-        solution,
-        coin_base,
         puzzle_hash
     )
 }

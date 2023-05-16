@@ -148,11 +148,13 @@ fun getTokenPrecisionByCode(code: String): Double {
 			10.0,
 			8.0
 		)
+
 		"XCH" ->
 			Math.pow(
 				10.0,
 				12.0
 			)
+
 		else -> 1000.0
 	}
 }
@@ -209,6 +211,13 @@ fun formatString(begin: Int, str: String, end: Int): String {
 	ans.append(str.substring(0, begin)).append("...")
 	ans.append(str.substring(str.length - end))
 	return ans.toString()
+}
+
+
+fun extractHttpUrl(metaDataUrl: String): String {
+	val regex = """https?://[^\s/$.?#]+\.[^\s/$.?#]+(?:/[^\s/$.?#]+)*""".toRegex()
+	val matchResult = regex.find(metaDataUrl)
+	return (matchResult?.value + ".json")
 }
 
 

@@ -10,10 +10,5 @@ data class NFTCoin(
     val confirmed_block_index: Long,
     val spent_block_index: Long,
     val time_stamp: Long,
-    val parent_coin_info: String,
-    val parent_coin_hash: String,
-    val puzzle_reveal: String,
-    val solution: String,
-	val coin_base:Boolean,
     val puzzle_hash:String
 )

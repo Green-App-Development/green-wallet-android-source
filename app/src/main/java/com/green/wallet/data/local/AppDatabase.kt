@@ -12,7 +12,7 @@ import com.green.wallet.data.local.entity.*
 		SpentCoinsEntity::class, FaqItemEntity::class,
 		NFTInfoEntity::class, NFTCoinEntity::class
 	],
-	version = 33,
+	version = 34,
 	exportSchema = false
 )
 @TypeConverters(Converters::class)

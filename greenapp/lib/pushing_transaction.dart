@@ -185,6 +185,27 @@ class PushingTransaction {
               _channel.invokeMethod("nftSpendBundle");
             }
           }
+          break;
+        case "unCurryNFTSecond":
+          {
+            var args = call.arguments;
+            debugPrint("unCurryNFTSecond got called with args : $args");
+            var parent_coin_info = args["parent_coin_info"].toString();
+            var puzzle_hash = args["puzzle_hash"].toString();
+            var start_height = int.parse(args["start_height"].toString());
+            var mnemonics = args["mnemonics"].toString().split(' ');
+            var observer = int.parse(args["observer"].toString());
+            var non_observer = int.parse(args["non_observer"].toString());
+            var base_url = args["base_url"];
+            unCurryNFTCoinSecond(
+                mnemonics: mnemonics,
+                observer: observer,
+                non_observer: non_observer,
+                start_height: start_height,
+                parent_coin_info: parent_coin_info,
+                puzzle_hash: puzzle_hash,
+                base_url: base_url);
+          }
       }
     });
     // testingMethod();
@@ -793,41 +814,45 @@ class PushingTransaction {
     }
     final keychain = WalletKeychain.fromWalletSets(walletsSetList);
 
-    final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    const fullNode = ChiaFullNodeInterface(fullNodeRpc);
 
     final nftService =
         NftNodeWalletService(fullNode: fullNode, keychain: keychain);
     debugPrint("Testing getting all nft coins");
-    var nftCoins = await nftService.getNFTCoinsByCoinHash(parent_coin_info: "0xe7dc1b830d0128832f868b1baf48c2eb15e07ff8a4bfadf19f347e930d921d24");
+    var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+        parent_coin_info: Bytes.fromHex(
+            "0xbf7190615ff980708097ef9eed73454fcab3fd845c529429a6d9e26941ab2f1c"),
+        puzzle_hash: Puzzlehash.fromHex(
+            "7bbc9355cc8cbb20d46af4a71f2e5e2bc12bb37af44821b3be9d719837c6cd9b"));
     debugPrint("NFTCoins after retrieving : $nftCoins");
     final nftCoin = nftCoins[0];
-    var puzzleReveal = nftCoin.parentCoinSpend?.puzzleReveal;
-    final nftUncurried = UncurriedNFT.uncurry(
-      puzzleReveal!,
-    );
 
-    final info = NFTInfo.fromUncurried(
-        uncurriedNFT: nftUncurried,
-        currentCoin: nftCoin.parentCoinSpend!.coin,
-        addressPrefix: "xch",
-        genesisCoin: Coin(
-          confirmedBlockIndex: 1188709,
-          spentBlockIndex: 1195599,
-          coinbase: false,
-          timestamp: 1656647940,
-          parentCoinInfo: Bytes.fromHex(
-              "0x9c9c13437bd702e00a9b8fd7b713287a8f6e89fc05844570b59735244d95d0e9"),
-          puzzlehash: Address(
-                  "txch1nxvql6sfz7aj9u6r2s9lflaa98uv3vkuwhh20vsve0ktva6mahsq28pd2m")
-              .toPuzzlehash(),
-          amount: (0.000100000000 * pow(10, 23)).toInt(),
-        ));
+    final nftFullCoin_ = await nftService.convertFullCoin(nftCoin);
+    final nftInfo = nftFullCoin_.toNftCoinInfo();
 
-    debugPrint("NFTInfo Testing :  " + info.toString());
+    final info = UncurriedNFT.uncurry(nftInfo.fullPuzzle);
+    final launcherId = info.singletonLauncherId.atom;
+    final address = NftAddress.fromPuzzlehash(Puzzlehash(launcherId)).address;
+    debugPrint("Address of nft found : $address");
+    Map<String, dynamic> mapToAndroid = {};
+    mapToAndroid["nft_hash"] = nftCoin.coin.parentCoinInfo;
+    mapToAndroid["launcherId"] = info.singletonLauncherId.toHex();
+    mapToAndroid["didOwner"] = info.ownerDid?.toHex();
+    mapToAndroid["royaltyPercentage"] = info.tradePricePercentage.toString();
+    mapToAndroid["dataUris"] = info.dataUris.toList();
+    mapToAndroid["dataHash"] = info.dataHash;
+    mapToAndroid["metadataUris"] = info.metadata.toList();
+    mapToAndroid["metadataHash"] = info.metadataUpdaterHash;
+    mapToAndroid["licenseUris"] = info.licenseUris.toList();
+    mapToAndroid["licenseHash"] = info.licenseHash;
+    mapToAndroid["seriesTotal"] = info.seriesTotal;
+    mapToAndroid["seriesNumber"] = info.seriesNumber;
+    mapToAndroid["supportsDid"] = info.supportDid;
+    mapToAndroid["launcherPuzzlehash"] = info.launcherPuzhash.toHex();
+
+    debugPrint("Map To Android on testing : $mapToAndroid");
     // final nftFullCoin = await nftService.convertFullCoin(nftCoin);
     // debugPrint("NFTFullCoin : $nftFullCoin");
-    //
-    //
 
     return;
     // var bundleNFT = NftWallet().createTransferSpendBundle(
@@ -1145,5 +1170,66 @@ class PushingTransaction {
     //   }
     // }
     return null;
+  }
+
+  Future<void> unCurryNFTCoinSecond({
+    required List<String> mnemonics,
+    required int observer,
+    required int non_observer,
+    required int start_height,
+    required String parent_coin_info,
+    required String puzzle_hash,
+    required String base_url,
+  }) async {
+    try {
+      var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
+
+      final keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, non_observer);
+
+      ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
+      final fullNodeRpc = FullNodeHttpRpc(base_url);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+      var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+          parent_coin_info: Bytes.fromHex(parent_coin_info),
+          puzzle_hash: Puzzlehash.fromHex(puzzle_hash),
+          startHeight: start_height);
+      if (nftCoins.isEmpty) {
+        debugPrint("NFtCoins to uncurry is empty");
+      }
+      final nftCoin = nftCoins[0];
+      final nftFullCoin_ = await nftService.convertFullCoin(nftCoin);
+      final nftInfo = nftFullCoin_.toNftCoinInfo();
+      final info = UncurriedNFT.uncurry(nftInfo.fullPuzzle);
+      final launcherId = info.singletonLauncherId.atom;
+      final address = NftAddress.fromPuzzlehash(Puzzlehash(launcherId)).address;
+      debugPrint("Address of nft found : $address");
+      Map<String, dynamic> mapToAndroid = {};
+      mapToAndroid["nft_hash"] = nftCoin.coin.parentCoinInfo.toString();
+      mapToAndroid["launcherId"] = info.singletonLauncherId.toHex();
+      mapToAndroid["nftCoinId"] = address;
+      mapToAndroid["didOwner"] = info.ownerDid?.toHex();
+      if (info.tradePricePercentage != null) {
+        mapToAndroid["royaltyPercentage"] = info.tradePricePercentage! / 100;
+      } else {
+        mapToAndroid["royaltyPercentage"] = 0;
+      }
+      mapToAndroid["dataUrl"] = info.dataUris.toList()[0].toString();
+      mapToAndroid["dataHash"] = info.dataHash.toHex();
+      mapToAndroid["metadataUrl"] = info.metadata.toList()[2].cons[1].toString();
+      mapToAndroid["metadataHash"] = info.metadataUpdaterHash.toHex();
+      // mapToAndroid["licenseUris"] = info.licenseUris.toList();
+      mapToAndroid["supportsDid"] = info.supportDid;
+
+      // debugPrint("Data url photo : ${info.metadata.toList()[2].cons[1].toString()}");
+      // debugPrint("Data url photo : ${info.metadata.toList()}");
+
+      _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
+    } catch (ex) {
+      debugPrint("Exception in uncurry nft second way : $ex");
+      _channel.invokeMethod("exceptionNFT", ex.toString());
+    }
   }
 }
