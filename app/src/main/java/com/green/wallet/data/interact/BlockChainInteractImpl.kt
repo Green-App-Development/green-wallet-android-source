@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.example.common.tools.extractHttpUrl
 import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
@@ -155,10 +156,19 @@ class BlockChainInteractImpl @Inject constructor(
 			if (isThisChivesNetwork(wallet.networkType)) return
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
+			val secretKeySpec =
+				encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
+			val decMnemonics = encryptor.decrypt(wallet.encMnemonics, secretKeySpec!!)
 			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 				.create(BlockChainService::class.java)
 			for (hash in wallet.puzzle_hashes) {
-				nftBalanceByHash(wallet, hash, curBlockChainService)
+				nftBalanceByHash(
+					wallet,
+					decMnemonics,
+					hash,
+					curBlockChainService,
+					networkItem.full_node
+				)
 			}
 		} catch (ex: Exception) {
 			VLog.d("Exception occurred with updating wallet nft balance by individ hash : ${ex.message}")
@@ -167,7 +177,11 @@ class BlockChainInteractImpl @Inject constructor(
 
 	private var waitingUnCurry = false
 	private suspend fun nftBalanceByHash(
-		wallet: WalletEntity, hash: String, service: BlockChainService
+		wallet: WalletEntity,
+		decMnemoincs: String,
+		hash: String,
+		service: BlockChainService,
+		base_url: String
 	) {
 		try {
 			val body = hashMapOf<String, Any>()
@@ -180,60 +194,56 @@ class BlockChainInteractImpl @Inject constructor(
 					val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
 					if (coin.coin.amount != 1L) continue
 					if (nftCoin.isPresent) continue
-					val parent_coin = getNftParentCoin(
-						coin.coin.parent_coin_info, coin.confirmed_block_index, service
+
+					val nftCoinEntity = NFTCoinEntity(
+						coin.coin.parent_coin_info,
+						address_fk = wallet.address,
+						coin.coin.puzzle_hash,
+						1,
+						coin.confirmed_block_index,
+						coin.spent_block_index,
+						coin.timestamp,
+						hash
 					)
-					if (parent_coin != null) {
-						val nftCoinEntity = NFTCoinEntity(
-							coin.coin.parent_coin_info,
-							address_fk = wallet.address,
-							coin.coin.puzzle_hash,
-							1,
-							coin.confirmed_block_index,
-							coin.spent_block_index,
-							coin.timestamp,
-							parent_coin.coin_solution.coin.parent_coin_info,
-							parent_coin.coin_solution.coin.puzzle_hash,
-							parent_coin.coin_solution.puzzle_reveal,
-							parent_coin.coin_solution.solution,
-							coin.coinbase,
-							hash
-						)
-						VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
-						val methodChannel = MethodChannel(
-							(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
-							METHOD_CHANNEL_GENERATE_HASH
-						)
-						waitingUnCurry = true
-						methodChannel.setMethodCallHandler { method, result ->
-							if (method.method == "unCurriedNFTInfo") {
-								VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
-								CoroutineScope(Dispatchers.IO).launch {
-									retrieveNFTPropertiesAndSave(
-										method, coin.coin.parent_coin_info, nftCoinEntity, wallet
-									)
-									waitingUnCurry = false
-								}
-							} else if (method.method == "exceptionNFT") {
-//								VLog.d("Exception called getting unCurried nft : ${method.arguments}")
+					VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+					val methodChannel = MethodChannel(
+						(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
+						METHOD_CHANNEL_GENERATE_HASH
+					)
+					waitingUnCurry = true
+					methodChannel.setMethodCallHandler { method, result ->
+						if (method.method == "unCurriedNFTInfo") {
+							VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
+							CoroutineScope(Dispatchers.IO+handler).launch {
+								retrieveNFTPropertiesAndSave(
+									method, coin.coin.parent_coin_info, nftCoinEntity, wallet
+								)
 								waitingUnCurry = false
 							}
+						} else if (method.method == "exceptionNFT") {
+//								VLog.d("Exception called getting unCurried nft : ${method.arguments}")
+							waitingUnCurry = false
 						}
-						withContext(Dispatchers.Main) {
-							val map = hashMapOf<String, Any>()
-							map["coin"] = gson.toJson(coin)
-							map["parent_coin"] = gson.toJson(parent_coin)
-//							VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
-							methodChannel.invokeMethod("unCurryNft", map)
-						}
-						var c = 0
-						while (waitingUnCurry) {
-							VLog.d("Waiting UnCurry NFT counter : $c")
-							delay(1000)
-							c++
-							if (c >= 10)
-								break
-						}
+					}
+					withContext(Dispatchers.Main) {
+						val map = hashMapOf<String, Any>()
+						map["observer"] = wallet.observer_hash
+						map["non_observer"] = wallet.non_observer_hash
+						map["mnemonics"] = decMnemoincs
+						map["base_url"] = base_url
+						map["parent_coin_info"] = coin.coin.parent_coin_info
+						map["start_height"] = coin.confirmed_block_index
+						map["puzzle_hash"] = hash
+						VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
+						methodChannel.invokeMethod("unCurryNFTSecond", map)
+					}
+					var c = 0
+					while (waitingUnCurry) {
+						VLog.d("Waiting UnCurry NFT counter : $c")
+						delay(1000)
+						c++
+						if (c == 100)
+							break
 					}
 				}
 			} else {
@@ -248,18 +258,19 @@ class BlockChainInteractImpl @Inject constructor(
 		method: MethodCall, coin_hash: String, nftCoinEntity: NFTCoinEntity, wallet: WalletEntity
 	) {
 		val args = method.arguments as HashMap<String, Any>
-		val launcher_id = args["launcherId"].toString()
-		val nft_id = args["nftCoinId"].toString()
-		val owner_id = args["didOwner"].toString()
-		val minter_did = ""
-		val royalty = args["royaltyPercentage"].toString().toInt()
-		val minter_height = args["mintHeight"].toString().toInt()
-		val data_url = (args["dataUris"] as List<String>)[0]
-		val data_hash = args["dataHash"].toString()
-		val meta_data_url = (args["metadataUris"] as List<String>)[0]
-		val meta_hash = args["metadataHash"].toString()
-		VLog.d("Meta data url of nft : $meta_data_url")
-		val metaData = getMetaDataNFT(meta_data_url)
+		val launcherId = args["launcherId"].toString()
+		val nftId = args["nftCoinId"].toString()
+		val ownerId = args["didOwner"].toString()
+		val royalty = (args["royaltyPercentage"] as Double).toInt()
+//		val minterHeight = args["mintHeight"].toString().toInt()
+		var dataUrl = args["dataUrl"].toString()
+		dataUrl = dataUrl.substring(1, dataUrl.length - 1)
+		val dataHash = args["dataHash"].toString()
+		var metaDataUrl = args["metadataUrl"].toString()
+		metaDataUrl = extractHttpUrl(metaDataUrl)
+		val metaHash = args["metadataHash"].toString()
+		VLog.d("Meta data url of nft : $metaDataUrl")
+		val metaData = getMetaDataNFT(metaDataUrl)
 		if (metaData == null) {
 			VLog.d("Meta Data of nft is null")
 			return
@@ -270,16 +281,16 @@ class BlockChainInteractImpl @Inject constructor(
 		val properties = metaData["attributes"] as HashMap<String, String>
 		val nftInfoEntity = NFTInfoEntity(
 			nft_coin_hash = coin_hash,
-			nft_id = nft_id,
-			launcher_id = launcher_id,
-			owner_did = owner_id,
+			nft_id = nftId,
+			launcher_id = launcherId,
+			owner_did = ownerId,
 			minter_did = "",
 			royalty_percentage = royalty,
-			mint_height = minter_height,
-			data_url = data_url,
-			data_hash = data_hash,
-			meta_hash = meta_hash,
-			meta_url = meta_data_url,
+			mint_height = 0,
+			data_url = dataUrl,
+			data_hash = dataHash,
+			meta_hash = metaHash,
+			meta_url = metaDataUrl,
 			description = description,
 			collection = collection,
 			properties = properties,
@@ -295,7 +306,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val resLanguageResource =
 				prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
 			val resMap = Converters.stringToHashMap(resLanguageResource)
-			val incoming_transaction =
+			val incomingTransaction =
 				resMap["push_notifications_incoming"] ?: "Incoming transaction"
 			val tran = TransactionEntity(
 				transaction_id = UUID.randomUUID().toString(),
@@ -313,12 +324,11 @@ class BlockChainInteractImpl @Inject constructor(
 			)
 			transactionDao.insertTransaction(tran)
 			notificationHelper.callGreenAppNotificationMessages(
-				"$incoming_transaction : 1 NFT",
+				"$incomingTransaction : 1 NFT",
 				System.currentTimeMillis()
 			)
 		}
 	}
-
 	private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any>? {
 		try {
 			val res = retrofitBuilder.build().create(BlockChainService::class.java)

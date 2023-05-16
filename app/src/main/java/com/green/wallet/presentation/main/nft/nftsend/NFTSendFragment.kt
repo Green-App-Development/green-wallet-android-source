@@ -485,20 +485,11 @@ class NFTSendFragment : DaggerFragment() {
 					parent_coin_info = nftCoin.coin_info,
 					puzzle_hash = nftCoin.coin_hash
 				),
-				coinbase = nftCoin.coin_base,
 				confirmed_block_index = nftCoin.confirmed_block_index,
 				spent = false,
 				spent_block_index = nftCoin.spent_block_index,
-				timestamp = nftCoin.time_stamp
-			)
-			val parentCoin = CoinSolution(
-				coin = Coin(
-					amount = 1,
-					parent_coin_info = nftCoin.parent_coin_hash,
-					puzzle_hash = nftCoin.parent_coin_hash
-				),
-				puzzle_reveal = nftCoin.puzzle_reveal,
-				solution = nftCoin.solution
+				timestamp = nftCoin.time_stamp,
+				coinbase = false
 			)
 			val enteredFee = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
 			VLog.d("Entered Fee NFT Send Fragment : $enteredFee")
