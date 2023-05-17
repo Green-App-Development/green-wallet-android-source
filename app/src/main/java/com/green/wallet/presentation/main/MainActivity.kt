@@ -795,7 +795,7 @@ class MainActivity : BaseActivity() {
 			delay(1000)
 		}
 		VLog.d("Create or import method has  been called on MainActivity")
-		lifecycleScope.launch {
+		lifecycleScope.launch(handler) {
 
 			val walletSize = mainViewModel.getWalletSizeInDB().size
 			if (walletSize >= 10) {

@@ -157,7 +157,7 @@ class CryptocurrencyImpl @Inject constructor(
 						}
 					}
 					delay(500)
-					VLog.d("HashListImported after : $hashListImported")
+//					VLog.d("HashListImported after : $hashListImported")
 					walletDao.updateChiaNetworkHashListImportedByAddress(
 						wallet.address,
 						hashListImported
