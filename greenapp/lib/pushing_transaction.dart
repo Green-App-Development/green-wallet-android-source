@@ -206,6 +206,22 @@ class PushingTransaction {
                 puzzle_hash: puzzle_hash,
                 base_url: base_url);
           }
+          break;
+        case "puzzle_hash_to_address":
+          {
+            try {
+              var puzzleHashHex = call.arguments.toString();
+              debugPrint("Puzzle Hash Hex got called : $puzzleHashHex");
+              var minterDid = Address.fromPuzzlehash(
+                  Puzzlehash.fromHex(
+                      puzzleHashHex),
+                  "did:chia:");
+              _channel.invokeMethod("puzzle_hash_to_address", minterDid.address);
+            } catch (ex) {
+              _channel.invokeMethod("exception");
+            }
+          }
+          break;
       }
     });
     // testingMethod();
@@ -801,6 +817,9 @@ class PushingTransaction {
       "vanish"
     ];
 
+    debugPrint(
+        "Minter DID From Hex : ${Address.fromPuzzlehash(Puzzlehash.fromHex('c23ecd8c8992e61f23c312f3eeb100301301fa9a6bb0e53539acdfc74b08881a'), "did:chia:")}");
+
     ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
 
     const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
@@ -1218,7 +1237,8 @@ class PushingTransaction {
       }
       mapToAndroid["dataUrl"] = info.dataUris.toList()[0].toString();
       mapToAndroid["dataHash"] = info.dataHash.toHex();
-      mapToAndroid["metadataUrl"] = info.metadata.toList()[2].cons[1].toString();
+      mapToAndroid["metadataUrl"] =
+          info.metadata.toList()[2].cons[1].toString();
       mapToAndroid["metadataHash"] = info.metadataUpdaterHash.toHex();
       // mapToAndroid["licenseUris"] = info.licenseUris.toList();
       mapToAndroid["supportsDid"] = info.supportDid;

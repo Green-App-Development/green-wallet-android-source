@@ -34,6 +34,7 @@ import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import okhttp3.internal.wait
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
@@ -158,12 +159,17 @@ class BlockChainInteractImpl @Inject constructor(
 				?: throw Exception("Exception in converting json str to networkItem")
 			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 				.create(BlockChainService::class.java)
+			val methodChannel = MethodChannel(
+				(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
+				METHOD_CHANNEL_GENERATE_HASH
+			)
 			for (hash in wallet.puzzle_hashes) {
 				nftBalanceByHash(
 					wallet,
 					hash,
 					curBlockChainService,
-					networkItem
+					networkItem,
+					methodChannel
 				)
 			}
 		} catch (ex: Exception) {
@@ -175,7 +181,8 @@ class BlockChainInteractImpl @Inject constructor(
 		wallet: WalletEntity,
 		hash: String,
 		service: BlockChainService,
-		networkItem: NetworkItem
+		networkItem: NetworkItem,
+		methodChannel: MethodChannel
 	) {
 		try {
 			val body = hashMapOf<String, Any>()
@@ -183,10 +190,9 @@ class BlockChainInteractImpl @Inject constructor(
 			body["include_spent_coins"] = false
 			val res = service.getCoinRecordsByHint(body)
 			if (res.isSuccessful) {
-				val coinRecords = res.body()!!.coin_records
+				val coinRecords = res.body()!!.coin_records.filter { it.coin.amount == 1L }
 				for (coin in coinRecords) {
 					val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-					if (coin.coin.amount != 1L) continue
 					if (nftCoin.isPresent) continue
 
 					val nftCoinEntity = NFTCoinEntity(
@@ -203,7 +209,8 @@ class BlockChainInteractImpl @Inject constructor(
 					val nftInfoEntity = getNFTINfoFromWalletApi(
 						networkItem,
 						coin.coin.parent_coin_info,
-						address_fk = wallet.address
+						address_fk = wallet.address,
+						methodChannel
 					)
 					if (nftInfoEntity == null) {
 						VLog.d("NFTInfo Entity is null ")
@@ -251,7 +258,8 @@ class BlockChainInteractImpl @Inject constructor(
 	private suspend fun getNFTINfoFromWalletApi(
 		networkItem: NetworkItem,
 		parentCoinInfo: String,
-		address_fk: String
+		address_fk: String,
+		methodChannel: MethodChannel
 	): NFTInfoEntity? {
 		try {
 
@@ -265,11 +273,35 @@ class BlockChainInteractImpl @Inject constructor(
 			val reqNFTInfo = walletService.getNFTInfoByCoinId(body)
 			if (reqNFTInfo.isSuccessful) {
 				val nftInfo = reqNFTInfo.body()!!.nft_info
-				VLog.d("Retrieved NFT Info from wallet : $nftInfo")
-				val metaData = getMetaDataNFT(nftInfo.metadata_uris[0])
+				VLog.d("Retrieved NFT Info from wallet : $nftInfo and with Coin_Id : $parentCoinInfo")
+				var minterDid = ""
+				var waitFlutter = true
+				methodChannel.setMethodCallHandler { call, method ->
+					if (call.method == "puzzle_hash_to_address") {
+						minterDid = call.arguments.toString()
+						waitFlutter = false
+					} else if (call.method == "exception") {
+						waitFlutter = false
+					}
+				}
+				withContext(Dispatchers.Main) {
+					methodChannel.invokeMethod(
+						"puzzle_hash_to_address",
+						nftInfo.minter_did ?: ""
+					)
+				}
+				val metaData = getMetaDataNFT(nftInfo.metadata_uris?.get(0) ?: "")
 				if (metaData == null) {
 					VLog.d("Meta Data of nft is null")
 					return null
+				}
+				var c = 0
+				while (waitFlutter) {
+					c++
+					delay(1000)
+					VLog.d("Waiting to minter did : $c")
+					if (c >= 5)
+						return null
 				}
 				val description = metaData["description"].toString()
 				val collection = metaData["collection"].toString()
@@ -280,13 +312,13 @@ class BlockChainInteractImpl @Inject constructor(
 					nft_id = nftInfo.nft_id ?: "",
 					launcher_id = nftInfo.launcher_id ?: "",
 					owner_did = nftInfo.owner_did ?: "",
-					minter_did = nftInfo.minter_did ?: "",
+					minter_did = minterDid,
 					royalty_percentage = nftInfo.royalty_percentage / 100,
 					mint_height = nftInfo.mint_height,
-					data_url = nftInfo.data_uris[0],
+					data_url = nftInfo.data_uris?.get(0) ?: "",
 					data_hash = nftInfo.data_hash ?: "",
-					meta_hash = nftInfo.metadata_hash,
-					meta_url = nftInfo.metadata_uris[0],
+					meta_hash = nftInfo.metadata_hash ?: "",
+					meta_url = nftInfo.metadata_uris?.get(0) ?: "",
 					description = description,
 					collection = collection,
 					properties = properties,

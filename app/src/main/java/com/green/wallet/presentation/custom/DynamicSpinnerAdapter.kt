@@ -19,7 +19,7 @@ import com.green.wallet.presentation.tools.pxToDp
 class DynamicSpinnerAdapter(
 	private val widthDp: Int,
 	private val context: Context,
-	private val dataOptions: List<String>
+	val dataOptions: List<String>
 ) : BaseAdapter() {
 
 	var selectedPosition: Int = 0

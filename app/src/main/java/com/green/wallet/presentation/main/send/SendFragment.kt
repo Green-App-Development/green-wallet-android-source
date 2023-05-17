@@ -61,7 +61,7 @@ class SendFragment : DaggerFragment() {
 
 	private val binding by viewBinding(FragmentSendBinding::bind)
 	private lateinit var networkAdapter: NetworkAdapter
-	private lateinit var tokenAdapter: NetworkAdapter
+	private lateinit var tokenAdapter: DynamicSpinnerAdapter
 	private lateinit var walletAdapter: WalletListAdapter
 
 	@Inject
@@ -407,8 +407,9 @@ class SendFragment : DaggerFragment() {
 			ic_token_downward.visibility = View.VISIBLE
 		}
 		curTokenWalletList = tokenWalletList
-		tokenAdapter = NetworkAdapter(
-			curActivity(),
+		tokenAdapter = DynamicSpinnerAdapter(
+			widthDp = 100,
+			context=curActivity(),
 			tokenWalletList.filter {
 				(it.code == "XCH" || it.asset_id.trim().isNotEmpty() || it.code == "XCC")
 			}

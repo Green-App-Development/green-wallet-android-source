@@ -201,7 +201,7 @@ class GreenAppInteractImpl @Inject constructor(
 						)
 						notifOtherDao.insertingNotifOther(notifOther)
 					} else {
-						VLog.d("Not insert OtherNotifOtherItems : $curJsonObject time : $timeStamp")
+//						VLog.d("Not insert OtherNotifOtherItems : $curJsonObject time : $timeStamp")
 					}
 
 				}
