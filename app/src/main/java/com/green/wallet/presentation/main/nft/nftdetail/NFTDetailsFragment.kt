@@ -117,7 +117,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		edtNFTID.text = formatString(8, nftInfo.nft_id, 4)
 		edtLaunchedID.text = formatString(4, nftInfo.launcher_id, 4)
 		edtOwnerID.text = "Unassigned"
-		edtMinterDID.text = formatString(4, nftInfo.minter_did, 4)
+		edtMinterDID.text = formatString(14 , nftInfo.minter_did, 4)
 		edtRoyaltyPercentage.text = "${nftInfo.royalty_percentage}%"
 		edtMinterBlockHeight.text = "${nftInfo.mint_height}"
 		edtDataUrl1.text = formatString(15, nftInfo.data_url, 0)

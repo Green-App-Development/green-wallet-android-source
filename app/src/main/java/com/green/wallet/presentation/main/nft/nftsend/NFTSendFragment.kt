@@ -173,6 +173,7 @@ class NFTSendFragment : DaggerFragment() {
 				) {
 					Handler(Looper.myLooper()!!).postDelayed({
 						popBackStackOnce()
+						popBackStackOnce()
 					}, 500)
 				}
 			}
@@ -364,6 +365,7 @@ class NFTSendFragment : DaggerFragment() {
 			}
 		}
 	}
+
 	private fun generateLinearLayoutProperties(
 		firstView: Boolean,
 		key: String,
@@ -496,16 +498,17 @@ class NFTSendFragment : DaggerFragment() {
 			val fee =
 				(Math.round(
 					enteredFee
-				 * if (isThisChivesNetwork(
-						wallet.networkType
+							* if (isThisChivesNetwork(
+							wallet.networkType
+						)
+					) Math.pow(
+						10.0,
+						8.0
+					) else Math.pow(
+						10.0,
+						12.0
 					)
-				) Math.pow(
-					10.0,
-					8.0
-				) else Math.pow(
-					10.0,
-					12.0
-				)))
+				))
 			val gson = Gson()
 			argsFlut["observer"] = wallet.observerHash
 			argsFlut["non_observer"] = wallet.nonObserverHash
