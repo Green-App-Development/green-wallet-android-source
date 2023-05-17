@@ -136,7 +136,7 @@ class CryptocurrencyImpl @Inject constructor(
 			)
 			for (wallet in chiaWallets) {
 				val hashListImported = wallet.hashListImported
-				VLog.d("HashListImported before : $hashListImported")
+//				VLog.d("HashListImported before : $hashListImported")
 				var needToWait = false
 				defaultTails.forEach { token ->
 					if (!hashListImported.containsKey(token.hash)) {

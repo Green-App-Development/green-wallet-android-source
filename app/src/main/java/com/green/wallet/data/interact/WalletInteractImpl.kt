@@ -112,7 +112,7 @@ class WalletInteractImpl @Inject constructor(
 				wallet.nonObserverHash
 			)
 		}
-		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
+//		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
 		val hashListMutList = walletEntity.hashListImported.keys.toMutableList()
 		val tokensDefault = tokenDao.getTokensDefaultOnScreen().map { it.hash }

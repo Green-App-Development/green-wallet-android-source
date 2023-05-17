@@ -88,7 +88,7 @@ class GreenAppInteractImpl @Inject constructor(
 				prefs.getSettingString(PrefsManager.VERSION_REQUEST, "")
 			)
 			val resMap = convertResponseToHashMap(response)
-			VLog.d("ResMap on downloading lang by code : $resMap")
+//			VLog.d("ResMap on downloading lang by code : $resMap")
 			if (resMap["error_code"] == "1007" || resMap["success"].toString() == "false") {
 				val errorCode = resMap["error_code"]!!
 				parseException(errorCode.toInt())
