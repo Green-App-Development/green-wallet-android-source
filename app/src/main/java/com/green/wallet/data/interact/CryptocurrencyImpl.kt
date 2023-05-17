@@ -107,7 +107,7 @@ class CryptocurrencyImpl @Inject constructor(
 						tokenPrice =
 							tokenJson.asJsonObject["price"].asString.toDoubleOrNull() ?: 0.0
 					} else {
-						VLog.d("Token property is null ")
+//						VLog.d("Token property is null ")
 					}
 					tokenDao.updateTokenPrice(tokenPrice, tokenCode)
 				}
