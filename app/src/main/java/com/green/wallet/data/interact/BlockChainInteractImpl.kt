@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.example.common.tools.extractHttpUrl
+import com.example.common.tools.extractHttpUrlFromMetaData
 import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
@@ -62,7 +62,7 @@ class BlockChainInteractImpl @Inject constructor(
 	private val mutexUpdateBalance = Mutex()
 
 	private val handler = CoroutineExceptionHandler { _, th ->
-		VLog.d("Exception caught with connection : ${th.message}")
+		VLog.d("Exception caught in blockchain : ${th.message}")
 	}
 
 	@RequiresApi(Build.VERSION_CODES.N)
@@ -111,7 +111,7 @@ class BlockChainInteractImpl @Inject constructor(
 					counterTokenHash++
 					VLog.d("Got back counter token hash : $counterTokenHash")
 					if (counterTokenHash == defaultTokenOnMainScreen.size) {
-						VLog.d("HashList Imported on creating new wallet : $hashListImported")
+//						VLog.d("HashList Imported on creating new wallet : $hashListImported")
 						CoroutineScope(Dispatchers.IO).launch {
 							walletDao.updateChiaNetworkHashListImportedByAddress(
 								wallet.address, hashListImported
@@ -214,7 +214,7 @@ class BlockChainInteractImpl @Inject constructor(
 					methodChannel.setMethodCallHandler { method, result ->
 						if (method.method == "unCurriedNFTInfo") {
 							VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
-							CoroutineScope(Dispatchers.IO+handler).launch {
+							CoroutineScope(Dispatchers.IO + handler).launch {
 								retrieveNFTPropertiesAndSave(
 									method, coin.coin.parent_coin_info, nftCoinEntity, wallet
 								)
@@ -267,7 +267,7 @@ class BlockChainInteractImpl @Inject constructor(
 		dataUrl = dataUrl.substring(1, dataUrl.length - 1)
 		val dataHash = args["dataHash"].toString()
 		var metaDataUrl = args["metadataUrl"].toString()
-		metaDataUrl = extractHttpUrl(metaDataUrl)
+		metaDataUrl = extractHttpUrlFromMetaData(metaDataUrl)
 		val metaHash = args["metadataHash"].toString()
 		VLog.d("Meta data url of nft : $metaDataUrl")
 		val metaData = getMetaDataNFT(metaDataUrl)
@@ -329,6 +329,7 @@ class BlockChainInteractImpl @Inject constructor(
 			)
 		}
 	}
+
 	private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any>? {
 		try {
 			val res = retrofitBuilder.build().create(BlockChainService::class.java)

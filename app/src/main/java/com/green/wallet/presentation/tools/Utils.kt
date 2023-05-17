@@ -214,10 +214,10 @@ fun formatString(begin: Int, str: String, end: Int): String {
 }
 
 
-fun extractHttpUrl(metaDataUrl: String): String {
-	val regex = """https?://[^\s/$.?#]+\.[^\s/$.?#]+(?:/[^\s/$.?#]+)*""".toRegex()
-	val matchResult = regex.find(metaDataUrl)
-	return (matchResult?.value + ".json")
+fun extractHttpUrlFromMetaData(str: String): String {
+	val withoutBracket=str.substring(1,str.length-1)
+	val split=withoutBracket.split(" ")[0]
+	return split.substring(1,split.length-1)
 }
 
 

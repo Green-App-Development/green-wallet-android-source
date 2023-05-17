@@ -176,7 +176,7 @@ class App : DaggerApplication() {
 			flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
-		CoroutineScope(Dispatchers.IO).launch {
+		CoroutineScope(Dispatchers.IO+handler).launch {
 			//wait for flutter engine to warm up
 			delay(500L)
 			walletInteract.getAllWalletList().forEach {
