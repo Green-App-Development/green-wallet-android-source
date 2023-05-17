@@ -156,18 +156,14 @@ class BlockChainInteractImpl @Inject constructor(
 			if (isThisChivesNetwork(wallet.networkType)) return
 			val networkItem = getNetworkItemFromPrefs(wallet.networkType)
 				?: throw Exception("Exception in converting json str to networkItem")
-			val secretKeySpec =
-				encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
-			val decMnemonics = encryptor.decrypt(wallet.encMnemonics, secretKeySpec!!)
 			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 				.create(BlockChainService::class.java)
 			for (hash in wallet.puzzle_hashes) {
 				nftBalanceByHash(
 					wallet,
-					decMnemonics,
 					hash,
 					curBlockChainService,
-					networkItem.full_node
+					networkItem
 				)
 			}
 		} catch (ex: Exception) {
@@ -175,13 +171,11 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 	}
 
-	private var waitingUnCurry = false
 	private suspend fun nftBalanceByHash(
 		wallet: WalletEntity,
-		decMnemoincs: String,
 		hash: String,
 		service: BlockChainService,
-		base_url: String
+		networkItem: NetworkItem
 	) {
 		try {
 			val body = hashMapOf<String, Any>()
@@ -206,44 +200,44 @@ class BlockChainInteractImpl @Inject constructor(
 						hash
 					)
 					VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
-					val methodChannel = MethodChannel(
-						(context.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
-						METHOD_CHANNEL_GENERATE_HASH
+					val nftInfoEntity = getNFTINfoFromWalletApi(
+						networkItem,
+						coin.coin.parent_coin_info,
+						address_fk = wallet.address
 					)
-					waitingUnCurry = true
-					methodChannel.setMethodCallHandler { method, result ->
-						if (method.method == "unCurriedNFTInfo") {
-							VLog.d("UnCurriedNFT called back from flutter with args : ${method.arguments}")
-							CoroutineScope(Dispatchers.IO + handler).launch {
-								retrieveNFTPropertiesAndSave(
-									method, coin.coin.parent_coin_info, nftCoinEntity, wallet
-								)
-								waitingUnCurry = false
-							}
-						} else if (method.method == "exceptionNFT") {
-//								VLog.d("Exception called getting unCurried nft : ${method.arguments}")
-							waitingUnCurry = false
-						}
+					if (nftInfoEntity == null) {
+						VLog.d("NFTInfo Entity is null ")
+						return
 					}
-					withContext(Dispatchers.Main) {
-						val map = hashMapOf<String, Any>()
-						map["observer"] = wallet.observer_hash
-						map["non_observer"] = wallet.non_observer_hash
-						map["mnemonics"] = decMnemoincs
-						map["base_url"] = base_url
-						map["parent_coin_info"] = coin.coin.parent_coin_info
-						map["start_height"] = coin.confirmed_block_index
-						map["puzzle_hash"] = hash
-						VLog.d("Sending body of nftCoin: $map to flutter to uncurry it")
-						methodChannel.invokeMethod("unCurryNFTSecond", map)
-					}
-					var c = 0
-					while (waitingUnCurry) {
-						VLog.d("Waiting UnCurry NFT counter : $c")
-						delay(1000)
-						c++
-						if (c == 100)
-							break
+					VLog.d("Inserting nftInfo to db : $nftInfoEntity")
+					VLog.d("Inserting nftCoin to db : $nftCoinEntity")
+					nftInfoDao.insertNftInfoEntity(nftInfoEntity)
+					nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
+					if (nftCoinEntity.time_stamp * 1000L >= wallet.savedTime) {
+						val resLanguageResource =
+							prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+						val resMap = Converters.stringToHashMap(resLanguageResource)
+						val incomingTransaction =
+							resMap["push_notifications_incoming"] ?: "Incoming transaction"
+						val tran = TransactionEntity(
+							transaction_id = UUID.randomUUID().toString(),
+							amount = 1.0,
+							created_at_time = nftCoinEntity.time_stamp * 1000L,
+							height = nftCoinEntity.confirmed_block_index,
+							status = Status.Incoming,
+							networkType = wallet.networkType,
+							to_dest_hash = wallet.puzzle_hashes[0],
+							fkAddress = wallet.address,
+							fee_amount = 0.0,
+							code = "NFT",
+							confirm_height = 0,
+							nft_coin_hash = nftInfoEntity.nft_coin_hash
+						)
+						transactionDao.insertTransaction(tran)
+						notificationHelper.callGreenAppNotificationMessages(
+							"$incomingTransaction : 1 NFT",
+							System.currentTimeMillis()
+						)
 					}
 				}
 			} else {
@@ -252,6 +246,62 @@ class BlockChainInteractImpl @Inject constructor(
 		} catch (ex: Exception) {
 			VLog.d("Exception occurred with nft balance by hash : ${ex.message}")
 		}
+	}
+
+	private suspend fun getNFTINfoFromWalletApi(
+		networkItem: NetworkItem,
+		parentCoinInfo: String,
+		address_fk: String
+	): NFTInfoEntity? {
+		try {
+
+			val walletService = retrofitBuilder.baseUrl(networkItem.wallet + '/').build()
+				.create(BlockChainService::class.java)
+			val body = hashMapOf<String, Any>()
+			body["coin_id"] = parentCoinInfo
+			body["latest"] = true
+			body["ignore_size_limit"] = false
+			body["reuse_puzhash"] = true
+			val reqNFTInfo = walletService.getNFTInfoByCoinId(body)
+			if (reqNFTInfo.isSuccessful) {
+				val nftInfo = reqNFTInfo.body()!!.nft_info
+				VLog.d("Retrieved NFT Info from wallet : $nftInfo")
+				val metaData = getMetaDataNFT(nftInfo.metadata_uris[0])
+				if (metaData == null) {
+					VLog.d("Meta Data of nft is null")
+					return null
+				}
+				val description = metaData["description"].toString()
+				val collection = metaData["collection"].toString()
+				val name = metaData["name"].toString()
+				val properties = metaData["attributes"] as HashMap<String, String>
+				return NFTInfoEntity(
+					nft_coin_hash = parentCoinInfo,
+					nft_id = nftInfo.nft_id ?: "",
+					launcher_id = nftInfo.launcher_id ?: "",
+					owner_did = nftInfo.owner_did ?: "",
+					minter_did = nftInfo.minter_did ?: "",
+					royalty_percentage = nftInfo.royalty_percentage / 100,
+					mint_height = nftInfo.mint_height,
+					data_url = nftInfo.data_uris[0],
+					data_hash = nftInfo.data_hash ?: "",
+					meta_hash = nftInfo.metadata_hash,
+					meta_url = nftInfo.metadata_uris[0],
+					description = description,
+					collection = collection,
+					properties = properties,
+					name = name,
+					address_fk = address_fk,
+					false
+				)
+			} else {
+				VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")
+			}
+
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred in getting nft info from wallet : ${ex.message}")
+		}
+		return null
 	}
 
 	private suspend fun retrieveNFTPropertiesAndSave(

@@ -4,6 +4,8 @@ import com.green.wallet.data.network.dto.coins.CoinRecordResponse
 import com.green.wallet.data.network.dto.spendbundle.SpenBunde
 import com.google.gson.JsonObject
 import com.green.wallet.data.network.dto.coinSolution.ParentCoinRecordResponse
+import com.green.wallet.data.network.dto.nft.NFTInfoResponse
+import com.green.wallet.data.network.dto.nft.NftInfoDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -42,5 +44,10 @@ interface BlockChainService {
 
 	@GET
 	suspend fun getMetaDataNFTJson(@Url url: String): Response<JsonObject>
+
+
+	@POST("nft_get_info")
+	suspend fun getNFTInfoByCoinId(@Body body:HashMap<String,Any>):Response<NFTInfoResponse>
+
 
 }
