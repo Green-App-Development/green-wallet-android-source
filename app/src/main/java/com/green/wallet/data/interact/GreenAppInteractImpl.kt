@@ -174,9 +174,9 @@ class GreenAppInteractImpl @Inject constructor(
 			val appInstallTimeInZulu = convertAppInstallTimeInMillisInZuluTime(prefs)
 			if (res.isSuccessful) {
 
-				VLog.d(
-					"Response body for notifications : ${res.body()} and langcode"
-				)
+//				VLog.d(
+//					"Response body for notifications : ${res.body()} and langcode"
+//				)
 
 				val otherNotifItemsJsonArray = JSONArray(
 					res.body()!!.getAsJsonObject("result").getAsJsonArray("list").toString()
