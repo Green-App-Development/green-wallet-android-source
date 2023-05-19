@@ -2,10 +2,10 @@ package com.green.wallet.presentation.di.application
 
 import android.content.Context
 import androidx.room.Room
-import com.green.wallet.data.local.AppDatabase
-import com.green.wallet.presentation.tools.VLog
 import com.google.gson.Gson
-import com.green.wallet.data.local.NftCoinsDao
+import com.green.wallet.data.local.AppDatabase
+import com.green.wallet.data.local.AppDatabase.Companion.migration25To34
+import com.green.wallet.presentation.tools.VLog
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -22,7 +22,7 @@ class AppModule {
 	@Provides
 	fun provideAppDatabase(context: Context): AppDatabase {
 		return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.APP_DB_NAME)
-			.fallbackToDestructiveMigration().build()
+			.addMigrations(migration25To34).build()
 	}
 
 	@Provides
