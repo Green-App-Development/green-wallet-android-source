@@ -2,6 +2,7 @@ package com.green.wallet.data.local
 
 import androidx.room.AutoMigration
 import androidx.room.Database
+import androidx.room.DeleteColumn
 import androidx.room.RenameColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -36,6 +37,9 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val nftCoinsDao: NftCoinsDao
 	abstract val nftInfoDao: NftInfoDao
 
+
+	@DeleteColumn
+	val migration25To34
 
 	companion object {
 
