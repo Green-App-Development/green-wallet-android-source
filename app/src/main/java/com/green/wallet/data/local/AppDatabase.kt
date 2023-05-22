@@ -3,7 +3,6 @@ package com.green.wallet.data.local
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.DeleteColumn
-import androidx.room.RenameColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
@@ -36,10 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val faqDao: FAQDao
 	abstract val nftCoinsDao: NftCoinsDao
 	abstract val nftInfoDao: NftInfoDao
-
-
-	@DeleteColumn
-	val migration25To34
 
 	companion object {
 
@@ -87,22 +82,11 @@ abstract class AppDatabase : RoomDatabase() {
 				)
 
 				database.execSQL(
-					"CREATE TABLE IF NOT EXISTS `TransactionEntity` (" +
-							"`transaction_id` TEXT NOT NULL, " +
-							"`amount` REAL NOT NULL, " +
-							"`created_at_time` INTEGER NOT NULL, " +
-							"`height` INTEGER NOT NULL, " +
-							"`status` TEXT NOT NULL, " +
-							"`networkType` TEXT NOT NULL, " +
-							"`to_dest_hash` TEXT NOT NULL, " +
-							"`fkAddress` TEXT NOT NULL, " +
-							"`fee_amount` REAL NOT NULL, " +
-							"`code` TEXT NOT NULL, " +
-							"`confirm_height` INTEGER NOT NULL DEFAULT 0, " +
-							"`nft_coin_hash` TEXT NOT NULL DEFAULT '', " +
-							"PRIMARY KEY(`transaction_id`), " +
-							"FOREIGN KEY(`fkAddress`) REFERENCES `WalletEntity`(`address`) ON DELETE CASCADE)"
+					"ALTER TABLE `TransactionEntity` ADD COLUMN confirm_height INTEGER NOT NULL DEFAULT(0)"
 				)
+
+				database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
+
 			}
 
 		}

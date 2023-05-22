@@ -11,6 +11,8 @@ import kotlin.collections.HashMap
 data class WalletEntity(
 	@ColumnInfo(name = "fingerPrint")
 	val fingerPrint: Long,
+	@ColumnInfo(name = "privateKey")
+	val privateKey: String,
 	@ColumnInfo(name = "puzzle_hashes")
 	val puzzle_hashes: List<String>,
 	@PrimaryKey(autoGenerate = false)
