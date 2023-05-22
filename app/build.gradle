@@ -25,7 +25,7 @@ android {
 		applicationId "com.green.wallet"
 		minSdk 26
 		targetSdk 32
-		versionCode 8 //for Google Play
+		versionCode 9 //for Google Play
 		versionName "0.0.74"
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -45,8 +45,8 @@ android {
 
 	buildTypes {
 		release {
-			minifyEnabled true
-			shrinkResources true
+			minifyEnabled false
+			shrinkResources false
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 		debug {

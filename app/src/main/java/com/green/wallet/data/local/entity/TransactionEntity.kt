@@ -42,7 +42,7 @@ data class TransactionEntity(
 	@ColumnInfo(name = "code")
 	val code: String,
 	@ColumnInfo(name = "confirm_height", defaultValue = "0")
-	val confirm_height: Int,
+	val confirm_height: Int = 0,
 	@ColumnInfo(name = "nft_coin_hash", defaultValue = "")
 	val nft_coin_hash: String = ""
 ) {

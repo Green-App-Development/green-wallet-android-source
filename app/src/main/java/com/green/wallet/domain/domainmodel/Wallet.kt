@@ -24,6 +24,7 @@ data class Wallet(
 
 	fun toWalletEntity(encMnemonics: String, savedTime: Long) = WalletEntity(
 		fingerPrint,
+		"",
 		puzzle_hashes,
 		address,
 		encMnemonics,
