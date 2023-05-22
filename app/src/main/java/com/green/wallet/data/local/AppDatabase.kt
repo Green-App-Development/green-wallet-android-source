@@ -17,10 +17,11 @@ import com.green.wallet.data.local.entity.*
 		SpentCoinsEntity::class, FaqItemEntity::class,
 		NFTInfoEntity::class, NFTCoinEntity::class
 	],
-	version = 34,
+	version = 35,
 	exportSchema = true,
 	autoMigrations = [
-		AutoMigration(from = 25, to = 34)
+		AutoMigration(from = 25, to = 34),
+		AutoMigration(from = 34, to = 35)
 	]
 )
 @TypeConverters(Converters::class)
@@ -88,8 +89,15 @@ abstract class AppDatabase : RoomDatabase() {
 				database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
 
 			}
-
 		}
+
+		val migration34To35 = object : Migration(34, 35) {
+			override fun migrate(database: SupportSQLiteDatabase) {
+				database.execSQL("ALTER TABLE AddressEntity ADD COLUMN `temp` TEXT NOT NULL DEFAULT ''")
+			}
+		}
+
+
 	}
 
 }
