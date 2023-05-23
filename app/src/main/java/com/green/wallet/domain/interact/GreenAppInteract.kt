@@ -29,5 +29,6 @@ interface GreenAppInteract {
 
 	suspend fun getServerTime(): Long
 
+	suspend fun getVerifiedDidList()
 
 }

@@ -18,10 +18,6 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.presentation.tools.VLog
-import com.green.wallet.presentation.tools.getCustomProgressLayoutWithParams
-import com.green.wallet.presentation.tools.getDrawableResource
-import kotlinx.android.synthetic.main.fragment_faq.view.*
 
 
 class NFTTokenAdapter(
@@ -55,9 +51,9 @@ class NFTTokenAdapter(
 	inner class NFTTokenViewHolder(v: View) : RecyclerView.ViewHolder(v) {
 		private val nftName = v.findViewById<TextView>(R.id.txt_name_nft)
 		private val nftCategory = v.findViewById<TextView>(R.id.txt_category_nft)
-		private val img_checked_nft = v.findViewById<ImageView>(R.id.img_nft_checked)
-		private val img_nft = v.findViewById<ImageView>(R.id.img_nft)
-		private val progress_bar = v.findViewById<CircularProgressIndicator>(R.id.progress_bar)
+		private val imgCheckedNft = v.findViewById<ImageView>(R.id.img_nft_checked)
+		private val imgNft = v.findViewById<ImageView>(R.id.img_nft)
+		private val progressBar = v.findViewById<CircularProgressIndicator>(R.id.progress_bar)
 		private val emptyView = v.findViewById<View>(R.id.emptyView)
 		private val rootNFTToken = v.findViewById<RelativeLayout>(R.id.root_nft_token)
 
@@ -65,6 +61,7 @@ class NFTTokenAdapter(
 //			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
 			nftName.text = nftInfo.name
 			nftCategory.text = nftInfo.collection
+			imgCheckedNft.visibility = if (nftInfo.isVerified) View.VISIBLE else View.GONE
 			Glide.with(activity).load(nftInfo.data_url)
 				.listener(object : RequestListener<Drawable> {
 					override fun onLoadFailed(
@@ -83,12 +80,12 @@ class NFTTokenAdapter(
 						dataSource: DataSource?,
 						isFirstResource: Boolean
 					): Boolean {
-						progress_bar.visibility = View.GONE
+						progressBar.visibility = View.GONE
 						return false
 					}
 
 				})
-				.into(img_nft)
+				.into(imgNft)
 			rootNFTToken.setOnClickListener {
 				nftTokenClicked.onNFTToken(nftInfo)
 			}

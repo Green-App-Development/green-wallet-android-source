@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.nft.usernfts
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.green.wallet.R
+import com.green.wallet.databinding.FragmentHomeBinding
 import com.green.wallet.databinding.FragmentUserNftBinding
 import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.ConnectionLiveData
+import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.ViewPagerPosition
 import com.green.wallet.presentation.custom.convertPixelToDp
@@ -22,7 +26,9 @@ import com.green.wallet.presentation.main.send.NetworkAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
+import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_send.swipeRefresh
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,7 +36,8 @@ import javax.inject.Inject
 
 class UserNFTTokensFragment : DaggerFragment() {
 
-	private lateinit var binding: FragmentUserNftBinding
+	private val binding by viewBinding(FragmentUserNftBinding::bind)
+
 
 	@Inject
 	lateinit var animManager: AnimationManager
@@ -43,6 +50,11 @@ class UserNFTTokensFragment : DaggerFragment() {
 	private val vm: UserNFTTokensViewModel by viewModels { factory }
 	private var prevChooseItemPosViewPager = 0
 
+	@Inject
+	lateinit var connectionLiveData: ConnectionLiveData
+
+	@Inject
+	lateinit var dialogMan: DialogManager
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -54,8 +66,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		binding = FragmentUserNftBinding.inflate(layoutInflater)
-		return binding.root
+		return inflater.inflate(R.layout.fragment_user_nft, container, false)
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,6 +124,10 @@ class UserNFTTokensFragment : DaggerFragment() {
 				}
 
 			})
+			val rect = Rect()
+			nftViewPager.getGlobalVisibleRect(rect)
+			swipeRefreshNft.topY = rect.top+35
+			swipeRefreshNft.bottomY = rect.bottom
 		}
 	}
 
@@ -157,6 +172,27 @@ class UserNFTTokensFragment : DaggerFragment() {
 		btnExploreMarkets.setOnClickListener {
 
 		}
+
+		swipeRefreshNft.apply {
+			setOnRefreshListener {
+				VLog.d("Is Online ${connectionLiveData.isOnline}")
+				if (connectionLiveData.isOnline) {
+					vm.swipedRefreshClicked {
+						if (this@UserNFTTokensFragment.isVisible) {
+							isRefreshing = false
+						}
+					}
+				} else {
+					isRefreshing = false
+					dialogMan.showNoInternetTimeOutExceptionDialog(curActivity()) {
+
+					}
+				}
+			}
+			setColorSchemeResources(R.color.green)
+			isNFTScreen = true
+		}
+
 
 	}
 

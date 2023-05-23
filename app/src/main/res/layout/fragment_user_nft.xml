@@ -1,278 +1,283 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.green.wallet.presentation.custom.OnlyVerticalSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
-		android:id="@+id/root"
+		android:id="@+id/swipe_refresh_nft"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/primary_app_background">
+		android:layout_height="match_parent">
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/root"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:background="@color/primary_app_background">
 
 
-	<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline8"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			app:layout_constraintGuide_percent="0.02" />
-
-	<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline9"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			app:layout_constraintGuide_percent="0.07" />
-
-
-	<LinearLayout
-			android:id="@+id/linear_nft_types"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="30dp"
-			android:layout_marginTop="4dp"
-			android:orientation="horizontal"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@id/guideline8">
-
-		<TextView
-				android:id="@+id/txtAllNFTS"
+		<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline8"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/all_nfts"
-				android:textColor="@color/secondary_text_color"
-				android:textFontWeight="400"
-				android:textSize="16sp" />
+				android:orientation="horizontal"
+				app:layout_constraintGuide_percent="0.02" />
 
-		<ImageView
-				android:id="@+id/icDownNFT"
-				android:layout_width="15dp"
-				android:layout_height="15dp"
-				android:layout_gravity="center_vertical"
-				android:layout_marginStart="6dp"
-				android:foreground="?android:attr/selectableItemBackground"
-				android:src="@drawable/ic_arrow_downword" />
+		<androidx.constraintlayout.widget.Guideline
+				android:id="@+id/guideline9"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				app:layout_constraintGuide_percent="0.07" />
 
-	</LinearLayout>
-
-
-	<RelativeLayout
-			android:id="@+id/relativeLayout5"
-			android:layout_width="150dp"
-			android:layout_height="0dp"
-			android:layout_marginStart="20dp"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/linear_nft_types">
-
-		<com.green.wallet.presentation.custom.CustomSpinner
-				android:id="@+id/nft_type_spinner"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:background="@drawable/selector_spinner_bcg_color"
-				android:dropDownVerticalOffset="5dp" />
-
-	</RelativeLayout>
-
-	<RelativeLayout
-			android:id="@+id/chosenNetworkRel"
-			android:layout_width="150dp"
-			android:layout_height="30dp"
-			android:layout_marginEnd="15dp"
-			android:background="@drawable/drop_down_network_chooser_bcg"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/guideline8">
 
 		<LinearLayout
+				android:id="@+id/linear_nft_types"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_centerInParent="true"
-				android:orientation="horizontal">
-
-			<ImageView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_gravity="center_vertical"
-					android:src="@drawable/ic_dot_green" />
+				android:layout_marginStart="30dp"
+				android:layout_marginTop="4dp"
+				android:orientation="horizontal"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@id/guideline8">
 
 			<TextView
-					android:id="@+id/txt_chosen_network"
+					android:id="@+id/txtAllNFTS"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_marginStart="5dp"
-					android:layout_marginEnd="5dp"
-					android:text="Chia Network"
-					android:textColor="@color/green"
+					android:text="@string/all_nfts"
+					android:textColor="@color/secondary_text_color"
 					android:textFontWeight="400"
-					android:textSize="14sp" />
+					android:textSize="16sp" />
 
 			<ImageView
-					android:id="@+id/imgArrowDownNetwork"
+					android:id="@+id/icDownNFT"
 					android:layout_width="15dp"
 					android:layout_height="15dp"
 					android:layout_gravity="center_vertical"
+					android:layout_marginStart="6dp"
 					android:foreground="?android:attr/selectableItemBackground"
 					android:src="@drawable/ic_arrow_downword" />
 
 		</LinearLayout>
 
-	</RelativeLayout>
-
-	<RelativeLayout
-			android:id="@+id/relativeLayout6"
-			android:layout_width="165dp"
-			android:layout_height="0dp"
-			app:layout_constraintStart_toStartOf="@+id/chosenNetworkRel"
-			app:layout_constraintTop_toBottomOf="@+id/chosenNetworkRel">
-
-		<com.green.wallet.presentation.custom.CustomSpinner
-				android:id="@+id/network_type_spinner"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:background="@drawable/selector_spinner_bcg_color"
-				android:dropDownVerticalOffset="5dp" />
-
-	</RelativeLayout>
-
-	<TextView
-			android:id="@+id/edtToken"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="NFTs"
-			android:textColor="@color/green"
-			android:textFontWeight="600"
-			android:textSize="25sp"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@id/guideline9" />
-
-
-	<androidx.viewpager.widget.ViewPager
-			android:id="@+id/nft_view_pager"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_marginBottom="5dp"
-			android:visibility="visible"
-			app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/edtToken"
-			app:layout_constraintVertical_bias="0.0">
-
-	</androidx.viewpager.widget.ViewPager>
-
-
-	<com.rd.PageIndicatorView
-			android:id="@+id/pageIndicator"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginBottom="10dp"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:piv_animationType="swap"
-			app:piv_count="1"
-			app:piv_radius="2.5dp"
-			app:piv_selectedColor="@color/selected_dot_indicator"
-			app:piv_unselectedColor="@color/unselected_dot_indicator" />
-
-	<com.google.android.material.button.MaterialButton
-			android:id="@+id/btnExploreMarkets"
-			style="@style/Widget.AppTheme.MaterialButton"
-			android:layout_width="0dp"
-			android:layout_height="60dp"
-			android:layout_marginStart="32dp"
-			android:layout_marginEnd="32dp"
-			android:layout_marginBottom="33dp"
-			android:background="@drawable/btn_background_draw"
-			android:text="@string/explore_btn"
-			android:textAllCaps="false"
-			android:visibility="gone"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.0"
-			app:layout_constraintStart_toStartOf="parent" />
-
-	<LinearLayout
-			android:id="@+id/linearLayout2"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="5dp"
-			android:orientation="horizontal"
-			android:visibility="gone"
-			app:layout_constraintEnd_toEndOf="@+id/edtToken"
-			app:layout_constraintStart_toStartOf="@+id/edtToken"
-			app:layout_constraintTop_toBottomOf="@+id/edtToken">
-
-		<TextView
-				android:id="@+id/txtCoin"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="Chia"
-				android:textColor="@color/second_grey" />
-
-		<TextView
-				android:id="@+id/txtHiddenPublicKey"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="12dp"
-				android:elevation="7dp"
-				android:text="******1422"
-				android:textColor="@color/second_grey" />
-
-	</LinearLayout>
-
-	<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/dot_constraint_comment"
-			android:layout_width="1dp"
-			android:layout_height="1dp"
-			android:layout_marginEnd="0dp"
-			android:layout_marginBottom="0dp"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintRight_toRightOf="parent" />
-
-	<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/constraint_btm_nav_view_comment"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginEnd="-25dp"
-			android:elevation="7dp"
-			android:visibility="gone"
-			app:layout_constraintBottom_toTopOf="@+id/dot_constraint_comment"
-			app:layout_constraintEnd_toEndOf="@+id/dot_constraint_comment"
-			app:layout_constraintHorizontal_bias="1.0"
-			app:layout_constraintStart_toStartOf="parent">
-
-		<ImageView
-				android:id="@+id/imageView2"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginEnd="15dp"
-				android:rotation="180"
-				android:src="@drawable/ic_polygon"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent" />
 
 		<RelativeLayout
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginBottom="-2dp"
-				android:background="@drawable/bcg_rounded_corner_comment"
-				android:paddingLeft="20dp"
-				android:paddingTop="10dp"
-				android:paddingRight="20dp"
-				android:paddingBottom="10dp"
-				app:layout_constraintBottom_toTopOf="@+id/imageView2"
-				app:layout_constraintEnd_toEndOf="parent">
+				android:id="@+id/relativeLayout5"
+				android:layout_width="150dp"
+				android:layout_height="0dp"
+				android:layout_marginStart="20dp"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/linear_nft_types">
 
-			<TextView
-					android:layout_width="150dp"
-					android:layout_height="wrap_content"
-					android:layout_centerInParent="true"
-					android:gravity="center_horizontal"
-					android:text="@string/funct_is_under_dev"
-					android:textColor="@color/white" />
+			<com.green.wallet.presentation.custom.CustomSpinner
+					android:id="@+id/nft_type_spinner"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:background="@drawable/selector_spinner_bcg_color"
+					android:dropDownVerticalOffset="5dp" />
 
 		</RelativeLayout>
 
+		<RelativeLayout
+				android:id="@+id/chosenNetworkRel"
+				android:layout_width="150dp"
+				android:layout_height="30dp"
+				android:layout_marginEnd="15dp"
+				android:background="@drawable/drop_down_network_chooser_bcg"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="@+id/guideline8">
+
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:orientation="horizontal">
+
+				<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:src="@drawable/ic_dot_green" />
+
+				<TextView
+						android:id="@+id/txt_chosen_network"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:layout_marginEnd="5dp"
+						android:text="Chia Network"
+						android:textColor="@color/green"
+						android:textFontWeight="400"
+						android:textSize="14sp" />
+
+				<ImageView
+						android:id="@+id/imgArrowDownNetwork"
+						android:layout_width="15dp"
+						android:layout_height="15dp"
+						android:layout_gravity="center_vertical"
+						android:foreground="?android:attr/selectableItemBackground"
+						android:src="@drawable/ic_arrow_downword" />
+
+			</LinearLayout>
+
+		</RelativeLayout>
+
+		<RelativeLayout
+				android:id="@+id/relativeLayout6"
+				android:layout_width="165dp"
+				android:layout_height="0dp"
+				app:layout_constraintStart_toStartOf="@+id/chosenNetworkRel"
+				app:layout_constraintTop_toBottomOf="@+id/chosenNetworkRel">
+
+			<com.green.wallet.presentation.custom.CustomSpinner
+					android:id="@+id/network_type_spinner"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:background="@drawable/selector_spinner_bcg_color"
+					android:dropDownVerticalOffset="5dp" />
+
+		</RelativeLayout>
+
+		<TextView
+				android:id="@+id/edtToken"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="NFTs"
+				android:textColor="@color/green"
+				android:textFontWeight="600"
+				android:textSize="25sp"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+
+		<androidx.viewpager.widget.ViewPager
+				android:id="@+id/nft_view_pager"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_marginBottom="5dp"
+				android:visibility="visible"
+				app:layout_constraintBottom_toTopOf="@+id/pageIndicator"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/edtToken"
+				app:layout_constraintVertical_bias="0.0">
+
+		</androidx.viewpager.widget.ViewPager>
+
+
+		<com.rd.PageIndicatorView
+				android:id="@+id/pageIndicator"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="10dp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:piv_animationType="swap"
+				app:piv_count="1"
+				app:piv_radius="2.5dp"
+				app:piv_selectedColor="@color/selected_dot_indicator"
+				app:piv_unselectedColor="@color/unselected_dot_indicator" />
+
+		<com.google.android.material.button.MaterialButton
+				android:id="@+id/btnExploreMarkets"
+				style="@style/Widget.AppTheme.MaterialButton"
+				android:layout_width="0dp"
+				android:layout_height="60dp"
+				android:layout_marginStart="32dp"
+				android:layout_marginEnd="32dp"
+				android:layout_marginBottom="33dp"
+				android:background="@drawable/btn_background_draw"
+				android:text="@string/explore_btn"
+				android:textAllCaps="false"
+				android:visibility="gone"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintHorizontal_bias="0.0"
+				app:layout_constraintStart_toStartOf="parent" />
+
+		<LinearLayout
+				android:id="@+id/linearLayout2"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="5dp"
+				android:orientation="horizontal"
+				android:visibility="gone"
+				app:layout_constraintEnd_toEndOf="@+id/edtToken"
+				app:layout_constraintStart_toStartOf="@+id/edtToken"
+				app:layout_constraintTop_toBottomOf="@+id/edtToken">
+
+			<TextView
+					android:id="@+id/txtCoin"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Chia"
+					android:textColor="@color/second_grey" />
+
+			<TextView
+					android:id="@+id/txtHiddenPublicKey"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="12dp"
+					android:elevation="7dp"
+					android:text="******1422"
+					android:textColor="@color/second_grey" />
+
+		</LinearLayout>
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/dot_constraint_comment"
+				android:layout_width="1dp"
+				android:layout_height="1dp"
+				android:layout_marginEnd="0dp"
+				android:layout_marginBottom="0dp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintRight_toRightOf="parent" />
+
+		<androidx.constraintlayout.widget.ConstraintLayout
+				android:id="@+id/constraint_btm_nav_view_comment"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="-25dp"
+				android:elevation="7dp"
+				android:visibility="gone"
+				app:layout_constraintBottom_toTopOf="@+id/dot_constraint_comment"
+				app:layout_constraintEnd_toEndOf="@+id/dot_constraint_comment"
+				app:layout_constraintHorizontal_bias="1.0"
+				app:layout_constraintStart_toStartOf="parent">
+
+			<ImageView
+					android:id="@+id/imageView2"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="15dp"
+					android:rotation="180"
+					android:src="@drawable/ic_polygon"
+					app:layout_constraintBottom_toBottomOf="parent"
+					app:layout_constraintEnd_toEndOf="parent" />
+
+			<RelativeLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginBottom="-2dp"
+					android:background="@drawable/bcg_rounded_corner_comment"
+					android:paddingLeft="20dp"
+					android:paddingTop="10dp"
+					android:paddingRight="20dp"
+					android:paddingBottom="10dp"
+					app:layout_constraintBottom_toTopOf="@+id/imageView2"
+					app:layout_constraintEnd_toEndOf="parent">
+
+				<TextView
+						android:layout_width="150dp"
+						android:layout_height="wrap_content"
+						android:layout_centerInParent="true"
+						android:gravity="center_horizontal"
+						android:text="@string/funct_is_under_dev"
+						android:textColor="@color/white" />
+
+			</RelativeLayout>
+
+		</androidx.constraintlayout.widget.ConstraintLayout>
+
 	</androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+</com.green.wallet.presentation.custom.OnlyVerticalSwipeRefreshLayout>

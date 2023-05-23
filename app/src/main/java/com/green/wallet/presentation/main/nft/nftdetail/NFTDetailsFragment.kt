@@ -18,17 +18,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.common.tools.formatString
-import com.green.wallet.R
-import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.databinding.FragmentNftDetailBinding
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.main.nft.usernfts.NFTTokenAdapter
-import com.green.wallet.presentation.tools.getDrawableResource
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_send_nft.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -106,6 +102,8 @@ class NFTDetailsFragment : DaggerFragment() {
 			copyToClipBoardShowCopied(nftInfo.nft_id)
 		}
 
+		imgNftChecked.visibility = if (nftInfo.isVerified) View.VISIBLE else View.GONE
+
 	}
 
 	fun FragmentNftDetailBinding.updateViews() {
@@ -117,7 +115,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		edtNFTID.text = formatString(8, nftInfo.nft_id, 4)
 		edtLaunchedID.text = formatString(4, nftInfo.launcher_id, 4)
 		edtOwnerID.text = "Unassigned"
-		edtMinterDID.text = formatString(14 , nftInfo.minter_did, 4)
+		edtMinterDID.text = formatString(14, nftInfo.minter_did, 4)
 		edtRoyaltyPercentage.text = "${nftInfo.royalty_percentage}%"
 		edtMinterBlockHeight.text = "${nftInfo.mint_height}"
 		edtDataUrl1.text = formatString(15, nftInfo.data_url, 0)

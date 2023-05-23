@@ -76,6 +76,32 @@ interface GreenAppService {
 	@GET
 	suspend fun getUpdatedChiaChivesCourse(@Url url: String): Response<JsonObject>
 
-
+	@GET("nft/verification")
+	suspend fun getNFTVerificationList(@Query("blockchain") blockChain: String):Response<JsonObject>
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
