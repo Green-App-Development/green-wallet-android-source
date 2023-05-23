@@ -18,8 +18,6 @@ data class AddressEntity(
 	val description: String,
 	@ColumnInfo(name = "updated_time")
 	val updated_time: Long,
-	@ColumnInfo(name = "temp", defaultValue = "")
-	val temp: String=""
 ) {
 
 	fun toAddress() =

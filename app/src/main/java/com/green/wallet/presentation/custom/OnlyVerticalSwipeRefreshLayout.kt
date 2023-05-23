@@ -17,15 +17,19 @@ class OnlyVerticalSwipeRefreshLayout(context: Context, attrs: AttributeSet?) :
 	var topY = 0
 	var bottomY = 0
 	var isOneHomeFragment = false
-
+	var isNFTScreen = false
 	override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
 		if (isOneHomeFragment)
 			isEnabled = event.y.toInt() !in topY..bottomY
+		if (isNFTScreen)
+			isEnabled = event.y.toInt() !in topY..bottomY
+
 		when (event.getAction()) {
 			MotionEvent.ACTION_DOWN -> {
 				prevX = MotionEvent.obtain(event).getX()
 				declined = false // New action
 			}
+
 			MotionEvent.ACTION_MOVE -> {
 				val eventX: Float = event.getX()
 				val xDiff = Math.abs(eventX - prevX)

@@ -5,7 +5,6 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.green.wallet.data.local.AppDatabase
 import com.green.wallet.data.local.AppDatabase.Companion.migration25To34
-import com.green.wallet.data.local.AppDatabase.Companion.migration34To35
 import com.green.wallet.presentation.tools.VLog
 import dagger.Module
 import dagger.Provides
@@ -23,7 +22,7 @@ class AppModule {
 	@Provides
 	fun provideAppDatabase(context: Context): AppDatabase {
 		return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.APP_DB_NAME)
-			.addMigrations(migration25To34,migration34To35).build()
+			.addMigrations(migration25To34).build()
 	}
 
 	@Provides

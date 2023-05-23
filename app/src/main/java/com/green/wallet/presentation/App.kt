@@ -124,6 +124,7 @@ class App : DaggerApplication() {
 			with(greenAppInteract) {
 				getAvailableNetworkItemsFromRestAndSave()
 				getAvailableLanguageList()
+				getVerifiedDidList()
 				getAgreementsText()
 			}
 			supportInteract.getFAQQuestionAnswers()

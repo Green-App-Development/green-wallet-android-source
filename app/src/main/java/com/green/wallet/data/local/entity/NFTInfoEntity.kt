@@ -35,10 +35,10 @@ data class NFTInfoEntity(
 	val properties: HashMap<String, String>,
 	val name: String,
 	val address_fk: String,
-	val spent:Boolean
+	val spent: Boolean,
 ) {
 
-	fun toNFTInfo() = NFTInfo(
+	fun toNFTInfo(isVerified: Boolean=false) = NFTInfo(
 		nft_coin_hash,
 		nft_id,
 		launcher_id,
@@ -54,7 +54,8 @@ data class NFTInfoEntity(
 		collection,
 		properties,
 		name,
-		address_fk
+		address_fk,
+		isVerified
 	)
 
 }

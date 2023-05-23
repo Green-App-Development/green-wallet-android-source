@@ -20,26 +20,29 @@ data class NFTInfo(
 	val collection: String,
 	val properties: HashMap<String, String>,
 	val name: String,
-	val fk_address: String
+	val fk_address: String,
+	val isVerified:Boolean
 ) : Parcelable {
 
+
 	constructor(parcel: Parcel) : this(
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
 		parcel.readInt(),
 		parcel.readInt(),
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
-		parcel.readString()!!,
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
 		parcel.readHashMap(String::class.java.classLoader) as HashMap<String, String>,
-		parcel.readString()!!,
-		parcel.readString()!!,
+		parcel.readString() ?: "",
+		parcel.readString() ?: "",
+		parcel.readByte() != 0.toByte()
 	)
 
 	override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -59,6 +62,7 @@ data class NFTInfo(
 		parcel.writeMap(properties)
 		parcel.writeString(name)
 		parcel.writeString(fk_address)
+		parcel.writeByte(if (isVerified) 1 else 0)
 	}
 
 	override fun describeContents(): Int {

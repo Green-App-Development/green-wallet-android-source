@@ -324,8 +324,9 @@ class BlockChainInteractImpl @Inject constructor(
 					properties = properties,
 					name = name,
 					address_fk = address_fk,
-					false
-				)
+					false,
+
+					)
 			} else {
 				VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")
 			}
@@ -335,6 +336,7 @@ class BlockChainInteractImpl @Inject constructor(
 		}
 		return null
 	}
+
 	private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any>? {
 		try {
 			val res = retrofitBuilder.build().create(BlockChainService::class.java)

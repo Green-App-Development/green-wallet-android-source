@@ -47,7 +47,7 @@ interface BlockChainService {
 
 
 	@POST("nft_get_info")
-	suspend fun getNFTInfoByCoinId(@Body body:HashMap<String,Any>):Response<NFTInfoResponse>
+	suspend fun getNFTInfoByCoinId(@Body body: HashMap<String, Any>): Response<NFTInfoResponse>
 
 
 }

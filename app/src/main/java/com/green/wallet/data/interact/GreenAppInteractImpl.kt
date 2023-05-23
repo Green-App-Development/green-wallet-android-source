@@ -217,8 +217,9 @@ class GreenAppInteractImpl @Inject constructor(
 
 	override suspend fun getAgreementsText(): Resource<String> {
 		try {
-			val langCode=prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE,"en")
-			val agreementTextSaved = prefs.getSettingString(getPreferenceKeyForTermsOfUse(langCode), "")
+			val langCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "en")
+			val agreementTextSaved =
+				prefs.getSettingString(getPreferenceKeyForTermsOfUse(langCode), "")
 			if (agreementTextSaved.isNotEmpty()) {
 				return Resource.success(agreementTextSaved)
 			}
@@ -321,6 +322,31 @@ class GreenAppInteractImpl @Inject constructor(
 			VLog.d("Exception getting  server time : ${ex.message}")
 		}
 		return -1
+	}
+
+	override suspend fun getVerifiedDidList() {
+		try {
+			val jsonAllNetworkItemList = prefs.getObjectString(PrefsManager.ALL_NETWORK_ITEMS_LIST)
+			val type = object : TypeToken<MutableList<NetworkItem>>() {}.type
+			val chiaName =
+				gson.fromJson<List<NetworkItem>>(jsonAllNetworkItemList, type)[0].name
+			val res = greenAppService.getNFTVerificationList(chiaName)
+			if (res.isSuccessful) {
+				val didList = res.body()!!.get("result").asJsonObject.get("list").asJsonArray
+				val resList = mutableListOf<String>()
+				for (did in didList) {
+//					VLog.d("DID list retrieved : $did")
+					resList.add(did.asJsonObject.get("did").asJsonPrimitive.asString)
+				}
+				val jsonDIDList = gson.toJson(resList)
+				VLog.d("Saving Json DID List to prefs : $jsonDIDList")
+				prefs.saveObjectString(PrefsManager.VERIFIED_DID_LIST, jsonDIDList)
+			} else {
+				VLog.d("Response is not success getting verified did list : ${res.body()}")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception in getting verified did list : ${ex.message}")
+		}
 	}
 
 
