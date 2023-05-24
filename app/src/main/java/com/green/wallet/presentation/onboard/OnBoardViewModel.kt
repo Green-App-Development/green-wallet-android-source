@@ -35,6 +35,7 @@ class OnBoardViewModel @Inject constructor(
 		VLog.d("Exception occurred in getting lang list : ${ex.message}")
 	}
 
+
 	init {
 //        notificationHelper.buildingNotificationChannels()
 	}
