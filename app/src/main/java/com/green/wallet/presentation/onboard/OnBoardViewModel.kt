@@ -6,6 +6,7 @@ import com.green.wallet.data.network.dto.greenapp.lang.LanguageItemDto
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.presentation.custom.NotificationHelper
 import com.green.wallet.presentation.custom.isExceptionBelongsToNoInternet
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
@@ -16,12 +17,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 
 class OnBoardViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
-	private val greenAppInteract: GreenAppInteract
+	private val greenAppInteract: GreenAppInteract,
+	notificationHelper: NotificationHelper
 ) : ViewModel() {
 
 	private val _languageList =
@@ -37,7 +40,7 @@ class OnBoardViewModel @Inject constructor(
 
 
 	init {
-//        notificationHelper.buildingNotificationChannels()
+		notificationHelper.buildingNotificationChannels()
 	}
 
 
@@ -85,6 +88,9 @@ class OnBoardViewModel @Inject constructor(
 	fun saveAppInstallTime(value: Long) {
 		viewModelScope.launch {
 			prefs.saveSettingLong(PrefsManager.APP_INSTALL_TIME, value)
+			val guid = UUID.randomUUID().toString()
+			VLog.d("Saving GUID : $guid")
+			prefs.saveSettingString(PrefsManager.USER_GUID, guid)
 		}
 	}
 
