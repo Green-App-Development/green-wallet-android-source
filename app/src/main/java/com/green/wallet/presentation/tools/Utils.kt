@@ -207,19 +207,14 @@ fun convertArrayStringToList(str: String): List<String> {
 }
 
 fun formatString(begin: Int, str: String, end: Int): String {
-	val ans = StringBuilder()
-	ans.append(str.substring(0, begin)).append("...")
-	ans.append(str.substring(str.length - end))
-	return ans.toString()
+	try {
+		val ans = StringBuilder()
+		ans.append(str.substring(0, begin)).append("...")
+		ans.append(str.substring(str.length - end))
+		return ans.toString()
+	} catch (ex: Exception) {
+		return str
+	}
 }
-
-
-fun extractHttpUrlFromMetaData(str: String): String {
-	val withoutBracket=str.substring(1,str.length-1)
-	val split=withoutBracket.split(" ")[0]
-	return split.substring(1,split.length-1)
-}
-
-
 
 

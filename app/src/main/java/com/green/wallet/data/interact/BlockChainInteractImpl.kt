@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.example.common.tools.extractHttpUrlFromMetaData
 import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
