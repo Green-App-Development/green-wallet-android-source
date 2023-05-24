@@ -34,7 +34,7 @@ class OnBoardActivity : BaseActivity() {
         const val RESET_APP_CLICKED = "reset_app_clicked"
     }
 
-    var reset_app_clicked = false
+    var resetAppClicked = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +42,9 @@ class OnBoardActivity : BaseActivity() {
         setContentView(binding.root)
         initStatusBarColorRegulation()
         intent.extras?.let {
-            reset_app_clicked = it.getBoolean(RESET_APP_CLICKED, false)
+            resetAppClicked = it.getBoolean(RESET_APP_CLICKED, false)
         }
-        VLog.d("Clearing cache btn clicked : $reset_app_clicked")
+        VLog.d("Clearing cache btn clicked : $resetAppClicked")
     }
 
     private fun initStatusBarColorRegulation() {

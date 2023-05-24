@@ -33,6 +33,7 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -61,6 +62,9 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var walletInteract: WalletInteract
 
+	@Inject
+	lateinit var notificationHelper: NotificationHelper
+
 	lateinit var appComponent: AppComponent
 	lateinit var swapComponent: SwapComponent
 	lateinit var swapNavController: NavController
@@ -77,7 +81,6 @@ class App : DaggerApplication() {
 	private var FLUTTER_ENGINE = "flutter_engine"
 	lateinit var flutterEngine: FlutterEngine
 
-	@RequiresApi(Build.VERSION_CODES.N)
 	override fun onCreate() {
 		super.onCreate()
 		if (BuildConfig.DEBUG)
@@ -103,6 +106,10 @@ class App : DaggerApplication() {
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.Main).launch {
 //			nftInteract.getHomeAddedWalletWithNFTTokensFlow()
+			val guid = UUID.randomUUID().toString().replace("-", "").uppercase()
+			VLog.d(
+				"GUID of the user : $guid Len : ${guid.length}"
+			)
 		}
 	}
 
@@ -171,7 +178,7 @@ class App : DaggerApplication() {
 			flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
-		CoroutineScope(Dispatchers.IO+handler).launch {
+		CoroutineScope(Dispatchers.IO + handler).launch {
 			//wait for flutter engine to warm up
 			delay(500L)
 			walletInteract.getAllWalletList().forEach {
@@ -186,10 +193,10 @@ class App : DaggerApplication() {
 		}
 
 		methodChannel.setMethodCallHandler { call, result ->
-			 if(call.method=="nftSpendBundle"){
-				 val bundleNFT=call.arguments.toString()
-				 VLog.d("BundleNFT on Android : $bundleNFT")
-			 }
+			if (call.method == "nftSpendBundle") {
+				val bundleNFT = call.arguments.toString()
+				VLog.d("BundleNFT on Android : $bundleNFT")
+			}
 		}
 
 	}

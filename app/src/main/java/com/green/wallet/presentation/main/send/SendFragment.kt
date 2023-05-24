@@ -60,7 +60,7 @@ import javax.inject.Inject
 class SendFragment : DaggerFragment() {
 
 	private val binding by viewBinding(FragmentSendBinding::bind)
-	private lateinit var networkAdapter: NetworkAdapter
+	private lateinit var networkAdapter: DynamicSpinnerAdapter
 	private lateinit var tokenAdapter: DynamicSpinnerAdapter
 	private lateinit var walletAdapter: WalletListAdapter
 
@@ -238,7 +238,7 @@ class SendFragment : DaggerFragment() {
 		spendableBalanceJob?.cancel()
 		spendableBalanceJob = lifecycleScope.launch(handler) {
 			val curSendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
-			val curWallet = walletAdapter.walletList[walletAdapter.selectedPosition]
+			val curWallet = walletAdapter.walletList[walletAdapterPosition]
 			withContext(Dispatchers.IO) {
 				viewModel.getSpentCoinsAmountsAddressCodeForSpendableBalance(
 					address = curWallet.address,
@@ -353,8 +353,10 @@ class SendFragment : DaggerFragment() {
 					if (walletAdapterPosition == 0)
 						walletAdapterPosition =
 							walletTokenList.map { it.fingerPrint }.indexOf(curFingerPrint)
-					if (walletAdapterPosition < walletTokenList.size)
+					if (walletAdapterPosition < walletTokenList.size) {
 						binding.walletSpinner.setSelection(walletAdapterPosition)
+						walletAdapter.selectedPosition = walletAdapterPosition
+					}
 					binding.walletSpinner.onItemSelectedListener =
 						object : AdapterView.OnItemSelectedListener {
 							override fun onItemSelected(
@@ -409,7 +411,7 @@ class SendFragment : DaggerFragment() {
 		curTokenWalletList = tokenWalletList
 		tokenAdapter = DynamicSpinnerAdapter(
 			widthDp = 100,
-			context=curActivity(),
+			context = curActivity(),
 			tokenWalletList.filter {
 				(it.code == "XCH" || it.asset_id.trim().isNotEmpty() || it.code == "XCC")
 			}
@@ -600,7 +602,7 @@ class SendFragment : DaggerFragment() {
 				viewModel.getDistinctNetworkTypeValues()
 
 			networkAdapter =
-				NetworkAdapter(curActivity(), distinctNetworkTypes)
+				DynamicSpinnerAdapter(180, curActivity(), distinctNetworkTypes)
 			binding.networkSpinner.adapter = networkAdapter
 
 			binding.networkSpinner.setSelection(distinctNetworkTypes.indexOf(curNetworkType))
