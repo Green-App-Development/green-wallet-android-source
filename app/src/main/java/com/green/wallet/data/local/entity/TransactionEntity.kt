@@ -10,14 +10,14 @@ import com.green.wallet.presentation.tools.Status
 
 @Entity(
 	tableName = "TransactionEntity",
-	foreignKeys = [
-		ForeignKey(
-			entity = WalletEntity::class,
-			parentColumns = ["address"],
-			childColumns = ["fkAddress"],
-			onDelete = ForeignKey.CASCADE
-		)
-	]
+//	foreignKeys = [
+//		ForeignKey(
+//			entity = WalletEntity::class,
+//			parentColumns = ["address"],
+//			childColumns = ["fkAddress"],
+//			onDelete = ForeignKey.CASCADE
+//		)
+//	]
 )
 data class TransactionEntity(
 	@ColumnInfo(name = "transaction_id")

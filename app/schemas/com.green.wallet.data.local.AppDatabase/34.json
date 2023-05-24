@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 34,
-    "identityHash": "bf2e6cefec1b6ccb3cedfbe7f52e0a4e",
+    "identityHash": "4b328eaf7dcb5eab8c2efb682da43bad",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -148,7 +148,7 @@
       },
       {
         "tableName": "TransactionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `amount` REAL NOT NULL, `created_at_time` INTEGER NOT NULL, `height` INTEGER NOT NULL, `status` TEXT NOT NULL, `network_type` TEXT NOT NULL, `to_dest_hash` TEXT NOT NULL, `fkAddress` TEXT NOT NULL, `fee_amount` REAL NOT NULL, `code` TEXT NOT NULL, `confirm_height` INTEGER NOT NULL DEFAULT 0, `nft_coin_hash` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`transaction_id`), FOREIGN KEY(`fkAddress`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `amount` REAL NOT NULL, `created_at_time` INTEGER NOT NULL, `height` INTEGER NOT NULL, `status` TEXT NOT NULL, `network_type` TEXT NOT NULL, `to_dest_hash` TEXT NOT NULL, `fkAddress` TEXT NOT NULL, `fee_amount` REAL NOT NULL, `code` TEXT NOT NULL, `confirm_height` INTEGER NOT NULL DEFAULT 0, `nft_coin_hash` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`transaction_id`))",
         "fields": [
           {
             "fieldPath": "transaction_id",
@@ -232,19 +232,7 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "WalletEntity",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "fkAddress"
-            ],
-            "referencedColumns": [
-              "address"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "NotificationOther",
@@ -622,7 +610,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bf2e6cefec1b6ccb3cedfbe7f52e0a4e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b328eaf7dcb5eab8c2efb682da43bad')"
     ]
   }
 }

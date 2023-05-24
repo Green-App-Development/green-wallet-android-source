@@ -87,6 +87,8 @@ abstract class AppDatabase : RoomDatabase() {
 
 				database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
 
+				
+
 			}
 		}
 
