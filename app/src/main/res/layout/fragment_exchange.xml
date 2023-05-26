@@ -22,7 +22,7 @@
 			<androidx.constraintlayout.widget.ConstraintLayout
 					android:id="@+id/container"
 					android:layout_width="match_parent"
-					android:layout_height="300dp"
+					android:layout_height="wrap_content"
 					android:layout_marginStart="10dp"
 					android:layout_marginTop="4dp"
 					android:layout_marginEnd="10dp"
@@ -276,7 +276,7 @@
 							android:maxLines="1"
 							android:singleLine="true"
 							android:text="0"
-							android:textColor="@color/secondary_text_color"
+							android:textColor="@color/green"
 							android:textSize="18sp"
 							app:layout_constraintEnd_toStartOf="@+id/guideline62"
 							app:layout_constraintStart_toStartOf="parent"
@@ -355,6 +355,139 @@
 
 				</androidx.constraintlayout.widget.ConstraintLayout>
 
+				<androidx.constraintlayout.widget.Barrier
+						android:id="@+id/barrier_get_address"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						app:barrierDirection="bottom"
+						app:constraint_referenced_ids="layout_exchange_to,layout_get_address_usdt,layout_get_address_xch">
+
+
+				</androidx.constraintlayout.widget.Barrier>
+
+
+				<View
+						android:id="@+id/view_divider_get_address"
+						android:layout_width="match_parent"
+						android:layout_height="1dp"
+						android:layout_marginStart="7dp"
+						android:layout_marginTop="12dp"
+						android:layout_marginEnd="7dp"
+						android:background="@color/track_color"
+						android:visibility="visible"
+						app:layout_constraintTop_toBottomOf="@id/layout_exchange_to" />
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+						android:id="@+id/layout_get_address_usdt"
+						android:layout_width="match_parent"
+						android:layout_height="75dp"
+						android:layout_marginStart="7dp"
+						android:layout_marginTop="12dp"
+						android:layout_marginEnd="7dp"
+						android:background="@drawable/bcg_edt_course_exchange"
+						android:visibility="gone"
+						app:layout_constraintTop_toBottomOf="@id/view_divider_get_address">
+
+					<TextView
+							android:id="@+id/txtReceiveAddressUSDT"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="8dp"
+							android:text="Адрес для получения (TRC-20)"
+							android:textColor="@color/second_grey"
+							android:textSize="12sp"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="parent" />
+
+					<EditText
+							android:id="@+id/edtGetAddressUSDT"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:layout_centerVertical="true"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:layout_marginEnd="10dp"
+							android:background="@android:color/transparent"
+							android:hint="@string/send_token_amount"
+							android:inputType="numberDecimal"
+							android:maxLines="1"
+							android:textColor="@color/secondary_text_color"
+							android:textColorHint="@color/inactive_grey_txt"
+							android:textSize="18sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/txtReceiveAddressUSDT" />
+
+					<View
+							android:id="@+id/line_green_edt_usdt"
+							android:layout_width="match_parent"
+							android:layout_height="1dp"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="5dp"
+							android:layout_marginEnd="10dp"
+							android:background="@color/green"
+							android:visibility="gone"
+							app:layout_constraintTop_toBottomOf="@id/edtGetAddressUSDT" />
+
+					<ImageView
+							android:id="@+id/img_ic_scan_usdt"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="10dp"
+							android:layout_marginEnd="18dp"
+							android:src="@drawable/edt_scan"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintTop_toBottomOf="@id/txtReceiveAddressUSDT" />
+
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+				<androidx.constraintlayout.widget.ConstraintLayout
+						android:id="@+id/layout_get_address_xch"
+						android:layout_width="match_parent"
+						android:layout_height="75dp"
+						android:layout_marginStart="7dp"
+						android:layout_marginTop="12dp"
+						android:layout_marginEnd="7dp"
+						android:background="@drawable/bcg_edt_course_exchange"
+						android:visibility="visible"
+						app:layout_constraintTop_toBottomOf="@id/view_divider_get_address">
+
+
+					<TextView
+							android:id="@+id/txtReceiveAddressXCH"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="10dp"
+							android:layout_marginTop="8dp"
+							android:text="Адрес для получения XCH"
+							android:textColor="@color/second_grey"
+							android:textSize="12sp"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="parent" />
+
+					<View
+							android:layout_width="1dp"
+							android:layout_height="0dp"
+							android:layout_marginTop="7dp"
+							android:layout_marginBottom="7dp"
+							android:background="@color/line_divider"
+							app:layout_constraintBottom_toBottomOf="parent"
+							app:layout_constraintStart_toStartOf="@+id/guideline63"
+							app:layout_constraintTop_toTopOf="parent" />
+
+					<androidx.constraintlayout.widget.Guideline
+							android:id="@+id/guideline63"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:orientation="vertical"
+							app:layout_constraintGuide_percent="0.65" />
+
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+
 				<TextView
 						android:id="@+id/txtDetailTransactions"
 						android:layout_width="wrap_content"
@@ -367,7 +500,7 @@
 						android:textStyle="normal"
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintTop_toBottomOf="@+id/layout_exchange_to" />
+						app:layout_constraintTop_toBottomOf="@+id/barrier_get_address" />
 
 				<ImageView
 						android:id="@+id/imgArrowDownDetailTrans"
