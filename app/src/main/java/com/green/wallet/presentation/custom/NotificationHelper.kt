@@ -43,7 +43,7 @@ class NotificationHelper @Inject constructor(
 		value: String = ""
 	) {
 		mutex.withLock {
-//			buildingNotificationChannels()
+			buildingNotificationChannels()
 			val title = "Green Wallet"
 			val isNotificationOn =
 				prefs.getSettingBoolean(PrefsManager.PUSH_NOTIF_IS_ON, default = true)
