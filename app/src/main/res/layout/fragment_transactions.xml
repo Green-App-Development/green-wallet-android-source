@@ -359,8 +359,9 @@
 		<androidx.recyclerview.widget.RecyclerView
 				android:id="@+id/rec_transaction_items"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="0dp"
 				android:visibility="visible"
+				app:layout_constraintBottom_toBottomOf="@+id/placeHolderLinearView"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/root_transaction_item"
