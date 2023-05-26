@@ -148,6 +148,8 @@ class NFTDetailsFragment : DaggerFragment() {
 
 			})
 			.into(imgNft)
+		relUpdatePending.visibility = if (nftInfo.isPending) View.VISIBLE else View.GONE
+		btnSend.isEnabled = !nftInfo.isPending
 	}
 
 	private fun initUpdatePropertiesRecView() {

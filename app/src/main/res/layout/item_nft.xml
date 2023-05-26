@@ -50,6 +50,36 @@
 						app:trackColor="@color/track_color"
 						app:trackThickness="1.5dp" />
 
+				<RelativeLayout
+						android:id="@+id/rel_update_pending"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:background="#6F000000"
+						android:visibility="visible">
+
+
+					<RelativeLayout
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_centerInParent="true"
+							android:background="@drawable/bcg_update_pending"
+							android:paddingLeft="10dp"
+							android:paddingTop="7dp"
+							android:paddingRight="10dp"
+							android:paddingBottom="7dp">
+
+						<TextView
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:text="Update Pending"
+								android:textColor="@color/white"
+								android:textFontWeight="500"
+								android:textSize="11sp" />
+
+					</RelativeLayout>
+
+				</RelativeLayout>
+
 			</FrameLayout>
 
 			<View
@@ -106,9 +136,9 @@
 						android:layout_height="wrap_content"
 						android:layout_marginStart="8dp"
 						android:layout_marginTop="8dp"
+						android:layout_marginEnd="5dp"
 						android:src="@drawable/ic_nft_checked"
 						android:visibility="visible"
-						android:layout_marginEnd="5dp"
 						app:layout_constraintEnd_toStartOf="@+id/txt_category_nft"
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintTop_toBottomOf="@+id/txt_name_nft" />
@@ -143,8 +173,8 @@
 						android:layout_height="wrap_content"
 						android:layout_marginStart="8dp"
 						android:layout_marginTop="8dp"
-						android:visibility="visible"
 						android:orientation="horizontal"
+						android:visibility="visible"
 						app:layout_constraintStart_toStartOf="parent" />
 
 			</androidx.constraintlayout.widget.ConstraintLayout>

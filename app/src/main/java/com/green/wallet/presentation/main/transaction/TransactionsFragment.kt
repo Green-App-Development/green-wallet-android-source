@@ -56,9 +56,9 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	@Inject
 	lateinit var animManager: AnimationManager
 
-	private lateinit var dateAdapter: TransactionSortingAdapter
+	private lateinit var dateAdapter: DynamicSpinnerAdapter
 
-	private lateinit var networkAdapter: TransactionSortingAdapter
+	private lateinit var networkAdapter: DynamicSpinnerAdapter
 
 	private val binding by viewBinding(FragmentTransactionsBinding::bind)
 
@@ -326,7 +326,8 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			distinctNetworkTypes.add(0, curActivity().getStringResource(R.string.transactions_all))
 
 			networkAdapter =
-				TransactionSortingAdapter(
+				DynamicSpinnerAdapter(
+					180,
 					curActivity(),
 					distinctNetworkTypes
 				)
@@ -418,13 +419,14 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		if (networkAdapter.selectedPosition == 0)
 			return null
 
-		return networkAdapter.options[networkAdapter.selectedPosition]
+		return networkAdapter.dataOptions[networkAdapter.selectedPosition]
 	}
 
 
 	private fun initDateAdapter() {
 		curActivity().apply {
-			dateAdapter = TransactionSortingAdapter(
+			dateAdapter = DynamicSpinnerAdapter(
+				180,
 				curActivity(),
 				listOf(
 					getStringResource(R.string.transactions_all),

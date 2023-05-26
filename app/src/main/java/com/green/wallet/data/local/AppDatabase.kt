@@ -63,6 +63,7 @@ abstract class AppDatabase : RoomDatabase() {
 							"`name` TEXT NOT NULL, " +
 							"`address_fk` TEXT NOT NULL, " +
 							"`spent` INTEGER NOT NULL, " +
+							"`isPending` BOOL NOT NULL,"+
 							"PRIMARY KEY(`nft_coin_hash`), " +
 							"FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON DELETE CASCADE)"
 				)
@@ -87,7 +88,7 @@ abstract class AppDatabase : RoomDatabase() {
 
 				database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
 
-				
+
 
 			}
 		}

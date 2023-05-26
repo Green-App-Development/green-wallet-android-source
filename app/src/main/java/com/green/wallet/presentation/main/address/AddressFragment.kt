@@ -18,12 +18,12 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import javax.inject.Inject
-
 
 
 class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
@@ -102,6 +102,10 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 			curActivity().move2EditAddressFragment(null)
 		}
 
+		binding.backLayout.setOnClickListener {
+			getMainActivity().popBackStackOnce()
+		}
+
 	}
 
 
@@ -145,7 +149,6 @@ class AddressFragment : DaggerFragment(), AddressAdapter.EditedOpenListener {
 		requestSendingTextViaMessengers.launch(intent)
 
 	}
-
 
 
 	override fun onResume() {

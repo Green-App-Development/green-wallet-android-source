@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 34,
-    "identityHash": "4b328eaf7dcb5eab8c2efb682da43bad",
+    "identityHash": "7dcd1ce0807bd7e59ef7a40310d39df5",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -406,7 +406,7 @@
       },
       {
         "tableName": "NFTInfoEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nft_coin_hash` TEXT NOT NULL, `nft_id` TEXT NOT NULL, `launcher_id` TEXT NOT NULL, `owner_did` TEXT NOT NULL, `minter_did` TEXT NOT NULL, `royalty_percentage` INTEGER NOT NULL, `mint_height` INTEGER NOT NULL, `data_url` TEXT NOT NULL, `data_hash` TEXT NOT NULL, `meta_hash` TEXT NOT NULL, `meta_url` TEXT NOT NULL, `description` TEXT NOT NULL, `collection` TEXT NOT NULL, `properties` TEXT NOT NULL, `name` TEXT NOT NULL, `address_fk` TEXT NOT NULL, `spent` INTEGER NOT NULL, PRIMARY KEY(`nft_coin_hash`), FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nft_coin_hash` TEXT NOT NULL, `nft_id` TEXT NOT NULL, `launcher_id` TEXT NOT NULL, `owner_did` TEXT NOT NULL, `minter_did` TEXT NOT NULL, `royalty_percentage` INTEGER NOT NULL, `mint_height` INTEGER NOT NULL, `data_url` TEXT NOT NULL, `data_hash` TEXT NOT NULL, `meta_hash` TEXT NOT NULL, `meta_url` TEXT NOT NULL, `description` TEXT NOT NULL, `collection` TEXT NOT NULL, `properties` TEXT NOT NULL, `name` TEXT NOT NULL, `address_fk` TEXT NOT NULL, `spent` INTEGER NOT NULL, `isPending` INTEGER NOT NULL, PRIMARY KEY(`nft_coin_hash`), FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "nft_coin_hash",
@@ -507,6 +507,12 @@
           {
             "fieldPath": "spent",
             "columnName": "spent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPending",
+            "columnName": "isPending",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -610,7 +616,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b328eaf7dcb5eab8c2efb682da43bad')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7dcd1ce0807bd7e59ef7a40310d39df5')"
     ]
   }
 }

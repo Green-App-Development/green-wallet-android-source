@@ -323,9 +323,9 @@ class BlockChainInteractImpl @Inject constructor(
 					properties = properties,
 					name = name,
 					address_fk = address_fk,
-					false,
-
-					)
+					spent = false,
+					isPending = false
+				)
 			} else {
 				VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")
 			}
@@ -908,6 +908,8 @@ class BlockChainInteractImpl @Inject constructor(
 						"XCH",
 						nftInfo.fk_address
 					)
+					nftInfoDao.updateIsPendingNFTInfoByNFTCoinHash(true, nftInfo.nft_coin_hash)
+
 					return Resource.success("OK")
 				}
 			}

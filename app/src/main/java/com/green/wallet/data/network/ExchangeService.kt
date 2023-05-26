@@ -3,11 +3,12 @@ package com.green.wallet.data.network
 import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ExchangeService {
 
-	@GET("exchange/create")
+	@POST("exchange/create")
 	suspend fun createExchangeRequest(
 		@Query("user") user: String,
 		@Query("give_address") give_address: String,
@@ -20,9 +21,6 @@ interface ExchangeService {
 		@Query("user") user: String,
 		@Query("order") order: String
 	): Response<JsonObject>
-
-	@GET("exchange")
-	suspend fun 
 
 
 }
