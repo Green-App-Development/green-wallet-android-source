@@ -71,12 +71,12 @@ class NFTDetailsFragment : DaggerFragment() {
 			if (curY > oldY) {
 				//down
 				val diff = Math.abs(curY - oldY)
-				if (diff >= 10)
+				if (diff >= 20)
 					moveRelativeLayoutToBtmSlowly(relativeLayoutBtnSend)
 			} else {
 				//up
 				val diff = Math.abs(curY - oldY)
-				if (diff >= 10)
+				if (diff >= 20)
 					moveRelativeLayoutFromBtmSlowly(relativeLayoutBtnSend)
 			}
 		}
@@ -113,7 +113,7 @@ class NFTDetailsFragment : DaggerFragment() {
 		edtNftDescription.text = nftInfo.description
 		edtNftCollection.text = nftInfo.collection
 		edtNFTID.text = formatString(8, nftInfo.nft_id, 4)
-		edtLaunchedID.text = formatString(4, nftInfo.launcher_id, 4)
+		edtLaunchedID.text = "0"+formatString(4, nftInfo.launcher_id.substring(2), 4)
 		edtOwnerID.text = "Unassigned"
 		edtMinterDID.text = formatString(14, nftInfo.minter_did, 4)
 		edtRoyaltyPercentage.text = "${nftInfo.royalty_percentage}%"
