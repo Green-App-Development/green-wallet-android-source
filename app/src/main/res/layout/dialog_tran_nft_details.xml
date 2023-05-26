@@ -78,10 +78,10 @@
 						app:cardCornerRadius="15dp">
 
 					<ImageView
+							android:id="@id/img_nft"
 							android:layout_width="match_parent"
 							android:layout_height="130dp"
 							android:scaleType="centerCrop"
-							android:id="@id/img_nft"
 							android:src="@drawable/img_nft" />
 
 				</androidx.cardview.widget.CardView>
@@ -110,7 +110,7 @@
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:layout_marginTop="8dp"
-							android:text="Collection"
+							android:text="@string/nft_collection"
 							android:textColor="@color/green"
 							android:textFontWeight="600"
 							android:textSize="14sp"
@@ -195,7 +195,7 @@
 						android:id="@+id/txtNftCommission"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:text="Commission"
+						android:text="@string/transaction_pop_up_info_commission"
 						android:textColor="@color/green"
 						android:textFontWeight="600"
 						android:textSize="14sp"
@@ -225,7 +225,7 @@
 						android:id="@+id/txtNFTBlockHeight"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:text="Высота блока:"
+						android:text="@string/block_height"
 						android:textColor="@color/green"
 						android:textFontWeight="600"
 						android:textSize="14sp"

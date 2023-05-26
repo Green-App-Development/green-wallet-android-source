@@ -56,6 +56,7 @@ class NFTTokenAdapter(
 		private val progressBar = v.findViewById<CircularProgressIndicator>(R.id.progress_bar)
 		private val emptyView = v.findViewById<View>(R.id.emptyView)
 		private val rootNFTToken = v.findViewById<RelativeLayout>(R.id.root_nft_token)
+		private val relUpdatePending = v.findViewById<RelativeLayout>(R.id.rel_update_pending)
 
 		fun onBind(nftInfo: NFTInfo, position: Int) {
 //			emptyView.visibility = if (position <= 1) View.VISIBLE else View.GONE
@@ -89,7 +90,7 @@ class NFTTokenAdapter(
 			rootNFTToken.setOnClickListener {
 				nftTokenClicked.onNFTToken(nftInfo)
 			}
-
+			relUpdatePending.visibility = if (nftInfo.isPending) View.VISIBLE else View.GONE
 		}
 
 

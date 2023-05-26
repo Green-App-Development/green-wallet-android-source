@@ -385,7 +385,7 @@
 	<string name="status_in_process" />
 	<string name="status_canceled" />
 	<string name="see_more_flow" />
-	<string name="sec_rate_update"/>
-	<string name="completion_oper_flow"/>
-
+	<string name="sec_rate_update" />
+	<string name="completion_oper_flow" />
+	<string name="block_height" />
 </resources>

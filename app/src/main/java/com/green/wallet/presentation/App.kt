@@ -133,6 +133,7 @@ class App : DaggerApplication() {
 				getAvailableLanguageList()
 				getVerifiedDidList()
 				getAgreementsText()
+				updateCoinDetails()
 			}
 			supportInteract.getFAQQuestionAnswers()
 			with(cryptocurrencyInteract) {

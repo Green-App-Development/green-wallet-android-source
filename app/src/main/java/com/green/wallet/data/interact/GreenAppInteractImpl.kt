@@ -304,6 +304,8 @@ class GreenAppInteractImpl @Inject constructor(
 
 	override suspend fun getCoinDetails(code: String): CoinDetails {
 		val coinDetailsJson = prefs.getObjectString(getPreferenceKeyForCoinDetail(code))
+		if (coinDetailsJson.isEmpty())
+			return CoinDetails("", "", "", "", "", 0.0)
 		VLog.d("Getting coin details by code : $code : $coinDetailsJson")
 		val coin = gson.fromJson(coinDetailsJson, CoinDetails::class.java)
 		return coin
