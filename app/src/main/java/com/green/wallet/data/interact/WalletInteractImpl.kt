@@ -343,9 +343,6 @@ class WalletInteractImpl @Inject constructor(
 			address = address
 		)
 		walletDao.updateObserverHashCount(address, observer, nonObserver)
-		val walletEntity = walletDao.getWalletByAddress(address = address)[0]
-		blockChainInteract.updateWalletBalanceWithTransactions(walletEntity)
-		blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
 	}
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)
