@@ -113,7 +113,6 @@ class App : DaggerApplication() {
 		}
 	}
 
-
 	private fun subscribingToTopic() {
 		FirebaseMessaging.getInstance().subscribeToTopic("news")
 			.addOnCompleteListener {
@@ -209,7 +208,6 @@ class App : DaggerApplication() {
 				delay(1000L * 30L)
 				VLog.d("Start requesting Balance Each Wallets Periodically:")
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
-				delay(1000 * 30L)
 			}
 		}
 		updateCryptoJob?.cancel()
