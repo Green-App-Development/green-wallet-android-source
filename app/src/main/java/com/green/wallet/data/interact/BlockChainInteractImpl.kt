@@ -601,7 +601,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 				.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
-			val job = CoroutineScope(Dispatchers.IO).launch {
+			val job = CoroutineScope(Dispatchers.IO+handler).launch {
 				for ((asset_id, puzzle_hashes) in wallet.hashListImported) {
 					launch {
 						VLog.d("Launched job to get balance for $asset_id and Puzzle Hash : $puzzle_hashes")
@@ -624,22 +624,26 @@ class BlockChainInteractImpl @Inject constructor(
 		puzzle_hashes: List<String>,
 		hashWithAmount: HashMap<String, Double>
 	) {
-		val body = hashMapOf<String, Any>()
-		body["puzzle_hashes"] = puzzle_hashes
-		body["include_spent_coins"] = false
-		val division = 1000.0
-		var balance = 0L
-		val request = blockChainService.queryBalanceByPuzzleHashes(body)
-		if (request.isSuccessful) {
-			val coinRecordsJsonArray = request.body()!!.coin_records
-			for (coin in coinRecordsJsonArray) {
-				val curAmount = coin.coin.amount
-				val spent = coin.spent
-				if (!spent) balance += curAmount
+		try {
+			val body = hashMapOf<String, Any>()
+			body["puzzle_hashes"] = puzzle_hashes
+			body["include_spent_coins"] = false
+			val division = 1000.0
+			var balance = 0L
+			val request = blockChainService.queryBalanceByPuzzleHashes(body)
+			if (request.isSuccessful) {
+				val coinRecordsJsonArray = request.body()!!.coin_records
+				for (coin in coinRecordsJsonArray) {
+					val curAmount = coin.coin.amount
+					val spent = coin.spent
+					if (!spent) balance += curAmount
+				}
 			}
+			val newAmount = balance / division
+			hashWithAmount[assetId] = newAmount
+		}catch (ex:Exception){
+			VLog.d("Exception caught in update token balance individually : ${ex.message}")
 		}
-		val newAmount = balance / division
-		hashWithAmount[assetId] = newAmount
 	}
 
 	override suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity) {

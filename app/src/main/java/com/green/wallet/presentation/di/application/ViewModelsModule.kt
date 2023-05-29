@@ -22,6 +22,7 @@ import com.green.wallet.presentation.main.notification.NotifViewModel
 import com.green.wallet.presentation.main.receive.ReceiveViewModel
 import com.green.wallet.presentation.main.send.SendFragmentViewModel
 import com.green.wallet.presentation.main.support.SupportViewModel
+import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
@@ -166,8 +167,10 @@ abstract class ViewModelsModule {
 	@ViewModelKey(NFTSendViewModel::class)
 	abstract fun bindingNFTSendViewModel(viewModel: NFTSendViewModel): ViewModel
 
-
-
+	@IntoMap
+	@Binds
+	@ViewModelKey(ExchangeViewModel::class)
+	abstract fun bindingExchangeViewModel(viewModel: ExchangeViewModel): ViewModel
 
 
 }

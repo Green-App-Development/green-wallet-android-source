@@ -141,7 +141,7 @@ class SendFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.registerCLicks()
-        getQrCodeDecoded()
+        getAddressToSend()
         queryWalletList(curNetworkType, null)
         updateNetworkName(curNetworkType)
         initTxtAboveEdits()
@@ -896,7 +896,7 @@ class SendFragment : DaggerFragment() {
 
     private var prevEnterAddressJob: Job? = null
 
-    private fun getQrCodeDecoded() {
+    private fun getAddressToSend() {
         prevEnterAddressJob?.cancel()
         prevEnterAddressJob = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

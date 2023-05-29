@@ -7,20 +7,45 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.Spinner
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.common.tools.formatString
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentExchangeBinding
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.CustomSpinner
 import com.green.wallet.presentation.custom.DialogManager
+import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
+import com.green.wallet.presentation.custom.hidePublicKey
+import com.green.wallet.presentation.di.factory.ViewModelFactory
+import com.green.wallet.presentation.main.send.SendFragmentViewModel
+import com.green.wallet.presentation.main.send.WalletListAdapter
 import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
+import com.green.wallet.presentation.tools.makeGreenDuringFocus
+import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_exchange.img_ic_scan_usdt
+import kotlinx.android.synthetic.main.fragment_exchange.tokenToSpinner
+import kotlinx.android.synthetic.main.fragment_send.txtHiddenPublicKey
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ExchangeFragment : DaggerFragment() {
@@ -33,14 +58,22 @@ class ExchangeFragment : DaggerFragment() {
 	@Inject
 	lateinit var dialogManager: DialogManager
 
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val vm: ExchangeViewModel by viewModels { viewModelFactory }
+
 	override fun onAttach(context: Context) {
 		super.onAttach(context)
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		VLog.d("On Create on exchange fragment")
 	}
 
+	private var smallContainer = 600
+	private var bigContainer = 418
+	private var hasOneFocusLeast = true
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -48,10 +81,46 @@ class ExchangeFragment : DaggerFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentExchangeBinding.inflate(layoutInflater)
+		VLog.d("On Create view on exchange fragment")
 		binding.registerViews()
 		binding.registerFilters()
 		binding.initSpinners()
 		return binding.root
+	}
+
+	private fun initChiaWalletAdapter() {
+		lifecycleScope.launchWhenCreated {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.chiaWalletList.collectLatest {
+					val list = it.map { "Chia ${it.fingerPrint}" }
+					val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list)
+					binding.walletSpinner.apply {
+						this.adapter = adapter
+						onItemSelectedListener = object : OnItemSelectedListener {
+							override fun onItemSelected(
+								p0: AdapterView<*>?,
+								p1: View?,
+								p2: Int,
+								p3: Long
+							) {
+								vm.walletPosition = p2
+								adapter.selectedPosition = p2
+								binding.apply {
+									edtFingerPrint.text = hidePublicKey(it[p2].fingerPrint)
+									edtGetAddress.text = formatString(10, it[p2].address, 6)
+								}
+							}
+
+							override fun onNothingSelected(p0: AdapterView<*>?) {
+
+							}
+
+						}
+						setSelection(vm.walletPosition)
+					}
+				}
+			}
+		}
 	}
 
 	private fun FragmentExchangeBinding.registerViews() {
@@ -77,6 +146,27 @@ class ExchangeFragment : DaggerFragment() {
 			constraintCommentMinAmount.visibility = if (double == 0.0) View.VISIBLE else View.GONE
 		}
 
+		edtAmountFrom.setOnFocusChangeListener { p0, p1 ->
+			if (p1 && !hasOneFocusLeast) {
+				hasOneFocusLeast = true
+				smallContainer = 400
+				bigContainer = 520
+				nextHeight = bigContainer
+				viewDividerGetAddress.visibility = View.VISIBLE
+				initGetAddressLayoutUpdate()
+				val newHeightPixel = (smallContainer * resources.displayMetrics.density).toInt()
+				anim = ValueAnimator.ofInt(container.height, newHeightPixel)
+				anim.duration = 500 // duration in milliseconds
+				anim.interpolator = DecelerateInterpolator()
+				anim.addUpdateListener {
+					val value = it.animatedValue as Int
+					container.layoutParams.height = value
+					container.requestLayout()
+				}
+				anim.start()
+			}
+		}
+
 		icQuestion.setOnClickListener {
 			getMainActivity().apply {
 				dialogManager.showQuestionDialogExchange(
@@ -98,7 +188,97 @@ class ExchangeFragment : DaggerFragment() {
 		val threeLetter = second.substring(0, Math.min(second.length, 3))
 		edtUpdateCourse.text = "3 $threeLetter"
 
+		tokenFromSpinner.setSpinnerEventsListener(object : CustomSpinner.OnSpinnerEventsListener {
+			override fun onSpinnerOpened(spin: Spinner?) {
+				edtFromNetwork.setTextColor(getMainActivity().getColorResource(R.color.green))
+			}
+
+			override fun onSpinnerClosed(spin: Spinner?) {
+				edtFromNetwork.setTextColor(getMainActivity().getColorResource(R.color.grey_txt_color))
+			}
+
+		})
+
+		tokenToSpinner.setSpinnerEventsListener(object : CustomSpinner.OnSpinnerEventsListener {
+			override fun onSpinnerOpened(spin: Spinner?) {
+				edtToNetwork.setTextColor(getMainActivity().getColorResource(R.color.green))
+			}
+
+			override fun onSpinnerClosed(spin: Spinner?) {
+				edtToNetwork.setTextColor(getMainActivity().getColorResource(R.color.grey_txt_color))
+			}
+
+		})
+
+		edtAmountFrom.setOnFocusChangeListener { p0, p1 ->
+			if (p1) {
+				getMainActivity().makeGreenDuringFocus(txtYouSending)
+				greenLineEdt.visibility = View.VISIBLE
+			} else {
+				getMainActivity().makeGreyDuringNonFocus(txtYouSending)
+				greenLineEdt.visibility = View.GONE
+			}
+		}
+
+		edtGetAddressUSDT.setOnFocusChangeListener { view, focus ->
+			if (focus) {
+				imgIcScanUsdt.visibility = View.GONE
+				lineGreenEdtUsdt.visibility = View.VISIBLE
+				getMainActivity().makeGreenDuringFocus(txtReceiveAddressUSDT)
+			} else if (edtGetAddressUSDT.text.toString().isEmpty()) {
+				lineGreenEdtUsdt.visibility = View.GONE
+				imgIcScanUsdt.visibility = View.VISIBLE
+			}
+			if (!focus) {
+				lineGreenEdtUsdt.visibility = View.GONE
+				getMainActivity().makeGreyDuringNonFocus(txtReceiveAddressUSDT)
+			}
+		}
+
+		imgIcScanUsdt.setOnClickListener {
+			requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
+		}
+
+		imgArrowChia.setOnClickListener {
+			walletSpinner.performClick()
+		}
+
 	}
+
+
+	private val requestPermissions =
+		registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { it ->
+			it.entries.forEach {
+				if (it.value) {
+					getMainActivity().mainViewModel.saveDecodeQrCode("")
+					getMainActivity().move2ScannerFragment(null, null)
+				} else
+					Toast.makeText(
+						getMainActivity(),
+						getMainActivity().getStringResource(R.string.camera_permission_missing),
+						Toast.LENGTH_SHORT
+					)
+						.show()
+			}
+		}
+
+	private var prevEnterAddressJob: Job? = null
+	private fun getAddressToSend() {
+		prevEnterAddressJob?.cancel()
+		prevEnterAddressJob = lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				launch {
+					getMainActivity().mainViewModel.decodedQrCode.collectLatest {
+						if (it.isNotEmpty()) {
+							binding.edtGetAddressUSDT.setText(it)
+							getMainActivity().mainViewModel.saveDecodeQrCode("")
+						}
+					}
+				}
+			}
+		}
+	}
+
 
 	private fun FragmentExchangeBinding.initSpinners() {
 		val tokenFromAdapter = TokenSpinnerAdapter(getMainActivity(), listOf("XCH", "USDT"))
@@ -125,6 +305,7 @@ class ExchangeFragment : DaggerFragment() {
 					tokenFromAdapter.selectedPosition = p2
 					tokenToSpinner.setSelection(if (p2 == 0) 1 else 0)
 					updateTokenTxtViews(tokenFromAdapter, tokenToAdapter)
+					initGetAddressLayoutUpdate()
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -141,6 +322,7 @@ class ExchangeFragment : DaggerFragment() {
 					tokenToAdapter.selectedPosition = p2
 					tokenFromSpinner.setSelection(if (p2 == 0) 1 else 0)
 					updateTokenTxtViews(tokenFromAdapter, tokenToAdapter)
+					initGetAddressLayoutUpdate()
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -158,8 +340,8 @@ class ExchangeFragment : DaggerFragment() {
 	}
 
 	private fun updateTokenTxtViews(
-        fromAdapter: TokenSpinnerAdapter,
-        toAdapter: TokenSpinnerAdapter
+		fromAdapter: TokenSpinnerAdapter,
+		toAdapter: TokenSpinnerAdapter
 	) {
 		binding.apply {
 			edtTokenFrom.text = fromAdapter.dataOptions[fromAdapter.selectedPosition]
@@ -170,7 +352,6 @@ class ExchangeFragment : DaggerFragment() {
 		}
 	}
 
-	var nextHeight = 418
 	var containerBigger = true
 	lateinit var anim: ValueAnimator
 
@@ -202,24 +383,43 @@ class ExchangeFragment : DaggerFragment() {
 	}
 
 	private fun initDetailTransaction(layout: View, viewClick: View, arrow: View) {
-		VLog.d("Change View Height : $nextHeight on ExchangeFragment")
-		if (nextHeight == 300) {
-			animManager.rotateBy180ForwardNoAnimation(
-				binding.imgArrowDownDetailTrans,
-				getMainActivity()
-			)
-			val params = binding.container.layoutParams
-			params.height = getMainActivity().convertDpToPixel(418)
-			binding.container.layoutParams = params
-		}
+
+		VLog.d("Change View Height : $bigContainer on ExchangeFragment")
 		viewClick.setOnClickListener {
 			initAnimationCollapsingDetailTransaction(layout)
 		}
 		arrow.setOnClickListener {
 			initAnimationCollapsingDetailTransaction(layout)
 		}
+		binding.apply {
+			if (!containerBigger) {
+				animManager.rotateBy180ForwardNoAnimation(
+					imgArrowDownDetailTrans,
+					getMainActivity()
+				)
+				val params = container.layoutParams
+				params.height = getMainActivity().convertDpToPixel(bigContainer)
+				container.layoutParams = params
+			} else {
+				val params = container.layoutParams
+				params.height = getMainActivity().convertDpToPixel(smallContainer)
+				container.layoutParams = params
+			}
+			if (hasOneFocusLeast) {
+				viewDividerGetAddress.visibility = View.VISIBLE
+				if (tokenToSpinner.selectedItem == 0) {
+					layoutGetAddressUsdt.visibility = View.VISIBLE
+					layoutGetAddressXch.visibility = View.GONE
+				} else {
+					layoutGetAddressUsdt.visibility = View.GONE
+					layoutGetAddressXch.visibility = View.VISIBLE
+				}
+			}
+		}
+
 	}
 
+	private var nextHeight = bigContainer
 	fun initAnimationCollapsingDetailTransaction(layout: View) {
 		if (this::anim.isInitialized && anim.isRunning)
 			return
@@ -239,15 +439,31 @@ class ExchangeFragment : DaggerFragment() {
 			animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, getMainActivity())
 		containerBigger = !containerBigger
 		if (containerBigger) {
-			nextHeight = 418
+			nextHeight = bigContainer
 		} else {
-			nextHeight = 300
+			nextHeight = smallContainer
 		}
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-
+		getAddressToSend()
+		initChiaWalletAdapter()
 	}
+
+	private fun initGetAddressLayoutUpdate() {
+		if (!hasOneFocusLeast) return
+		VLog.d("Selected Item Token To Spinner : ${tokenToSpinner.selectedItemPosition}")
+		binding.apply {
+			if (tokenToSpinner.selectedItemPosition == 1) {
+				layoutGetAddressXch.visibility = View.GONE
+				layoutGetAddressUsdt.visibility = View.VISIBLE
+			} else {
+				layoutGetAddressXch.visibility = View.VISIBLE
+				layoutGetAddressUsdt.visibility = View.GONE
+			}
+		}
+	}
+
 
 }
