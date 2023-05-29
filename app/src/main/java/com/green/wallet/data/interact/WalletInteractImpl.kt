@@ -9,6 +9,7 @@ import com.green.wallet.data.local.TransactionDao
 import com.green.wallet.data.local.WalletDao
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.ChiaWallet
 import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
@@ -343,6 +344,10 @@ class WalletInteractImpl @Inject constructor(
 			address = address
 		)
 		walletDao.updateObserverHashCount(address, observer, nonObserver)
+	}
+
+	override suspend fun getChiaWalletListForExchange(): List<ChiaWallet> {
+		return walletDao.getChiaWalletList().map { it.toChiaWallet() }
 	}
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)

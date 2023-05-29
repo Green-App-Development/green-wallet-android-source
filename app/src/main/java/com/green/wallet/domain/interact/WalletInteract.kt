@@ -1,5 +1,6 @@
 package com.green.wallet.domain.interact
 
+import com.green.wallet.domain.domainmodel.ChiaWallet
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.presentation.tools.NetworkType
@@ -66,9 +67,11 @@ interface WalletInteract {
 		address: String,
 		main_puzzle_hashes: List<String>,
 		hashListImported: HashMap<String, List<String>>,
-		observer:Int,
-		nonObserver:Int
+		observer: Int,
+		nonObserver: Int
 	)
+
+	suspend fun getChiaWalletListForExchange(): List<ChiaWallet>
 
 
 }

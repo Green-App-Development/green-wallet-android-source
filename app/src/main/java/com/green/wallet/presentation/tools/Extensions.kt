@@ -10,12 +10,14 @@ import android.view.animation.AnimationUtils
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.green.wallet.R
 import com.green.wallet.databinding.NftImgPlaceholderBinding
 import com.green.wallet.presentation.main.MainActivity
 
@@ -120,7 +122,7 @@ fun Activity.pxToDp(px: Int): Int {
 	return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
 }
 
-fun Context.dpToPx(dp:Int):Int{
+fun Context.dpToPx(dp: Int): Int {
 	val density = resources.displayMetrics.density
 	val pxValue = (dp * density).toInt()
 	return pxValue
@@ -173,8 +175,13 @@ fun Activity.getCustomProgressLayoutWithParams(size: Int, thickness: Int): View 
 	return binding.root
 }
 
+fun Activity.makeGreenDuringFocus(txt: TextView) {
+	txt.setTextColor(getColorResource(R.color.green))
+}
 
-
+fun Activity.makeGreyDuringNonFocus(txt: TextView) {
+	txt.setTextColor(getColorResource(R.color.grey_txt_color))
+}
 
 
 

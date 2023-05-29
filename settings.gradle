@@ -7,7 +7,7 @@ setBinding(new Binding([gradle:this]))
 
 evaluate(new File(
 		settingsDir.parentFile,
-		'green-wallet-android-source-pro/greenapp/.android/include_flutter.groovy'
+		'green-wallet-android-source/greenapp/.android/include_flutter.groovy'
 ))
 
 include ':wallet-sdk'
