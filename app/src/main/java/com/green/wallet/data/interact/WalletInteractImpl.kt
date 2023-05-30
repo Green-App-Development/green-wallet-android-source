@@ -2,12 +2,14 @@ package com.green.wallet.data.interact
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.common.tools.convertArrayStringToList
 import com.green.wallet.data.local.SpentCoinsDao
 import com.green.wallet.data.local.TokenDao
 import com.green.wallet.data.local.TransactionDao
 import com.green.wallet.data.local.WalletDao
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.ChiaWallet
 import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
@@ -44,16 +46,11 @@ class WalletInteractImpl @Inject constructor(
 			val secretKeySpec =
 				encryptor.getAESKey(prefsInteract.getSettingString(PrefsManager.PASSCODE, ""))
 			val decMnemonics = encryptor.decrypt(encMnemonics, secretKeySpec!!)
-			return getListFromString(decMnemonics)
+			return convertArrayStringToList(decMnemonics)
 		} catch (ex: Exception) {
 			VLog.d("Exception in decrypting mnemonics : ${ex.message}")
 		}
 		return listOf()
-	}
-
-	private fun getListFromString(str: String): List<String> {
-		val withoutBrakes = str.substring(1, str.length - 1)
-		return withoutBrakes.split(",").map { it.trim() }.toList()
 	}
 
 	override suspend fun getAllWalletList(): List<Wallet> {
@@ -116,7 +113,7 @@ class WalletInteractImpl @Inject constructor(
 				wallet.nonObserverHash
 			)
 		}
-		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
+//		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
 		val hashListMutList = walletEntity.hashListImported.keys.toMutableList()
 		val tokensDefault = tokenDao.getTokensDefaultOnScreen().map { it.hash }
@@ -347,9 +344,10 @@ class WalletInteractImpl @Inject constructor(
 			address = address
 		)
 		walletDao.updateObserverHashCount(address, observer, nonObserver)
-		val walletEntity = walletDao.getWalletByAddress(address = address)[0]
-		blockChainInteract.updateWalletBalanceWithTransactions(walletEntity)
-		blockChainInteract.updateTokenBalanceWithFullNode(walletEntity)
+	}
+
+	override suspend fun getChiaWalletListForExchange(): List<ChiaWallet> {
+		return walletDao.getChiaWalletList().map { it.toChiaWallet() }
 	}
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)

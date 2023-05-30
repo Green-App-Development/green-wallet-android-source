@@ -14,19 +14,6 @@ data class Transaction(
 	val to_dest_hash: String,
 	val fkAddress: String,
 	val fee_amount: Double,
-	var code:String
-) {
-    fun toTransactionEntity() =
-        TransactionEntity(
-            transaction_id,
-            amount,
-            created_at_time,
-            confirmed_at_height,
-            status,
-            networkType,
-            to_dest_hash,
-			fkAddress,
-            fee_amount,
-			code
-        )
-}
+	var code:String,
+	val nft_coin_hash:String
+)

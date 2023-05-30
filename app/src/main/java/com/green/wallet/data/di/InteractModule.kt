@@ -45,5 +45,12 @@ abstract class InteractModule {
 	@Binds
 	abstract fun bindSpentCoinsInteractImpl(spentCoinsInteract: SpentCoinsInteractImpl): SpentCoinsInteract
 
+	@Binds
+	abstract fun bindNFTInteractImpl(nftInteract: NFtInteractImpl): NFTInteract
+
+	@Binds
+	abstract fun bindExchangeInteractImpl(exchangeInteract: ExchangeInteractImpl): ExchangeInteract
+
+
 
 }

@@ -59,7 +59,7 @@ class CryptocurrencyImpl @Inject constructor(
 				val chives = res.body()!!.asJsonObject["chives-coin"]
 				val chiaPrice = JSONObject(chia.toString()).getDouble("usd")
 				val chivesPrice = JSONObject(chives.toString()).getDouble("usd")
-				VLog.d("Saving Chia and Chives course Exchange : $chiaPrice, ${chivesPrice}")
+				VLog.d("Saving Chia and Chives course ExchangeDTO : $chiaPrice, ${chivesPrice}")
 				prefs.saveCoursePriceDouble(
 					getPreferenceKeyForCurStockNetworkDouble("Chia"),
 					chiaPrice
@@ -107,7 +107,7 @@ class CryptocurrencyImpl @Inject constructor(
 						tokenPrice =
 							tokenJson.asJsonObject["price"].asString.toDoubleOrNull() ?: 0.0
 					} else {
-						VLog.d("Token property is null ")
+//						VLog.d("Token property is null ")
 					}
 					tokenDao.updateTokenPrice(tokenPrice, tokenCode)
 				}
@@ -136,7 +136,7 @@ class CryptocurrencyImpl @Inject constructor(
 			)
 			for (wallet in chiaWallets) {
 				val hashListImported = wallet.hashListImported
-				VLog.d("HashListImported before : $hashListImported")
+//				VLog.d("HashListImported before : $hashListImported")
 				var needToWait = false
 				defaultTails.forEach { token ->
 					if (!hashListImported.containsKey(token.hash)) {
@@ -157,7 +157,7 @@ class CryptocurrencyImpl @Inject constructor(
 						}
 					}
 					delay(500)
-					VLog.d("HashListImported after : $hashListImported")
+//					VLog.d("HashListImported after : $hashListImported")
 					walletDao.updateChiaNetworkHashListImportedByAddress(
 						wallet.address,
 						hashListImported
@@ -195,30 +195,29 @@ class CryptocurrencyImpl @Inject constructor(
 
 
 	override suspend fun getAllTails() {
-
-		val exChiaToken = tokenDao.getTokenByCode("XCH")
-		var exChiaPrice = 0.0
-		if (exChiaToken.isPresent)
-			exChiaPrice = exChiaToken.get().price
-		val exChivesToken = tokenDao.getTokenByCode("XCC")
-		var exChivesPrice = 0.0
-		if (exChivesToken.isPresent)
-			exChivesPrice = exChivesToken.get().price
-		val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", exChiaPrice, 0, true)
-		tokenDao.insertToken(chiaTokenEntity)
-		val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", exChivesPrice, 0, true)
-		tokenDao.insertToken(chivesTokenEntity)
-
-		//make all tails enabled false
-		val existingTails = tokenDao.getTokenListAndSearch(null)
-			.map { TokenDto(it.name, it.code, it.hash, it.logo_url, 0, "") }
-			.toMutableList()
-
-		val jsonAllNetworkItemList = prefs.getObjectString(ALL_NETWORK_ITEMS_LIST)
-		val type = object : TypeToken<MutableList<NetworkItem>>() {}.type
-		val chiaName =
-			gson.fromJson<List<NetworkItem>>(jsonAllNetworkItemList, type)[0].name
 		try {
+			val exChiaToken = tokenDao.getTokenByCode("XCH")
+			var exChiaPrice = 0.0
+			if (exChiaToken.isPresent)
+				exChiaPrice = exChiaToken.get().price
+			val exChivesToken = tokenDao.getTokenByCode("XCC")
+			var exChivesPrice = 0.0
+			if (exChivesToken.isPresent)
+				exChivesPrice = exChivesToken.get().price
+			val chiaTokenEntity = TokenEntity("XCH", "Chia", "", "", exChiaPrice, 0, true)
+			tokenDao.insertToken(chiaTokenEntity)
+			val chivesTokenEntity = TokenEntity("XCC", "Chives", "", "", exChivesPrice, 0, true)
+			tokenDao.insertToken(chivesTokenEntity)
+
+			//make all tails enabled false
+			val existingTails = tokenDao.getTokenListAndSearch(null)
+				.map { TokenDto(it.name, it.code, it.hash, it.logo_url, 0, "") }
+				.toMutableList()
+
+			val jsonAllNetworkItemList = prefs.getObjectString(ALL_NETWORK_ITEMS_LIST)
+			val type = object : TypeToken<MutableList<NetworkItem>>() {}.type
+			val chiaName =
+				gson.fromJson<List<NetworkItem>>(jsonAllNetworkItemList, type)[0].name
 			val res = greenAppService.getAllTails(chiaName)
 			if (res.isSuccessful) {
 				val baseResSuccess = res.body()!!.success

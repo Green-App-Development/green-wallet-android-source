@@ -19,7 +19,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			app:layout_constraintGuide_percent="0.07" />
+			app:layout_constraintGuide_percent="0.03" />
 
 	<androidx.constraintlayout.widget.Guideline
 			android:id="@+id/guideline58"
@@ -47,7 +47,7 @@
 			android:id="@+id/edtToken"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/dapp_list_title"
+			android:text="@string/swap_title"
 			android:textColor="@color/green"
 			android:textFontWeight="600"
 			android:textSize="25sp"
@@ -56,9 +56,10 @@
 			app:layout_constraintTop_toTopOf="@id/guideline9" />
 
 	<TextView
-			android:id="@+id/txtDEX"
-			android:layout_width="106dp"
+			android:id="@+id/txtExchange"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
+			android:layout_marginStart="10dp"
 			android:layout_marginTop="10dp"
 			android:layout_marginEnd="13dp"
 			android:layout_weight="1"
@@ -68,18 +69,20 @@
 			android:paddingTop="6dp"
 			android:paddingBottom="6dp"
 			android:tag="Outgoing"
-			android:text="@string/nft_dex_btn"
+			android:text="@string/exchange_main"
 			android:textColor="@color/sorting_txt_category"
 			android:textFontWeight="500"
 			android:textSize="14sp"
 			app:layout_constraintEnd_toStartOf="@+id/guideline58"
+			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toBottomOf="@+id/edtToken" />
 
 	<TextView
-			android:id="@+id/txtNFtMarkets"
-			android:layout_width="106dp"
+			android:id="@+id/txtMyRequests"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="13dp"
+			android:layout_marginEnd="10dp"
 			android:layout_weight="1"
 			android:background="@drawable/bcg_sorting_txt"
 			android:fontFamily="@font/inter_regular"
@@ -87,26 +90,26 @@
 			android:paddingTop="6dp"
 			android:paddingBottom="6dp"
 			android:tag="Outgoing"
-			android:text="@string/nft_markets_btn"
+			android:text="@string/my_orders"
 			android:textColor="@color/sorting_txt_category"
 			android:textFontWeight="500"
 			android:textSize="14sp"
+			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="@+id/guideline58"
-			app:layout_constraintTop_toTopOf="@+id/txtDEX" />
+			app:layout_constraintTop_toTopOf="@+id/txtExchange" />
 
-<!--	<fragment-->
-<!--			android:id="@+id/swap_nav"-->
-<!--			android:name="androidx.navigation.fragment.NavHostFragment"-->
-<!--			android:layout_width="0dp"-->
-<!--			android:layout_height="0dp"-->
-<!--			android:layout_marginTop="20dp"-->
-<!--			app:defaultNavHost="true"-->
-<!--			app:layout_constraintBottom_toBottomOf="parent"-->
-<!--			app:layout_constraintEnd_toEndOf="parent"-->
-<!--			app:layout_constraintHorizontal_bias="0.0"-->
-<!--			app:layout_constraintStart_toStartOf="parent"-->
-<!--			app:layout_constraintTop_toBottomOf="@+id/txtNFtMarkets"-->
-<!--			app:navGraph="@navigation/swap_nav" />-->
+	<fragment
+			android:id="@+id/my_nav_swap"
+			android:name="androidx.navigation.fragment.NavHostFragment"
+			android:layout_width="0dp"
+			android:layout_height="0dp"
+			android:layout_marginTop="15dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/txtMyRequests"
+			app:navGraph="@navigation/swap_nav" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

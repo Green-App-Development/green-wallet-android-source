@@ -226,6 +226,12 @@
 			tools:layout="@layout/dialog_choose_network" />
 
 	<dialog
+			android:id="@+id/btmChooseDApps"
+			android:name="com.green.wallet.presentation.main.btmdialogs.BtmChooseDAppsPayment"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_choose_d_apps" />
+
+	<dialog
 			android:id="@+id/btmSheetDialogNewOrImport"
 			android:name="com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogNewOrImport"
 			android:label="btmDialog"
@@ -262,9 +268,21 @@
 			tools:layout="@layout/fragment_d_app" />
 
 	<fragment
-			android:id="@+id/fragmentSwap"
+			android:id="@+id/fragmentSwapMain"
 			android:name="com.green.wallet.presentation.main.swap.main.SwapMainFragment"
 			android:label="SwapFragment"
 			tools:layout="@layout/fragment_swap_main" />
+
+	<fragment
+			android:id="@+id/fragmentRequestDetail"
+			android:name="com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment"
+			android:label="Request Detail"
+			tools:layout="@layout/fragment_request_details" />
+
+	<fragment
+			android:id="@+id/fragmentQrCodeSend"
+			android:name="com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend"
+			android:label=""
+			tools:layout="@layout/fragment_qrcode_send" />
 
 </navigation>

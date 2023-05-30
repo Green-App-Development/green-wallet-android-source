@@ -8,5 +8,4 @@ class NFTDetailsViewModel @Inject constructor() : ViewModel() {
 
 
 
-
 }

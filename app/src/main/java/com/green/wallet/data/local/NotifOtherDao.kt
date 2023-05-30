@@ -3,7 +3,6 @@ package com.green.wallet.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.IGNORE
-import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.NotifOtherEntity
 import java.util.*
@@ -19,7 +18,7 @@ interface NotifOtherDao {
         today: Long?
     ): List<NotifOtherEntity>
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     suspend fun insertingNotifOther(notifOther:NotifOtherEntity)
 
     @Insert(onConflict = IGNORE)

@@ -8,7 +8,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Wallet(
 	val fingerPrint: Long,
-	val privateKey: String,
 	val puzzle_hashes: List<String>,
 	val address: String,
 	val mnemonics: List<String>,
@@ -25,7 +24,7 @@ data class Wallet(
 
 	fun toWalletEntity(encMnemonics: String, savedTime: Long) = WalletEntity(
 		fingerPrint,
-		privateKey,
+		"",
 		puzzle_hashes,
 		address,
 		encMnemonics,

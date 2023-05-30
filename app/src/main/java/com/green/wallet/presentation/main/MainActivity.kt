@@ -25,9 +25,9 @@ import cash.z.ecc.android.bip39.Mnemonics.MnemonicCode
 import com.example.common.tools.*
 import com.green.wallet.R
 import com.green.wallet.R.id.*
-import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
 import com.green.wallet.presentation.custom.*
@@ -36,6 +36,7 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.main.address.AddressFragment
 import com.green.wallet.presentation.main.address.EditAddressFragment
+import com.green.wallet.presentation.main.btmdialogs.BtmChooseDAppsPayment
 import com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogChooseNetwork
 import com.green.wallet.presentation.main.btmdialogs.BtmSheetDialogNewOrImport
 import com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment
@@ -48,12 +49,15 @@ import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
 import com.green.wallet.presentation.main.importtoken.ImportTokenFragment
 import com.green.wallet.presentation.main.managewallet.ManageWalletFragment
+import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
+import com.green.wallet.presentation.main.nft.nftsend.NFTSendFragment
 import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensFragment
 import com.green.wallet.presentation.main.notification.NotifFragment.Companion.SHOW_GREEN_APP_NOTIF
 import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
 import com.green.wallet.presentation.main.send.SendFragment
 import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
+import com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
@@ -165,7 +169,8 @@ class MainActivity : BaseActivity() {
 			val shouldStopUpdateBalance = setOf(
 				sendFragment, impMnemonicFragment,
 				verificationFragment,
-				entPasscodeFrMain
+				entPasscodeFrMain,
+				fragmentSendNFT
 			)
 			if (shouldStopUpdateBalance.contains(dest.id)) {
 				VLog.d("ShouldStopUpdateBalance destination on MainActivity")
@@ -292,6 +297,14 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+				fragmentSwapMain -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+				fragmentRequestDetail -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -322,7 +335,7 @@ class MainActivity : BaseActivity() {
 					}
 				}
 				swap -> {
-					if (navController.currentDestination?.id != fragmentSwap) {
+					if (navController.currentDestination?.id != fragmentSwapMain) {
 						item.isChecked = true
 						move2SwapFragment()
 					}
@@ -437,7 +450,10 @@ class MainActivity : BaseActivity() {
 					walletSettings,
 					fragmentNFTDetails,
 					fragmentSendNFT,
-					addressFragment
+					addressFragment,
+					fragmentRequestDetail,
+					btmChooseDApps,
+					fragmentQrCodeSend
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -550,8 +566,11 @@ class MainActivity : BaseActivity() {
 		navController.navigate(action_walletFragment_to_allWalletFragment)
 	}
 
-	fun move2NFTDetailsFragment() {
-		navController.navigate(fragmentNFTDetails)
+	fun move2NFTDetailsFragment(nft: NFTInfo) {
+		val bundle = Bundle().apply {
+			putParcelable(NFTDetailsFragment.NFT_KEY, nft)
+		}
+		navController.navigate(fragmentNFTDetails, bundle)
 	}
 
 	fun move2ManageWalletFragment(id: Int) {
@@ -627,7 +646,11 @@ class MainActivity : BaseActivity() {
 	}
 
 	fun move2SwapFragment() {
-		navController.navigate(fragmentSwap)
+		navController.navigate(fragmentSwapMain)
+	}
+
+	fun move2QRSendFragment() {
+		navController.navigate(fragmentQrCodeSend)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {
@@ -728,7 +751,7 @@ class MainActivity : BaseActivity() {
 	var prevSoftKeyboardValue = false
 
 	private fun changeVisibilityOfViewsDuringSoftKeyBoardOpen(visibility: Boolean) {
-		VLog.d("Soft key board is open : $visibility")
+//		VLog.d("Soft key board is open : $visibility")
 		if (visibility == prevSoftKeyboardValue)
 			return
 
@@ -772,7 +795,7 @@ class MainActivity : BaseActivity() {
 			delay(1000)
 		}
 		VLog.d("Create or import method has  been called on MainActivity")
-		lifecycleScope.launch {
+		lifecycleScope.launch(handler) {
 
 			val walletSize = mainViewModel.getWalletSizeInDB().size
 			if (walletSize >= 10) {
@@ -813,8 +836,18 @@ class MainActivity : BaseActivity() {
 		move2NewOrImportWallet(networkType)
 	}
 
-	fun move2SendNFTFragment() {
-		navController.navigate(fragmentSendNFT)
+	fun move2SendNFTFragment(nft:NFTInfo) {
+		val bundle = Bundle().apply {
+			putParcelable(NFTSendFragment.NFT_KEY, nft)
+		}
+		navController.navigate(fragmentSendNFT,bundle)
+	}
+
+	//temp passing status
+	fun move2RequestDetailsFragment(status: RequestStatus) {
+		val bundle = bundleOf()
+		bundle.putString(RequestDetailFragment.KEY_ID, status.name)
+		navController.navigate(fragmentRequestDetail, bundle)
 	}
 
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {
@@ -840,6 +873,14 @@ class MainActivity : BaseActivity() {
 			delay(100)
 			move2NewOrImportWallet(curChosenNetworkTypePosForBackImport)
 		}
+	}
+
+	fun move2BtmDialogPayment(address: String, amount: Double) {
+		val bundle = bundleOf(
+			BtmChooseDAppsPayment.ADDRESS_KEY to address,
+			BtmChooseDAppsPayment.AMOUNT_KEY to amount
+		)
+		navController.navigate(btmChooseDApps, bundle)
 	}
 
 	fun move2WalletSettings(address: String) {

@@ -10,6 +10,8 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
+import 'nft_service.dart';
+
 class PushingTransaction {
   static const MethodChannel _channel =
       MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
@@ -144,8 +146,85 @@ class PushingTransaction {
             cachedWalletKeyChain(mnemonics, observer, non_observer);
           }
           break;
+        case "unCurryNft":
+          {
+            var args = call.arguments;
+            debugPrint("JsonNftCoin to uncurry the method called args : $args");
+            var nftCoin = args["coin"].toString();
+            var nftParentCoin = args["parent_coin"].toString();
+            unCurryNFTCoin(nftCoin: nftCoin, nftParentCoinJson: nftParentCoin);
+            break;
+          }
+        case "generateNftSpendBundle":
+          {
+            try {
+              var args = call.arguments;
+              debugPrint("generateNftSpendBundle got called with args : $args");
+              var nftCoin = args["coin"].toString();
+              var mnemonics = args["mnemonics"].toString().split(' ');
+              var observer = int.parse(args["observer"].toString());
+              var non_observer = int.parse(args["non_observer"].toString());
+              var destAddress = args["destAddress"].toString();
+              var fee = args['fee'];
+              var spentXCHCoins = args['spentCoins'];
+              var base_url = args["base_url"];
+              var fromAddress = args["fromAddress"];
+              generateNFTSpendBundle(
+                  nftCoinJson: nftCoin,
+                  mnemonics: mnemonics,
+                  observer: observer,
+                  non_observer: non_observer,
+                  destAddress: destAddress,
+                  fee: fee,
+                  spentCoinsJson: spentXCHCoins,
+                  base_url: base_url,
+                  fromAddress: fromAddress);
+              break;
+            } catch (ex) {
+              debugPrint("Exception in parsing args from android : $ex");
+              _channel.invokeMethod("nftSpendBundle");
+            }
+          }
+          break;
+        case "unCurryNFTSecond":
+          {
+            var args = call.arguments;
+            debugPrint("unCurryNFTSecond got called with args : $args");
+            var parent_coin_info = args["parent_coin_info"].toString();
+            var puzzle_hash = args["puzzle_hash"].toString();
+            var start_height = int.parse(args["start_height"].toString());
+            var mnemonics = args["mnemonics"].toString().split(' ');
+            var observer = int.parse(args["observer"].toString());
+            var non_observer = int.parse(args["non_observer"].toString());
+            var base_url = args["base_url"];
+            unCurryNFTCoinSecond(
+                mnemonics: mnemonics,
+                observer: observer,
+                non_observer: non_observer,
+                start_height: start_height,
+                parent_coin_info: parent_coin_info,
+                puzzle_hash: puzzle_hash,
+                base_url: base_url);
+          }
+          break;
+        case "puzzle_hash_to_address":
+          {
+            try {
+              var puzzleHashHex = call.arguments.toString();
+              debugPrint("Puzzle Hash Hex got called : $puzzleHashHex");
+              var minterDid = Address.fromPuzzlehash(
+                  Puzzlehash.fromHex(
+                      puzzleHashHex),
+                  "did:chia:");
+              _channel.invokeMethod("puzzle_hash_to_address", minterDid.address);
+            } catch (ex) {
+              _channel.invokeMethod("exception");
+            }
+          }
+          break;
       }
     });
+    // testingMethod();
   }
 
   Future<void> cachedWalletKeyChain(
@@ -267,20 +346,15 @@ class PushingTransaction {
       CatWalletService catWalletService = CatWalletService();
 
       stopwatch = Stopwatch()..start();
-      Map<String, dynamic> body = {
-        "puzzle_hashes": myOuterPuzzlehashes.map((e) => e.toHex()).toList()
-      };
 
+      final fullNodeRpc = FullNodeHttpRpc(httpUrl);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
 
       final responseDataCAT =
-          await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(body));
+          await fullNode.getCoinsByPuzzleHashes(myOuterPuzzlehashes);
 
       debugPrint(
-          "My Response From retrieving cat  : ${responseDataCAT.body}, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
+          "My Response From retrieving cat  : $responseDataCAT, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
 
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];
@@ -298,74 +372,64 @@ class PushingTransaction {
             httpUrl: httpUrl,
             spentCoinsParents: spentCoinsParents,
             standardCoinsForFee: standardCoinsForFee,
-            fee: fee));
+            fee: fee,
+            fullNode: fullNode));
       }
 
       debugPrint("SpentCoinsPrototypes on sending : $spentCoinsParents");
 
-      if (responseDataCAT.statusCode == 200) {
-        List<Coin> allCatCoins = [
-          for (final item in jsonDecode(responseDataCAT.body)['coin_records'])
-            Coin.fromChiaCoinRecordJson(item)
-        ];
+      List<Coin> allCatCoins = responseDataCAT;
 
-        allCatCoins.sort((a, b) {
-          return b.amount.compareTo(a.amount);
-        });
+      allCatCoins.sort((a, b) {
+        return b.amount.compareTo(a.amount);
+      });
 
-        // debugPrint("AllCoins sorted by decreasing order : $allCatCoins");
+      // debugPrint("AllCoins sorted by decreasing order : $allCatCoins");
 
-        List<Coin> filteredCoins = [];
-        var sum = 0;
-        for (final coin in allCatCoins) {
-          var coinIsSpent =
-              spentCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (coin.amount != 0 && !coinIsSpent) {
-            filteredCoins.add(coin);
-            sum += coin.amount;
-            if (sum >= amount) {
-              break;
-            }
+      List<Coin> filteredCoins = [];
+      var sum = 0;
+      for (final coin in allCatCoins) {
+        var coinIsSpent =
+            spentCoinsParents.contains(coin.parentCoinInfo.toString());
+        if (coin.amount != 0 && !coinIsSpent) {
+          filteredCoins.add(coin);
+          sum += coin.amount;
+          if (sum >= amount) {
+            break;
           }
         }
-
-        List<CatCoin> catCoins = [];
-        for (final coin in filteredCoins) {
-          futures.add(getCatCoinsDetail(
-              coin: coin, httpUrl: httpUrl, catCoins: catCoins));
-          if (futures.length == 3) {
-            debugPrint(
-                "Filled  futures with ${futures.length} wait for them to complete");
-            await Future.wait(futures);
-            futures.clear();
-          }
-        }
-        debugPrint("Sending cat coins future size : ${futures.length}");
-        await Future.wait(futures);
-        debugPrint("Sending cat coins : $catCoins");
-        final spendBundle = catWalletService.createSpendBundle(
-            payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
-            catCoinsInput: catCoins,
-            keychain: keyChainCAT,
-            changePuzzlehash: keyChainCAT.puzzlehashes[0],
-            fee: fee,
-            standardCoinsForFee: standardCoinsForFee);
-
-        var dest_puzzle_has = Address(destAddress).toPuzzlehash();
-        var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
-                dest_puzzle_has, Puzzlehash.fromHex(asset_id))
-            .toHex();
-
-        _channel.invokeMethod('getSpendBundle', {
-          "spendBundle": spendBundle.toJson(),
-          "dest_puzzle_hash": outer_dest_puzzle_hash,
-          "spentCoins": jsonEncode(standardCoinsForFee),
-          "spentTokens": jsonEncode(filteredCoins)
-        });
-      } else {
-        debugPrint("StatusCode is not ok  : ${responseDataCAT.body}");
-        throw Exception("Response on coin records is not ok");
       }
+
+      List<CatCoin> catCoins = [];
+      for (final coin in filteredCoins) {
+        futures.add(getCatCoinsDetail(
+            coin: coin,
+            httpUrl: httpUrl,
+            catCoins: catCoins,
+            fullNode: fullNode));
+      }
+      debugPrint("Sending cat coins future size : ${futures.length}");
+      await Future.wait(futures);
+      debugPrint("Sending cat coins : $catCoins");
+      final spendBundle = catWalletService.createSpendBundle(
+          payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
+          catCoinsInput: catCoins,
+          keychain: keyChainCAT,
+          changePuzzlehash: keyChainCAT.puzzlehashes[0],
+          fee: fee,
+          standardCoinsForFee: standardCoinsForFee);
+
+      var dest_puzzle_has = Address(destAddress).toPuzzlehash();
+      var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
+              dest_puzzle_has, Puzzlehash.fromHex(asset_id))
+          .toHex();
+
+      _channel.invokeMethod('getSpendBundle', {
+        "spendBundle": spendBundle.toJson(),
+        "dest_puzzle_hash": outer_dest_puzzle_hash,
+        "spentCoins": jsonEncode(standardCoinsForFee),
+        "spentTokens": jsonEncode(filteredCoins)
+      });
     } catch (e) {
       debugPrint("Caught exception in dart code for token" + e.toString());
       _channel.invokeMethod("exception", e.toString());
@@ -375,32 +439,11 @@ class PushingTransaction {
   Future<void> getCatCoinsDetail(
       {required Coin coin,
       required String httpUrl,
-      required List<CatCoin> catCoins}) async {
-    Map<String, dynamic> bodyParentCoinInfo = {
-      "name": coin.parentCoinInfo.toString()
-    };
-    final bodyParentCoinInfoRes =
-        await post(Uri.parse("$httpUrl/get_coin_record_by_name"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(bodyParentCoinInfo));
-    var parentCoin = CoinRecordResponse.fromJson(
-      jsonDecode(bodyParentCoinInfoRes.body) as Map<String, dynamic>,
-    ).coinRecord!.toCoin();
-    Map<String, dynamic> bodyParentCoinSpentBody = {
-      'coin_id': parentCoin.id.toHex(),
-      'height': parentCoin.spentBlockIndex,
-    };
-    final bodyParentCoinSpentRes =
-        await post(Uri.parse("$httpUrl/get_puzzle_and_solution"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(bodyParentCoinSpentBody));
-    var parentCoinSpend = CoinSpendResponse.fromJson(
-      jsonDecode(bodyParentCoinSpentRes.body) as Map<String, dynamic>,
-    ).coinSpend;
+      required List<CatCoin> catCoins,
+      required ChiaFullNodeInterface fullNode}) async {
+    final parentCoin = await fullNode.getCoinById(coin.parentCoinInfo);
+
+    final parentCoinSpend = await fullNode.getCoinSpend(parentCoin!);
     catCoins.add(CatCoin(
       parentCoinSpend: parentCoinSpend!,
       coin: coin,
@@ -414,29 +457,14 @@ class PushingTransaction {
       required String httpUrl,
       required List<String> spentCoinsParents,
       required List<Coin> standardCoinsForFee,
-      required int fee}) async {
-    var main_puzzle_hashes = keyChain.hardenedMap.keys
-        .map((e) => e.toHex())
-        .toList()
-        .sublist(0, non_observer);
-    main_puzzle_hashes.addAll(keyChain.unhardenedMap.keys
-        .map((e) => e.toHex())
-        .toList()
-        .sublist(0, observer));
-    Map<String, dynamic> standardCoinBody = {
-      "puzzle_hashes": main_puzzle_hashes
-    };
-    final responseDataForStandardCoins =
-        await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(standardCoinBody));
-    List<Coin> feeStandardCoinsTotal = [
-      for (final item
-          in jsonDecode(responseDataForStandardCoins.body)['coin_records'])
-        Coin.fromChiaCoinRecordJson(item)
-    ];
+      required int fee,
+      required ChiaFullNodeInterface fullNode}) async {
+    var main_puzzle_hashes =
+        keyChain.hardenedMap.keys.toList().sublist(0, non_observer);
+    main_puzzle_hashes
+        .addAll(keyChain.unhardenedMap.keys.toList().sublist(0, observer));
+    List<Coin> feeStandardCoinsTotal =
+        await fullNode.getCoinsByPuzzleHashes(main_puzzle_hashes);
     var feeSum = 0;
     feeStandardCoinsTotal.sort((a, b) {
       return b.amount.compareTo(a.amount);
@@ -446,8 +474,8 @@ class PushingTransaction {
     for (var coin in feeStandardCoinsTotal) {
       var feeCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      debugPrint(
-          "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
+      // debugPrint(
+      //     "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
       if (coin.amount != 0 && !feeCoinSpent) {
         feeSum += coin.amount;
         standardCoinsForFee.add(coin);
@@ -758,19 +786,23 @@ class PushingTransaction {
     return keychain;
   }
 
-  void getPuzzleHashCAT() async {
-    var assetId =
-        "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02";
+  void testingMethod() async {
+    // var mnemonic = [
+    //   "faint",
+    //   "step",
+    //   "noise",
+    //   "upper",
+    //   "anchor",
+    //   "audit",
+    //   "make",
+    //   "will",
+    //   "buyer",
+    //   "shed",
+    //   "cliff",
+    //   "chalk"
+    // ];
 
-    var outer_hashe = WalletKeychain.makeOuterPuzzleHash(
-            Puzzlehash.fromHex(
-                "069207980d2a4822c0e0bb57c88b7f85fcd30927e685b73597ddb34a27887dd9"),
-            Puzzlehash.fromHex(assetId))
-        .toHex();
-
-    debugPrint("Outer Hash : $outer_hashe");
-
-    var mnemonics = [
+    var mnemonic = [
       "blast",
       "song",
       "refuse",
@@ -785,28 +817,109 @@ class PushingTransaction {
       "vanish"
     ];
 
-    var observer = 2;
-    var non_observer = 3;
+    debugPrint(
+        "Minter DID From Hex : ${Address.fromPuzzlehash(Puzzlehash.fromHex('c23ecd8c8992e61f23c312f3eeb100301301fa9a6bb0e53539acdfc74b08881a'), "did:chia:")}");
 
-    final keyChainCat = generateKeyChainForAssets(mnemonics,
-        "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02", 1);
-    debugPrint("Start generating hashes");
-    Stopwatch stopwatch = new Stopwatch()..start();
-    final keyChain = generateKeyChain(mnemonics, 1, 2);
-    var setUnhardened =
-        keyChain.unhardenedMap.keys.map((e) => e.toHex()).toSet();
-    debugPrint("Testing Unhardened Size : ${setUnhardened.length}");
-    setUnhardened.forEach((element) {
-      debugPrint("Testing Unhardened : $element");
-    });
+    ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
 
-    var setHardened = keyChain.hardenedMap.keys.map((e) => e.toHex()).toSet();
-    debugPrint("Testing Hardened Size : ${setHardened.length}");
-    setHardened.forEach((element) {
-      debugPrint("Testing Hardened : $element");
-    });
-    stopwatch.stop();
-    debugPrint("End generating hashes : ${stopwatch.elapsed}");
+    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+
+    KeychainCoreSecret keychainSecret =
+        KeychainCoreSecret.fromMnemonic(mnemonic);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 5; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList);
+
+    const fullNode = ChiaFullNodeInterface(fullNodeRpc);
+
+    final nftService =
+        NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+    debugPrint("Testing getting all nft coins");
+    var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+        parent_coin_info: Bytes.fromHex(
+            "0xbf7190615ff980708097ef9eed73454fcab3fd845c529429a6d9e26941ab2f1c"),
+        puzzle_hash: Puzzlehash.fromHex(
+            "7bbc9355cc8cbb20d46af4a71f2e5e2bc12bb37af44821b3be9d719837c6cd9b"));
+    debugPrint("NFTCoins after retrieving : $nftCoins");
+    final nftCoin = nftCoins[0];
+
+    final nftFullCoin_ = await nftService.convertFullCoin(nftCoin);
+    final nftInfo = nftFullCoin_.toNftCoinInfo();
+
+    final info = UncurriedNFT.uncurry(nftInfo.fullPuzzle);
+    final launcherId = info.singletonLauncherId.atom;
+    final address = NftAddress.fromPuzzlehash(Puzzlehash(launcherId)).address;
+    debugPrint("Address of nft found : $address");
+    Map<String, dynamic> mapToAndroid = {};
+    mapToAndroid["nft_hash"] = nftCoin.coin.parentCoinInfo;
+    mapToAndroid["launcherId"] = info.singletonLauncherId.toHex();
+    mapToAndroid["didOwner"] = info.ownerDid?.toHex();
+    mapToAndroid["royaltyPercentage"] = info.tradePricePercentage.toString();
+    mapToAndroid["dataUris"] = info.dataUris.toList();
+    mapToAndroid["dataHash"] = info.dataHash;
+    mapToAndroid["metadataUris"] = info.metadata.toList();
+    mapToAndroid["metadataHash"] = info.metadataUpdaterHash;
+    mapToAndroid["licenseUris"] = info.licenseUris.toList();
+    mapToAndroid["licenseHash"] = info.licenseHash;
+    mapToAndroid["seriesTotal"] = info.seriesTotal;
+    mapToAndroid["seriesNumber"] = info.seriesNumber;
+    mapToAndroid["supportsDid"] = info.supportDid;
+    mapToAndroid["launcherPuzzlehash"] = info.launcherPuzhash.toHex();
+
+    debugPrint("Map To Android on testing : $mapToAndroid");
+    // final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+    // debugPrint("NFTFullCoin : $nftFullCoin");
+
+    return;
+    // var bundleNFT = NftWallet().createTransferSpendBundle(
+    //   nftCoin: nftFullCoin.toNftCoinInfo(),
+    //   keychain: keychain,
+    //   targetPuzzleHash: Address(
+    //           "xch10w7fx4wv3jajp4r27jn37tj790qjhvm673yzrva7n4cesd7xekds5yhrsx")
+    //       .toPuzzlehash(),
+    //   standardCoinsForFee: [],
+    //   fee: 0,
+    //   changePuzzlehash: keychain.puzzlehashes[0],
+    // );
+    // var bundleNFTJson = bundleNFT.toJson();
+    // print("BundleNFTJson : $bundleNFTJson");
+    // _channel.invokeMethod('nftSpendBundle', {"spendBundle": bundleNFTJson});
+    //
+    // print("Puzzle Hash Hint : ${keychain.puzzlehashes.first.toHex()}");
+    //
+    // Map<String, dynamic> body = {
+    //   "hint": keychain.puzzlehashes.first.toHex(),
+    //   "include_spent_coins": false
+    // };
+    //
+    // final response = await post(
+    //     Uri.parse(
+    //         "https://chia.green-app.io/full-node/get_coin_records_by_hint"),
+    //     headers: <String, String>{
+    //       'Content-Type': 'application/json; charset=UTF-8',
+    //     },
+    //     body: jsonEncode(body));
+    //
+    // var resCoinRecords = CoinRecordsResponse.fromJson(
+    //   jsonDecode(response.body) as Map<String, dynamic>,
+    // );
+    // print("NFT Coin Records : ${resCoinRecords.coinRecords}");
+    // var allNftCoins =
+    //     resCoinRecords.coinRecords.map((record) => record.toCoin()).toList();
+    // List<FullCoin> fullCoins = [];
+    // List<Future<void>> futures = [];
+    //
+    // for (final coin in allNftCoins) {
+    //   futures.add(getFullCoinsDetail(
+    //       coin: coin,
+    //       httpUrl: "https://chia.green-app.io/full-node",
+    //       fullCoins: fullCoins));
+    //   await Future.wait(futures);
+    // }
+    // print("NFTCoins after hydration : $allNftCoins");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
@@ -833,5 +946,310 @@ class PushingTransaction {
       }
     });
     _channel.invokeMethod('$asset_id', {asset_id: outer_puzzle_hashes});
+  }
+
+  void unCurryNFTCoin(
+      {required String nftCoin, required String nftParentCoinJson}) {
+    try {
+      var coinMap = json.decode(nftCoin) as Map<String, dynamic>;
+      var nftParentCoin = json.decode(nftParentCoinJson)["coin_solution"]
+          as Map<String, dynamic>;
+      // debugPrint(
+      //     "NFtParentCoin after decoding and casting : $nftParentCoin $coinMap");
+      final coin = Coin.fromChiaCoinRecordJson(coinMap);
+      // debugPrint("fromChiaCoinRecordJson : $coin");
+      final parentSpendCoin = CoinSpend.fromJson(nftParentCoin);
+      final puzzleReveal = parentSpendCoin.puzzleReveal;
+      final nftUncurried = UncurriedNFT.uncurry(
+        puzzleReveal,
+      );
+      final info = NFTInfo.fromUncurried(
+        uncurriedNFT: nftUncurried,
+        currentCoin: parentSpendCoin.coin,
+        addressPrefix: "xch",
+        genesisCoin: Coin(
+          confirmedBlockIndex: coin.confirmedBlockIndex,
+          spentBlockIndex: coin.spentBlockIndex,
+          coinbase: coin.coinbase,
+          timestamp: coin.timestamp,
+          parentCoinInfo: coin.parentCoinInfo,
+          puzzlehash: coin.puzzlehash,
+          amount: (coin.amount * pow(10, 23)).toInt(),
+        ), //Coin
+      );
+      debugPrint("Final UnCurried NFT : ${info.toMap()}");
+      Map<String, dynamic> mapToAndroid = {};
+      mapToAndroid["nft_hash"] = coin.parentCoinInfo.toHex();
+      mapToAndroid["launcherId"] =
+          NftAddress.fromPuzzlehash(info.launcherId).toString();
+      mapToAndroid["nftCoinId"] = info.nftCoinId.toHex();
+      mapToAndroid["didOwner"] = info.didOwner?.toHex();
+      mapToAndroid["royaltyPercentage"] = info.royaltyPercentage.toString();
+      mapToAndroid["royaltyAddress"] = info.royaltyAddress.toString();
+      mapToAndroid["dataUris"] = info.dataUris.toList();
+      mapToAndroid["dataHash"] = info.dataHash;
+      mapToAndroid["metadataUris"] = info.metadataUris.toList();
+      mapToAndroid["metadataHash"] = info.metadataHash;
+      mapToAndroid["licenseUris"] = info.licenseUris.toList();
+      mapToAndroid["licenseHash"] = info.licenseHash;
+      mapToAndroid["seriesTotal"] = info.seriesTotal;
+      mapToAndroid["seriesNumber"] = info.seriesNumber;
+      mapToAndroid["chainInfo"] = info.chainInfo;
+      mapToAndroid["mintHeight"] = info.mintHeight;
+      mapToAndroid["supportsDid"] = info.supportsDid.toString();
+      mapToAndroid["pendingTransaction"] = info.pendingTransaction.toString();
+      mapToAndroid["p2Puzzlehash"] = info.p2Puzzlehash.toHex();
+      mapToAndroid["launcherPuzzlehash"] = info.launcherPuzzlehash.toString();
+      _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
+    } catch (ex) {
+      debugPrint("Exception in unCurrying nft coin: ${ex.toString()}");
+      _channel.invokeMethod("exceptionNFT", ex.toString());
+    }
+  }
+
+  Future<void> generateNFTSpendBundle(
+      {required String nftCoinJson,
+      required List<String> mnemonics,
+      required int observer,
+      required int non_observer,
+      required String destAddress,
+      required int fee,
+      required String spentCoinsJson,
+      required String base_url,
+      required String fromAddress}) async {
+    try {
+      var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
+
+      final keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, non_observer);
+
+      var coinMap = json.decode(nftCoinJson) as Map<String, dynamic>;
+
+      NetworkContext()
+          .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+      final coin = Coin.fromChiaCoinRecordJson(coinMap);
+      debugPrint(
+          "NFTCoin to Send after decoding and parsing : $coin and baseURL : $base_url");
+
+      final fullNodeRpc = FullNodeHttpRpc(base_url);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+
+      List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
+      List<String> spentCoinsParents = [];
+      for (var item in spentCoinsJsonDecoded) {
+        var parent_coin_info = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parent_coin_info);
+      }
+      List<Future<void>> futures = [];
+      List<Coin> standardCoinsForFee = [];
+      if (fee > 0) {
+        futures.add(getStandardCoinsForFee(
+            keyChain: keychain,
+            observer: observer,
+            non_observer: non_observer,
+            httpUrl: base_url,
+            spentCoinsParents: spentCoinsParents,
+            standardCoinsForFee: standardCoinsForFee,
+            fee: fee,
+            fullNode: fullNode));
+      }
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+      debugPrint(
+          "PuzzleHash to get nft coins: ${Puzzlehash.fromHex(fromAddress)}");
+      var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+          parent_coin_info: coin.parentCoinInfo,
+          puzzle_hash: Puzzlehash.fromHex(fromAddress));
+      final nftCoin = nftCoins[0];
+      debugPrint("Found NFTCoin to send  $nftCoin");
+
+      final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+      debugPrint("Converting to FullNFTCoin : $nftFullCoin");
+      debugPrint('Standard XCH for fee : ${standardCoinsForFee}');
+
+      final destPuzzleHash = Address(destAddress).toPuzzlehash();
+      await Future.wait(futures);
+      var bundleNFT = NftWallet().createTransferSpendBundle(
+        nftCoin: nftFullCoin.toNftCoinInfo(),
+        keychain: keychain,
+        targetPuzzleHash: destPuzzleHash,
+        standardCoinsForFee: standardCoinsForFee,
+        fee: fee,
+        changePuzzlehash: keychain.puzzlehashes[0],
+      );
+      var bundleNFTJson = bundleNFT.toJson();
+
+      _channel.invokeMethod('nftSpendBundle', {
+        "spendBundle": bundleNFTJson,
+        "spentCoins": jsonEncode(standardCoinsForFee)
+      });
+    } catch (ex) {
+      debugPrint("Exception in sending nft token : $ex");
+      _channel.invokeMethod("failedNFT", "Sorry, something went wrong : $ex");
+    }
+  }
+
+  Future<void> getFullCoinsDetail(
+      {required Coin coin,
+      required String httpUrl,
+      required List<FullCoin> fullCoins}) async {
+    Map<String, dynamic> bodyParentCoinInfo = {
+      "name": coin.parentCoinInfo.toString()
+    };
+    final bodyParentCoinInfoRes =
+        await post(Uri.parse("$httpUrl/get_coin_record_by_name"),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(bodyParentCoinInfo));
+    var parentCoin = CoinRecordResponse.fromJson(
+      jsonDecode(bodyParentCoinInfoRes.body) as Map<String, dynamic>,
+    ).coinRecord!.toCoin();
+    Map<String, dynamic> bodyParentCoinSpentBody = {
+      'coin_id': parentCoin.id.toHex(),
+      'height': parentCoin.spentBlockIndex,
+    };
+    final bodyParentCoinSpentRes =
+        await post(Uri.parse("$httpUrl/get_puzzle_and_solution"),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(bodyParentCoinSpentBody));
+    var parentCoinSpend = CoinSpendResponse.fromJson(
+      jsonDecode(bodyParentCoinSpentRes.body) as Map<String, dynamic>,
+    ).coinSpend;
+    fullCoins.add(FullCoin(
+      parentCoinSpend: parentCoinSpend!,
+      coin: coin,
+    ));
+  }
+
+  Future<FullNFTCoinInfo> convertFullCoin(
+      FullCoin coin, WalletKeychain keychain) async {
+    final nftInfo =
+        await NftWallet().getNFTFullCoinInfo(coin, buildKeychain: (phs) async {
+      final founded = phs.where((element) =>
+          keychain.getWalletVector(
+            element,
+          ) !=
+          null);
+      if (founded.length == phs.length) {
+        return keychain;
+      }
+      return null;
+    });
+    FullNFTCoinInfo nftFullInfo = nftInfo.item1;
+    if (nftInfo.item1.minterDid == null) {
+      final did = await getMinterNft(Puzzlehash(nftInfo.item1.launcherId));
+      if (did != null) {
+        nftFullInfo = nftFullInfo.copyWith(minterDid: did.didId);
+      }
+      print("Minter DID is null");
+    }
+    return nftFullInfo;
+  }
+
+  Future<DidInfo?> getMinterNft(
+    Puzzlehash launcherId,
+  ) async {
+    final body = <String, dynamic>{
+      'parent_ids': [launcherId].map((parentId) => parentId.toHex()).toList(),
+    };
+    body['include_spent_coins'] = true;
+
+    final response = await post(
+        Uri.parse(
+            'https://chia.green-app.io/full-node/get_coin_records_by_parent_ids'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(body));
+
+    final mainChildrens = CoinRecordsResponse.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    ).coinRecords.map((record) => record.toCoin()).toList();
+
+    // final mainHidratedCoins = await fullNode.hydrateFullCoins(mainChildrens);
+    //
+    // if (mainHidratedCoins.isEmpty) {
+    //   throw Exception("Can't be found the NFT coin with launcher ${launcherId}");
+    // }
+    // FullCoin nftCoin = mainHidratedCoins.first;
+    // print(nftCoin.type);
+    // final foundedCoins = await fullNode.getAllLinageSingletonCoin(nftCoin);
+    // final eveCcoin = foundedCoins.first;
+    // final uncurriedNft = UncurriedNFT.tryUncurry(eveCcoin.parentCoinSpend!.puzzleReveal);
+    // if (uncurriedNft!.supportDid) {
+    //   final minterDid = NftService()
+    //       .getnewOwnerDid(unft: uncurriedNft, solution: eveCcoin.parentCoinSpend!.solution);
+    //   if (minterDid != null) {
+    //     return DidService(fullNode: fullNode, keychain: keychain)
+    //         .getDidInfoByLauncherId(Puzzlehash(minterDid));
+    //   }
+    // }
+    return null;
+  }
+
+  Future<void> unCurryNFTCoinSecond({
+    required List<String> mnemonics,
+    required int observer,
+    required int non_observer,
+    required int start_height,
+    required String parent_coin_info,
+    required String puzzle_hash,
+    required String base_url,
+  }) async {
+    try {
+      var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
+
+      final keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, non_observer);
+
+      ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
+      final fullNodeRpc = FullNodeHttpRpc(base_url);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+      var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+          parent_coin_info: Bytes.fromHex(parent_coin_info),
+          puzzle_hash: Puzzlehash.fromHex(puzzle_hash),
+          startHeight: start_height);
+      if (nftCoins.isEmpty) {
+        debugPrint("NFtCoins to uncurry is empty");
+      }
+      final nftCoin = nftCoins[0];
+      final nftFullCoin_ = await nftService.convertFullCoin(nftCoin);
+      final nftInfo = nftFullCoin_.toNftCoinInfo();
+      final info = UncurriedNFT.uncurry(nftInfo.fullPuzzle);
+      final launcherId = info.singletonLauncherId.atom;
+      final address = NftAddress.fromPuzzlehash(Puzzlehash(launcherId)).address;
+      debugPrint("Address of nft found : $address");
+      Map<String, dynamic> mapToAndroid = {};
+      mapToAndroid["nft_hash"] = nftCoin.coin.parentCoinInfo.toString();
+      mapToAndroid["launcherId"] = info.singletonLauncherId.toHex();
+      mapToAndroid["nftCoinId"] = address;
+      mapToAndroid["didOwner"] = info.ownerDid?.toHex();
+      if (info.tradePricePercentage != null) {
+        mapToAndroid["royaltyPercentage"] = info.tradePricePercentage! / 100;
+      } else {
+        mapToAndroid["royaltyPercentage"] = 0;
+      }
+      mapToAndroid["dataUrl"] = info.dataUris.toList()[0].toString();
+      mapToAndroid["dataHash"] = info.dataHash.toHex();
+      mapToAndroid["metadataUrl"] =
+          info.metadata.toList()[2].cons[1].toString();
+      mapToAndroid["metadataHash"] = info.metadataUpdaterHash.toHex();
+      // mapToAndroid["licenseUris"] = info.licenseUris.toList();
+      mapToAndroid["supportsDid"] = info.supportDid;
+
+      // debugPrint("Data url photo : ${info.metadata.toList()[2].cons[1].toString()}");
+      // debugPrint("Data url photo : ${info.metadata.toList()}");
+
+      _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
+    } catch (ex) {
+      debugPrint("Exception in uncurry nft second way : $ex");
+      _channel.invokeMethod("exceptionNFT", ex.toString());
+    }
   }
 }

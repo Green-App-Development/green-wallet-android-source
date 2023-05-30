@@ -46,7 +46,10 @@ class NotifinteractImpl @Inject constructor(
 
 		val notifItems = transactionsList.map { trans ->
 
-			val amountInUSD = tokenDAO.getTokenByCode(trans.code).get().price * trans.amount
+			var amountInUSD = 0.0
+			val optionalToken = tokenDAO.getTokenByCode(trans.code)
+			if (optionalToken.isPresent)
+				amountInUSD = optionalToken.get().price * trans.amount
 
 			NotificationItem(
 				trans.status,
@@ -57,7 +60,8 @@ class NotifinteractImpl @Inject constructor(
 				trans.fee_amount,
 				trans.created_at_time + timeDiff,
 				"",
-				trans.code
+				trans.code,
+				nft_coin_hash = trans.nft_coin_hash
 			)
 		}.toMutableList()
 

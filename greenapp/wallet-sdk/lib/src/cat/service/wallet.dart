@@ -5,7 +5,6 @@ import 'package:chia_crypto_utils/src/cat/exceptions/mixed_asset_ids_exception.d
 import 'package:chia_crypto_utils/src/cat/models/conditions/run_tail_condition.dart';
 import 'package:chia_crypto_utils/src/core/exceptions/change_puzzlehash_needed_exception.dart';
 import 'package:chia_crypto_utils/src/core/exceptions/insufficient_coins_exception.dart';
-import 'package:chia_crypto_utils/src/core/service/base_wallet.dart';
 import 'package:chia_crypto_utils/src/standard/exceptions/spend_bundle_validation/incorrect_announcement_id_exception.dart';
 import 'package:chia_crypto_utils/src/standard/exceptions/spend_bundle_validation/multiple_origin_coin_exception.dart';
 
@@ -467,7 +466,7 @@ class CatWalletService extends BaseWalletService {
     final coinsBeingSpent = <CoinPrototype>[];
     Bytes? originId;
     final catSpends =
-        spendBundle.coinSpends.where((spend) => spend.type == SpendType.cat);
+        spendBundle.coinSpends.where((spend) => spend.type == SpendType.cat2);
     for (final catSpend in catSpends) {
       final outputConditions =
           catSpend.puzzleReveal.run(catSpend.solution).program.toList();

@@ -25,7 +25,6 @@ class SupportInteractImpl @Inject constructor(
 ) :
 	SupportInteract {
 
-	@RequiresApi(Build.VERSION_CODES.N)
 	override suspend fun getFAQQuestionAnswers(): Resource<List<FAQItem>> {
 		try {
 			val langCode = prefs.getSettingString(PrefsManager.CUR_LANGUAGE_CODE, "ru")

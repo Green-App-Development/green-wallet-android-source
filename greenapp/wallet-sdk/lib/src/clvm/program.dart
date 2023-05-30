@@ -33,7 +33,7 @@ class Program with ToBytesMixin {
   Bytes? _atom;
   Position? position;
 
-  static int cost = 11000000000;
+  static const int cost = 11000000000;
   static Program nil = Program.fromBytes([]);
 
   @override
@@ -79,6 +79,22 @@ class Program with ToBytesMixin {
     } else {
       throw StateError('Unexpected end of source.');
     }
+  }
+
+  /// represent Program.at(), Take a string of only `f` and `r` characters and follow the corresponding path.
+  Program filterAt(String filter) {
+    Program v = this;
+    final path = filter.toLowerCase().split("");
+    for (var member in path) {
+      if (member == "f") {
+        v = v.first();
+      } else if (member == "r") {
+        v = v.rest();
+      } else {
+        throw Exception("`at` got illegal character `${member}`. Only `f` & `r` allowed");
+      }
+    }
+    return v;
   }
 
   // TODO(nvjoshi2): dont want to keep reloading this every time

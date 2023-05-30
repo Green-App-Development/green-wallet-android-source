@@ -15,8 +15,14 @@ import android.widget.TextView
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTransactionsBinding
 import com.green.wallet.domain.domainmodel.Transaction
@@ -25,11 +31,15 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.viewBinding
 import com.example.common.tools.*
+import com.green.wallet.databinding.DialogTranNftDetailsBinding
 import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.dialog_tran_nft_details.edtNFTName
+import kotlinx.android.synthetic.main.dialog_tran_nft_details.edtNftCollection
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,13 +56,14 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	@Inject
 	lateinit var animManager: AnimationManager
 
-	private lateinit var dateAdapter: TransactionSortingAdapter
+	private lateinit var dateAdapter: DynamicSpinnerAdapter
 
-	private lateinit var networkAdapter: TransactionSortingAdapter
+	private lateinit var networkAdapter: DynamicSpinnerAdapter
 
 	private val binding by viewBinding(FragmentTransactionsBinding::bind)
 
 	private lateinit var transactionItemAdapter: TransactionItemAdapter
+	private lateinit var transAdapterPaging: TransPagingAdapter
 
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
@@ -102,9 +113,27 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		initNetworkTypeAdapter()
 		initStatusHorizontalView()
 		initSortingByStatusClicks()
-		initTransactionItemAdapter()
+//		initTransactionItemAdapter()
+		initTransactionItemAdapterPagingSource()
 		sortingByHeightAndSum()
 		initSwipeRefreshLayout()
+		addEmptyTransPlaceHolder()
+	}
+
+	private fun initTransactionItemAdapterPagingSource() {
+		transAdapterPaging = TransPagingAdapter(getMainActivity(), this)
+		binding.recTransactionItems.apply {
+			adapter = transAdapterPaging
+			layoutManager = LinearLayoutManager(curActivity())
+		}
+		transAdapterPaging.registerAdapterDataObserver(object :
+			RecyclerView.AdapterDataObserver() {
+			override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+				if (positionStart == 0) {
+					binding.recTransactionItems.layoutManager?.scrollToPosition(0)
+				}
+			}
+		})
 	}
 
 
@@ -131,29 +160,62 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 
 	private fun updateTransactions() {
 		updateTransJob?.cancel()
+//		updateTransJob = lifecycleScope.launch {
+//			viewModel.getAllQueriedFlowTransactionList(
+//				currentAddress,
+//				getCurSearchAmount(),
+//				getCurChosenNetworkType(),
+//				getCurChosenStatus(),
+//				getCurSearchTransByDateCreatedExceptYesterday(),
+//				getCurSearchByForYesterdayStart(),
+//				getCurSearchByForYesterdayEnds(),
+//				getTokenCode()
+//			).collectLatest { transList ->
+//				binding.apply {
+//					if (transList.isNotEmpty()) {
+//						recTransactionItems.visibility = View.VISIBLE
+//						txtNoTrans.visibility = View.GONE
+//						updateTransactionItems(transList)
+//					} else {
+//						recTransactionItems.visibility = View.GONE
+//						txtNoTrans.visibility = View.VISIBLE
+//					}
+//				}
+//			}
+//		}
 		updateTransJob = lifecycleScope.launch {
-			viewModel.getAllQueriedFlowTransactionList(
-				currentAddress,
-				getCurSearchAmount(),
-				getCurChosenNetworkType(),
-				getCurChosenStatus(),
-				getCurSearchTransByDateCreatedExceptYesterday(),
-				getCurSearchByForYesterdayStart(),
-				getCurSearchByForYesterdayEnds(),
-				getTokenCode()
-			).collectLatest { transList ->
-				binding.apply {
-					if (transList.isNotEmpty()) {
-						recTransactionItems.visibility = View.VISIBLE
-						txtNoTrans.visibility = View.GONE
-						updateTransactionItems(transList)
-					} else {
-						recTransactionItems.visibility = View.GONE
-						txtNoTrans.visibility = View.VISIBLE
+			launch {
+				viewModel.getAllQueriedFlowTransactionPagingSource(
+					currentAddress,
+					getCurSearchAmount(),
+					getCurChosenNetworkType(),
+					getCurChosenStatus(),
+					getCurSearchTransByDateCreatedExceptYesterday(),
+					getCurSearchByForYesterdayStart(),
+					getCurSearchByForYesterdayEnds(),
+					getTokenCode()
+				).collectLatest { pagingData ->
+					VLog.d("PagingData got called : $pagingData")
+					transAdapterPaging.submitData(pagingData)
+				}
+			}
+			transAdapterPaging.loadStateFlow.collectLatest {
+				if (it.append is LoadState.NotLoading && it.append.endOfPaginationReached) {
+					binding.apply {
+						if (transAdapterPaging.itemCount >= 1) {
+							recTransactionItems.visibility = View.VISIBLE
+							txtNoTrans.visibility = View.GONE
+							placeHolderLinearView.visibility = View.VISIBLE
+						} else {
+							recTransactionItems.visibility = View.GONE
+							txtNoTrans.visibility = View.VISIBLE
+							placeHolderLinearView.visibility = View.GONE
+						}
 					}
 				}
 			}
 		}
+
 	}
 
 	private fun getTokenCode(): String? {
@@ -188,12 +250,29 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		val dp = curActivity().pxToDp(recHeight)
 		val atLeastItemCount = (dp / 45) - 2
 		VLog.d("At Least Item Count of RecyclerView Items : $atLeastItemCount")
-		for (tran in transList) {
-			VLog.d("Update Trans Adapter : $tran")
-		}
 		transactionItemAdapter.itemCountFitsScreen = atLeastItemCount
 		transactionItemAdapter.updateTransactionList(transList)
 		transactionItemAdapter.notifyDataSetChanged()
+	}
+
+	private fun addEmptyTransPlaceHolder() {
+		lifecycleScope.launch {
+			delay(50)
+			val recHeight = binding.placeHolderLinearView.height
+			val dp = curActivity().pxToDp(recHeight)
+			val atLeastItemCount = (dp / 45) - 3
+			VLog.d("Number of empty item to add is : $atLeastItemCount")
+			repeat(atLeastItemCount) {
+				val emptyView =
+					layoutInflater.inflate(R.layout.empty_tran_view_place_holder, null, false)
+				val layoutParams = LinearLayout.LayoutParams(
+					LinearLayout.LayoutParams.MATCH_PARENT,
+					getMainActivity().convertDpToPixel(45)
+				)
+				emptyView.layoutParams = layoutParams
+				binding.placeHolderLinearView.addView(emptyView)
+			}
+		}
 	}
 
 
@@ -247,7 +326,8 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			distinctNetworkTypes.add(0, curActivity().getStringResource(R.string.transactions_all))
 
 			networkAdapter =
-				TransactionSortingAdapter(
+				DynamicSpinnerAdapter(
+					180,
 					curActivity(),
 					distinctNetworkTypes
 				)
@@ -288,12 +368,15 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			Status.Incoming.toString() -> {
 				Status.Incoming
 			}
+
 			Status.Outgoing.toString() -> {
 				Status.Outgoing
 			}
+
 			Status.InProgress.toString() -> {
 				Status.InProgress
 			}
+
 			else -> {
 				null
 			}
@@ -336,13 +419,14 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 		if (networkAdapter.selectedPosition == 0)
 			return null
 
-		return networkAdapter.options[networkAdapter.selectedPosition]
+		return networkAdapter.dataOptions[networkAdapter.selectedPosition]
 	}
 
 
 	private fun initDateAdapter() {
 		curActivity().apply {
-			dateAdapter = TransactionSortingAdapter(
+			dateAdapter = DynamicSpinnerAdapter(
+				180,
 				curActivity(),
 				listOf(
 					getStringResource(R.string.transactions_all),
@@ -405,25 +489,93 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 	}
 
 	private fun showTransactionDetails(transaction: Transaction) {
+		if (transaction.code == "NFT") {
+			showTransactionsNFTDetails(transaction)
+		} else {
+			val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
+			dialog.setContentView(R.layout.dialog_transaction_details)
+			val width = resources.displayMetrics.widthPixels
+			dialog.apply {
+				addingDoubleDotsTxt(findViewById(R.id.txtDate))
+				addingDoubleDotsTxt(findViewById(R.id.txtCountCoins))
+				addingDoubleDotsTxt(findViewById(R.id.txtCommission))
+				addingDoubleDotsTxt(findViewById(R.id.txtHeightBlocks))
+				findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
+					dialog.dismiss()
+				}
+			}
+			initTransDetails(dialog, transaction)
+			dialog.window?.setLayout(
+				width,
+				WindowManager.LayoutParams.WRAP_CONTENT
+			)
+			dialog.show()
+		}
+	}
+
+	private fun showTransactionsNFTDetails(transaction: Transaction) {
 		val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
-		dialog.setContentView(R.layout.dialog_transaction_details)
+		val binding = DialogTranNftDetailsBinding.inflate(layoutInflater)
+		dialog.setContentView(binding.root)
 		val width = resources.displayMetrics.widthPixels
-		dialog.apply {
-			addingDoubleDotsTxt(findViewById(R.id.txtDate))
-			addingDoubleDotsTxt(findViewById(R.id.txtCountCoins))
-			addingDoubleDotsTxt(findViewById(R.id.txtCommission))
-			addingDoubleDotsTxt(findViewById(R.id.txtHeightBlocks))
-			findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
+		binding.apply {
+			addingDoubleDotsTxt(txtNFTDate)
+			addingDoubleDotsTxt(txtNftCommission)
+			addingDoubleDotsTxt(txtNFTBlockHeight)
+			backLayout.setOnClickListener {
 				dialog.dismiss()
 			}
 		}
-		initTransDetails(dialog, transaction)
+		initTransDetailsNFT(binding, transaction)
 		dialog.window?.setLayout(
 			width,
 			WindowManager.LayoutParams.WRAP_CONTENT
 		)
 		dialog.show()
 	}
+
+	@SuppressLint("SetTextI18n")
+	private fun initTransDetailsNFT(
+		binding: DialogTranNftDetailsBinding,
+		transaction: Transaction
+	) {
+		binding.apply {
+			val formattedDate = formattedDateForTransaction(
+				curActivity(),
+				transaction.created_at_time
+			)
+
+			VLog.d("Formatted date for tran details : $formattedDate")
+			binding.apply {
+				edtNFTDate.text = formattedDate
+				edtCommission.text =
+					"${formattedDoubleAmountWithPrecision(transaction.fee_amount)} ${
+						getShortNetworkType(
+							transaction.networkType
+						)
+					}"
+				edtNFTBlockHeight.text = transaction.confirmed_at_height.toString()
+
+				viewModel.initNFTInfoByHash(transaction.nft_coin_hash)
+				lifecycleScope.launch {
+					repeatOnLifecycle(Lifecycle.State.STARTED) {
+						viewModel.nftInfoState.collectLatest {
+							it?.let { nft ->
+								edtNFTName.text=nft.name
+								edtNftCollection.text=nft.collection
+								edtNftID.text= formatString(10,nft.nft_id,4)
+								Glide.with(getMainActivity()).load(nft.data_url)
+									.placeholder(getMainActivity().getDrawableResource(R.drawable.img_nft))
+									.into(imgNft)
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+
 
 	@SuppressLint("SetTextI18n")
 	private fun initTransDetails(dialog: Dialog, transaction: Transaction) {
