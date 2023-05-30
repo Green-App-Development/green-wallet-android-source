@@ -1,6 +1,7 @@
 package com.example.common.tools
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
@@ -8,7 +9,11 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
+import com.green.wallet.R
+import com.green.wallet.presentation.tools.RequestStatus
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getColorResource
+import com.green.wallet.presentation.tools.getStringResource
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
@@ -143,11 +148,13 @@ fun getTokenPrecisionByCode(code: String): Double {
 			10.0,
 			8.0
 		)
+
 		"XCH" ->
 			Math.pow(
 				10.0,
 				12.0
 			)
+
 		else -> 1000.0
 	}
 }
@@ -160,9 +167,55 @@ fun getTokenPrecisionAfterComoByTokenCode(code: String): Int {
 	}
 }
 
+fun requestDateFormat(timeCreated: Long): String {
+	return SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(timeCreated))
+}
 
+fun convertStringToRequestStatus(status: String): RequestStatus {
+	RequestStatus.values().forEach {
+		if (it == RequestStatus.valueOf(status))
+			return it
+	}
+	return RequestStatus.InProgress
+}
 
+fun getRequestStatusTranslation(activity: Activity, status: RequestStatus): String {
+	activity.apply {
+		return when (status) {
+			RequestStatus.InProgress -> getStringResource(R.string.status_in_process)
+			RequestStatus.Waiting -> getStringResource(R.string.awaiting_payment)
+			RequestStatus.Completed -> getStringResource(R.string.status_completed)
+			else -> getStringResource(R.string.status_canceled)
+		}
+	}
+}
 
+fun getRequestStatusColor(status: RequestStatus, activity: Activity): Int {
+	return activity.getColorResource(
+		when (status) {
+			RequestStatus.InProgress -> R.color.orange
+			RequestStatus.Waiting -> R.color.blue_aspect_ratio
+			RequestStatus.Completed -> R.color.green
+			else -> R.color.red_mnemonic
+		}
+	)
+}
+
+fun convertArrayStringToList(str: String): List<String> {
+	val withoutBrakes = str.substring(1, str.length - 1)
+	return withoutBrakes.split(",").map { it.trim() }.toList()
+}
+
+fun formatString(begin: Int, str: String, end: Int): String {
+	try {
+		val ans = StringBuilder()
+		ans.append(str.substring(0, begin)).append("...")
+		ans.append(str.substring(str.length - end))
+		return ans.toString()
+	} catch (ex: Exception) {
+		return str
+	}
+}
 
 
 

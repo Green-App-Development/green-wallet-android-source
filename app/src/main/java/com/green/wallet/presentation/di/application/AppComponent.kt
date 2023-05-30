@@ -1,13 +1,13 @@
 package com.green.wallet.presentation.di.application
 
 import android.content.Context
+import com.green.wallet.data.di.InteractModule
 import com.green.wallet.data.di.NetworkModule
 import com.green.wallet.presentation.App
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
-import com.green.wallet.data.di.InteractModule
 
 
 @AppScope

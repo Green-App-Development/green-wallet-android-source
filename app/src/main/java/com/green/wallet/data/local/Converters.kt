@@ -5,7 +5,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-
 object Converters {
 
 
@@ -52,11 +51,13 @@ object Converters {
 	}
 
 
+	@TypeConverter
 	fun stringToHashMap(str: String): HashMap<String, String> {
 		val type = object : TypeToken<HashMap<String, String>>() {}.type
 		return Gson().fromJson(str, type)
 	}
 
+	@TypeConverter
 	fun hashMapToString(hashMap: HashMap<String, String>): String {
 		return Gson().toJson(hashMap)
 	}

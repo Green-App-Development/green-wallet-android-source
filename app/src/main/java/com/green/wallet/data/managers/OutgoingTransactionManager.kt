@@ -121,7 +121,8 @@ class OutgoingTransactionManager @Inject constructor(
 											parent_coin.coin.puzzle_hash.substring(2),
 											wallet.address,
 											0.0,
-											tokenCode
+											tokenCode,
+											0
 										)
 										val formatted =
 											formattedDoubleAmountWithPrecision(coinAmount / division)
@@ -165,7 +166,8 @@ class OutgoingTransactionManager @Inject constructor(
 							"",
 							wallet.address,
 							0.0,
-							tokenCode
+							tokenCode,
+							0
 						)
 						transactionDao.insertTransaction(OutgoingTranEntity)
 					}

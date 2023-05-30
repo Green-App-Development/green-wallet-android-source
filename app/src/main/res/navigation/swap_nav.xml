@@ -2,7 +2,8 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
-		android:id="@+id/fragment_exchange">
+		android:id="@+id/nav_swap"
+		app:startDestination="@id/fragment_exchange">
 
 	<fragment
 			android:id="@+id/fragment_exchange"
@@ -15,5 +16,7 @@
 			android:name="com.green.wallet.presentation.main.swap.request.RequestFragment"
 			android:label="Request"
 			tools:layout="@layout/fragment_request" />
+
+
 
 </navigation>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+	<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_centerInParent="true"
+			android:background="@color/cardView_background"
+			android:paddingLeft="20dp"
+			android:paddingTop="20dp"
+			android:paddingRight="20dp"
+			android:paddingBottom="30dp">
+
+		<LinearLayout
+				android:id="@+id/back_layout"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:foreground="?android:attr/selectableItemBackground"
+				android:orientation="horizontal">
+
+			<ImageView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center_vertical"
+					android:gravity="center_vertical"
+					android:src="@drawable/back_arrow_ic" />
+
+			<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="match_parent"
+					android:layout_gravity="center_vertical"
+					android:text="@string/back_btn"
+					android:textColor="@color/greey"
+					android:textFontWeight="500"
+					android:textSize="18sp" />
+
+		</LinearLayout>
+
+
+		<TextView
+				android:id="@+id/txt_details_transactions"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/back_layout"
+				android:layout_centerHorizontal="true"
+				android:layout_marginStart="50dp"
+				android:layout_marginTop="5dp"
+				android:layout_marginEnd="50dp"
+				android:gravity="center_horizontal"
+				android:text="@string/transaction_pop_up_info_title"
+				android:textColor="@color/green"
+				android:textFontWeight="600"
+				android:textSize="23sp"
+				android:textStyle="bold" />
+
+
+		<LinearLayout
+				android:id="@+id/lay_detail_trans"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_below="@+id/txt_details_transactions"
+				android:layout_marginTop="20dp"
+				android:orientation="vertical">
+
+			<androidx.constraintlayout.widget.ConstraintLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+
+				<androidx.cardview.widget.CardView
+						android:id="@+id/imgCardNft"
+						android:layout_width="130dp"
+						android:layout_height="wrap_content"
+						app:cardCornerRadius="15dp">
+
+					<ImageView
+							android:id="@id/img_nft"
+							android:layout_width="match_parent"
+							android:layout_height="130dp"
+							android:scaleType="centerCrop"
+							android:src="@drawable/img_nft" />
+
+				</androidx.cardview.widget.CardView>
+
+				<LinearLayout
+						android:layout_width="0dp"
+						android:layout_height="match_parent"
+						android:layout_marginStart="10dp"
+						android:orientation="vertical"
+						app:layout_constraintBottom_toBottomOf="parent"
+						app:layout_constraintLeft_toRightOf="@+id/imgCardNft"
+						app:layout_constraintRight_toRightOf="parent"
+						app:layout_constraintTop_toTopOf="parent">
+
+					<TextView
+							android:id="@+id/edtNFTName"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="GAD NFT Collection #187"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="14sp" />
+
+					<TextView
+							android:id="@+id/txtNftCollection"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="8dp"
+							android:text="@string/nft_collection"
+							android:textColor="@color/green"
+							android:textFontWeight="600"
+							android:textSize="14sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+					<TextView
+							android:id="@+id/edtNftCollection"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:text="GAD NFT Collection"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="14sp" />
+
+					<TextView
+							android:id="@+id/txtNftID"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginTop="8dp"
+							android:text="NFT ID"
+							android:textColor="@color/green"
+							android:textFontWeight="600"
+							android:textSize="14sp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+					<TextView
+							android:id="@+id/edtNftID"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:layout_marginEnd="10dp"
+							android:layout_toLeftOf="@+id/imgCopyNftId"
+							android:text="nft1qxasgvsg7jbd...ne84"
+							android:textColor="@color/secondary_text_color"
+							android:textFontWeight="400"
+							android:textSize="14sp" />
+
+				</LinearLayout>
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="15dp"
+					android:orientation="horizontal">
+
+				<TextView
+						android:id="@+id/txtNFTDate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/notifications_transaction_info_data"
+						android:textColor="@color/green"
+						android:textFontWeight="600"
+						android:textSize="14sp"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+				<TextView
+						android:id="@+id/edtNFTDate"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:text="23 января, 19:11"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="550"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:orientation="horizontal">
+
+				<TextView
+						android:id="@+id/txtNftCommission"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/transaction_pop_up_info_commission"
+						android:textColor="@color/green"
+						android:textFontWeight="600"
+						android:textSize="14sp"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+				<TextView
+						android:id="@+id/edtCommission"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:text="0.000123 XCH"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="550"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+			<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="5dp"
+					android:orientation="horizontal">
+
+				<TextView
+						android:id="@+id/txtNFTBlockHeight"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="@string/block_height"
+						android:textColor="@color/green"
+						android:textFontWeight="600"
+						android:textSize="14sp"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="@id/guideline9" />
+
+				<TextView
+						android:id="@+id/edtNFTBlockHeight"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="5dp"
+						android:text="0.000123 XCH"
+						android:textColor="@color/secondary_text_color"
+						android:textFontWeight="550"
+						android:textStyle="normal" />
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</RelativeLayout>
+
+
+</RelativeLayout>

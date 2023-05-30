@@ -16,14 +16,14 @@ class AnimationManager @Inject constructor(private var context: Context) {
 
 	fun getBtnEffectAnimation() = AnimationUtils.loadAnimation(context, R.anim.btn_effect)
 
-	fun rotateBy180Forward(v: View,activity:Activity) {
+	fun rotateBy180Forward(v: View, activity: Activity) {
 		val animation = AnimationUtils.loadAnimation(activity, R.anim.rotate_forward_180)
 		animation.fillAfter = true
 		animation.isFillEnabled = true
 		v.startAnimation(animation)
 	}
 
-	fun rotateBy180Backward(v: View,activity:Activity) {
+	fun rotateBy180Backward(v: View, activity: Activity) {
 		val animation = AnimationUtils.loadAnimation(activity, R.anim.rotate_backward_180)
 		animation.fillAfter = true
 		animation.isFillEnabled = true
@@ -31,14 +31,21 @@ class AnimationManager @Inject constructor(private var context: Context) {
 	}
 
 
-	fun animateArrowIconCustomSpinner(spinner: CustomSpinner, icon: ImageView,activity: Activity) {
+	fun rotateBy180ForwardNoAnimation(v: View, activity: Activity) {
+		val animation = AnimationUtils.loadAnimation(activity, R.anim.rotate_forward_180_no_anim)
+		animation.fillAfter = true
+		animation.isFillEnabled = true
+		v.startAnimation(animation)
+	}
+
+	fun animateArrowIconCustomSpinner(spinner: CustomSpinner, icon: ImageView, activity: Activity) {
 		spinner.setSpinnerEventsListener(object : CustomSpinner.OnSpinnerEventsListener {
 			override fun onSpinnerOpened(spin: Spinner?) {
-				rotateBy180Forward(icon,activity)
+				rotateBy180Forward(icon, activity)
 			}
 
 			override fun onSpinnerClosed(spin: Spinner?) {
-				rotateBy180Backward(icon,activity)
+				rotateBy180Backward(icon, activity)
 			}
 
 		})

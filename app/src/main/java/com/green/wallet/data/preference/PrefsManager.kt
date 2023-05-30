@@ -146,6 +146,8 @@ class PrefsManager @Inject constructor(private val context: Context) : PrefsInte
 		val APP_INSTALL_TIME = longPreferencesKey("app_install_time")
 		val NOTIFICATION_ID = intPreferencesKey("notification_id")
 		val TIME_DIFFERENCE = longPreferencesKey("time_difference")
+		val VERIFIED_DID_LIST = stringPreferencesKey("verified_did_list")
+		val USER_GUID = stringPreferencesKey("user_guid")
 	}
 
 }

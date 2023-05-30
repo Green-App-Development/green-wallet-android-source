@@ -378,7 +378,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 					val main_hashes = arguments["main_puzzle_hashes"] as List<String>
 					val newWallet = Wallet(
 						fingerPrint,
-						"",
 						main_hashes,
 						address,
 						getMnemonicsList(),

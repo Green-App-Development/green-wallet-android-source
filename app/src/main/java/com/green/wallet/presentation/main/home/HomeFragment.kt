@@ -64,6 +64,9 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	@Inject
 	lateinit var dialogMan: DialogManager
 
+	@Inject
+	lateinit var viewPagerState: ViewPagerPosition
+
 	private var walletsJob: Job? = null
 	private var cryptoJob: Job? = null
 	private var networkItemsJob: Job? = null
@@ -84,7 +87,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	private var curNetwork: String = "Chia"
 	private var curFingerPrint: Long? = null
 	private var toHideBalance = false
-	private var prevChosenPositionInViewPager = 0
 	private var hasAtLeastOneWallet = true
 
 	private lateinit var mainViewPagerWalletAdapter: ViewPagerWalletsAdapter
@@ -124,7 +126,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		VLog.d("OnViewCreated on HomeFragment")
+		VLog.d("OnViewCreated on HomeFragment $viewPagerState -> ${viewPagerState.pagerPosition}")
 		prevModeChanged()
 		binding.registerButtonClicks()
 		initWalletTokenAdapter()
@@ -215,7 +217,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 	@SuppressLint("SetTextI18n")
 	private suspend fun initWalletListViewPager(homeAddedList: List<WalletWithTokens>) {
 		if (homeAddedList.isNotEmpty()) {
-
 			mainViewPagerWalletAdapter =
 				ViewPagerWalletsAdapter(
 					curActivity(),
@@ -228,20 +229,57 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 			mainWalletViewPager.adapter = mainViewPagerWalletAdapter
 			pageIndicator.count = homeAddedList.size
 			pageIndicator.visibility = View.VISIBLE
-			mainWalletViewPager.visibility = View.VISIBLE
 			rel_no_wallet.visibility = View.GONE
-			if (prevChosenPositionInViewPager >= homeAddedList.size)
-				prevChosenPositionInViewPager = 0
-			curBalance = homeAddedList[prevChosenPositionInViewPager].totalAmountInUSD
-			curNetwork = homeAddedList[prevChosenPositionInViewPager].networkType
-			homeFragmentViewModel.updateCryptoCurrencyCourse(homeAddedList[prevChosenPositionInViewPager].networkType)
-			pageIndicator.setSelected(prevChosenPositionInViewPager)
-			mainWalletViewPager.setCurrentItem(prevChosenPositionInViewPager, true)
+			if (viewPagerState.pagerPosition >= homeAddedList.size) {
+				viewPagerState.pagerPosition = 0
+			}
+			curBalance = homeAddedList[viewPagerState.pagerPosition].totalAmountInUSD
+			curNetwork = homeAddedList[viewPagerState.pagerPosition].networkType
+			homeFragmentViewModel.updateCryptoCurrencyCourse(homeAddedList[viewPagerState.pagerPosition].networkType)
+			pageIndicator.setSelected(viewPagerState.pagerPosition)
 //            homeFragmentViewModel.updateCryptoCurrencyCourse(curNetwork)
-			curFingerPrint = homeAddedList[prevChosenPositionInViewPager].fingerPrint
+			curFingerPrint = homeAddedList[viewPagerState.pagerPosition].fingerPrint
 			updateBalanceToDollarStr()
 			homeFragmentViewModel.saveHomeIsAddedWalletCounter(homeAddedList.size)
 			hasAtLeastOneWallet = true
+			binding.apply {
+				mainWalletViewPager.visibility = View.VISIBLE
+				mainWalletViewPager.setCurrentItem(viewPagerState.pagerPosition, true)
+				mainWalletViewPager.addOnPageChangeListener(object :
+					ViewPager.OnPageChangeListener {
+					override fun onPageScrolled(
+						position: Int,
+						positionOffset: Float,
+						positionOffsetPixels: Int
+					) {
+
+					}
+
+					@SuppressLint("SetTextI18n")
+					override fun onPageSelected(position: Int) {
+						VLog.d("Selected Position  MainViewPager -> : $position")
+						pageIndicator.setSelected(position)
+						viewPagerState.pagerPosition = position
+						if (this@HomeFragment::mainViewPagerWalletAdapter.isInitialized) {
+							curBalance =
+								mainViewPagerWalletAdapter.walletList[position].totalAmountInUSD
+							curNetwork = mainViewPagerWalletAdapter.walletList[position].networkType
+							curFingerPrint =
+								mainViewPagerWalletAdapter.walletList[position].fingerPrint
+							updateBalanceToDollarStr()
+							initSettingIcon(mainViewPagerWalletAdapter.walletList[position].address)
+							homeFragmentViewModel.updateCryptoCurrencyCourse(
+								mainViewPagerWalletAdapter.walletList[position].networkType
+							)
+						}
+					}
+
+					override fun onPageScrollStateChanged(state: Int) {
+
+					}
+
+				})
+			}
 			delay(1000L)
 			val rect = Rect()
 			binding.apply {
@@ -249,6 +287,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 				swipeRefresh.topY = rect.top - 40
 				swipeRefresh.bottomY = rect.bottom
 			}
+
 		} else {
 			binding.apply {
 				relNoWallet.visibility = View.VISIBLE
@@ -296,38 +335,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 //            it.startAnimation(effect.getAnimation())
 			showBottomSheetDialogSettings()
 		}
-
-		mainWalletViewPager.addOnPageChangeListener(object :
-			ViewPager.OnPageChangeListener {
-			override fun onPageScrolled(
-				position: Int,
-				positionOffset: Float,
-				positionOffsetPixels: Int
-			) {
-
-			}
-
-			@SuppressLint("SetTextI18n")
-			override fun onPageSelected(position: Int) {
-				VLog.d("Selected Position  MainViewPager -> : $position")
-				pageIndicator.setSelected(position)
-				prevChosenPositionInViewPager = position
-				if (this@HomeFragment::mainViewPagerWalletAdapter.isInitialized) {
-					curBalance = mainViewPagerWalletAdapter.walletList[position].totalAmountInUSD
-					curNetwork = mainViewPagerWalletAdapter.walletList[position].networkType
-					curFingerPrint =
-						mainViewPagerWalletAdapter.walletList[position].fingerPrint
-					updateBalanceToDollarStr()
-					initSettingIcon(mainViewPagerWalletAdapter.walletList[position].address)
-					homeFragmentViewModel.updateCryptoCurrencyCourse(mainViewPagerWalletAdapter.walletList[position].networkType)
-				}
-			}
-
-			override fun onPageScrollStateChanged(state: Int) {
-
-			}
-
-		})
 
 		relAddWallet.setOnClickListener {
 			addWallet()

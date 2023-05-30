@@ -30,7 +30,7 @@ class NotificationHelper @Inject constructor(
 
 	companion object {
 		const val GreenAppChannel = "Green Wallet Messages"
-		const val transactionMessages = "Transactions"
+		const val TransactionMessages = "Transactions"
 	}
 
 	private val mutex = Mutex()
@@ -89,9 +89,9 @@ class NotificationHelper @Inject constructor(
 	}
 
 
-	private fun buildingNotificationChannels() {
+	fun buildingNotificationChannels() {
 
-		val channels = listOf(GreenAppChannel, transactionMessages)
+		val channels = listOf(GreenAppChannel, TransactionMessages)
 		channels.forEach {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				val importance: Int = NotificationManager.IMPORTANCE_DEFAULT

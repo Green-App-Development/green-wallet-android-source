@@ -9,12 +9,16 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.green.wallet.R
+import com.green.wallet.databinding.NftImgPlaceholderBinding
 import com.green.wallet.presentation.main.MainActivity
 
 
@@ -118,6 +122,12 @@ fun Activity.pxToDp(px: Int): Int {
 	return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
 }
 
+fun Context.dpToPx(dp: Int): Int {
+	val density = resources.displayMetrics.density
+	val pxValue = (dp * density).toInt()
+	return pxValue
+}
+
 fun Activity.getResourceAnimation(resId: Int) = AnimationUtils.loadAnimation(this, resId)
 
 
@@ -149,3 +159,43 @@ val FragmentManager.currentNavigationFragment: Fragment?
 fun Fragment.getMainActivity(): MainActivity {
 	return requireActivity() as MainActivity
 }
+
+
+fun Activity.getCustomProgressLayoutWithParams(size: Int, thickness: Int): View {
+	val binding = NftImgPlaceholderBinding.inflate(layoutInflater)
+	binding.progressBar.apply {
+		indicatorSize = size
+		trackThickness = thickness
+	}
+	val layoutParams = LinearLayout.LayoutParams(
+		LinearLayout.LayoutParams.MATCH_PARENT,
+		LinearLayout.LayoutParams.MATCH_PARENT
+	)
+	binding.root.layoutParams = layoutParams
+	return binding.root
+}
+
+fun Activity.makeGreenDuringFocus(txt: TextView) {
+	txt.setTextColor(getColorResource(R.color.green))
+}
+
+fun Activity.makeGreyDuringNonFocus(txt: TextView) {
+	txt.setTextColor(getColorResource(R.color.grey_txt_color))
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

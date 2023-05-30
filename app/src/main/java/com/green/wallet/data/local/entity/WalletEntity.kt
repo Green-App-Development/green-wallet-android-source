@@ -44,7 +44,6 @@ data class WalletEntity(
 	fun toWallet(decMnemonics: List<String>) =
 		Wallet(
 			fingerPrint,
-			privateKey,
 			puzzle_hashes,
 			address,
 			decMnemonics,

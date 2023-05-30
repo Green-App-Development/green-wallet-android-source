@@ -78,6 +78,7 @@
 							android:layout_width="match_parent"
 							android:layout_height="130dp"
 							android:scaleType="centerCrop"
+							android:id="@+id/img_nft"
 							android:src="@drawable/img_nft" />
 
 				</androidx.cardview.widget.CardView>
@@ -93,7 +94,7 @@
 						app:layout_constraintTop_toTopOf="parent">
 
 					<TextView
-							android:id="@+id/txtNftName"
+							android:id="@+id/edtNFTName"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:text="GAD NFT Collection #187"
@@ -115,7 +116,7 @@
 							app:layout_constraintTop_toTopOf="@id/guideline9" />
 
 					<TextView
-							android:id="@+id/txtNftCategory"
+							android:id="@+id/edtNftCollection"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:text="GAD NFT Collection"

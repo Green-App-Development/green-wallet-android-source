@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <dimen name="switch_padding">-2dp</dimen>
-    <dimen name="switch_radius">100dp</dimen>
-    <dimen name="switch_size">30dp</dimen>
+	<dimen name="switch_padding">-2dp</dimen>
+	<dimen name="switch_radius">100dp</dimen>
+	<dimen name="switch_size">30dp</dimen>
+	<dimen name="request_property_top">13dp</dimen>
+	<dimen name="request_property_bottom">14dp</dimen>
+	<dimen name="request_property_start">15dp</dimen>
+	<dimen name="request_property_end">15dp</dimen>
 </resources>

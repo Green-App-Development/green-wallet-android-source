@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		xmlns:tools="http://schemas.android.com/tools">
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline10"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			app:layout_constraintGuide_percent="0.30" />
+
+
+	<LinearLayout
+			android:id="@+id/linearDummyNftImg1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:padding="2dp"
+			android:visibility="gone"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="@+id/guideline10">
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_76" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="5dp"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_77" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_79__1_" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+	</LinearLayout>
+
+	<LinearLayout
+			android:id="@+id/linearDummyNftImg2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:orientation="horizontal"
+			android:visibility="gone"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/linearDummyNftImg1">
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_79" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="5dp"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_80" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_81" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+		<com.google.android.material.card.MaterialCardView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="5dp"
+				android:background="@drawable/bcg_dummy_nft_img"
+				app:cardCornerRadius="5dp"
+				app:strokeWidth="1dp">
+
+			<ImageView
+					android:layout_width="70dp"
+					android:layout_height="70dp"
+					android:scaleType="fitXY"
+					android:src="@drawable/rectangle_82" />
+
+		</com.google.android.material.card.MaterialCardView>
+
+	</LinearLayout>
+
+	<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/rec_view_nft"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_marginBottom="10dp"
+			android:paddingLeft="7dp"
+			android:paddingRight="7dp"
+			android:visibility="visible"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			tools:listitem="@layout/item_nft"
+			app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+			app:spanCount="2"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintLeft_toLeftOf="parent"
+			app:layout_constraintRight_toRightOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toBottomOf="@+id/layout_finger_print"
+			app:layout_constraintVertical_bias="0.0">
+
+
+	</androidx.recyclerview.widget.RecyclerView>
+
+
+	<LinearLayout
+			android:id="@+id/layout_finger_print"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:orientation="horizontal"
+			android:visibility="visible"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent">
+
+		<TextView
+				android:id="@+id/txtNetwork"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Chia"
+				android:textColor="@color/second_grey" />
+
+		<TextView
+				android:id="@+id/txtHiddenPublicKey"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginStart="12dp"
+				android:elevation="7dp"
+				android:text="******1422"
+				android:textColor="@color/second_grey" />
+
+	</LinearLayout>
+
+
+	<TextView
+			android:id="@+id/txtNoNFTPlaceHolder"
+			android:layout_width="304dp"
+			android:layout_height="67dp"
+			android:layout_marginTop="20dp"
+			android:gravity="center_horizontal"
+			android:text="@string/all_nfts_shown_txt"
+			android:textColor="@color/grey_txt_color"
+			android:textFontWeight="600"
+			android:textSize="20sp"
+			android:visibility="visible"
+			app:layout_constraintEnd_toEndOf="@+id/linearDummyNftImg2"
+			app:layout_constraintStart_toStartOf="@+id/linearDummyNftImg2"
+			app:layout_constraintTop_toBottomOf="@id/linearDummyNftImg2" />
+
+
+	<com.google.android.material.button.MaterialButton
+			android:id="@+id/btnExploreMarkets"
+			style="@style/Widget.AppTheme.MaterialButton"
+			android:layout_width="0dp"
+			android:layout_height="60dp"
+			android:layout_marginStart="32dp"
+			android:layout_marginEnd="32dp"
+			android:layout_marginBottom="5dp"
+			android:background="@drawable/btn_background_draw"
+			android:text="@string/explore_btn"
+			android:textAllCaps="false"
+			android:visibility="gone"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintHorizontal_bias="0.0"
+			app:layout_constraintStart_toStartOf="parent" />
+
+
+	<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/comment_under_dev"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:visibility="gone"
+			app:layout_constraintBottom_toTopOf="@+id/btnExploreMarkets"
+			app:layout_constraintEnd_toEndOf="@+id/btnExploreMarkets"
+			app:layout_constraintStart_toStartOf="@+id/btnExploreMarkets">
+
+		<ImageView
+				android:id="@+id/ic_down_arrow"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginEnd="10dp"
+				android:rotation="180"
+				android:src="@drawable/ic_polygon"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent" />
+
+		<RelativeLayout
+				android:id="@+id/rel_txt_bcg"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="15dp"
+				android:background="@drawable/bcg_rounded_corner_comment"
+				android:paddingLeft="20dp"
+				android:paddingTop="10dp"
+				android:paddingRight="20dp"
+				android:paddingBottom="10dp"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="parent">
+
+			<TextView
+					android:layout_width="150dp"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:gravity="center_horizontal"
+					android:text="@string/funct_is_under_dev"
+					android:textColor="@color/white" />
+
+		</RelativeLayout>
+
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<com.rd.PageIndicatorView
+			android:id="@+id/pageIndicator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="15dp"
+			android:visibility="gone"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:piv_animationType="swap"
+			app:piv_count="3"
+			app:piv_radius="4dp"
+			app:piv_selectedColor="@color/selected_dot_indicator"
+			app:piv_unselectedColor="@color/unselected_dot_indicator" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

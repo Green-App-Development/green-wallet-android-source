@@ -1,18 +1,19 @@
 package com.green.wallet.data.local
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.IGNORE
+import com.green.wallet.data.local.dto.ChiaWalletDTO
 import com.green.wallet.data.local.entity.WalletEntity
+import com.green.wallet.data.local.relations.WalletWithNFTInfoRelation
 import com.green.wallet.presentation.tools.NetworkType
 import kotlinx.coroutines.flow.Flow
 import java.util.*
-import kotlin.collections.HashMap
 
 
 @Dao
 interface WalletDao {
 
-	@Insert(onConflict = REPLACE)
+	@Insert(onConflict = IGNORE)
 	suspend fun insertWallet(walletEntity: WalletEntity): Long
 
 	@Delete
@@ -133,6 +134,13 @@ interface WalletDao {
 		tokenStartHeight: HashMap<String, Long>,
 		address: String
 	)
+
+	@Transaction
+	@Query("SELECT fingerPrint,mnemonics,observer_hash,non_observer_hash,address FROM WalletEntity WHERE homeAdded>0 ORDER BY homeAdded ASC")
+	fun getFLowOfWalletListWithNFTCoins(): Flow<List<WalletWithNFTInfoRelation>>
+
+	@Query("SELECT fingerPrint,address FROM WalletEntity")
+	suspend fun getChiaWalletList(): List<ChiaWalletDTO>
 
 
 }

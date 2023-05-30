@@ -130,15 +130,36 @@
 									android:id="@+id/imgCardNft"
 									android:layout_width="130dp"
 									android:layout_height="wrap_content"
+									android:visibility="invisible"
 									app:cardCornerRadius="15dp">
 
 								<ImageView
 										android:layout_width="match_parent"
 										android:layout_height="130dp"
 										android:scaleType="centerCrop"
+										android:id="@+id/img_nft"
 										android:src="@drawable/img_nft" />
 
 							</androidx.cardview.widget.CardView>
+
+							<RelativeLayout
+									android:id="@+id/frame_progress_bar"
+									android:layout_width="130dp"
+									android:layout_height="130dp"
+									android:background="@drawable/border_nft_img">
+
+								<com.google.android.material.progressindicator.CircularProgressIndicator
+										android:id="@+id/progress_bar"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_centerInParent="true"
+										android:indeterminate="true"
+										app:indicatorColor="@color/green"
+										app:indicatorSize="30dp"
+										app:trackColor="@color/track_color"
+										app:trackThickness="1dp" />
+
+							</RelativeLayout>
 
 							<LinearLayout
 									android:layout_width="0dp"
@@ -151,7 +172,7 @@
 									app:layout_constraintTop_toTopOf="parent">
 
 								<TextView
-										android:id="@+id/txtNftName"
+										android:id="@+id/edtNFTName"
 										android:layout_width="wrap_content"
 										android:layout_height="wrap_content"
 										android:text="GAD NFT Collection #187"
@@ -173,7 +194,7 @@
 										app:layout_constraintTop_toTopOf="@id/guideline9" />
 
 								<TextView
-										android:id="@+id/txtNftCategory"
+										android:id="@+id/edtNFTCollection"
 										android:layout_width="wrap_content"
 										android:layout_height="wrap_content"
 										android:text="GAD NFT Collection"
@@ -182,7 +203,7 @@
 										android:textSize="14sp" />
 
 								<TextView
-										android:id="@+id/txtNftID"
+										android:id="@+id/edtNFTId"
 										android:layout_width="wrap_content"
 										android:layout_height="wrap_content"
 										android:layout_marginTop="8dp"
@@ -234,245 +255,9 @@
 									android:layout_width="wrap_content"
 									android:layout_height="match_parent"
 									android:layout_marginBottom="12dp"
+									android:id="@+id/container_properties"
 									android:orientation="horizontal">
 
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_apy"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtApyPercent"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="9.5%"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_body"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtBody"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="Common"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_beak_type"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtBreakType"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="Common"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_eye_type"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtEyeType"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="Calm"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_eye_color"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtEyeColor"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="Dark green"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_clothing"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtClothing"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="T-shirt"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_clothing_color"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtClothingClr"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="Pink"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
-
-
-								<LinearLayout
-										android:layout_width="match_parent"
-										android:layout_height="match_parent"
-										android:layout_marginStart="3dp"
-										android:background="@drawable/bcg_nft_property"
-										android:gravity="center_vertical"
-										android:minWidth="90dp"
-										android:orientation="vertical"
-										android:paddingStart="8dp"
-										android:paddingTop="5dp"
-										android:paddingBottom="5dp">
-
-									<TextView
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="@string/nft_special_sign"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="10sp" />
-
-									<TextView
-											android:id="@+id/edtSpecialSign"
-											android:layout_width="wrap_content"
-											android:layout_height="wrap_content"
-											android:text="Playful"
-											android:textColor="@color/secondary_text_color"
-											android:textSize="14sp" />
-
-								</LinearLayout>
 
 							</LinearLayout>
 
@@ -693,7 +478,7 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:layout_marginBottom="5dp"
-								android:text="Spendable Balance"
+								android:text="@string/spendable_balance"
 								android:textColor="@color/greey"
 								android:visibility="gone" />
 
@@ -733,7 +518,7 @@
 									android:layout_height="wrap_content"
 									android:layout_alignParentEnd="true"
 									android:layout_centerVertical="true"
-									android:text="-"
+									android:text="XCH"
 									android:textColor="@color/enter_commission_token"
 									android:textFontWeight="400"
 									android:textSize="16sp" />

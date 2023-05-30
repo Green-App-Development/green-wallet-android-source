@@ -13,7 +13,7 @@ class SimulatorHttpRpc extends FullNodeHttpRpc {
         );
 
   Future<ChiaBaseResponse> farmTransactionBlock(Address address) async {
-    final responseData = await client.post(
+    final responseData = await client.postCustom(
       Uri.parse('farm_tx_block'),
       {'address': address.address},
     );

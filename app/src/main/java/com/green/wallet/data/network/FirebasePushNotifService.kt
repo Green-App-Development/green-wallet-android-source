@@ -25,12 +25,12 @@ class FirebasePushNotifService : FirebaseMessagingService() {
 
 	override fun onMessageReceived(message: RemoteMessage) {
 		super.onMessageReceived(message)
-		CoroutineScope(Dispatchers.IO).launch {
-			notifHelper.callGreenAppNotificationMessages(
-				"Message FCM Checking",
-				System.currentTimeMillis()
-			)
-		}
+//		CoroutineScope(Dispatchers.IO).launch {
+//			notifHelper.callGreenAppNotificationMessages(
+//				"Messege FCM Checking",
+//				System.currentTimeMillis()
+//			)
+//		}
 	}
 
 }

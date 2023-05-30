@@ -20,4 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.green.wallet.data.network.dto.*
+-keep class com.green.wallet.data.local.entity.**
+-keep class com.green.wallet.data.network.dto.**

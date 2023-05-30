@@ -1,6 +1,7 @@
 package com.green.wallet.data.di
 
 import com.green.wallet.BuildConfig
+import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.GreenAppService
 import com.green.wallet.data.network.getUnsafeOkHttpClient
 import com.green.wallet.presentation.di.application.AppScope
@@ -21,7 +22,7 @@ class NetworkModule {
 	fun provideLanguageRetrofitInstance(): Retrofit {
 
 		val interceptor = HttpLoggingInterceptor().apply {
-			level = HttpLoggingInterceptor.Level.NONE
+			level = HttpLoggingInterceptor.Level.BODY
 		}
 		return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL_GREEN_APP)
 			.client(getUnsafeOkHttpClient(interceptor))
@@ -31,10 +32,16 @@ class NetworkModule {
 	}
 
 	@Provides
+	@AppScope
 	fun provideLanguageService(@Named("retrofit_green_app") retrofit: Retrofit) = retrofit.create(
 		GreenAppService::class.java
 	)
 
+	@Provides
+	@AppScope
+	fun provideExchangeService(@Named("retrofit_green_app") retrofit: Retrofit) = retrofit.create(
+		ExchangeService::class.java
+	)
 
 	@Provides
 	@AppScope
