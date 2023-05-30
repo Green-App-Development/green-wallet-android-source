@@ -1,10 +1,5 @@
 package com.green.wallet.presentation
 
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.NavController
 import androidx.work.*
@@ -18,7 +13,6 @@ import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.custom.workmanager.WorkManagerSyncTransactions
 import com.green.wallet.presentation.di.application.AppComponent
 import com.green.wallet.presentation.di.application.DaggerAppComponent
-import com.green.wallet.presentation.di.components.swap.SwapComponent
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.SYNC_WORK_TAG
 import com.green.wallet.presentation.tools.VLog
@@ -66,7 +60,6 @@ class App : DaggerApplication() {
 	lateinit var notificationHelper: NotificationHelper
 
 	lateinit var appComponent: AppComponent
-	lateinit var swapComponent: SwapComponent
 	lateinit var swapNavController: NavController
 
 	var applicationIsAlive = false

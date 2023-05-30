@@ -59,7 +59,7 @@ class CryptocurrencyImpl @Inject constructor(
 				val chives = res.body()!!.asJsonObject["chives-coin"]
 				val chiaPrice = JSONObject(chia.toString()).getDouble("usd")
 				val chivesPrice = JSONObject(chives.toString()).getDouble("usd")
-				VLog.d("Saving Chia and Chives course Exchange : $chiaPrice, ${chivesPrice}")
+				VLog.d("Saving Chia and Chives course ExchangeDTO : $chiaPrice, ${chivesPrice}")
 				prefs.saveCoursePriceDouble(
 					getPreferenceKeyForCurStockNetworkDouble("Chia"),
 					chiaPrice

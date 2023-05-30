@@ -751,7 +751,7 @@ class MainActivity : BaseActivity() {
 	var prevSoftKeyboardValue = false
 
 	private fun changeVisibilityOfViewsDuringSoftKeyBoardOpen(visibility: Boolean) {
-		VLog.d("Soft key board is open : $visibility")
+//		VLog.d("Soft key board is open : $visibility")
 		if (visibility == prevSoftKeyboardValue)
 			return
 

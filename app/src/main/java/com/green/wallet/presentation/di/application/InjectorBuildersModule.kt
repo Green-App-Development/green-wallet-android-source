@@ -1,12 +1,6 @@
 package com.green.wallet.presentation.di.application
 
 import android.app.Dialog
-import com.green.wallet.presentation.di.components.swap.SwapInjectorModules
-import com.green.wallet.presentation.onboard.OnBoardActivity
-import com.green.wallet.presentation.onboard.icon.IconFragment
-import com.green.wallet.presentation.onboard.language.LanguageFragment
-import com.green.wallet.presentation.onboard.setpassword.SetPasswordFragment
-import com.green.wallet.presentation.onboard.terms.TermsFragment
 import com.green.wallet.presentation.intro.IntroActivity
 import com.green.wallet.presentation.intro.authenticate.AuthFragmentIntro
 import com.green.wallet.presentation.main.MainActivity
@@ -45,6 +39,11 @@ import com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragme
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
+import com.green.wallet.presentation.onboard.OnBoardActivity
+import com.green.wallet.presentation.onboard.icon.IconFragment
+import com.green.wallet.presentation.onboard.language.LanguageFragment
+import com.green.wallet.presentation.onboard.setpassword.SetPasswordFragment
+import com.green.wallet.presentation.onboard.terms.TermsFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
