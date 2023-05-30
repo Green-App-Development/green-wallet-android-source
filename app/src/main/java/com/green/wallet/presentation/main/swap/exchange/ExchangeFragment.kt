@@ -28,6 +28,8 @@ import com.green.wallet.presentation.custom.CustomSpinner
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
+import com.green.wallet.presentation.custom.formattedDollarWithPrecision
+import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -40,6 +42,8 @@ import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_exchange.btnExchange
+import kotlinx.android.synthetic.main.fragment_exchange.tokenFromSpinner
 import kotlinx.android.synthetic.main.fragment_exchange.tokenToSpinner
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -315,7 +319,6 @@ class ExchangeFragment : DaggerFragment() {
 				}
 
 			}
-		tokenToSpinner.setSelection(1)
 		tokenToSpinner.onItemSelectedListener =
 			object : AdapterView.OnItemSelectedListener {
 
@@ -323,6 +326,7 @@ class ExchangeFragment : DaggerFragment() {
 					VLog.d("Selected item position : $p2 On To")
 					tokenToAdapter.selectedPosition = p2
 					tokenFromSpinner.setSelection(if (p2 == 0) 1 else 0)
+					vm.tokenToSpinner = p2
 					updateTokenTxtViews(tokenFromAdapter, tokenToAdapter)
 				}
 
@@ -331,6 +335,7 @@ class ExchangeFragment : DaggerFragment() {
 				}
 
 			}
+		tokenToSpinner.setSelection(vm.tokenToSpinner)
 
 		imgSwap.setOnClickListener {
 			val temp = tokenFromSpinner.selectedItemPosition
@@ -451,18 +456,18 @@ class ExchangeFragment : DaggerFragment() {
 		getAddressToSend()
 		initChiaWalletAdapter()
 		initFromTokenExchangeRequest()
+		vm.requestExchangeRate("XCH")
 	}
 
 	private fun initGetAddressLayoutUpdate() {
+		vm.requestExchangeRate(if (tokenToSpinner.selectedItemPosition == 1) "XCH" else "USDT")
 		if (!hasOneFocusLeast) return
 		VLog.d("Selected Item Token To Spinner : ${tokenToSpinner.selectedItemPosition}")
 		binding.apply {
 			if (tokenToSpinner.selectedItemPosition == 1) {
 				layoutGetAddressXch.visibility = View.GONE
 				layoutGetAddressUsdt.visibility = View.VISIBLE
-				vm.requestExchangeRate("XCH")
 			} else {
-				vm.requestExchangeRate("USDT")
 				layoutGetAddressXch.visibility = View.VISIBLE
 				layoutGetAddressUsdt.visibility = View.GONE
 			}
@@ -482,10 +487,11 @@ class ExchangeFragment : DaggerFragment() {
 								val res = it.data!!
 								VLog.d("Result of request exchange rate : $res")
 								binding.initLimitToMinAndMax(res)
+								calculateOneUnitToken(res)
 							}
 
 							Resource.State.ERROR -> {
-								VLog.d("Error has been called : ${it}")
+								VLog.d("Error has been called : ${it.error?.message}")
 								manageExceptionDialogsForRest(
 									getMainActivity(),
 									dialogManager,
@@ -499,14 +505,42 @@ class ExchangeFragment : DaggerFragment() {
 		}
 	}
 
+	private fun calculateOneUnitToken(res: ExchangeRate) {
+		if (tokenFromSpinner.selectedItemPosition == 0) {
+			val xchInUSDT = res.rateXCH / res.rateUSDT
+			binding.txtCoursePrice.text =
+				"1 XCH = ${formattedDollarWithPrecision(xchInUSDT, 2)} USDT"
+		} else {
+			val xchInUSDT = res.rateUSDT / res.rateXCH
+			binding.txtCoursePrice.text =
+				"1 USDT = ${formattedDollarWithPrecision(xchInUSDT, 2)} XCH"
+		}
+	}
+
 	private fun FragmentExchangeBinding.initLimitToMinAndMax(res: ExchangeRate) {
 		edtAmountFrom.addTextChangedListener {
-			val amount = StringBuilder(it.toString())
-			if (amount.toString().toDoubleOrNull() == null) {
-				amount.append(0, '0')
+			val amount = it.toString().toDoubleOrNull()
+			if (amount == null || amount !in res.min..res.max) {
+				btnExchange.isEnabled = false
+				constraintCommentLimitAmount.visibility = View.GONE
+				if (amount != null) {
+					var textValidate = ""
+					val tokenCode =
+						if (tokenFromSpinner.selectedItemPosition == 0) "XCH" else "USDT"
+					val network =
+						if (tokenFromSpinner.selectedItemPosition == 0) "Chia Network" else "TRC-20"
+					textValidate = if (amount < res.min) {
+						"Минимальная сумма: ${res.min} $tokenCode $network"
+					} else {
+						"Mаксимальная сумма: ${res.max} $tokenCode $network"
+					}
+					constraintCommentLimitAmount.visibility = View.VISIBLE
+					txtMinSumRequired.text = textValidate
+				}
+			} else {
+				constraintCommentLimitAmount.visibility = View.GONE
+				btnExchange.isEnabled = true
 			}
-			val double = amount.toString().toDoubleOrNull() ?: 0.0
-			constraintCommentMinAmount.visibility = if (double == 0.0) View.VISIBLE else View.GONE
 		}
 	}
 

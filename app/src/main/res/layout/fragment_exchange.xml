@@ -10,7 +10,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_marginBottom="5dp"
-			app:layout_constraintBottom_toTopOf="@+id/btnContinue"
+			app:layout_constraintBottom_toTopOf="@+id/btnExchange"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent">
@@ -210,7 +210,7 @@
 						app:layout_constraintTop_toTopOf="@+id/txtCoursePrice" />
 
 				<androidx.constraintlayout.widget.ConstraintLayout
-						android:id="@+id/constraint_comment_min_amount"
+						android:id="@+id/constraint_comment_limit_amount"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginStart="7dp"
@@ -732,7 +732,7 @@
 
 
 	<com.google.android.material.button.MaterialButton
-			android:id="@+id/btnContinue"
+			android:id="@+id/btnExchange"
 			style="@style/Widget.AppTheme.MaterialButton"
 			android:layout_width="0dp"
 			android:layout_height="60dp"
