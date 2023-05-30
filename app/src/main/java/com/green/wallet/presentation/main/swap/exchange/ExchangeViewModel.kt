@@ -8,9 +8,11 @@ import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +28,7 @@ class ExchangeViewModel @Inject constructor(
 	val exchangeRequest = _exchangeRequest.asStateFlow()
 
 	var walletPosition = 0
+	var tokenToSpinner = 1
 
 	init {
 		retrieveChiaWallet()
@@ -44,11 +47,12 @@ class ExchangeViewModel @Inject constructor(
 		if (prevFromToken == fromToken)
 			return
 		prevFromToken = fromToken
-//		VLog.d("Call from view model to get exchange request rate : $fromToken")
+		VLog.d("Call from view model to get exchange request rate : $fromToken")
 		requestJob?.cancel()
-		requestJob = viewModelScope.launch {
+		requestJob = viewModelScope.launch() {
 			val res = exchangeInteract.getExchangeRequest(fromToken)
-			_exchangeRequest.emit(res)
+			if (isActive)
+				_exchangeRequest.emit(res)
 		}
 	}
 

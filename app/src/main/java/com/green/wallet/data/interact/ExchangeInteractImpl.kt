@@ -47,7 +47,7 @@ class ExchangeInteractImpl @Inject constructor(
 						)
 					}
 
-					"XCH" -> {
+					else  -> {
 						ExchangeRate(
 							min = res.fromXCH.toUSDT.min.toDoubleOrNull() ?: 0.0,
 							max = res.fromXCH.toUSDT.max.toDoubleOrNull() ?: 0.0,
@@ -55,10 +55,6 @@ class ExchangeInteractImpl @Inject constructor(
 							rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
 							rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
 						)
-					}
-
-					else -> {
-						throw IllegalArgumentException("No found from what type of token to convert to")
 					}
 				}
 				return Resource.success(resExchange)
