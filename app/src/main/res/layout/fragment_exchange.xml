@@ -22,7 +22,7 @@
 			<androidx.constraintlayout.widget.ConstraintLayout
 					android:id="@+id/container"
 					android:layout_width="match_parent"
-					android:layout_height="600dp"
+					android:layout_height="300dp"
 					android:layout_marginStart="10dp"
 					android:layout_marginTop="4dp"
 					android:layout_marginEnd="10dp"
@@ -387,7 +387,7 @@
 						android:layout_marginTop="12dp"
 						android:layout_marginEnd="7dp"
 						android:background="@color/track_color"
-						android:visibility="visible"
+						android:visibility="gone"
 						app:layout_constraintTop_toBottomOf="@id/layout_exchange_to" />
 
 				<androidx.constraintlayout.widget.ConstraintLayout
@@ -464,7 +464,7 @@
 						android:layout_marginTop="12dp"
 						android:layout_marginEnd="7dp"
 						android:background="@drawable/bcg_edt_course_exchange"
-						android:visibility="visible"
+						android:visibility="gone"
 						app:layout_constraintTop_toBottomOf="@id/view_divider_get_address">
 
 

@@ -1,5 +1,8 @@
 package com.green.wallet.domain.interact
 
+import com.green.wallet.domain.domainmodel.ExchangeRate
+import com.green.wallet.presentation.tools.Resource
+
 interface ExchangeInteract {
 
 	suspend fun createExchangeRequest(
@@ -7,6 +10,8 @@ interface ExchangeInteract {
 		give_amount: Double,
 		get_address: String
 	)
+
+	suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate>
 
 
 }

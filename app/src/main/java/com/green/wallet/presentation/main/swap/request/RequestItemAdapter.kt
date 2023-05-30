@@ -60,7 +60,7 @@ class RequestItemAdapter(
 			when (item.status) {
 				RequestStatus.Waiting -> {
 					txtSend.text =
-						"${activity.getStringResource(R.string.need_to_send)}: -${item.send} USDT"
+						"${activity.getStringResource(R.string.need_to_send)}: -${item.send} FromUSDT"
 					txtReceive.text =
 						"${activity.getStringResource(R.string.you_will_receive)}: +${item.receive} XCH"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_blue))

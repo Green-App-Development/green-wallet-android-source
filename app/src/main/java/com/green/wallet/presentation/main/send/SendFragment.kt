@@ -107,7 +107,7 @@ class SendFragment : DaggerFragment() {
     private var walletAdapterPosition = -1
     private var tokendAdapterPosition = 0
     private var lastTokenBalanceText = "0.0 XCH"
-    private var lastTokenBalanceTxtInUSDT="0.0 USDT"
+    private var lastTokenBalanceTxtInUSDT="0.0 USD"
 
     private val handler = CoroutineExceptionHandler { _, ex ->
         VLog.d("Exception caught on send fragment : ${ex.message} ")

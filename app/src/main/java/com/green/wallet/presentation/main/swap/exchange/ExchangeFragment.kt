@@ -7,7 +7,6 @@ import android.text.InputFilter
 import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
@@ -23,16 +22,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.common.tools.formatString
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentExchangeBinding
+import com.green.wallet.domain.domainmodel.ExchangeRate
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.CustomSpinner
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.hidePublicKey
+import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory
-import com.green.wallet.presentation.main.send.SendFragmentViewModel
-import com.green.wallet.presentation.main.send.WalletListAdapter
 import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
+import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
@@ -40,9 +40,7 @@ import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_exchange.img_ic_scan_usdt
 import kotlinx.android.synthetic.main.fragment_exchange.tokenToSpinner
-import kotlinx.android.synthetic.main.fragment_send.txtHiddenPublicKey
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -71,9 +69,9 @@ class ExchangeFragment : DaggerFragment() {
 		VLog.d("On Create on exchange fragment")
 	}
 
-	private var smallContainer = 600
+	private var smallContainer = 300
 	private var bigContainer = 418
-	private var hasOneFocusLeast = true
+	private var hasOneFocusLeast = false
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -137,15 +135,6 @@ class ExchangeFragment : DaggerFragment() {
 			getMainActivity()
 		)
 
-		edtAmountFrom.addTextChangedListener {
-			val amount = StringBuilder(it.toString())
-			if (amount.toString().toDoubleOrNull() == null) {
-				amount.append(0, '0')
-			}
-			val double = amount.toString().toDoubleOrNull() ?: 0.0
-			constraintCommentMinAmount.visibility = if (double == 0.0) View.VISIBLE else View.GONE
-		}
-
 		edtAmountFrom.setOnFocusChangeListener { p0, p1 ->
 			if (p1 && !hasOneFocusLeast) {
 				hasOneFocusLeast = true
@@ -164,6 +153,13 @@ class ExchangeFragment : DaggerFragment() {
 					container.requestLayout()
 				}
 				anim.start()
+			}
+			if (p1) {
+				getMainActivity().makeGreenDuringFocus(txtYouSending)
+				greenLineEdt.visibility = View.VISIBLE
+			} else {
+				getMainActivity().makeGreyDuringNonFocus(txtYouSending)
+				greenLineEdt.visibility = View.GONE
 			}
 		}
 
@@ -210,16 +206,6 @@ class ExchangeFragment : DaggerFragment() {
 
 		})
 
-		edtAmountFrom.setOnFocusChangeListener { p0, p1 ->
-			if (p1) {
-				getMainActivity().makeGreenDuringFocus(txtYouSending)
-				greenLineEdt.visibility = View.VISIBLE
-			} else {
-				getMainActivity().makeGreyDuringNonFocus(txtYouSending)
-				greenLineEdt.visibility = View.GONE
-			}
-		}
-
 		edtGetAddressUSDT.setOnFocusChangeListener { view, focus ->
 			if (focus) {
 				imgIcScanUsdt.visibility = View.GONE
@@ -241,6 +227,22 @@ class ExchangeFragment : DaggerFragment() {
 
 		imgArrowChia.setOnClickListener {
 			walletSpinner.performClick()
+		}
+
+		animManager.animateArrowIconCustomSpinner(
+			binding.walletSpinner,
+			binding.imgArrowChia,
+			getMainActivity()
+		)
+
+		imgIcScanUsdt.setOnClickListener {
+			requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
+		}
+
+		edtGetAddressUSDT.addTextChangedListener {
+			if (it?.isNotEmpty() == true) {
+				imgIcScanUsdt.visibility = View.VISIBLE
+			}
 		}
 
 	}
@@ -322,7 +324,6 @@ class ExchangeFragment : DaggerFragment() {
 					tokenToAdapter.selectedPosition = p2
 					tokenFromSpinner.setSelection(if (p2 == 0) 1 else 0)
 					updateTokenTxtViews(tokenFromAdapter, tokenToAdapter)
-					initGetAddressLayoutUpdate()
 				}
 
 				override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -449,6 +450,7 @@ class ExchangeFragment : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		getAddressToSend()
 		initChiaWalletAdapter()
+		initFromTokenExchangeRequest()
 	}
 
 	private fun initGetAddressLayoutUpdate() {
@@ -458,11 +460,65 @@ class ExchangeFragment : DaggerFragment() {
 			if (tokenToSpinner.selectedItemPosition == 1) {
 				layoutGetAddressXch.visibility = View.GONE
 				layoutGetAddressUsdt.visibility = View.VISIBLE
+				vm.requestExchangeRate("XCH")
 			} else {
+				vm.requestExchangeRate("USDT")
 				layoutGetAddressXch.visibility = View.VISIBLE
 				layoutGetAddressUsdt.visibility = View.GONE
 			}
 		}
+	}
+
+	private var requestExchangeJob: Job? = null
+	fun initFromTokenExchangeRequest() {
+		requestExchangeJob?.cancel()
+		requestExchangeJob = lifecycleScope.launchWhenCreated {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				VLog.d("Started on exchange fragment has been called multiple times")
+				vm.exchangeRequest.collectLatest {
+					it?.let {
+						when (it.state) {
+							Resource.State.SUCCESS -> {
+								val res = it.data!!
+								VLog.d("Result of request exchange rate : $res")
+								binding.initLimitToMinAndMax(res)
+							}
+
+							Resource.State.ERROR -> {
+								VLog.d("Error has been called : ${it}")
+								manageExceptionDialogsForRest(
+									getMainActivity(),
+									dialogManager,
+									it.error
+								)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private fun FragmentExchangeBinding.initLimitToMinAndMax(res: ExchangeRate) {
+		edtAmountFrom.addTextChangedListener {
+			val amount = StringBuilder(it.toString())
+			if (amount.toString().toDoubleOrNull() == null) {
+				amount.append(0, '0')
+			}
+			val double = amount.toString().toDoubleOrNull() ?: 0.0
+			constraintCommentMinAmount.visibility = if (double == 0.0) View.VISIBLE else View.GONE
+		}
+	}
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		requestExchangeJob?.cancel()
+		VLog.d("On Destroy view  called on exchange fragment")
+	}
+
+	override fun onDestroy() {
+		super.onDestroy()
+		VLog.d("On Destroy called on exchange fragment")
 	}
 
 
