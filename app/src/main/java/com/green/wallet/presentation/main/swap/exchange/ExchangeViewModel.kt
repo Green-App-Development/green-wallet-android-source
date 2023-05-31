@@ -34,6 +34,19 @@ class ExchangeViewModel @Inject constructor(
 		retrieveChiaWallet()
 	}
 
+	suspend fun requestingOrder(
+		amount: Double,
+		get_address: String,
+		get_coin: String
+	): Resource<String> {
+		val giveAddress = exchangeRequest.value?.data?.give_address ?: return Resource.error(
+			Exception(
+				"No Give Address present"
+			)
+		)
+		return exchangeInteract.createExchangeRequest(giveAddress, amount, get_address, get_coin)
+	}
+
 	fun retrieveChiaWallet() {
 		viewModelScope.launch {
 			val res = walletInteract.getChiaWalletListForExchange()

@@ -8,8 +8,9 @@ interface ExchangeInteract {
 	suspend fun createExchangeRequest(
 		give_address: String,
 		give_amount: Double,
-		get_address: String
-	)
+		get_address: String,
+		get_coin: String
+	): Resource<String>
 
 	suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate>
 
