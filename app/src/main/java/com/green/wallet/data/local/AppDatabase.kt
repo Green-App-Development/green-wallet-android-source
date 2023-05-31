@@ -15,9 +15,10 @@ import com.green.wallet.data.local.entity.*
 		AddressEntity::class, WalletEntity::class, TransactionEntity::class,
 		NotifOtherEntity::class, TokenEntity::class,
 		SpentCoinsEntity::class, FaqItemEntity::class,
-		NFTInfoEntity::class, NFTCoinEntity::class
+		NFTInfoEntity::class, NFTCoinEntity::class,
+		OrderEntity::class
 	],
-	version = 34,
+	version = 35,
 	exportSchema = true,
 	autoMigrations = [
 		AutoMigration(from = 25, to = 34)
@@ -35,6 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val faqDao: FAQDao
 	abstract val nftCoinsDao: NftCoinsDao
 	abstract val nftInfoDao: NftInfoDao
+	abstract val orderExchangeDao: OrderExchangeDao
 
 	companion object {
 
@@ -63,7 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
 							"`name` TEXT NOT NULL, " +
 							"`address_fk` TEXT NOT NULL, " +
 							"`spent` INTEGER NOT NULL, " +
-							"`isPending` INTEGER NOT NULL,"+
+							"`isPending` INTEGER NOT NULL," +
 							"PRIMARY KEY(`nft_coin_hash`), " +
 							"FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON DELETE CASCADE)"
 				)
@@ -87,8 +89,6 @@ abstract class AppDatabase : RoomDatabase() {
 				)
 
 				database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
-
-
 
 			}
 		}

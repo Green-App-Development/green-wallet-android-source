@@ -10,7 +10,7 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
 import com.green.wallet.R
-import com.green.wallet.presentation.tools.RequestStatus
+import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
@@ -171,31 +171,31 @@ fun requestDateFormat(timeCreated: Long): String {
 	return SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(timeCreated))
 }
 
-fun convertStringToRequestStatus(status: String): RequestStatus {
-	RequestStatus.values().forEach {
-		if (it == RequestStatus.valueOf(status))
+fun convertStringToRequestStatus(status: String): OrderStatus {
+	OrderStatus.values().forEach {
+		if (it == OrderStatus.valueOf(status))
 			return it
 	}
-	return RequestStatus.InProgress
+	return OrderStatus.InProgress
 }
 
-fun getRequestStatusTranslation(activity: Activity, status: RequestStatus): String {
+fun getRequestStatusTranslation(activity: Activity, status: OrderStatus): String {
 	activity.apply {
 		return when (status) {
-			RequestStatus.InProgress -> getStringResource(R.string.status_in_process)
-			RequestStatus.Waiting -> getStringResource(R.string.awaiting_payment)
-			RequestStatus.Completed -> getStringResource(R.string.status_completed)
+			OrderStatus.InProgress -> getStringResource(R.string.status_in_process)
+			OrderStatus.Waiting -> getStringResource(R.string.awaiting_payment)
+			OrderStatus.Completed -> getStringResource(R.string.status_completed)
 			else -> getStringResource(R.string.status_canceled)
 		}
 	}
 }
 
-fun getRequestStatusColor(status: RequestStatus, activity: Activity): Int {
+fun getRequestStatusColor(status: OrderStatus, activity: Activity): Int {
 	return activity.getColorResource(
 		when (status) {
-			RequestStatus.InProgress -> R.color.orange
-			RequestStatus.Waiting -> R.color.blue_aspect_ratio
-			RequestStatus.Completed -> R.color.green
+			OrderStatus.InProgress -> R.color.orange
+			OrderStatus.Waiting -> R.color.blue_aspect_ratio
+			OrderStatus.Completed -> R.color.green
 			else -> R.color.red_mnemonic
 		}
 	)

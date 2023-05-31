@@ -9,21 +9,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.green.wallet.databinding.FragmentRequestBinding
 import com.green.wallet.domain.domainmodel.RequestItem
 import com.green.wallet.presentation.di.factory.ViewModelFactory
-import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
-import com.green.wallet.presentation.tools.RequestStatus
+import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
-class OrderFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListener {
+class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListener {
 
 	private lateinit var binding: FragmentRequestBinding
 
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
-	private val vm: OrderViewModel by viewModels { viewModelFactory }
+	private val vm: OrdersViewModel by viewModels { viewModelFactory }
 	private val swapMainSharedVM: SwapMainViewModel by viewModels { viewModelFactory }
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,15 +54,15 @@ class OrderFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListe
 		}
 		val list = mutableListOf<RequestItem>()
 		list.add(
-			RequestItem("001766", RequestStatus.Cancelled, 16.00, 0.45, System.currentTimeMillis())
+			RequestItem("001766", OrderStatus.Cancelled, 16.00, 0.45, System.currentTimeMillis())
 		)
 		list.add(
-			RequestItem("001765", RequestStatus.Waiting, 145.00, 4.45, System.currentTimeMillis())
+			RequestItem("001765", OrderStatus.Waiting, 145.00, 4.45, System.currentTimeMillis())
 		)
 		list.add(
 			RequestItem(
 				"001710",
-				RequestStatus.InProgress,
+				OrderStatus.InProgress,
 				145.00,
 				4.45,
 				System.currentTimeMillis()
@@ -72,7 +71,7 @@ class OrderFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListe
 		list.add(
 			RequestItem(
 				"001769",
-				RequestStatus.Completed,
+				OrderStatus.Completed,
 				145.00,
 				4.45,
 				System.currentTimeMillis()
@@ -87,7 +86,7 @@ class OrderFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListe
 
 	override fun onClickDetailItem(item: RequestItem) {
 		VLog.d("Request Item Detail : $item clicked")
-		getMainActivity().move2RequestDetailsFragment(item.status)
+		getMainActivity().move2OrderDetailsFragment(item.status)
 	}
 
 

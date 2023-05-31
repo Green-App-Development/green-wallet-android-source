@@ -1,7 +1,6 @@
 package com.green.wallet.presentation.main.swap.requestdetail
 
 import android.os.Bundle
-import android.text.InputFilter
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -11,35 +10,29 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
-import com.example.common.tools.convertStringToRequestStatus
 import com.example.common.tools.getRequestStatusColor
 import com.example.common.tools.getRequestStatusTranslation
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestDetailsBinding
 import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_exchange.*
-import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class RequestDetailFragment : DaggerFragment() {
+class OrderDetailFragment : DaggerFragment() {
 
 
 	companion object {
-		const val KEY_ID = "key_id"
+		const val ORDER_HASH = "order_hash"
 	}
 
-	private var status = RequestStatus.InProgress
 
 	private lateinit var binding: FragmentRequestDetailsBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		VLog.d("Arguments on request Detail : $arguments")
-		status = convertStringToRequestStatus(
-			arguments?.getString(KEY_ID) ?: RequestStatus.InProgress.name
-		)
+
 	}
 
 	override fun onCreateView(
@@ -53,9 +46,6 @@ class RequestDetailFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		if (status == RequestStatus.Cancelled) {
-			statusCancelled()
-		}
 		binding.initUpdateRequestItemViews()
 		binding.registerClicks()
 	}
@@ -74,6 +64,7 @@ class RequestDetailFragment : DaggerFragment() {
 
 
 	private fun FragmentRequestDetailsBinding.initUpdateRequestItemViews() {
+		val status = OrderStatus.Cancelled
 		txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
 			getRequestStatusTranslation(
 				getMainActivity(),
@@ -84,16 +75,18 @@ class RequestDetailFragment : DaggerFragment() {
 		changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
 		val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
 		when (status) {
-			RequestStatus.InProgress -> {
+			OrderStatus.InProgress -> {
 				layoutInProgress.visibility = View.VISIBLE
 				params.bottomToTop = R.id.layout_in_progress
 				startTempTimer(edtFinishTranTime)
 			}
-			RequestStatus.Waiting -> {
+
+			OrderStatus.Waiting -> {
 				layoutWaiting.visibility = View.VISIBLE
 				params.bottomToTop = R.id.layout_waiting
 				startTempTimer(edtAutoCancelTime)
 			}
+
 			else -> {
 				params.bottomToBottom = R.id.root
 			}
@@ -101,9 +94,9 @@ class RequestDetailFragment : DaggerFragment() {
 		scrollViewProperties.layoutParams = params
 		txtAutoCancel.text = "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
 
-		if (status == RequestStatus.Waiting)
+		if (status == OrderStatus.Waiting)
 			txtSent.text = getMainActivity().getStringResource(R.string.need_to_send)
-		if (status == RequestStatus.InProgress || status == RequestStatus.Waiting) {
+		if (status == OrderStatus.InProgress || status == OrderStatus.Waiting) {
 			txtReceive.text = getMainActivity().getStringResource(R.string.you_will_receive)
 		}
 

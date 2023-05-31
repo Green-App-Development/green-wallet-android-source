@@ -22,7 +22,9 @@ class AppModule {
 	@Provides
 	fun provideAppDatabase(context: Context): AppDatabase {
 		return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.APP_DB_NAME)
-			.addMigrations(migration25To34).build()
+			.addMigrations(migration25To34)
+			.fallbackToDestructiveMigration()
+			.build()
 	}
 
 	@Provides
@@ -52,6 +54,8 @@ class AppModule {
 	@Provides
 	fun provideNFtInfoDao(appDatabase: AppDatabase) = appDatabase.nftInfoDao
 
+	@Provides
+	fun provideOrderExchangeDao(appDatabase: AppDatabase) = appDatabase.orderExchangeDao
 
 	@Provides
 	fun provideHandler(): CoroutineExceptionHandler {

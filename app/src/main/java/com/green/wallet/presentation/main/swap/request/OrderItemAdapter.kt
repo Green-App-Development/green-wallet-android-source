@@ -14,7 +14,7 @@ import com.example.common.tools.requestDateFormat
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.RequestItem
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.tools.RequestStatus
+import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
 import com.green.wallet.presentation.tools.getStringResource
@@ -58,7 +58,7 @@ class OrderItemAdapter(
 		fun onBind(item: RequestItem) {
 			hashId.text = "${activity.getStringResource(R.string.order_title)} #${item.id}"
 			when (item.status) {
-				RequestStatus.Waiting -> {
+				OrderStatus.Waiting -> {
 					txtSend.text =
 						"${activity.getStringResource(R.string.need_to_send)}: -${item.send} FromUSDT"
 					txtReceive.text =
@@ -66,13 +66,13 @@ class OrderItemAdapter(
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_blue))
 					txtStatus.text = activity.getStringResource(R.string.awaiting_payment)
 				}
-				RequestStatus.Cancelled -> {
+				OrderStatus.Cancelled -> {
 					txtSend.text = "${activity.getStringResource(R.string.sent_flow)}: -"
 					txtReceive.text = "${activity.getStringResource(R.string.received_flow)}: -"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_red))
 					txtStatus.text = activity.getString(R.string.status_canceled)
 				}
-				RequestStatus.Completed -> {
+				OrderStatus.Completed -> {
 					txtSend.text =
 						"${activity.getStringResource(R.string.sent_flow)}: -${item.send} XCH"
 					txtReceive.text =
@@ -80,7 +80,7 @@ class OrderItemAdapter(
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_green))
 					txtStatus.text = activity.getStringResource(R.string.status_completed)
 				}
-				RequestStatus.InProgress -> {
+				OrderStatus.InProgress -> {
 					txtSend.text =
 						"${activity.getStringResource(R.string.you_sent_flow)}: -${item.send} USDT"
 					txtReceive.text =
@@ -92,7 +92,7 @@ class OrderItemAdapter(
 			changeAmountColor(txtSend, activity.getColorResource(R.color.red_mnemonic))
 			changeAmountColor(
 				txtReceive,
-				activity.getColorResource(if (item.status != RequestStatus.Cancelled) R.color.green else R.color.red_mnemonic)
+				activity.getColorResource(if (item.status != OrderStatus.Cancelled) R.color.green else R.color.red_mnemonic)
 			)
 			txtDate.text = requestDateFormat(item.time_created)
 			initChangeColorStatusTxt(item.status, txtStatus)
@@ -101,12 +101,12 @@ class OrderItemAdapter(
 			}
 		}
 
-		private fun initChangeColorStatusTxt(status: RequestStatus, txtStatus: TextView) {
+		private fun initChangeColorStatusTxt(status: OrderStatus, txtStatus: TextView) {
 			val clr = activity.getColorResource(
 				when (status) {
-					RequestStatus.Waiting -> R.color.blue_aspect_ratio
-					RequestStatus.Cancelled -> R.color.red_mnemonic
-					RequestStatus.InProgress -> R.color.orange
+					OrderStatus.Waiting -> R.color.blue_aspect_ratio
+					OrderStatus.Cancelled -> R.color.red_mnemonic
+					OrderStatus.InProgress -> R.color.orange
 					else -> R.color.green
 				}
 			)

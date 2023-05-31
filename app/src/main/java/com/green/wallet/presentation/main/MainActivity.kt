@@ -57,7 +57,7 @@ import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
 import com.green.wallet.presentation.main.send.SendFragment
 import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
-import com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment
+import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
@@ -301,7 +301,7 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
-				fragmentRequestDetail -> {
+				fragmentOrderDetail -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
@@ -451,7 +451,7 @@ class MainActivity : BaseActivity() {
 					fragmentNFTDetails,
 					fragmentSendNFT,
 					addressFragment,
-					fragmentRequestDetail,
+					fragmentOrderDetail,
 					btmChooseDApps,
 					fragmentQrCodeSend
 				).contains(destination.id)
@@ -843,11 +843,10 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentSendNFT,bundle)
 	}
 
-	//temp passing status
-	fun move2RequestDetailsFragment(status: RequestStatus) {
+	fun move2OrderDetailsFragment(orderHash:String) {
 		val bundle = bundleOf()
-		bundle.putString(RequestDetailFragment.KEY_ID, status.name)
-		navController.navigate(fragmentRequestDetail, bundle)
+		bundle.putString(OrderDetailFragment.ORDER_HASH, orderHash)
+		navController.navigate(fragmentOrderDetail, bundle)
 	}
 
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {

@@ -29,7 +29,6 @@ import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
-import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -273,7 +272,31 @@ class ExchangeFragment : DaggerFragment() {
 
 	private fun requestingOrder() {
 		val amountToSend = binding.edtAmountFrom.text.toString().toDouble()
+		var getCoin = ""
+		var getAddress = ""
+		if (tokenToSpinner.selectedItemPosition == 0) {
+			vm.chiaWalletList.value[vm.walletPosition].address
+			getCoin = "XCH"
+		} else {
+			getCoin = "USDT"
+			binding.edtGetAddressUSDT.text.toString()
+		}
+		lifecycleScope.launch {
+			val res = vm.requestingOrder(amountToSend, getAddress, getCoin)
+			when (res.state) {
+				Resource.State.SUCCESS -> {
+					getMainActivity().move2OrderDetailsFragment()
+				}
 
+				Resource.State.ERROR -> {
+					manageExceptionDialogsForRest(getMainActivity(), dialogManager, res.error)
+				}
+
+				Resource.State.LOADING -> {
+
+				}
+			}
+		}
 	}
 
 
@@ -294,7 +317,7 @@ class ExchangeFragment : DaggerFragment() {
 		}
 
 	private var prevEnterAddressJob: Job? = null
-	private fun getAddressToSend() {
+	private fun getQRDecodedAddressToSend() {
 		prevEnterAddressJob?.cancel()
 		prevEnterAddressJob = lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -478,7 +501,7 @@ class ExchangeFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		getAddressToSend()
+		getQRDecodedAddressToSend()
 		initChiaWalletAdapter()
 		initFromTokenExchangeRequest()
 		vm.requestExchangeRate(if (vm.tokenToSpinner == 1) "XCH" else "USDT")

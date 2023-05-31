@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 35,
-    "identityHash": "ec919ebf9921415da1df0fbf7e90b170",
+    "identityHash": "200153cfa21882ff1c586f42737ad34a",
     "entities": [
       {
         "tableName": "AddressEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address_id` TEXT NOT NULL, `address` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `updated_time` INTEGER NOT NULL, `temp` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`address_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`address_id` TEXT NOT NULL, `address` TEXT NOT NULL, `name` TEXT NOT NULL, `description` TEXT NOT NULL, `updated_time` INTEGER NOT NULL, PRIMARY KEY(`address_id`))",
         "fields": [
           {
             "fieldPath": "address_id",
@@ -37,13 +37,6 @@
             "columnName": "updated_time",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "temp",
-            "columnName": "temp",
-            "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -155,7 +148,7 @@
       },
       {
         "tableName": "TransactionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `amount` REAL NOT NULL, `created_at_time` INTEGER NOT NULL, `height` INTEGER NOT NULL, `status` TEXT NOT NULL, `network_type` TEXT NOT NULL, `to_dest_hash` TEXT NOT NULL, `fkAddress` TEXT NOT NULL, `fee_amount` REAL NOT NULL, `code` TEXT NOT NULL, `confirm_height` INTEGER NOT NULL DEFAULT 0, `nft_coin_hash` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`transaction_id`), FOREIGN KEY(`fkAddress`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`transaction_id` TEXT NOT NULL, `amount` REAL NOT NULL, `created_at_time` INTEGER NOT NULL, `height` INTEGER NOT NULL, `status` TEXT NOT NULL, `network_type` TEXT NOT NULL, `to_dest_hash` TEXT NOT NULL, `fkAddress` TEXT NOT NULL, `fee_amount` REAL NOT NULL, `code` TEXT NOT NULL, `confirm_height` INTEGER NOT NULL DEFAULT 0, `nft_coin_hash` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`transaction_id`))",
         "fields": [
           {
             "fieldPath": "transaction_id",
@@ -239,19 +232,7 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "WalletEntity",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "fkAddress"
-            ],
-            "referencedColumns": [
-              "address"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "NotificationOther",
@@ -425,7 +406,7 @@
       },
       {
         "tableName": "NFTInfoEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nft_coin_hash` TEXT NOT NULL, `nft_id` TEXT NOT NULL, `launcher_id` TEXT NOT NULL, `owner_did` TEXT NOT NULL, `minter_did` TEXT NOT NULL, `royalty_percentage` INTEGER NOT NULL, `mint_height` INTEGER NOT NULL, `data_url` TEXT NOT NULL, `data_hash` TEXT NOT NULL, `meta_hash` TEXT NOT NULL, `meta_url` TEXT NOT NULL, `description` TEXT NOT NULL, `collection` TEXT NOT NULL, `properties` TEXT NOT NULL, `name` TEXT NOT NULL, `address_fk` TEXT NOT NULL, `spent` INTEGER NOT NULL, PRIMARY KEY(`nft_coin_hash`), FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nft_coin_hash` TEXT NOT NULL, `nft_id` TEXT NOT NULL, `launcher_id` TEXT NOT NULL, `owner_did` TEXT NOT NULL, `minter_did` TEXT NOT NULL, `royalty_percentage` INTEGER NOT NULL, `mint_height` INTEGER NOT NULL, `data_url` TEXT NOT NULL, `data_hash` TEXT NOT NULL, `meta_hash` TEXT NOT NULL, `meta_url` TEXT NOT NULL, `description` TEXT NOT NULL, `collection` TEXT NOT NULL, `properties` TEXT NOT NULL, `name` TEXT NOT NULL, `address_fk` TEXT NOT NULL, `spent` INTEGER NOT NULL, `isPending` INTEGER NOT NULL, PRIMARY KEY(`nft_coin_hash`), FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "nft_coin_hash",
@@ -528,6 +509,12 @@
             "columnName": "spent",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "isPending",
+            "columnName": "isPending",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -624,12 +611,62 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "OrderEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `code` TEXT NOT NULL, `time_created` INTEGER NOT NULL, PRIMARY KEY(`order_hash`))",
+        "fields": [
+          {
+            "fieldPath": "order_hash",
+            "columnName": "order_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount_to_send",
+            "columnName": "amount_to_send",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "give_address",
+            "columnName": "give_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time_created",
+            "columnName": "time_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "order_hash"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ec919ebf9921415da1df0fbf7e90b170')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '200153cfa21882ff1c586f42737ad34a')"
     ]
   }
 }
