@@ -34,6 +34,7 @@ import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
+import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
@@ -63,6 +64,7 @@ class ExchangeFragment : DaggerFragment() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: ExchangeViewModel by viewModels { viewModelFactory }
+	private val swapMainSharedVM: SwapMainViewModel by viewModels { viewModelFactory }
 
 	override fun onAttach(context: Context) {
 		super.onAttach(context)
@@ -70,12 +72,14 @@ class ExchangeFragment : DaggerFragment() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		VLog.d("On Create on exchange fragment")
+		VLog.d("On Create on exchange fragment : SharedVM : $swapMainSharedVM")
+		swapMainSharedVM.showingExchange = true
 	}
 
 	private var smallContainer = 300
 	private var bigContainer = 418
 	private var hasOneFocusLeast = false
+	private var btnExchangeEnabled = mutableSetOf<Int>()
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -245,9 +249,30 @@ class ExchangeFragment : DaggerFragment() {
 
 		edtGetAddressUSDT.addTextChangedListener {
 			if (it?.isNotEmpty() == true) {
+				btnExchangeEnabled.add(2)
 				imgIcScanUsdt.visibility = View.VISIBLE
-			}
+			} else
+				btnExchangeEnabled.remove(2)
+			updateEnabledBtnExchangeNow()
 		}
+
+		btnExchange.setOnClickListener {
+			requestingOrder()
+		}
+
+//		dialogManager.showWarningOrderExistDialog(
+//			getMainActivity(),
+//			"Завершите обмен",
+//			"У вас уже есть одна активная заявка на обмен. Завершите ее или отмените заявку, чтобы создать новую.",
+//			"Мои заявки"
+//		) {
+//			swapMainSharedVM.move2RequestHistory()
+//		}
+
+	}
+
+	private fun requestingOrder() {
+		val amountToSend = binding.edtAmountFrom.text.toString().toDouble()
 
 	}
 
@@ -456,7 +481,7 @@ class ExchangeFragment : DaggerFragment() {
 		getAddressToSend()
 		initChiaWalletAdapter()
 		initFromTokenExchangeRequest()
-		vm.requestExchangeRate("XCH")
+		vm.requestExchangeRate(if (vm.tokenToSpinner == 1) "XCH" else "USDT")
 	}
 
 	private fun initGetAddressLayoutUpdate() {
@@ -511,17 +536,19 @@ class ExchangeFragment : DaggerFragment() {
 			binding.txtCoursePrice.text =
 				"1 XCH = ${formattedDollarWithPrecision(xchInUSDT, 2)} USDT"
 		} else {
-			val xchInUSDT = res.rateUSDT / res.rateXCH
+			val usdtInXCH = res.rateUSDT / res.rateXCH
 			binding.txtCoursePrice.text =
-				"1 USDT = ${formattedDollarWithPrecision(xchInUSDT, 2)} XCH"
+				"1 USDT = ${formattedDollarWithPrecision(usdtInXCH, 2)} XCH"
 		}
+
 	}
 
 	private fun FragmentExchangeBinding.initLimitToMinAndMax(res: ExchangeRate) {
 		edtAmountFrom.addTextChangedListener {
 			val amount = it.toString().toDoubleOrNull()
 			if (amount == null || amount !in res.min..res.max) {
-				btnExchange.isEnabled = false
+				btnExchangeEnabled.remove(1)
+				updateEnabledBtnExchangeNow()
 				constraintCommentLimitAmount.visibility = View.GONE
 				if (amount != null) {
 					var textValidate = ""
@@ -539,9 +566,21 @@ class ExchangeFragment : DaggerFragment() {
 				}
 			} else {
 				constraintCommentLimitAmount.visibility = View.GONE
-				btnExchange.isEnabled = true
+				btnExchangeEnabled.add(1)
+				updateEnabledBtnExchangeNow()
+				val rate =
+					if (tokenFromSpinner.selectedItemPosition == 0) res.rateXCH / res.rateUSDT else res.rateUSDT / res.rateXCH
+				edtAmountTo.text = formattedDollarWithPrecision(amount * rate, 2)
 			}
 		}
+		edtAmountFrom.setText(edtAmountFrom.text.toString())
+	}
+
+	private fun updateEnabledBtnExchangeNow() {
+		btnExchange.isEnabled =
+			if (tokenToSpinner.selectedItemPosition == 1) btnExchangeEnabled.size >= 2 else btnExchangeEnabled.contains(
+				1
+			)
 	}
 
 	override fun onDestroyView() {

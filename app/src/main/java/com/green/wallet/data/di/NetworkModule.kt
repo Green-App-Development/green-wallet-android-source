@@ -22,7 +22,7 @@ class NetworkModule {
 	fun provideLanguageRetrofitInstance(): Retrofit {
 
 		val interceptor = HttpLoggingInterceptor().apply {
-			level = HttpLoggingInterceptor.Level.BODY
+			level = HttpLoggingInterceptor.Level.NONE
 		}
 		return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL_GREEN_APP)
 			.client(getUnsafeOkHttpClient(interceptor))
