@@ -159,6 +159,7 @@ abstract class ViewModelsModule {
 	@IntoMap
 	@Binds
 	@ViewModelKey(SwapMainViewModel::class)
+	@AppScope
 	abstract fun bindingSwapViewModel(viewModel: SwapMainViewModel): ViewModel
 
 

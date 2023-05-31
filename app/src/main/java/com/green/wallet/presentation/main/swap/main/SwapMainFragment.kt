@@ -5,21 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_swap_main.*
+import javax.inject.Inject
 
 class SwapMainFragment : DaggerFragment() {
 
 	private lateinit var binding: FragmentSwapMainBinding
+
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val vm: SwapMainViewModel by viewModels { viewModelFactory }
+
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -44,7 +52,7 @@ class SwapMainFragment : DaggerFragment() {
 		VLog.d("On ViewCreated SwapMainFragment")
 		navController =
 			(childFragmentManager.findFragmentById(R.id.my_nav_swap) as NavHostFragment).navController
-		(getMainActivity().application as App).swapNavController = navController
+		vm.initSwapNavController(navController)
 		registerNavListener()
 	}
 
@@ -60,18 +68,15 @@ class SwapMainFragment : DaggerFragment() {
 		}
 	}
 
-	private var showingExchange = true
-	private var hasBeenToRequest = false
-
 	private fun FragmentSwapMainBinding.registerClicks() {
 		txtExchange.setOnClickListener {
-			if (showingExchange) return@setOnClickListener
-			showingExchange = true
+			if (vm.showingExchange) return@setOnClickListener
+			vm.showingExchange = true
 			navController.popBackStack()
 		}
 		txtMyRequests.setOnClickListener {
-			if (!showingExchange) return@setOnClickListener
-			showingExchange = false
+			if (!vm.showingExchange) return@setOnClickListener
+			vm.showingExchange = false
 			navController.navigate(R.id.fragment_request)
 		}
 	}

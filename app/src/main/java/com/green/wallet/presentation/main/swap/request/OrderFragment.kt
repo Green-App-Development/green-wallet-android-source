@@ -4,24 +4,31 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestBinding
 import com.green.wallet.domain.domainmodel.RequestItem
-import com.green.wallet.presentation.App
+import com.green.wallet.presentation.di.factory.ViewModelFactory
+import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
+import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.tools.RequestStatus
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
+import javax.inject.Inject
 
-class RequestFragment : DaggerFragment(), RequestItemAdapter.OnClickRequestItemListener {
+class OrderFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListener {
 
 	private lateinit var binding: FragmentRequestBinding
 
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val vm: OrderViewModel by viewModels { viewModelFactory }
+	private val swapMainSharedVM: SwapMainViewModel by viewModels { viewModelFactory }
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
+		swapMainSharedVM.showingExchange = false
 	}
 
 	override fun onCreateView(
@@ -41,7 +48,7 @@ class RequestFragment : DaggerFragment(), RequestItemAdapter.OnClickRequestItemL
 	}
 
 	private fun initRequestAdapter() {
-		val requestAdapter = RequestItemAdapter(getMainActivity(), this)
+		val requestAdapter = OrderItemAdapter(getMainActivity(), this)
 		with(binding.recViewRequests) {
 			adapter = requestAdapter
 			layoutManager = LinearLayoutManager(getMainActivity())

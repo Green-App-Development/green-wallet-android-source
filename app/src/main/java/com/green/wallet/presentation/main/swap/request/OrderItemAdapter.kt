@@ -19,11 +19,11 @@ import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
 import com.green.wallet.presentation.tools.getStringResource
 
-class RequestItemAdapter(
+class OrderItemAdapter(
 	val activity: MainActivity,
 	val listener: OnClickRequestItemListener
 ) :
-	RecyclerView.Adapter<RequestItemAdapter.RequestItemViewHolder>() {
+	RecyclerView.Adapter<OrderItemAdapter.RequestItemViewHolder>() {
 
 	val data = mutableListOf<RequestItem>()
 
