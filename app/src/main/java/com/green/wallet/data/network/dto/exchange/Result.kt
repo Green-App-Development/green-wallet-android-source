@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Result(
 	@SerializedName("USDT")
-	val fromUSDT: FromUSDT,
+	val fromUSDT: FromUSDT?,
 	@SerializedName("XCH")
-	val fromXCH: FromXCH
+	val fromXCH: FromXCH?
 )

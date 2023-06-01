@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.common.tools.requestDateFormat
 import com.green.wallet.R
+import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.domain.domainmodel.RequestItem
+import com.green.wallet.presentation.custom.formattedDollarWithPrecision
+import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.getColorResource
@@ -25,9 +28,9 @@ class OrderItemAdapter(
 ) :
 	RecyclerView.Adapter<OrderItemAdapter.RequestItemViewHolder>() {
 
-	val data = mutableListOf<RequestItem>()
+	val data = mutableListOf<OrderItem>()
 
-	fun updateRequestList(incoming: List<RequestItem>) {
+	fun updateRequestList(incoming: List<OrderItem>) {
 		data.clear()
 		data.addAll(incoming)
 		notifyDataSetChanged()
@@ -55,36 +58,40 @@ class OrderItemAdapter(
 		val detailBtn = v.findViewById<TextView>(R.id.txtDetailRequest)
 		val txtDate = v.findViewById<TextView>(R.id.txtDate)
 
-		fun onBind(item: RequestItem) {
-			hashId.text = "${activity.getStringResource(R.string.order_title)} #${item.id}"
+		fun onBind(item: OrderItem) {
+			hashId.text = "${activity.getStringResource(R.string.order_title)} #${item.hash}"
+			val amountToReceive= formattedDollarWithPrecision(item.amountToSend*item.rate,4)
 			when (item.status) {
 				OrderStatus.Waiting -> {
 					txtSend.text =
-						"${activity.getStringResource(R.string.need_to_send)}: -${item.send} FromUSDT"
+						"${activity.getStringResource(R.string.need_to_send)}: -${item.amountToSend} ${item.sendCoin}"
 					txtReceive.text =
-						"${activity.getStringResource(R.string.you_will_receive)}: +${item.receive} XCH"
+						"${activity.getStringResource(R.string.you_will_receive)}: +${amountToReceive} ${item.getCoin}"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_blue))
 					txtStatus.text = activity.getStringResource(R.string.awaiting_payment)
 				}
+
 				OrderStatus.Cancelled -> {
 					txtSend.text = "${activity.getStringResource(R.string.sent_flow)}: -"
 					txtReceive.text = "${activity.getStringResource(R.string.received_flow)}: -"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_red))
 					txtStatus.text = activity.getString(R.string.status_canceled)
 				}
-				OrderStatus.Completed -> {
+
+				OrderStatus.Success -> {
 					txtSend.text =
-						"${activity.getStringResource(R.string.sent_flow)}: -${item.send} XCH"
+						"${activity.getStringResource(R.string.sent_flow)}: -${item.amountToSend} ${item.sendCoin}"
 					txtReceive.text =
-						"${activity.getStringResource(R.string.received_flow)}: +${item.receive} USDT"
+						"${activity.getStringResource(R.string.received_flow)}: +${amountToReceive} ${item.getCoin}"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_green))
 					txtStatus.text = activity.getStringResource(R.string.status_completed)
 				}
+
 				OrderStatus.InProgress -> {
 					txtSend.text =
-						"${activity.getStringResource(R.string.you_sent_flow)}: -${item.send} USDT"
+						"${activity.getStringResource(R.string.you_sent_flow)}: -${item.amountToSend} ${item.sendCoin}"
 					txtReceive.text =
-						"${activity.getStringResource(R.string.you_will_receive)}: +${item.receive} XCH"
+						"${activity.getStringResource(R.string.you_will_receive)}: +${amountToReceive} ${item.getCoin}"
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_orange))
 					txtStatus.text = activity.getStringResource(R.string.status_in_process)
 				}
@@ -94,10 +101,10 @@ class OrderItemAdapter(
 				txtReceive,
 				activity.getColorResource(if (item.status != OrderStatus.Cancelled) R.color.green else R.color.red_mnemonic)
 			)
-			txtDate.text = requestDateFormat(item.time_created)
+			txtDate.text = requestDateFormat(item.timeCreated)
 			initChangeColorStatusTxt(item.status, txtStatus)
 			detailBtn.setOnClickListener {
-				listener.onClickDetailItem(item)
+				listener.onClickDetailItem(item.hash)
 			}
 		}
 
@@ -132,7 +139,7 @@ class OrderItemAdapter(
 	}
 
 	interface OnClickRequestItemListener {
-		fun onClickDetailItem(item: RequestItem)
+		fun onClickDetailItem(hash: String)
 	}
 
 

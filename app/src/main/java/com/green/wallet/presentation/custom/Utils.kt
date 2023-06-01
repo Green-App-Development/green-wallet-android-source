@@ -20,6 +20,7 @@ import com.green.wallet.presentation.tools.getStringResource
 import com.example.common.tools.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.green.wallet.presentation.tools.VLog
+import okhttp3.internal.format
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.text.DecimalFormat
@@ -94,12 +95,15 @@ fun getStatusBcgBarColorBasedOnTime(activity: Activity): Int {
 		curMinutes in 0..com.green.wallet.presentation.tools.MORNING_STARTS_MINUTE -> activity.getColorResource(
 			R.color.night_status_bar_clr
 		)
+
 		curMinutes in com.green.wallet.presentation.tools.MORNING_STARTS_MINUTE..com.green.wallet.presentation.tools.NOON_STARTS_MINUTE -> activity.getColorResource(
 			R.color.morning_status_bar_clr
 		)
+
 		curMinutes in com.green.wallet.presentation.tools.NOON_STARTS_MINUTE..com.green.wallet.presentation.tools.EVENING_STARTS_MINUTE -> activity.getColorResource(
 			R.color.day_status_bar_clr
 		)
+
 		else -> activity.getColorResource(R.color.evening_status_bar_clr)
 	}
 	return color
@@ -152,7 +156,7 @@ fun isThisChivesNetwork(networkType: String): Boolean {
 	return networkType.lowercase().contains("chives")
 }
 
-fun getNetworkFromAddress(address: String):String {
+fun getNetworkFromAddress(address: String): String {
 	if (address.contains("xch"))
 		return "Chia"
 	return "Chives"
@@ -174,8 +178,17 @@ fun formattedDoubleAmountWithPrecision(double: Double): String {
 }
 
 fun formattedDollarWithPrecision(price: Double, precision: Int = 2): String {
-	val formattedBalance = String.format("%.${precision}f", price).replace(",", ".")
-	return formattedBalance
+	try {
+		val formattedBalance = String.format("%.${precision}f", price).replace(",", ".")
+		var at = formattedBalance.length - 1
+		while (at >= 0 && formattedBalance[at] == '0' && formattedBalance[at - 1] == '0') {
+			at--
+		}
+		return formattedBalance.substring(0, at+1)
+	} catch (ex: java.lang.Exception) {
+		VLog.d("Exception in formatting double : $ex")
+	}
+	return "$price"
 }
 
 

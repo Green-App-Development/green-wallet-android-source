@@ -233,50 +233,62 @@ class MainActivity : BaseActivity() {
 					window.statusBarColor = getColorResource(R.color.status_bar_color_home)
 					setSystemUiLightStatusBar(isLightStatusBar = false)
 				}
+
 				progressWalletCreating -> {
 //					window.statusBarColor = getColorResource(R.color.status_bar_color_home)
 //					setSystemUiLightStatusBar(isLightStatusBar = false)
 				}
+
 				transactionsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				addressFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				allWalletListFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				verificationFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				manageWalletFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				walletSettings -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				importTokenFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				saveMnemonicsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				allSettingsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
 				}
+
 				addAddressFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				entPasscodeFrMain -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
@@ -289,22 +301,27 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentNFTDetails -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentDApp -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentSwapMain -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentOrderDetail -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -322,18 +339,21 @@ class MainActivity : BaseActivity() {
 						popBackStackTillHomeFragment()
 					}
 				}
+
 				dapp -> {
 					if (navController.currentDestination?.id != fragmentDApp) {
 						item.isChecked = true
 						move2DAppFragment()
 					}
 				}
+
 				nfts -> {
 					if (navController.currentDestination?.id != fragmentUserNFTs) {
 						item.isChecked = true
 						move2UserNFTTokensFragment()
 					}
 				}
+
 				swap -> {
 					if (navController.currentDestination?.id != fragmentSwapMain) {
 						item.isChecked = true
@@ -351,6 +371,7 @@ class MainActivity : BaseActivity() {
 			is HomeFragment -> {
 				curFragment.onCommentUnderDevClicked()
 			}
+
 			is UserNFTTokensFragment -> {
 				curFragment.onCommentUnderDevClicked()
 			}
@@ -414,7 +435,11 @@ class MainActivity : BaseActivity() {
 
 	}
 
-	fun move2SendFragment(networkType: String, fingerPrint: Long?, shouldQRCleared: Boolean) {
+	fun move2SendFragment(
+		networkType: String,
+		fingerPrint: Long?,
+		shouldQRCleared: Boolean
+	) {
 		if (shouldQRCleared) {
 			mainViewModel.saveDecodeQrCode("")
 			mainViewModel.saveChosenAddress("")
@@ -653,6 +678,10 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentQrCodeSend)
 	}
 
+	fun move2SwapSendXCHFragment(address: String, amount: Double) {
+
+	}
+
 	fun move2EditAddressFragment(itemAddress: Address?) {
 		mainViewModel.saveDecodeQrCode("")
 		if (itemAddress != null) {
@@ -819,9 +848,11 @@ class MainActivity : BaseActivity() {
 					val networkList = res.data!!.map { it.name }.toList()
 					move2BtmDialogChooseNetwork(hasAtLeastOneWallet, networkList)
 				}
+
 				Resource.State.LOADING -> {
 
 				}
+
 				Resource.State.ERROR -> {
 					VLog.d("Error create or import wallet dialog error : ${res.error}")
 					dialogMan.showServerErrorDialog(this@MainActivity) {
@@ -836,14 +867,14 @@ class MainActivity : BaseActivity() {
 		move2NewOrImportWallet(networkType)
 	}
 
-	fun move2SendNFTFragment(nft:NFTInfo) {
+	fun move2SendNFTFragment(nft: NFTInfo) {
 		val bundle = Bundle().apply {
 			putParcelable(NFTSendFragment.NFT_KEY, nft)
 		}
-		navController.navigate(fragmentSendNFT,bundle)
+		navController.navigate(fragmentSendNFT, bundle)
 	}
 
-	fun move2OrderDetailsFragment(orderHash:String) {
+	fun move2OrderDetailsFragment(orderHash: String) {
 		val bundle = bundleOf()
 		bundle.putString(OrderDetailFragment.ORDER_HASH, orderHash)
 		navController.navigate(fragmentOrderDetail, bundle)

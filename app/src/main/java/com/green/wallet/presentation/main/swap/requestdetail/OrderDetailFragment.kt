@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.swap.requestdetail
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -9,15 +10,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.common.tools.formatString
+import com.example.common.tools.formattedTimeForOrderItem
 import com.example.common.tools.getRequestStatusColor
 import com.example.common.tools.getRequestStatusTranslation
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestDetailsBinding
+import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.presentation.custom.formattedDollarWithPrecision
+import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.*
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_exchange.edtFingerPrint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class OrderDetailFragment : DaggerFragment() {
 
@@ -26,13 +36,20 @@ class OrderDetailFragment : DaggerFragment() {
 		const val ORDER_HASH = "order_hash"
 	}
 
-
 	private lateinit var binding: FragmentRequestDetailsBinding
 
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val vm: OrderDetailViewModel by viewModels { viewModelFactory }
+
+	private var orderHash = ""
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		VLog.d("Arguments on request Detail : $arguments")
+		arguments?.let {
+			orderHash = it.getString(ORDER_HASH, "")
 
+		}
 	}
 
 	override fun onCreateView(
@@ -46,8 +63,10 @@ class OrderDetailFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		binding.initUpdateRequestItemViews()
 		binding.registerClicks()
+		if (orderHash.isNotEmpty()) {
+			binding.initUpdateOrderDetails()
+		}
 	}
 
 	private fun FragmentRequestDetailsBinding.registerClicks() {
@@ -56,59 +75,91 @@ class OrderDetailFragment : DaggerFragment() {
 			getMainActivity().popBackStackOnce()
 		}
 
-		btnPay.setOnClickListener {
-			getMainActivity().move2BtmDialogPayment("", 0.003)
-		}
-
 	}
 
+	private var orderDetailsJob: Job? = null
 
-	private fun FragmentRequestDetailsBinding.initUpdateRequestItemViews() {
-		val status = OrderStatus.Cancelled
-		txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
-			getRequestStatusTranslation(
-				getMainActivity(),
-				status
-			)
-		}"
-		txtRequestHash.text = getMainActivity().getStringResource(R.string.order_title) + " #001766"
-		changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
-		val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
-		when (status) {
-			OrderStatus.InProgress -> {
-				layoutInProgress.visibility = View.VISIBLE
-				params.bottomToTop = R.id.layout_in_progress
-				startTempTimer(edtFinishTranTime)
+	@SuppressLint("SetTextI18n")
+	private fun FragmentRequestDetailsBinding.initUpdateOrderDetails() {
+		orderDetailsJob?.cancel()
+		orderDetailsJob = lifecycleScope.launch {
+			val orderItem = vm.getOrderItemByHash(orderHash)
+			val status = orderItem.status
+			txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
+				getRequestStatusTranslation(
+					getMainActivity(),
+					status
+				)
+			}"
+			txtRequestHash.text =
+				getMainActivity().getStringResource(R.string.order_title) + " #${orderItem.hash}"
+			edtData.text = formattedTimeForOrderItem(orderItem.timeCreated)
+			if (status == OrderStatus.Cancelled) {
+				statusCancelled()
+				return@launch
 			}
+			edtAddressEksCrou.text = formatString(9, orderItem.giveAddress, 6)
+			edtSendAmount.text = "${orderItem.amountToSend} " + orderItem.sendCoin
+			val amountToReceive =
+				formattedDollarWithPrecision(orderItem.amountToSend * orderItem.rate, 4)
+			edtReceiveAmount.text = "$amountToReceive " + orderItem.getCoin
+			edtAddressReceive.text = formatString(9, orderItem.getAddress, 6)
+			edtCourseExchange.text =
+				"1 ${orderItem.sendCoin} = ${
+					formattedDollarWithPrecision(
+						orderItem.rate,
+						4
+					)
+				} " + orderItem.getCoin
+			if (orderItem.txID.isNotEmpty())
+				edtHashTransaction.text = formatString(9, orderItem.txID, 6)
+			else {
+				imgCpyHashTransaction.visibility = View.GONE
+			}
+			changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
+			val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
+			when (status) {
+				OrderStatus.Waiting -> {
+					layoutWaiting.visibility = View.VISIBLE
+					params.bottomToTop = R.id.layout_waiting
+					val timeDiff =
+						((orderItem.timeCreated + FIFTEEN_MINUTES_IN_MILLIS_SECONDS) - System.currentTimeMillis()) / 1000
+					startTimerAwaitingPayment(edtAutoCancelTime, timeDiff)
+				}
 
-			OrderStatus.Waiting -> {
-				layoutWaiting.visibility = View.VISIBLE
-				params.bottomToTop = R.id.layout_waiting
-				startTempTimer(edtAutoCancelTime)
+				else -> {
+					params.bottomToBottom = R.id.root
+				}
 			}
+			scrollViewProperties.layoutParams = params
+			txtAutoCancel.text = "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
+			if (status == OrderStatus.Waiting)
+				txtSent.text = getMainActivity().getStringResource(R.string.need_to_send)
+			if (status == OrderStatus.InProgress || status == OrderStatus.Waiting) {
+				txtReceive.text = getMainActivity().getStringResource(R.string.you_will_receive)
+			}
+			txtFinishTran.text =
+				getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
 
-			else -> {
-				params.bottomToBottom = R.id.root
-			}
+			initClickListeners(orderItem)
+
 		}
-		scrollViewProperties.layoutParams = params
-		txtAutoCancel.text = "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
-
-		if (status == OrderStatus.Waiting)
-			txtSent.text = getMainActivity().getStringResource(R.string.need_to_send)
-		if (status == OrderStatus.InProgress || status == OrderStatus.Waiting) {
-			txtReceive.text = getMainActivity().getStringResource(R.string.you_will_receive)
-		}
-
-		txtFinishTran.text =
-			getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
-
 	}
 
+	private fun initClickListeners(orderItem: OrderItem) {
+		binding.apply {
+			btnPay.setOnClickListener {
+				if (orderItem.sendCoin == "XCH") {
 
-	fun startTempTimer(txt: TextView) {
+				} else
+					getMainActivity().move2BtmDialogPayment("", 0.0)
+			}
+		}
+	}
+
+	fun startTimerAwaitingPayment(txt: TextView, diff: Long) {
 		lifecycleScope.launch {
-			var totalSeconds = 60 * 15
+			var totalSeconds = diff
 			while (totalSeconds >= 0) {
 				val minutes = totalSeconds / 60
 				val seconds = totalSeconds % 60
@@ -119,7 +170,7 @@ class OrderDetailFragment : DaggerFragment() {
 		}
 	}
 
-	fun addZeroToFrontIfNeeded(num: Int): String {
+	fun addZeroToFrontIfNeeded(num: Long): String {
 		val str = "$num"
 		if (str.length == 2)
 			return str
@@ -131,6 +182,7 @@ class OrderDetailFragment : DaggerFragment() {
 			listOf(imgCpyAddress, imgCpyReceiveAddress, imgCpyHashTransaction).forEach {
 				it.visibility = View.GONE
 			}
+
 		}
 	}
 

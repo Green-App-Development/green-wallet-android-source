@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.room.Index.Order
 import com.green.wallet.R
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.VLog
@@ -40,6 +41,7 @@ fun Dialog.setDefaultParams(dialogAnim: Int) {
 }
 
 fun formattedTime(value: Long) = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Date(value))
+fun formattedTimeForOrderItem(value: Long) = SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
 
 fun formattedDay(value: Long) = SimpleDateFormat("dd.MM.yyyy").format(Date(value))
 
@@ -184,7 +186,7 @@ fun getRequestStatusTranslation(activity: Activity, status: OrderStatus): String
 		return when (status) {
 			OrderStatus.InProgress -> getStringResource(R.string.status_in_process)
 			OrderStatus.Waiting -> getStringResource(R.string.awaiting_payment)
-			OrderStatus.Completed -> getStringResource(R.string.status_completed)
+			OrderStatus.Success -> getStringResource(R.string.status_completed)
 			else -> getStringResource(R.string.status_canceled)
 		}
 	}
@@ -195,7 +197,7 @@ fun getRequestStatusColor(status: OrderStatus, activity: Activity): Int {
 		when (status) {
 			OrderStatus.InProgress -> R.color.orange
 			OrderStatus.Waiting -> R.color.blue_aspect_ratio
-			OrderStatus.Completed -> R.color.green
+			OrderStatus.Success -> R.color.green
 			else -> R.color.red_mnemonic
 		}
 	)
@@ -214,6 +216,15 @@ fun formatString(begin: Int, str: String, end: Int): String {
 		return ans.toString()
 	} catch (ex: Exception) {
 		return str
+	}
+}
+
+fun mapNetworkOrderStatusToLocal(status: String): OrderStatus {
+	return when (status) {
+		"wait" -> OrderStatus.Waiting
+		"process" -> OrderStatus.InProgress
+		"success" -> OrderStatus.Success
+		else -> OrderStatus.Cancelled
 	}
 }
 

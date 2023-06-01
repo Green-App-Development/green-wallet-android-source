@@ -57,6 +57,9 @@ class App : DaggerApplication() {
 	lateinit var walletInteract: WalletInteract
 
 	@Inject
+	lateinit var exchangeInteract: ExchangeInteract
+
+	@Inject
 	lateinit var notificationHelper: NotificationHelper
 
 	lateinit var appComponent: AppComponent
@@ -103,6 +106,11 @@ class App : DaggerApplication() {
 			VLog.d(
 				"GUID of the user : $guid Len : ${guid.length}"
 			)
+//			prefs.saveSettingString(PrefsManager.USER_GUID, guid)
+			while (true) {
+				delay(5000L)
+				exchangeInteract.updateOrderStatusPeriodically()
+			}
 		}
 	}
 

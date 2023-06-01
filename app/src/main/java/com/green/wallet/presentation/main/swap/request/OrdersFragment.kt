@@ -5,15 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.green.wallet.databinding.FragmentRequestBinding
 import com.green.wallet.domain.domainmodel.RequestItem
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
-import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemListener {
@@ -43,50 +47,39 @@ class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemList
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		initRequestAdapter()
+		initOrdersAdapter()
 	}
 
-	private fun initRequestAdapter() {
-		val requestAdapter = OrderItemAdapter(getMainActivity(), this)
+	private var prevOrderListJob: Job? = null
+
+	private fun initOrdersAdapter() {
+		val orderAdapter = OrderItemAdapter(getMainActivity(), this)
 		with(binding.recViewRequests) {
-			adapter = requestAdapter
+			adapter = orderAdapter
 			layoutManager = LinearLayoutManager(getMainActivity())
 		}
-		val list = mutableListOf<RequestItem>()
-		list.add(
-			RequestItem("001766", OrderStatus.Cancelled, 16.00, 0.45, System.currentTimeMillis())
-		)
-		list.add(
-			RequestItem("001765", OrderStatus.Waiting, 145.00, 4.45, System.currentTimeMillis())
-		)
-		list.add(
-			RequestItem(
-				"001710",
-				OrderStatus.InProgress,
-				145.00,
-				4.45,
-				System.currentTimeMillis()
-			)
-		)
-		list.add(
-			RequestItem(
-				"001769",
-				OrderStatus.Completed,
-				145.00,
-				4.45,
-				System.currentTimeMillis()
-			)
-		)
-		requestAdapter.updateRequestList(list)
+		prevOrderListJob = lifecycleScope.launchWhenCreated {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.orderList.collectLatest {
+					orderAdapter.updateRequestList(it)
+				}
+			}
+		}
 	}
 
 	private fun FragmentRequestBinding.registerClicks() {
 
 	}
 
-	override fun onClickDetailItem(item: RequestItem) {
-		VLog.d("Request Item Detail : $item clicked")
-		getMainActivity().move2OrderDetailsFragment(item.status)
+	override fun onClickDetailItem(hash: String) {
+		VLog.d("Request Item Detail : $hash clicked")
+		getMainActivity().move2OrderDetailsFragment(hash)
+	}
+
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+		prevOrderListJob?.cancel()
 	}
 
 

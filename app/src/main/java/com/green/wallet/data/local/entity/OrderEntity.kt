@@ -15,13 +15,29 @@ data class OrderEntity(
 	val status: OrderStatus,
 	val amount_to_send: Double,
 	val give_address: String,
-	val code: String,
-	val time_created: Long
+	val time_created: Long,
+	val rate: Double,
+	val send_coin: String,
+	val get_coin: String,
+	val get_address: String,
+	val tx_ID: String,
+	val fee: Double
 ) {
 
 	fun toOrderItem() =
-		OrderItem(order_hash, amount_to_send, give_address, code, time_created, status)
-
+		OrderItem(
+			order_hash,
+			amount_to_send,
+			give_address,
+			time_created,
+			status,
+			rate,
+			get_coin,
+			send_coin,
+			get_address,
+			tx_ID,
+			fee
+		)
 
 
 }
