@@ -413,6 +413,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 			width,
 			WindowManager.LayoutParams.WRAP_CONTENT
 		)
+		dialog.setCanceledOnTouchOutside(false)
 		dialog.show()
 	}
 

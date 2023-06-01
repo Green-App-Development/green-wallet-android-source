@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 35,
-    "identityHash": "200153cfa21882ff1c586f42737ad34a",
+    "identityHash": "a4038312a01e517313a4bcd5fc862230",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -614,7 +614,7 @@
       },
       {
         "tableName": "OrderEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `code` TEXT NOT NULL, `time_created` INTEGER NOT NULL, PRIMARY KEY(`order_hash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `fee` REAL NOT NULL, PRIMARY KEY(`order_hash`))",
         "fields": [
           {
             "fieldPath": "order_hash",
@@ -641,15 +641,45 @@
             "notNull": true
           },
           {
-            "fieldPath": "code",
-            "columnName": "code",
+            "fieldPath": "time_created",
+            "columnName": "time_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rate",
+            "columnName": "rate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "send_coin",
+            "columnName": "send_coin",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "time_created",
-            "columnName": "time_created",
-            "affinity": "INTEGER",
+            "fieldPath": "get_coin",
+            "columnName": "get_coin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "get_address",
+            "columnName": "get_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tx_ID",
+            "columnName": "tx_ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fee",
+            "columnName": "fee",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -666,7 +696,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '200153cfa21882ff1c586f42737ad34a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a4038312a01e517313a4bcd5fc862230')"
     ]
   }
 }

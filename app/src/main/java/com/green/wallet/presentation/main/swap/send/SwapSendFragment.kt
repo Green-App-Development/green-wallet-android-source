@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.send
+package com.green.wallet.presentation.main.swap.send
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -30,6 +30,7 @@ import com.google.gson.Gson
 import dagger.android.support.DaggerFragment
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.databinding.FragmentSendSwapBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
@@ -37,6 +38,8 @@ import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.send.SendFragmentViewModel
+import com.green.wallet.presentation.main.send.WalletListAdapter
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
 import io.flutter.plugin.common.MethodChannel
@@ -57,9 +60,9 @@ import java.util.*
 import javax.inject.Inject
 
 
-class SendFragment : DaggerFragment() {
+class SwapSendFragment : DaggerFragment() {
 
-	private val binding by viewBinding(FragmentSendBinding::bind)
+	private val binding by viewBinding(FragmentSendSwapBinding::bind)
 	private lateinit var networkAdapter: DynamicSpinnerAdapter
 	private lateinit var tokenAdapter: DynamicSpinnerAdapter
 	private lateinit var walletAdapter: WalletListAdapter
@@ -1079,7 +1082,7 @@ class SendFragment : DaggerFragment() {
 			txtAddressDontExistWarning.visibility = View.VISIBLE
 			lifecycleScope.launch {
 				delay(2000)
-				if (!this@SendFragment.isVisible) {
+				if (!this@SwapSendFragment.isVisible) {
 					edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
 					txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
 					txtAddressDontExistWarning.visibility = View.GONE
@@ -1179,7 +1182,7 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun showNotEnoughAmountFee() {
-		if (!this@SendFragment::tokenAdapter.isInitialized)
+		if (!this@SwapSendFragment::tokenAdapter.isInitialized)
 			return
 		binding.apply {
 			val token = tokenAdapter.dataOptions[0]
@@ -1201,7 +1204,7 @@ class SendFragment : DaggerFragment() {
 				edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
 			//check only token first
 			if (tokenAdapter.selectedPosition != 0) {
-				if (enteredAmount > spendableAmountToken && this@SendFragment::tokenAdapter.isInitialized)
+				if (enteredAmount > spendableAmountToken && this@SwapSendFragment::tokenAdapter.isInitialized)
 					return tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 			}
 		}

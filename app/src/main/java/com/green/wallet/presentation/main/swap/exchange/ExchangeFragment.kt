@@ -90,6 +90,7 @@ class ExchangeFragment : DaggerFragment() {
 		binding.registerViews()
 		binding.registerFilters()
 		binding.initSpinners()
+		vm.changeToDefault()
 		return binding.root
 	}
 
@@ -259,15 +260,6 @@ class ExchangeFragment : DaggerFragment() {
 			requestingOrder()
 		}
 
-//		dialogManager.showWarningOrderExistDialog(
-//			getMainActivity(),
-//			"Завершите обмен",
-//			"У вас уже есть одна активная заявка на обмен. Завершите ее или отмените заявку, чтобы создать новую.",
-//			"Мои заявки"
-//		) {
-//			swapMainSharedVM.move2RequestHistory()
-//		}
-
 	}
 
 	private fun requestingOrder() {
@@ -275,17 +267,17 @@ class ExchangeFragment : DaggerFragment() {
 		var getCoin = ""
 		var getAddress = ""
 		if (tokenToSpinner.selectedItemPosition == 0) {
-			vm.chiaWalletList.value[vm.walletPosition].address
+			getAddress = vm.chiaWalletList.value[vm.walletPosition].address
 			getCoin = "XCH"
 		} else {
 			getCoin = "USDT"
-			binding.edtGetAddressUSDT.text.toString()
+			getAddress = binding.edtGetAddressUSDT.text.toString()
 		}
 		lifecycleScope.launch {
 			val res = vm.requestingOrder(amountToSend, getAddress, getCoin)
 			when (res.state) {
 				Resource.State.SUCCESS -> {
-					getMainActivity().move2OrderDetailsFragment()
+					getMainActivity().move2OrderDetailsFragment(res.data!!)
 				}
 
 				Resource.State.ERROR -> {
@@ -534,8 +526,19 @@ class ExchangeFragment : DaggerFragment() {
 							Resource.State.SUCCESS -> {
 								val res = it.data!!
 								VLog.d("Result of request exchange rate : $res")
-								binding.initLimitToMinAndMax(res)
-								calculateOneUnitToken(res)
+								if (res.give_address.isNotEmpty()) {
+									binding.initLimitToMinAndMax(res)
+									calculateOneUnitToken(res)
+								} else {
+									dialogManager.showWarningOrderExistDialog(
+										getMainActivity(),
+										"Завершите обмен",
+										"У вас уже есть одна активная заявка на обмен. Завершите ее или отмените заявку, чтобы создать новую.",
+										"Мои заявки"
+									) {
+										swapMainSharedVM.move2RequestHistory()
+									}
+								}
 							}
 
 							Resource.State.ERROR -> {
@@ -557,11 +560,11 @@ class ExchangeFragment : DaggerFragment() {
 		if (tokenFromSpinner.selectedItemPosition == 0) {
 			val xchInUSDT = res.rateXCH / res.rateUSDT
 			binding.txtCoursePrice.text =
-				"1 XCH = ${formattedDollarWithPrecision(xchInUSDT, 2)} USDT"
+				"1 XCH = ${formattedDollarWithPrecision(xchInUSDT, 4)} USDT"
 		} else {
 			val usdtInXCH = res.rateUSDT / res.rateXCH
 			binding.txtCoursePrice.text =
-				"1 USDT = ${formattedDollarWithPrecision(usdtInXCH, 2)} XCH"
+				"1 USDT = ${formattedDollarWithPrecision(usdtInXCH, 4)} XCH"
 		}
 
 	}
@@ -593,7 +596,8 @@ class ExchangeFragment : DaggerFragment() {
 				updateEnabledBtnExchangeNow()
 				val rate =
 					if (tokenFromSpinner.selectedItemPosition == 0) res.rateXCH / res.rateUSDT else res.rateUSDT / res.rateXCH
-				edtAmountTo.text = formattedDollarWithPrecision(amount * rate, 2)
+				edtAmountTo.text = formattedDollarWithPrecision(amount * rate, 4)
+				vm.rateConversion = rate
 			}
 		}
 		edtAmountFrom.setText(edtAmountFrom.text.toString())
