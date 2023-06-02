@@ -58,6 +58,7 @@ import com.green.wallet.presentation.main.scan.ScannerFragment
 import com.green.wallet.presentation.main.send.SendFragment
 import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
+import com.green.wallet.presentation.main.swap.send.SwapSendFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
@@ -478,7 +479,8 @@ class MainActivity : BaseActivity() {
 					addressFragment,
 					fragmentOrderDetail,
 					btmChooseDApps,
-					fragmentQrCodeSend
+					fragmentQrCodeSend,
+					fragmentSwapSend
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -679,7 +681,12 @@ class MainActivity : BaseActivity() {
 	}
 
 	fun move2SwapSendXCHFragment(address: String, amount: Double) {
-
+		val bundle = bundleOf()
+		bundle.apply {
+			putString(SwapSendFragment.SEND_ADDRESS_KEY, address)
+			putDouble(SwapSendFragment.SEND_AMOUNT_KEY, amount)
+		}
+		navController.navigate(fragmentSwapSend, bundle)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {

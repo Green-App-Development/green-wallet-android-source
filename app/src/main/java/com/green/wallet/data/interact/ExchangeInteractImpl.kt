@@ -145,6 +145,12 @@ class ExchangeInteractImpl @Inject constructor(
 							System.currentTimeMillis()
 						)
 					}
+					if (status == OrderStatus.Cancelled) {
+						notifHelper.callGreenAppNotificationMessages(
+							"Order ${order.order_hash} Status Updated to Cancelled",
+							System.currentTimeMillis()
+						)
+					}
 				}
 			} else
 				VLog.d("Exchange Status is null : $order")

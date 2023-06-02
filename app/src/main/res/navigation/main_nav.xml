@@ -285,4 +285,11 @@
 			android:label=""
 			tools:layout="@layout/fragment_qrcode_send" />
 
+	<fragment
+			android:id="@+id/fragmentSwapSend"
+			android:name="com.green.wallet.presentation.main.swap.send.SwapSendFragment"
+			android:label=""
+			tools:layout="@layout/fragment_send_swap" />
+
+
 </navigation>

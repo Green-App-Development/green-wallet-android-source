@@ -141,7 +141,24 @@ class OrderDetailFragment : DaggerFragment() {
 			txtFinishTran.text =
 				getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
 
+			imgCpyAddress.setOnClickListener {
+				getMainActivity().copyToClipBoard(orderItem.giveAddress)
+			}
+
+			imgCpyReceiveAddress.setOnClickListener {
+				getMainActivity().copyToClipBoard(orderItem.getAddress)
+			}
+
+			imgCpyHashTransaction.setOnClickListener {
+				getMainActivity().copyToClipBoard(orderItem.txID)
+			}
+
+			imgCpyRequestHash.setOnClickListener {
+				getMainActivity().copyToClipBoard(orderItem.hash)
+			}
+
 			initClickListeners(orderItem)
+
 
 		}
 	}
@@ -149,8 +166,12 @@ class OrderDetailFragment : DaggerFragment() {
 	private fun initClickListeners(orderItem: OrderItem) {
 		binding.apply {
 			btnPay.setOnClickListener {
-				if (orderItem.sendCoin == "XCH") {
-
+				if (orderItem.sendCoin == "XCH" || false) {
+//					getMainActivity().move2SwapSendXCHFragment("xch13ufqtdl5nlmsnv855l8xsa99zavdntjsma6zzlzeuw3m22dpu9eqel278q", 0.0000003)
+					getMainActivity().move2SwapSendXCHFragment(
+						orderItem.giveAddress,
+						orderItem.amountToSend
+					)
 				} else
 					getMainActivity().move2BtmDialogPayment("", 0.0)
 			}

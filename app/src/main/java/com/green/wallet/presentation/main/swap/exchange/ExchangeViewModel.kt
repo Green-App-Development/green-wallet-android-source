@@ -21,7 +21,7 @@ class ExchangeViewModel @Inject constructor(
 	private val walletInteract: WalletInteract, private val exchangeInteract: ExchangeInteract
 ) : ViewModel() {
 
-	private val _chiaWalletList = MutableStateFlow<List<ChiaWallet>>(emptyList())
+	private val _chiaWalletList = MutableStateFlow<List<ChiaWallet>?>(null)
 	val chiaWalletList = _chiaWalletList.asStateFlow()
 
 	private val _exchangeRequest = MutableStateFlow<Resource<ExchangeRate>?>(Resource.loading())
@@ -36,6 +36,7 @@ class ExchangeViewModel @Inject constructor(
 	var rateConversion = 0.0
 
 	init {
+		VLog.d("Creating exchange view model : $this")
 		retrieveChiaWallet()
 	}
 

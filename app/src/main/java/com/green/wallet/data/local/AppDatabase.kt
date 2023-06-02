@@ -21,7 +21,8 @@ import com.green.wallet.data.local.entity.*
 	version = 35,
 	exportSchema = true,
 	autoMigrations = [
-		AutoMigration(from = 25, to = 34)
+		AutoMigration(from = 25, to = 34),
+		AutoMigration(from = 34, to = 35)
 	]
 )
 @TypeConverters(Converters::class)
@@ -91,6 +92,32 @@ abstract class AppDatabase : RoomDatabase() {
 				database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
 
 			}
+		}
+
+
+		val migration34To35 = object : Migration(34, 35) {
+
+			override fun migrate(database: SupportSQLiteDatabase) {
+				val createTableQuery = """
+            CREATE TABLE IF NOT EXISTS OrderEntity (
+                order_hash TEXT PRIMARY KEY NOT NULL,
+                status TEXT NOT NULL,
+                amount_to_send REAL NOT NULL,
+                give_address TEXT NOT NULL,
+                time_created INTEGER NOT NULL,
+                rate REAL NOT NULL,
+                send_coin TEXT NOT NULL,
+                get_coin TEXT NOT NULL,
+                get_address TEXT NOT NULL,
+                tx_ID TEXT NOT NULL,
+                fee REAL NOT NULL
+            )
+        """.trimIndent()
+				database.execSQL(createTableQuery)
+			}
+
+
+
 		}
 
 

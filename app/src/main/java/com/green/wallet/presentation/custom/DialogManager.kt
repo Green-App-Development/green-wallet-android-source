@@ -61,6 +61,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		status: String,
 		description: String,
 		action: String,
+		isCancellable: Boolean = true,
 		callback: () -> Unit
 	) {
 		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
@@ -80,6 +81,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 				callback()
 			}
 		}
+		dialog.setCanceledOnTouchOutside(isCancellable)
 		failureDialog?.dismiss()
 		failureDialog = dialog
 		dialog.show()
