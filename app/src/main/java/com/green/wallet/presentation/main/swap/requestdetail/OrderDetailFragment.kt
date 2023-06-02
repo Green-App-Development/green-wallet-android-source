@@ -48,7 +48,6 @@ class OrderDetailFragment : DaggerFragment() {
 		VLog.d("Arguments on request Detail : $arguments")
 		arguments?.let {
 			orderHash = it.getString(ORDER_HASH, "")
-
 		}
 	}
 
@@ -116,6 +115,9 @@ class OrderDetailFragment : DaggerFragment() {
 			else {
 				imgCpyHashTransaction.visibility = View.GONE
 			}
+			edtCommissionNetwork.setText("0.000005 XCH")
+			edtCommissionTron.setText("1$")
+			edtCommissionExchange.setText("1%")
 			changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
 			val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
 			when (status) {
@@ -166,14 +168,16 @@ class OrderDetailFragment : DaggerFragment() {
 	private fun initClickListeners(orderItem: OrderItem) {
 		binding.apply {
 			btnPay.setOnClickListener {
-				if (orderItem.sendCoin == "XCH" || false) {
-//					getMainActivity().move2SwapSendXCHFragment("xch13ufqtdl5nlmsnv855l8xsa99zavdntjsma6zzlzeuw3m22dpu9eqel278q", 0.0000003)
+				if (orderItem.sendCoin == "XCH") {
 					getMainActivity().move2SwapSendXCHFragment(
 						orderItem.giveAddress,
 						orderItem.amountToSend
 					)
 				} else
-					getMainActivity().move2BtmDialogPayment("", 0.0)
+					getMainActivity().move2BtmDialogPayment(
+						orderItem.giveAddress,
+						orderItem.amountToSend
+					)
 			}
 		}
 	}
