@@ -1,6 +1,8 @@
 package com.green.wallet.presentation.tools
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.util.DisplayMetrics
 import android.view.GestureDetector
@@ -183,6 +185,16 @@ fun Activity.makeGreyDuringNonFocus(txt: TextView) {
 	txt.setTextColor(getColorResource(R.color.grey_txt_color))
 }
 
+
+fun Activity.copyToClipBoard(data: String) {
+	val clipBoard =
+		getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+	val clip = ClipData.newPlainText(
+		"label",
+		data
+	)
+	clipBoard.setPrimaryClip(clip)
+}
 
 
 

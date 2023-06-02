@@ -36,6 +36,7 @@ import com.green.wallet.presentation.main.swap.main.SwapMainFragment
 import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
 import com.green.wallet.presentation.main.swap.request.OrdersFragment
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
+import com.green.wallet.presentation.main.swap.send.SwapSendFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -182,6 +183,12 @@ abstract class InjectorBuildersModule {
 
 	@ContributesAndroidInjector()
 	abstract fun injectIntoQRSendFragment(): FragmentQRSend
+
+
+	@ContributesAndroidInjector()
+	abstract fun injectIntoSendSwapFragment(): SwapSendFragment
+
+
 
 
 }

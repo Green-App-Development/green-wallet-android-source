@@ -26,6 +26,7 @@ import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.main.swap.request.OrdersViewModel
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailViewModel
+import com.green.wallet.presentation.main.swap.send.SwapSendViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsViewModel
@@ -183,6 +184,12 @@ abstract class ViewModelsModule {
 	@Binds
 	@ViewModelKey(OrdersViewModel::class)
 	abstract fun bindingOrdersViewModel(viewModel: OrdersViewModel): ViewModel
+
+	@IntoMap
+	@Binds
+	@ViewModelKey(SwapSendViewModel::class)
+	abstract fun bindingSwapSendViewModel(viewModel: SwapSendViewModel): ViewModel
+
 
 
 }

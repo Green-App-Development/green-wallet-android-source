@@ -1003,7 +1003,7 @@ class SendFragment : DaggerFragment() {
 				}
 			}
 		}
-		ic_wallet_list.setOnClickListener {
+		binding.icWalletList.setOnClickListener {
 			binding.walletSpinner.performClick()
 		}
 

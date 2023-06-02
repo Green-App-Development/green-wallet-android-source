@@ -91,6 +91,7 @@ class ExchangeFragment : DaggerFragment() {
 		binding.registerFilters()
 		binding.initSpinners()
 		vm.changeToDefault()
+		initChiaWalletAdapter()
 		return binding.root
 	}
 
@@ -98,31 +99,45 @@ class ExchangeFragment : DaggerFragment() {
 		lifecycleScope.launchWhenCreated {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				vm.chiaWalletList.collectLatest {
-					val list = it.map { "Chia ${it.fingerPrint}" }
-					val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list)
-					binding.walletSpinner.apply {
-						this.adapter = adapter
-						onItemSelectedListener = object : OnItemSelectedListener {
-							override fun onItemSelected(
-								p0: AdapterView<*>?,
-								p1: View?,
-								p2: Int,
-								p3: Long
-							) {
-								vm.walletPosition = p2
-								adapter.selectedPosition = p2
-								binding.apply {
-									edtFingerPrint.text = hidePublicKey(it[p2].fingerPrint)
-									edtGetAddress.text = formatString(10, it[p2].address, 6)
+					it?.let {
+						if (it.isNotEmpty()) {
+							val list = it.map { "Chia ${it.fingerPrint}" }
+							val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list)
+							binding.walletSpinner.apply {
+								this.adapter = adapter
+								onItemSelectedListener = object : OnItemSelectedListener {
+									override fun onItemSelected(
+										p0: AdapterView<*>?,
+										p1: View?,
+										p2: Int,
+										p3: Long
+									) {
+										vm.walletPosition = p2
+										adapter.selectedPosition = p2
+										binding.apply {
+											edtFingerPrint.text = hidePublicKey(it[p2].fingerPrint)
+											edtGetAddress.text = formatString(10, it[p2].address, 6)
+										}
+									}
+
+									override fun onNothingSelected(p0: AdapterView<*>?) {
+
+									}
+
 								}
+								setSelection(vm.walletPosition)
 							}
-
-							override fun onNothingSelected(p0: AdapterView<*>?) {
-
+						} else {
+							dialogManager.showFailureDialog(
+								getMainActivity(),
+								"Опаньки...",
+								"Для обмена создайте или импортируйте кошелек в приложение Green Wallet",
+								"Создать",
+								false
+							) {
+								getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
 							}
-
 						}
-						setSelection(vm.walletPosition)
 					}
 				}
 			}
@@ -267,7 +282,7 @@ class ExchangeFragment : DaggerFragment() {
 		var getCoin = ""
 		var getAddress = ""
 		if (tokenToSpinner.selectedItemPosition == 0) {
-			getAddress = vm.chiaWalletList.value[vm.walletPosition].address
+			getAddress = vm.chiaWalletList.value?.get(vm.walletPosition)!!.address
 			getCoin = "XCH"
 		} else {
 			getCoin = "USDT"
@@ -494,7 +509,6 @@ class ExchangeFragment : DaggerFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		getQRDecodedAddressToSend()
-		initChiaWalletAdapter()
 		initFromTokenExchangeRequest()
 		vm.requestExchangeRate(if (vm.tokenToSpinner == 1) "XCH" else "USDT")
 	}
@@ -608,6 +622,26 @@ class ExchangeFragment : DaggerFragment() {
 			if (tokenToSpinner.selectedItemPosition == 1) btnExchangeEnabled.size >= 2 else btnExchangeEnabled.contains(
 				1
 			)
+	}
+
+	override fun onStart() {
+		super.onStart()
+		VLog.d("On Start on exchange fragment")
+	}
+
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On Resume on exchange fragment")
+	}
+
+	override fun onStop() {
+		super.onStop()
+		VLog.d("On Stop on exchange fragment")
+	}
+
+	override fun onPause() {
+		super.onPause()
+		VLog.d("On Pause on exchange fragment")
 	}
 
 	override fun onDestroyView() {
