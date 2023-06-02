@@ -21,8 +21,7 @@ import com.green.wallet.data.local.entity.*
 	version = 35,
 	exportSchema = true,
 	autoMigrations = [
-		AutoMigration(from = 25, to = 34),
-		AutoMigration(from = 34, to = 35)
+		AutoMigration(from = 25, to = 34)
 	]
 )
 @TypeConverters(Converters::class)
@@ -115,8 +114,6 @@ abstract class AppDatabase : RoomDatabase() {
         """.trimIndent()
 				database.execSQL(createTableQuery)
 			}
-
-
 
 		}
 
