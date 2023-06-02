@@ -128,14 +128,16 @@ class ExchangeFragment : DaggerFragment() {
 								setSelection(vm.walletPosition)
 							}
 						} else {
-							dialogManager.showFailureDialog(
-								getMainActivity(),
-								"Опаньки...",
-								"Для обмена создайте или импортируйте кошелек в приложение Green Wallet",
-								"Создать",
-								false
-							) {
-								getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
+							getMainActivity().apply {
+								dialogManager.showFailureDialog(
+									this,
+									status = getStringResource(R.string.pop_up_failed_create_a_mnemonic_phrase_title),
+									description = getStringResource(R.string.exchange_fail),
+									action = getStringResource(R.string.network_description_btn),
+									false
+								) {
+									getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
+								}
 							}
 						}
 					}
@@ -190,10 +192,8 @@ class ExchangeFragment : DaggerFragment() {
 			getMainActivity().apply {
 				dialogManager.showQuestionDialogExchange(
 					this,
-					"Фиксированный курс",
-					"Сумма к получению останется неизменной независимо от изменений на рынке.\n" +
-							"\n" +
-							"Фиксированный курс обновляется каждые 30 сек.",
+					getStringResource(R.string.fixed_rate),
+					getStringResource(R.string.fixed_rate_txt),
 					getStringResource(R.string.ok_button)
 				) {
 
@@ -544,13 +544,15 @@ class ExchangeFragment : DaggerFragment() {
 									binding.initLimitToMinAndMax(res)
 									calculateOneUnitToken(res)
 								} else {
-									dialogManager.showWarningOrderExistDialog(
-										getMainActivity(),
-										"Завершите обмен",
-										"У вас уже есть одна активная заявка на обмен. Завершите ее или отмените заявку, чтобы создать новую.",
-										"Мои заявки"
-									) {
-										swapMainSharedVM.move2RequestHistory()
+									getMainActivity().apply {
+										dialogManager.showWarningOrderExistDialog(
+											getMainActivity(),
+											getStringResource(R.string.complete_exchange),
+											getStringResource(R.string.complete_exchange_txt),
+											getStringResource(R.string.my_orders)
+										) {
+											swapMainSharedVM.move2RequestHistory()
+										}
 									}
 								}
 							}
@@ -596,10 +598,12 @@ class ExchangeFragment : DaggerFragment() {
 						if (tokenFromSpinner.selectedItemPosition == 0) "XCH" else "USDT"
 					val network =
 						if (tokenFromSpinner.selectedItemPosition == 0) "Chia Network" else "TRC-20"
+					var minSum = getMainActivity().getStringResource(R.string.min_sum)
+					val maxSum = getMainActivity().getStringResource(R.string.max_sum)
 					textValidate = if (amount < res.min) {
-						"Минимальная сумма: ${res.min} $tokenCode $network"
+						"$minSum: ${res.min} $tokenCode $network"
 					} else {
-						"Mаксимальная сумма: ${res.max} $tokenCode $network"
+						"$maxSum: ${res.max} $tokenCode $network"
 					}
 					constraintCommentLimitAmount.visibility = View.VISIBLE
 					txtMinSumRequired.text = textValidate

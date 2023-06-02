@@ -57,6 +57,7 @@ import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
 import com.green.wallet.presentation.main.send.SendFragment
 import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
+import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.swap.send.SwapSendFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
@@ -676,8 +677,10 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentSwapMain)
 	}
 
-	fun move2QRSendFragment() {
-		navController.navigate(fragmentQrCodeSend)
+	fun move2QRSendFragment(address: String) {
+		val bundle = bundleOf()
+		bundle.putString(FragmentQRSend.SEND_ADDRESS_KEY, address)
+		navController.navigate(fragmentQrCodeSend, bundle)
 	}
 
 	fun move2SwapSendXCHFragment(address: String, amount: Double) {
