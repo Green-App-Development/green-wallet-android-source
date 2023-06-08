@@ -37,6 +37,7 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.viewBinding
 import io.flutter.plugin.common.MethodChannel
@@ -129,6 +130,10 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		VLog.d("OnCreate View on Import Mnemonics on $dialog")
 		val view = inflater.inflate(R.layout.fragment_impmnemonic, container, false)
 		curActivity().impMnemonicsFragmentView = view
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 		return view
 	}
 
@@ -1032,6 +1037,10 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		jobAfter7Seconds?.cancel()
 		jobToMakeDuplicatesWarningGone?.cancel()
 		curActivity().impMnemonicsFragmentView = null
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 	}
 
 

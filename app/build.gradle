@@ -8,6 +8,7 @@ plugins {
 
 	// Add the Crashlytics Gradle plugin
 	id 'com.google.firebase.crashlytics'
+	id 'com.github.triplet.play'
 }
 
 
@@ -89,7 +90,7 @@ dependencies {
 	implementation 'org.chromium.net:cronet-api:76.3809.111'
 	implementation 'com.google.firebase:firebase-messaging:23.1.1'
 	testImplementation 'junit:junit:4.+'
-	implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
+	implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
 
 	def dag_version = "2.22"
 	//Dagger Core
