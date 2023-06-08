@@ -26,7 +26,7 @@ android {
 		applicationId "com.green.wallet"
 		minSdk 26
 		targetSdk 32
-		versionCode 9 //for Google Play
+		versionCode 10 //for Google Play
 		versionName "0.0.76"
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,18 +44,43 @@ android {
 		}
 	}
 
-	buildTypes {
+	signingConfigs {
 		release {
+			// Configuration details for release signing
+			// Configuration details for release signing
+			storeFile file("C:\\Users\\user\\Documents\\Bekzhan  documents\\green_wallet_final.jks")
+			storePassword "Bekjan"
+			keyAlias "key0"
+			keyPassword "Bekjan"
+		}
+		// Other signing configurations
+	}
+
+
+	buildTypes {
+
+		release {
+			applicationIdSuffix ''
+			versionNameSuffix ''
 			minifyEnabled false
 			shrinkResources false
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+			signingConfig signingConfigs.release
 		}
 		debug {
 			minifyEnabled false
 			shrinkResources false
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
+
 	}
+
+
+	playConfigs {
+		googleRelease {
+			enabled.set(true)
+		}
+	} // playConfigs
 
 	compileOptions {
 		sourceCompatibility JavaVersion.VERSION_1_8
@@ -76,7 +101,16 @@ android {
 		checkReleaseBuilds false
 	}
 
+
 }
+
+play {
+	enabled.set(true)
+	track.set("internal")
+	defaultToAppBundles.set(true)
+	serviceAccountCredentials.set(file('private_green_wallet.json'))
+}
+
 
 dependencies {
 
