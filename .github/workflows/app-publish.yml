@@ -46,7 +46,7 @@ jobs:
           NEW_APK_NAME="app-release-${VERSION_NAME}.apk"
           mv $APK_PATH $GITHUB_WORKSPACE/$NEW_APK_NAME
       - name: Upload APK
-          uses: actions/upload-artifact@v2
-          with:
-            name: Release APK
-            path: $GITHUB_WORKSPACE/app-release-*.apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: Release APK
+          path: $GITHUB_WORKSPACE/app-release-*.apk
