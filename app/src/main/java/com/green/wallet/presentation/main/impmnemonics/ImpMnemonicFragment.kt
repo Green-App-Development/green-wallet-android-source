@@ -50,7 +50,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-
 class ImpMnemonicFragment : DaggerDialogFragment() {
 
 	private val binding by viewBinding(FragmentImpmnemonicBinding::bind)
@@ -427,11 +426,11 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			map["mnemonic"] = mnemonicString
 			map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 			map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
-			map["observer"]=12
-			map["non_observer"]=5
+			map["observer"] = 12
+			map["non_observer"] = 5
 			VLog.d("Calling flutter generate hash : $mnemonicString")
 			methodChannel.invokeMethod("generateHashImport", map)
-		}catch (ex:Exception){
+		} catch (ex: Exception) {
 			VLog.d("Exception in calling flutter module to generate hash : ${ex.message}")
 			adjustingAssureTxt(24)
 		}
@@ -1020,11 +1019,19 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 	override fun onResume() {
 		super.onResume()
 		VLog.d("OnResume on import mnemonic fragment")
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 	}
 
 	override fun onPause() {
 		super.onPause()
 		VLog.d("OnPause on import mnemonic fragment")
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 	}
 
 	override fun onStop() {

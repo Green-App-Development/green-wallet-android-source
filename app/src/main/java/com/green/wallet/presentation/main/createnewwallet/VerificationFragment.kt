@@ -531,6 +531,22 @@ class VerificationFragment : DaggerDialogFragment() {
 		)
 	}
 
+	override fun onResume() {
+		super.onResume()
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
+	override fun onPause() {
+		super.onPause()
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
 	override fun onStart() {
 		super.onStart()
 		initStatusBarColor()

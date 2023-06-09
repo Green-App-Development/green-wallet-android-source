@@ -188,12 +188,34 @@ class SaveMnemonicsFragment : DaggerDialogFragment() {
 		initStatusBarColor()
 	}
 
+
+	override fun onResume() {
+		super.onResume()
+		// Add this code in the onCreate() method of your Activity
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
 	private fun getMnemonicsFromList(): String {
 		val mneMnemonicsString = StringBuilder()
 		for (i in 0 until mnemonicsList.size) {
 			mneMnemonicsString.append("${mnemonicsList[i]} ")
 		}
 		return mneMnemonicsString.toString()
+	}
+
+
+	override fun onPause() {
+		super.onPause()
+		getMainActivity().window.clearFlags(
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
+	override fun onStop() {
+		super.onStop()
 	}
 
 	private fun curActivity() = requireActivity() as MainActivity
