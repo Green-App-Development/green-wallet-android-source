@@ -48,7 +48,7 @@ android {
 		release {
 			// Configuration details for release signing
 			// Configuration details for release signing
-			storeFile file("C:\\Users\\user\\Documents\\Bekzhan  documents\\green_wallet_final.jks")
+			storeFile file("$rootDir/cert.final")
 			storePassword "Bekjan"
 			keyAlias "key0"
 			keyPassword "Bekjan"
@@ -108,7 +108,7 @@ play {
 	enabled.set(true)
 	track.set("internal")
 	defaultToAppBundles.set(true)
-	serviceAccountCredentials.set(file('private_green_wallet.json'))
+	serviceAccountCredentials.set(file("${rootDir}/private_wallet.json"))
 }
 
 
