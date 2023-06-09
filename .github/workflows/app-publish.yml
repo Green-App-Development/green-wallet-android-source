@@ -6,12 +6,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-      - name: set up JDK 11
+      - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: '11'
@@ -20,7 +19,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10'  # Replace with your desired Flutter version
+          flutter-version: '2.2.2'  # Replace with your desired Flutter version
       - name: Init flutter project set up as a module
         run: |
           flutter config --no-analytics
@@ -29,14 +28,15 @@ jobs:
           flutter build bundle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Load local  properties file
+      - name: Load local properties file
         run: echo "${{ secrets.LOCAL_PROPERTIES }}" > local.properties
       - name: Load encoded certificate to decode and sign up
         run: echo "${{ secrets.CERT_BASE_64 }}" | base64 --decode > $GITHUB_WORKSPACE/app/cert.final
-      - name: Load encoded json for push app bundle
+      - name: Load encoded JSON for push app bundle
         run: echo "${{ secrets.PRIVATE_WALLET_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/app/private_wallet.json
-      #      - name: Build with Gradle
-      #        run: ./gradlew publishBundle
+      # Uncomment the next line if you want to publish a bundle
+      # - name: Build with Gradle
+      #   run: ./gradlew publishBundle
       - name: Build with Gradle
         run: ./gradlew assembleRelease
       - name: Rename APK with version
@@ -45,9 +45,8 @@ jobs:
           APK_PATH="$GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release.apk"
           NEW_APK_NAME="app-release-${VERSION_NAME}.apk"
           mv $APK_PATH $NEW_APK_NAME
-
       - name: Upload APK
-          uses: actions/upload-artifact@v2
-          with:
-            name: Release APK
-            path: $GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release-*.apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: Release APK
+          path: $GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release-*.apk
