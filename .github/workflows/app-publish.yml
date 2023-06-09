@@ -38,13 +38,13 @@ jobs:
       #      - name: Build with Gradle
       #        run: ./gradlew publishBundle
       - name: Build with Gradle
-          run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease
       - name: Rename APK with version
-          run: |
-            VERSION_NAME=$(grep -oP 'versionName "\K(.*?)(?=")' app/build.gradle)
-            APK_PATH="$GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release.apk"
-            NEW_APK_NAME="app-release-${VERSION_NAME}.apk"
-            mv $APK_PATH $NEW_APK_NAME
+        run: |
+          VERSION_NAME=$(grep -oP 'versionName "\K(.*?)(?=")' app/build.gradle)
+          APK_PATH="$GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release.apk"
+          NEW_APK_NAME="app-release-${VERSION_NAME}.apk"
+          mv $APK_PATH $NEW_APK_NAME
 
       - name: Upload APK
           uses: actions/upload-artifact@v2
