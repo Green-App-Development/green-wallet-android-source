@@ -26,8 +26,8 @@ android {
 		applicationId "com.green.wallet"
 		minSdk 26
 		targetSdk 32
-		versionCode 10 //for Google Play
-		versionName "0.0.76"
+		versionCode 11 //for Google Play
+		versionName "0.0.79"
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -47,8 +47,7 @@ android {
 	signingConfigs {
 		release {
 			// Configuration details for release signing
-			// Configuration details for release signing
-			storeFile file("$rootDir/cert.final")
+			storeFile file("$rootDir/app/cert.final")
 			storePassword "Bekjan"
 			keyAlias "key0"
 			keyPassword "Bekjan"
@@ -108,7 +107,7 @@ play {
 	enabled.set(true)
 	track.set("internal")
 	defaultToAppBundles.set(true)
-	serviceAccountCredentials.set(file("${rootDir}/private_wallet.json"))
+	serviceAccountCredentials.set(file("${rootDir}/app/private_wallet.json"))
 }
 
 
