@@ -19,7 +19,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '2.2.2'  # Replace with your desired Flutter version
+          flutter-version: '3.10'  # Replace with your desired Flutter version
       - name: Init flutter project set up as a module
         run: |
           flutter config --no-analytics
