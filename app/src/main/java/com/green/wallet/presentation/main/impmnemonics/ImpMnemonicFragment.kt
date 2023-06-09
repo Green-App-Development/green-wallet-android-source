@@ -1028,8 +1028,7 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 	override fun onPause() {
 		super.onPause()
 		VLog.d("OnPause on import mnemonic fragment")
-		getMainActivity().window.setFlags(
-			WindowManager.LayoutParams.FLAG_SECURE,
+		getMainActivity().window.clearFlags(
 			WindowManager.LayoutParams.FLAG_SECURE
 		)
 	}
@@ -1044,10 +1043,6 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		jobAfter7Seconds?.cancel()
 		jobToMakeDuplicatesWarningGone?.cancel()
 		curActivity().impMnemonicsFragmentView = null
-		getMainActivity().window.setFlags(
-			WindowManager.LayoutParams.FLAG_SECURE,
-			WindowManager.LayoutParams.FLAG_SECURE
-		)
 	}
 
 

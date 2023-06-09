@@ -526,9 +526,6 @@ class VerificationFragment : DaggerDialogFragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		getMainActivity().window.clearFlags(
-			WindowManager.LayoutParams.FLAG_SECURE
-		)
 	}
 
 	override fun onResume() {
@@ -541,8 +538,7 @@ class VerificationFragment : DaggerDialogFragment() {
 
 	override fun onPause() {
 		super.onPause()
-		getMainActivity().window.setFlags(
-			WindowManager.LayoutParams.FLAG_SECURE,
+		getMainActivity().window.clearFlags(
 			WindowManager.LayoutParams.FLAG_SECURE
 		)
 	}
