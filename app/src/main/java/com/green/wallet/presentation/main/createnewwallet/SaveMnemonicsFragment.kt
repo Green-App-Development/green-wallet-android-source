@@ -222,9 +222,6 @@ class SaveMnemonicsFragment : DaggerDialogFragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-		getMainActivity().window.clearFlags(
-			WindowManager.LayoutParams.FLAG_SECURE
-		)
 	}
 
 	private fun initStatusBarColor() {
