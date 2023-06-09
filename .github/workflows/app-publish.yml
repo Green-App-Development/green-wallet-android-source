@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "add_flut" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -35,5 +35,5 @@ jobs:
         run: echo "${{ secrets.CERT_BASE_64 }}" | base64 --decode > $GITHUB_WORKSPACE/cert.final
       - name: Load encoded json for push app bundle
         run: echo "${{ secrets.PRIVATE_WALLET_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/private_wallet.json
-#      - name: Build with Gradle
-#        run: ./gradlew publishBundle
+      - name: Build with Gradle
+        run: ./gradlew publishBundle
