@@ -32,8 +32,21 @@ jobs:
       - name: Load local  properties file
         run: echo "${{ secrets.LOCAL_PROPERTIES }}" > local.properties
       - name: Load encoded certificate to decode and sign up
-        run: echo "${{ secrets.CERT_BASE_64 }}" | base64 --decode > $GITHUB_WORKSPACE/cert.final
+        run: echo "${{ secrets.CERT_BASE_64 }}" | base64 --decode > $GITHUB_WORKSPACE/app/cert.final
       - name: Load encoded json for push app bundle
-        run: echo "${{ secrets.PRIVATE_WALLET_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/private_wallet.json
+        run: echo "${{ secrets.PRIVATE_WALLET_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/app/private_wallet.json
       - name: Build with Gradle
         run: ./gradlew publishBundle
+      - name: Get Version Name
+        id: get-version-name
+        run: |
+          VERSION_NAME=$(./gradlew properties -q | grep "versionName" | awk -F= '{print $2}')
+          echo "Version Name: $VERSION_NAME"
+          echo "::set-output name=version_name::$VERSION_NAME"
+      - name: Upload APK to Release Assets
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: app/build/outputs/apk/release/app-release.apk
+          asset_name: app-release ${{ steps.get-version-name.outputs.version_name }}.apk
+          asset_content_type: application/vnd.android.package-archive
