@@ -40,13 +40,13 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assembleRelease
       - name: Rename APK with version
-        run: |
-          VERSION_NAME=$(grep -oP 'versionName "\K(.*?)(?=")' app/build.gradle)
-          APK_PATH="$GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release.apk"
-          NEW_APK_NAME="app-release-${VERSION_NAME}.apk"
-          mv $APK_PATH $NEW_APK_NAME
+          run: |
+            VERSION_NAME=$(grep -oP 'versionName "\K(.*?)(?=")' app/build.gradle)
+            APK_PATH=$(find app/build/outputs/apk/release -name "*.apk")
+            NEW_APK_NAME="app-release-${VERSION_NAME}.apk"
+            mv $APK_PATH $GITHUB_WORKSPACE/$NEW_APK_NAME
       - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: Release APK
-          path: $GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release-*.apk
+          uses: actions/upload-artifact@v2
+          with:
+            name: Release APK
+            path: $GITHUB_WORKSPACE/app-release-*.apk
