@@ -41,6 +41,8 @@ jobs:
         run: ./gradlew assembleRelease
       - name: Display APK directory contents
         run: ls $GITHUB_WORKSPACE/app/build/outputs/apk/release/
+      - name: Read permission
+        run: chmod +r $GITHUB_WORKSPACE/app/build/outputs/apk/release/app-release.apk
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
