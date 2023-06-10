@@ -274,8 +274,8 @@
 			tools:layout="@layout/fragment_swap_main" />
 
 	<fragment
-			android:id="@+id/fragmentRequestDetail"
-			android:name="com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment"
+			android:id="@+id/fragmentOrderDetail"
+			android:name="com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment"
 			android:label="Request Detail"
 			tools:layout="@layout/fragment_request_details" />
 
@@ -284,5 +284,12 @@
 			android:name="com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend"
 			android:label=""
 			tools:layout="@layout/fragment_qrcode_send" />
+
+	<fragment
+			android:id="@+id/fragmentSwapSend"
+			android:name="com.green.wallet.presentation.main.swap.send.SwapSendFragment"
+			android:label=""
+			tools:layout="@layout/fragment_send_swap" />
+
 
 </navigation>

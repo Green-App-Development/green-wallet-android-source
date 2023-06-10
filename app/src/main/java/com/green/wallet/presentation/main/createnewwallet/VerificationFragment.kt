@@ -120,6 +120,10 @@ class VerificationFragment : DaggerDialogFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentVerificationWalletBinding.inflate(inflater)
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 		return binding.root
 	}
 
@@ -519,6 +523,25 @@ class VerificationFragment : DaggerDialogFragment() {
 	}
 
 	private fun curActivity() = requireActivity() as MainActivity
+
+	override fun onDestroyView() {
+		super.onDestroyView()
+	}
+
+	override fun onResume() {
+		super.onResume()
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
+	override fun onPause() {
+		super.onPause()
+		getMainActivity().window.clearFlags(
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
 
 	override fun onStart() {
 		super.onStart()

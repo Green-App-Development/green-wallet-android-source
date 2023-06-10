@@ -1,33 +1,81 @@
 package com.green.wallet.data.interact
 
+import com.example.common.tools.mapNetworkOrderStatusToLocal
+import com.green.wallet.data.local.OrderExchangeDao
+import com.green.wallet.data.local.entity.OrderEntity
 import com.green.wallet.data.network.ExchangeService
-import com.green.wallet.data.network.dto.exchange.ExchangeDTO
+import com.green.wallet.data.network.dto.exchangestatus.ExchangeStatus
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.ExchangeRate
+import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.presentation.custom.NotificationHelper
+import com.green.wallet.presentation.custom.parseException
+import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
-import java.lang.IllegalArgumentException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import java.util.UUID
 import javax.inject.Inject
 
 class ExchangeInteractImpl @Inject constructor(
 	private val exchangeService: ExchangeService,
-	private val prefsInteract: PrefsInteract
+	private val prefsInteract: PrefsInteract,
+	private val orderExchangeDao: OrderExchangeDao,
+	private val notifHelper: NotificationHelper
 ) : ExchangeInteract {
 
 
 	override suspend fun createExchangeRequest(
 		give_address: String,
 		give_amount: Double,
-		get_address: String
-	) {
+		get_address: String,
+		get_coin: String,
+		rate: Double
+	): Resource<String> {
 		try {
 			val guid = prefsInteract.getSettingString(PrefsManager.USER_GUID, "")
-
+			val mapFields = hashMapOf<String, Any>()
+			mapFields["user"] = guid
+			mapFields["give_address"] = give_address
+			mapFields["give_amount"] = give_amount
+			mapFields["get_address"] = get_address
+			mapFields["get_coin"] = get_coin
+			val res = exchangeService.createExchangeRequest(
+				mapFields
+			)
+			if (res.isSuccessful) {
+				val body = res.body()!!
+				val success = body.asJsonObject.get("success").asBoolean
+				if (success) {
+					val orderHash = body.asJsonObject.get("result").asString
+					val orderExchange = OrderEntity(
+						order_hash = orderHash,
+						status = OrderStatus.Waiting,
+						amount_to_send = give_amount,
+						give_address = give_address,
+						time_created = System.currentTimeMillis(),
+						rate = rate,
+						get_coin = get_coin,
+						send_coin = if (get_coin == "XCH") "USDT" else "XCH",
+						get_address = get_address,
+						tx_ID = "",
+						fee = 0.0
+					)
+					orderExchangeDao.insertOrderExchange(orderExchange)
+					return Resource.success(orderHash)
+				}
+				val error_code = body.asJsonObject.get("error_code").asInt
+				parseException(error_code)
+			} else
+				throw Exception("Request is not successful : ${res.message()}")
 		} catch (ex: Exception) {
 			VLog.d("Exception in creating exchange requesting : ${ex.message}")
+			return Resource.error(ex)
 		}
+		return Resource.error(Exception("Unknown exception"))
 	}
 
 	override suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate> {
@@ -36,28 +84,33 @@ class ExchangeInteractImpl @Inject constructor(
 			val request = exchangeService.getExchangeRequestRate(user = guid)
 			if (request.isSuccessful) {
 				val res = request.body()!!.result
-				val resExchange = when (fromToken) {
-					"USDT" -> {
-						ExchangeRate(
-							min = res.fromUSDT.toXCH.min.toDoubleOrNull() ?: 0.0,
-							max = res.fromUSDT.toXCH.max.toDoubleOrNull() ?: 0.0,
-							give_address = res.fromUSDT.address,
-							rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
-							rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
-						)
-					}
+				if (request.body()!!.success) {
+					if (res.fromUSDT != null && res.fromXCH != null) {
+						val resExchange = when (fromToken) {
+							"USDT" -> {
+								ExchangeRate(
+									min = res.fromUSDT.toXCH.min.toDoubleOrNull() ?: 0.0,
+									max = res.fromUSDT.toXCH.max.toDoubleOrNull() ?: 0.0,
+									give_address = res.fromUSDT.address,
+									rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
+									rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
+								)
+							}
 
-					else  -> {
-						ExchangeRate(
-							min = res.fromXCH.toUSDT.min.toDoubleOrNull() ?: 0.0,
-							max = res.fromXCH.toUSDT.max.toDoubleOrNull() ?: 0.0,
-							give_address = res.fromXCH.address,
-							rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
-							rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
-						)
+							else -> {
+								ExchangeRate(
+									min = res.fromXCH.toUSDT.min.toDoubleOrNull() ?: 0.0,
+									max = res.fromXCH.toUSDT.max.toDoubleOrNull() ?: 0.0,
+									give_address = res.fromXCH.address,
+									rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
+									rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
+								)
+							}
+						}
+						return Resource.success(resExchange)
 					}
+					return Resource.success(ExchangeRate(0.0, 0.0, "", 0.0, 0.0))
 				}
-				return Resource.success(resExchange)
 			} else {
 				VLog.d("Request is not success for exchange rate : ${request.message()}")
 			}
@@ -66,6 +119,68 @@ class ExchangeInteractImpl @Inject constructor(
 			return Resource.error(ex)
 		}
 		return Resource.error(Exception("Unknown error"))
+	}
+
+	override suspend fun getOrderByHash(hash: String): OrderItem {
+		val res = orderExchangeDao.getOrderExchangeByOrderHash(order_hash = hash)
+		return res.get().toOrderItem()
+	}
+
+	override suspend fun updateOrderStatusPeriodically() {
+		val ordersList = orderExchangeDao.getOrderExchangeInProgressOrAwaitingPayment()
+		for (order in ordersList) {
+			val exchangeStatus = getOrderStatus(order.order_hash)
+			if (exchangeStatus != null) {
+				val status = mapNetworkOrderStatusToLocal(exchangeStatus.result.status)
+				VLog.d("ExchangeStatus : $exchangeStatus of orderItem : $order")
+				if (status != order.status) {
+					orderExchangeDao.updateOrderStatusByHash(status, order.order_hash)
+					if (status == OrderStatus.Success) {
+						orderExchangeDao.updateOrderTxIDByHash(
+							exchangeStatus.result.get.txID ?: "",
+							order.order_hash
+						)
+						notifHelper.callGreenAppNotificationMessages(
+							"Order ${order.order_hash} Status Updated to Success",
+							System.currentTimeMillis()
+						)
+					}
+					if (status == OrderStatus.Cancelled) {
+						notifHelper.callGreenAppNotificationMessages(
+							"Order ${order.order_hash} Status Updated to Cancelled",
+							System.currentTimeMillis()
+						)
+					}
+				}
+			} else
+				VLog.d("Exchange Status is null : $order")
+		}
+	}
+
+	override suspend fun updateOrderStatusByHash(hash: String) {
+
+	}
+
+	override fun getAllOrderEntityList(): Flow<List<OrderItem>> {
+		return orderExchangeDao.getAllOrderEntityList().map { it.map { it.toOrderItem() } }
+	}
+
+	private suspend fun getOrderStatus(orderHash: String): ExchangeStatus? {
+		try {
+			val guid = prefsInteract.getSettingString(PrefsManager.USER_GUID, "")
+			val res = exchangeService.getStatusOfOrderExchange(user = guid, order = orderHash)
+			if (res.isSuccessful) {
+				VLog.d("Result of exchange status request : ${res.body()}")
+				if (res.body()?.success == true)
+					return res.body()
+				return null
+			} else {
+				VLog.d("Request is not success in getting order status : ${res.message()}")
+			}
+		} catch (ex: Exception) {
+			VLog.d("Exception occurred in getting order status : ${ex.message}")
+		}
+		return null
 	}
 
 

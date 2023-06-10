@@ -57,7 +57,9 @@ import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
 import com.green.wallet.presentation.main.send.SendFragment
 import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
-import com.green.wallet.presentation.main.swap.requestdetail.RequestDetailFragment
+import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
+import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
+import com.green.wallet.presentation.main.swap.send.SwapSendFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
@@ -233,50 +235,62 @@ class MainActivity : BaseActivity() {
 					window.statusBarColor = getColorResource(R.color.status_bar_color_home)
 					setSystemUiLightStatusBar(isLightStatusBar = false)
 				}
+
 				progressWalletCreating -> {
 //					window.statusBarColor = getColorResource(R.color.status_bar_color_home)
 //					setSystemUiLightStatusBar(isLightStatusBar = false)
 				}
+
 				transactionsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				addressFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				allWalletListFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				verificationFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				manageWalletFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				walletSettings -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				importTokenFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				saveMnemonicsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				allSettingsFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
 				}
+
 				addAddressFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				entPasscodeFrMain -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
@@ -289,22 +303,27 @@ class MainActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentNFTDetails -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentDApp -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				fragmentSwapMain -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
-				fragmentRequestDetail -> {
+
+				fragmentOrderDetail -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -322,18 +341,21 @@ class MainActivity : BaseActivity() {
 						popBackStackTillHomeFragment()
 					}
 				}
+
 				dapp -> {
 					if (navController.currentDestination?.id != fragmentDApp) {
 						item.isChecked = true
 						move2DAppFragment()
 					}
 				}
+
 				nfts -> {
 					if (navController.currentDestination?.id != fragmentUserNFTs) {
 						item.isChecked = true
 						move2UserNFTTokensFragment()
 					}
 				}
+
 				swap -> {
 					if (navController.currentDestination?.id != fragmentSwapMain) {
 						item.isChecked = true
@@ -351,6 +373,7 @@ class MainActivity : BaseActivity() {
 			is HomeFragment -> {
 				curFragment.onCommentUnderDevClicked()
 			}
+
 			is UserNFTTokensFragment -> {
 				curFragment.onCommentUnderDevClicked()
 			}
@@ -414,7 +437,11 @@ class MainActivity : BaseActivity() {
 
 	}
 
-	fun move2SendFragment(networkType: String, fingerPrint: Long?, shouldQRCleared: Boolean) {
+	fun move2SendFragment(
+		networkType: String,
+		fingerPrint: Long?,
+		shouldQRCleared: Boolean
+	) {
 		if (shouldQRCleared) {
 			mainViewModel.saveDecodeQrCode("")
 			mainViewModel.saveChosenAddress("")
@@ -451,9 +478,10 @@ class MainActivity : BaseActivity() {
 					fragmentNFTDetails,
 					fragmentSendNFT,
 					addressFragment,
-					fragmentRequestDetail,
+					fragmentOrderDetail,
 					btmChooseDApps,
-					fragmentQrCodeSend
+					fragmentQrCodeSend,
+					fragmentSwapSend
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -649,8 +677,19 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentSwapMain)
 	}
 
-	fun move2QRSendFragment() {
-		navController.navigate(fragmentQrCodeSend)
+	fun move2QRSendFragment(address: String) {
+		val bundle = bundleOf()
+		bundle.putString(FragmentQRSend.SEND_ADDRESS_KEY, address)
+		navController.navigate(fragmentQrCodeSend, bundle)
+	}
+
+	fun move2SwapSendXCHFragment(address: String, amount: Double) {
+		val bundle = bundleOf()
+		bundle.apply {
+			putString(SwapSendFragment.SEND_ADDRESS_KEY, address)
+			putDouble(SwapSendFragment.SEND_AMOUNT_KEY, amount)
+		}
+		navController.navigate(fragmentSwapSend, bundle)
 	}
 
 	fun move2EditAddressFragment(itemAddress: Address?) {
@@ -819,9 +858,11 @@ class MainActivity : BaseActivity() {
 					val networkList = res.data!!.map { it.name }.toList()
 					move2BtmDialogChooseNetwork(hasAtLeastOneWallet, networkList)
 				}
+
 				Resource.State.LOADING -> {
 
 				}
+
 				Resource.State.ERROR -> {
 					VLog.d("Error create or import wallet dialog error : ${res.error}")
 					dialogMan.showServerErrorDialog(this@MainActivity) {
@@ -836,18 +877,17 @@ class MainActivity : BaseActivity() {
 		move2NewOrImportWallet(networkType)
 	}
 
-	fun move2SendNFTFragment(nft:NFTInfo) {
+	fun move2SendNFTFragment(nft: NFTInfo) {
 		val bundle = Bundle().apply {
 			putParcelable(NFTSendFragment.NFT_KEY, nft)
 		}
-		navController.navigate(fragmentSendNFT,bundle)
+		navController.navigate(fragmentSendNFT, bundle)
 	}
 
-	//temp passing status
-	fun move2RequestDetailsFragment(status: RequestStatus) {
+	fun move2OrderDetailsFragment(orderHash: String) {
 		val bundle = bundleOf()
-		bundle.putString(RequestDetailFragment.KEY_ID, status.name)
-		navController.navigate(fragmentRequestDetail, bundle)
+		bundle.putString(OrderDetailFragment.ORDER_HASH, orderHash)
+		navController.navigate(fragmentOrderDetail, bundle)
 	}
 
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {

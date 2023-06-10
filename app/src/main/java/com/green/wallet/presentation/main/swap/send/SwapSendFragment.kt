@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.send
+package com.green.wallet.presentation.main.swap.send
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -30,6 +30,7 @@ import com.google.gson.Gson
 import dagger.android.support.DaggerFragment
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.databinding.FragmentSendSwapBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
@@ -37,6 +38,8 @@ import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.send.SendFragmentViewModel
+import com.green.wallet.presentation.main.send.WalletListAdapter
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
 import io.flutter.plugin.common.MethodChannel
@@ -50,6 +53,7 @@ import kotlinx.android.synthetic.main.fragment_receive.txtAddress
 import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.android.synthetic.main.fragment_send.chosenNetworkRel
 import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
+import kotlinx.android.synthetic.main.fragment_send_swap.ic_wallet_list
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.math.BigDecimal
@@ -57,9 +61,9 @@ import java.util.*
 import javax.inject.Inject
 
 
-class SendFragment : DaggerFragment() {
+class SwapSendFragment : DaggerFragment() {
 
-	private val binding by viewBinding(FragmentSendBinding::bind)
+	private val binding by viewBinding(FragmentSendSwapBinding::bind)
 	private lateinit var networkAdapter: DynamicSpinnerAdapter
 	private lateinit var tokenAdapter: DynamicSpinnerAdapter
 	private lateinit var walletAdapter: WalletListAdapter
@@ -67,19 +71,21 @@ class SendFragment : DaggerFragment() {
 	@Inject
 	lateinit var dialogManager: DialogManager
 
-	private var curNetworkType: String = ""
+	private var curNetworkType: String = "Chia Network"
 	private var curFingerPrint: Long? = null
 	private var shouldQRBeEmpty: Boolean = false
 
 	companion object {
-		const val NETWORK_TYPE_KEY = "coin_type"
-		const val FINGERPRINT_KEY = "finger_print"
-		const val SHOULD_BE_EMPTY = "should_be_empty"
+		const val SEND_ADDRESS_KEY = "send_address_key"
+		const val SEND_AMOUNT_KEY = "send_amount_key"
 	}
+
+	private var sendAddress: String = ""
+	private var sendAmount: Double = 0.0
 
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
-	private val viewModel: SendFragmentViewModel by viewModels { viewModelFactory }
+	private val viewModel: SwapSendViewModel by viewModels { viewModelFactory }
 
 	@Inject
 	lateinit var anim: AnimationManager
@@ -114,15 +120,13 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private var curTokenWalletList = listOf<TokenWallet>()
-	private val twoEdtsFilled = mutableSetOf<Int>()
+	private val twoEdtsFilled = mutableSetOf(1)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		arguments?.let {
-			curNetworkType = arguments?.getString(NETWORK_TYPE_KEY) ?: "Chia Network"
-			if (it[FINGERPRINT_KEY] != null) {
-				curFingerPrint = it[FINGERPRINT_KEY] as Long
-			}
+			sendAddress = it.getString(SEND_ADDRESS_KEY, "")
+			sendAmount = it.getDouble(SEND_AMOUNT_KEY, 0.0)
 		}
 		VLog.d("On Create SendFragment Params : FingerPrint  ${curFingerPrint}, NetworkType : $curNetworkType")
 	}
@@ -132,7 +136,7 @@ class SendFragment : DaggerFragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View? {
-		val view = inflater.inflate(R.layout.fragment_send, container, false)
+		val view = inflater.inflate(R.layout.fragment_send_swap, container, false)
 		VLog.d("OnCreateView on send Fragment")
 		curActivity().sendCoinsFragmentView = view
 		return view
@@ -145,11 +149,9 @@ class SendFragment : DaggerFragment() {
 		queryWalletList(curNetworkType, null)
 		updateNetworkName(curNetworkType)
 		initTxtAboveEdits()
-		initMoveFocusToEnterAmount()
-//		determineOneWalletShow()
-		VLog.d("OnViewCreated on send Fragment")
+		VLog.d("OnViewCreated on send Swap Fragment")
 		initSwipeRefreshLayout()
-		initNetworkAdapter()
+		binding.updateParams()
 	}
 
 	private fun initConstrainsAfterCommobasedOnToken() {
@@ -297,13 +299,6 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun removeGADIfCurNetworkChives(networkType: String) {
-		if (isThisChivesNetwork(networkType)) {
-			binding.txtAmountInGAD.visibility = View.GONE
-			binding.txtGAD.visibility = View.GONE
-		} else {
-			binding.txtAmountInGAD.visibility = View.VISIBLE
-			binding.txtGAD.visibility = View.VISIBLE
-		}
 		val enterAmount = binding.edtEnterAmount.text.toString().toDoubleOrNull()
 		if (enterAmount != null) {
 			convertAmountToUSDGAD(enterAmount)
@@ -324,18 +319,7 @@ class SendFragment : DaggerFragment() {
 				btnContinue.isEnabled = true
 			}
 			txtWalletAmount.text = lastTokenBalanceText
-			txtWalletAmountInUsd.text = lastTokenBalanceTxtInUSDT
 			VLog.d("EdtFilledSize : ${twoEdtsFilled.size}")
-		}
-	}
-
-	private fun determineOneWalletShow() {
-		if (curFingerPrint != null) {
-			ic_wallet_list.visibility = View.INVISIBLE
-			imgIconSpinner.visibility = View.INVISIBLE
-			chosenNetworkRel.isEnabled = false
-		} else {
-
 		}
 	}
 
@@ -348,9 +332,9 @@ class SendFragment : DaggerFragment() {
 			viewModel.queryWalletWithTokensList(type, fingerPrint)
 				.collectLatest { walletTokenList ->
 
-//					for (walletWithToken in walletTokenList) {
-//						VLog.d("Wallet Token on SendFragment : $walletWithToken ")
-//					}
+					for (walletWithToken in walletTokenList) {
+						VLog.d("Wallet Token on SwapSendFragment : $walletWithToken ")
+					}
 					walletAdapter = WalletListAdapter(curActivity(), walletTokenList)
 					binding.walletSpinner.adapter = walletAdapter
 					if (walletAdapterPosition == -1) {
@@ -407,11 +391,6 @@ class SendFragment : DaggerFragment() {
 	}
 
 	private fun updateTokensSpinner(tokenWalletList: List<TokenWallet>) {
-		if (tokenWalletList.size == 1) {
-			ic_token_downward.visibility = View.GONE
-		} else {
-			ic_token_downward.visibility = View.VISIBLE
-		}
 		curTokenWalletList = tokenWalletList
 		tokenAdapter = DynamicSpinnerAdapter(
 			widthDp = 100,
@@ -422,9 +401,6 @@ class SendFragment : DaggerFragment() {
 				.map { it.code }.toList()
 		)
 		binding.tokenSpinner.adapter = tokenAdapter
-		binding.icTokenDownward.setOnClickListener {
-			binding.tokenSpinner.performClick()
-		}
 		if (tokendAdapterPosition < tokenWalletList.size) {
 			binding.tokenSpinner.setSelection(tokendAdapterPosition)
 			tokenAdapter.selectedPosition = tokendAdapterPosition
@@ -466,7 +442,6 @@ class SendFragment : DaggerFragment() {
 			if (builder.toString() != curText) {
 				binding.edtEnterAmount.apply {
 					setText(builder.toString())
-					setSelection(builder.toString().length)
 				}
 			}
 		}
@@ -474,11 +449,10 @@ class SendFragment : DaggerFragment() {
 
 	@SuppressLint("SetTextI18n")
 	private fun updateAmounts(tokenWallet: TokenWallet) {
-		txtWalletAmount.text =
+		binding.txtWalletAmount.text =
 			formattedDoubleAmountWithPrecision(tokenWallet.amount) + " ${tokenWallet.code}"
 		lastTokenBalanceText = txtWalletAmount.text.toString()
 		val formattedBalance = String.format("%.2f", tokenWallet.amountInUSD).replace(",", ".")
-		txtWalletAmountInUsd.text = "⁓$formattedBalance USD"
 		lastTokenBalanceTxtInUSDT = "⁓$formattedBalance USD"
 		chosenTokenCode = tokenWallet.code
 		if (txtShortNetworkType.text.toString().length > 1) {
@@ -486,11 +460,6 @@ class SendFragment : DaggerFragment() {
 		}
 		if (binding.enterCommissionToken.text.toString().length > 1) {
 			binding.enterCommissionToken.text = tokenAdapter.dataOptions[0]
-		}
-		if (tokenAdapter.selectedPosition != 0) {
-			binding.txtGAD.text = "XCH"
-		} else {
-			binding.txtGAD.text = "GAD"
 		}
 		if (binding.edtEnterAmount.text.toString().isNotEmpty()) {
 			val amount = binding.edtEnterAmount.text.toString().toDouble()
@@ -501,74 +470,6 @@ class SendFragment : DaggerFragment() {
 
 	private fun initTxtAboveEdits() {
 		binding.apply {
-
-			edtAddressWallet.setOnFocusChangeListener { view, focus ->
-				if (focus) {
-					txtEnterAddressWallet.visibility = View.VISIBLE
-					edtAddressWallet.hint = ""
-					line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
-				} else if (edtAddressWallet.text.toString().isEmpty()) {
-					txtEnterAddressWallet.visibility = View.INVISIBLE
-					edtAddressWallet.hint = curActivity().getString(R.string.send_token_adress)
-				}
-				if (!focus) {
-					line2.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
-				}
-			}
-
-
-			edtEnterAmount.setOnFocusChangeListener { view, focus ->
-				if (focus) {
-					txtEnterAmount.visibility = View.VISIBLE
-					txtSpendableBalanceAmount.visibility = View.VISIBLE
-					edtEnterAmount.hint = ""
-					view2.setBackgroundColor(curActivity().getColorResource(R.color.green))
-					txtShortNetworkType.apply {
-						setTextColor(curActivity().getColorResource(R.color.green))
-						text = chosenTokenCode
-					}
-				} else if (edtEnterAmount.text.toString().isEmpty()) {
-					txtEnterAmount.visibility = View.INVISIBLE
-					edtEnterAmount.hint = curActivity().getString(R.string.send_token_amount)
-					txtShortNetworkType.apply {
-						text = "-"
-						setTextColor(curActivity().getColorResource(R.color.txtShortNetworkType))
-					}
-					txtSpendableBalanceAmount.visibility = View.GONE
-				}
-				if (!focus) {
-					view2.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
-				}
-			}
-
-			edtEnterCommission.setOnFocusChangeListener { view, focus ->
-				if (focus) {
-					txtEnterCommission.visibility = View.VISIBLE
-					txtSpendableBalanceCommission.visibility = View.VISIBLE
-					edtEnterCommission.hint = ""
-					view3.setBackgroundColor(curActivity().getColorResource(R.color.green))
-					enterCommissionToken.apply {
-						setTextColor(curActivity().getColorResource(R.color.green))
-						text = getShortNetworkType(curNetworkType)
-					}
-					txtRecommendedCommission.visibility = View.VISIBLE
-					changeCommissionValueFromRest()
-				} else if (edtEnterCommission.text.toString().isEmpty()) {
-					txtEnterCommission.visibility = View.INVISIBLE
-					edtEnterCommission.hint =
-						curActivity().getString(R.string.send_token_commission_amount)
-					enterCommissionToken.apply {
-						text = "-"
-						setTextColor(curActivity().getColorResource(R.color.txtShortNetworkType))
-					}
-					txtRecommendedCommission.visibility = View.INVISIBLE
-					txtSpendableBalanceCommission.visibility = View.GONE
-				}
-				if (!focus) {
-					view3.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
-				}
-			}
-
 
 			txtRecommendedCommission.setOnClickListener {
 				edtEnterCommission.setText(txtRecommendedCommission.text.toString().trim())
@@ -600,40 +501,6 @@ class SendFragment : DaggerFragment() {
 		}
 	}
 
-	private fun initNetworkAdapter() {
-
-		lifecycleScope.launch {
-
-			val distinctNetworkTypes =
-				viewModel.getDistinctNetworkTypeValues()
-
-			networkAdapter =
-				DynamicSpinnerAdapter(180, curActivity(), distinctNetworkTypes)
-			binding.networkSpinner.adapter = networkAdapter
-
-			binding.networkSpinner.setSelection(distinctNetworkTypes.indexOf(curNetworkType))
-
-			binding.networkSpinner.onItemSelectedListener =
-				object : AdapterView.OnItemSelectedListener {
-
-					override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-						VLog.d("Selected item position : $p2")
-						updateNetworkName(networkAdapter.dataOptions[p2])
-						curNetworkType = networkAdapter.dataOptions[p2]
-						networkAdapter.selectedPosition = p2
-						queryWalletList(
-							networkAdapter.dataOptions[p2],
-							null
-						)
-					}
-
-					override fun onNothingSelected(p0: AdapterView<*>?) {
-
-					}
-
-				}
-		}
-	}
 
 	private var passcodeJob: Job? = null
 
@@ -645,7 +512,7 @@ class SendFragment : DaggerFragment() {
 					VLog.d("Success entering the passcode : $it")
 					delay(500)
 					dialogManager.showProgress(curActivity())
-					initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+					initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString().lowercase())
 					curActivity().mainViewModel.send_money_false()
 				}
 			}
@@ -683,7 +550,6 @@ class SendFragment : DaggerFragment() {
 			when (res.state) {
 				Resource.State.SUCCESS -> {
 					dialogManager.hidePrevDialogs()
-					insertAddressEntityIfBoxChecked()
 					showSuccessSendMoneyDialog()
 				}
 
@@ -833,25 +699,8 @@ class SendFragment : DaggerFragment() {
 		return gson.fromJson(item, NetworkItem::class.java)
 	}
 
-	private suspend fun insertAddressEntityIfBoxChecked() {
-		if (binding.checkBoxAddAddress.isChecked) {
-			val name = binding.edtAddressName.text.toString()
-			val existAddress =
-				viewModel.checkIfAddressExistInDb(binding.edtAddressWallet.text.toString())
-			if (existAddress.isEmpty())
-				viewModel.insertAddressEntity(
-					Address(
-						UUID.randomUUID().toString(),
-						binding.edtAddressWallet.text.toString(),
-						name,
-						"",
-						System.currentTimeMillis()
-					)
-				)
-		}
-	}
 
-	private fun getDoubleValueFromEdt(edt: EditText): Double {
+	private fun getDoubleValueFromEdt(edt: TextView): Double {
 		return edt.text.toString().toDoubleOrNull() ?: 0.0
 	}
 
@@ -920,52 +769,33 @@ class SendFragment : DaggerFragment() {
 	}
 
 
-	private fun FragmentSendBinding.registerCLicks() {
+	private fun FragmentSendSwapBinding.updateParams() {
+		edtAddressWallet.text = sendAddress
+		edtEnterAmount.text = formattedDoubleAmountWithPrecision(sendAmount)
+		edtEnterCommission.text = "0.000005"
+		txtRecommendedCommission.text = "0.000005"
+	}
 
-		checkBoxAddAddress.setOnCheckedChangeListener(object :
-			CompoundButton.OnCheckedChangeListener {
-			override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
-				addNameAddressLay.visibility = if (p1) View.VISIBLE else View.GONE
-				txtAddressAlredyExistWarning.visibility = if (p1) View.VISIBLE else View.GONE
-				checkBoxAddAddress.setTextColor(
-					if (p1) ContextCompat.getColor(
-						curActivity(),
-						R.color.green
-					) else ContextCompat.getColor(curActivity(), R.color.checkbox_text_color)
-				)
-				if (p1)
-					checkAddressAlreadyExistInDB()
-			}
-		})
+	private fun FragmentSendSwapBinding.registerCLicks() {
 
 		backLayout.setOnClickListener {
 			curActivity().popBackStackOnce()
 		}
 
 
-		imgEdtScan.setOnClickListener {
-			it.startAnimation(anim.getBtnEffectAnimation())
-			requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
-		}
-
-		imgAddressIc.setOnClickListener {
-			curActivity().move2AddressFragmentList(true)
-		}
-
-
-		edtAddressWallet.addTextChangedListener {
-			if (it.isNullOrEmpty()) {
-				twoEdtsFilled.remove(1)
-			} else {
-				twoEdtsFilled.add(1)
-				txtEnterAddressWallet.visibility = View.VISIBLE
-				edtAddressWallet.hint = ""
-				line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
-				edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-				txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
-			}
-			enableBtnContinueTwoEdtsFilled()
-		}
+//		edtAddressWallet.addTextChangedListener {
+//			if (it.isNullOrEmpty()) {
+//				twoEdtsFilled.remove(1)
+//			} else {
+//				twoEdtsFilled.add(1)
+//				txtEnterAddressWallet.visibility = View.VISIBLE
+//				edtAddressWallet.hint = ""
+//				line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
+//				edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
+//				txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
+//			}f
+//			enableBtnContinueTwoEdtsFilled()
+//		}
 
 		edtEnterAmount.addTextChangedListener {
 			kotlin.runCatching {
@@ -1003,7 +833,7 @@ class SendFragment : DaggerFragment() {
 				}
 			}
 		}
-		binding.icWalletList.setOnClickListener {
+		icWalletList.setOnClickListener {
 			binding.walletSpinner.performClick()
 		}
 
@@ -1014,11 +844,6 @@ class SendFragment : DaggerFragment() {
 
 		curActivity().mainViewModel.send_money_false()
 
-		anim.animateArrowIconCustomSpinner(
-			binding.tokenSpinner,
-			binding.icTokenDownward,
-			curActivity()
-		)
 		anim.animateArrowIconCustomSpinner(
 			binding.walletSpinner,
 			binding.icWalletList,
@@ -1034,22 +859,7 @@ class SendFragment : DaggerFragment() {
 	@SuppressLint("SetTextI18n")
 	private fun convertAmountToUSDGAD(amount: Double) {
 		lifecycleScope.launch(handler) {
-			val amountInUSD =
-				amount * viewModel.getTokenPriceByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
-			binding.txtAmountInUSD.setText("⁓${formattedDollarWithPrecision(amountInUSD, 3)}")
-			val gadPrice = viewModel.getTokenPriceByCode(binding.txtGAD.text.toString())
-			var convertedAmountGAD = 0.0
-			if (gadPrice != 0.0) {
-				convertedAmountGAD = amountInUSD / gadPrice
-			}
-			binding.txtAmountInGAD.setText(
-				"~${
-					formattedDollarWithPrecision(
-						convertedAmountGAD,
-						3
-					)
-				}"
-			)
+
 		}
 	}
 
@@ -1079,9 +889,9 @@ class SendFragment : DaggerFragment() {
 			txtAddressDontExistWarning.visibility = View.VISIBLE
 			lifecycleScope.launch {
 				delay(2000)
-				if (!this@SendFragment.isVisible) {
-					edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-					txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
+				if (!this@SwapSendFragment.isVisible) {
+					edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.greey))
+					txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.greey))
 					txtAddressDontExistWarning.visibility = View.GONE
 				}
 			}
@@ -1166,20 +976,20 @@ class SendFragment : DaggerFragment() {
 
 	private fun hideNotEnoughAmountWarningSending() {
 		binding.apply {
-			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.green))
+			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.greey))
+			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.greey))
 		}
 	}
 
 	private fun hideNotEnoughAmountWarningFee() {
 		binding.apply {
-			edtEnterCommission.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-			txtEnterCommission.setTextColor(curActivity().getColorResource(R.color.green))
+			edtEnterCommission.setTextColor(curActivity().getColorResource(R.color.greey))
+			txtEnterCommission.setTextColor(curActivity().getColorResource(R.color.greey))
 		}
 	}
 
 	private fun showNotEnoughAmountFee() {
-		if (!this@SendFragment::tokenAdapter.isInitialized)
+		if (!this@SwapSendFragment::tokenAdapter.isInitialized)
 			return
 		binding.apply {
 			val token = tokenAdapter.dataOptions[0]
@@ -1201,7 +1011,7 @@ class SendFragment : DaggerFragment() {
 				edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
 			//check only token first
 			if (tokenAdapter.selectedPosition != 0) {
-				if (enteredAmount > spendableAmountToken && this@SendFragment::tokenAdapter.isInitialized)
+				if (enteredAmount > spendableAmountToken && this@SwapSendFragment::tokenAdapter.isInitialized)
 					return tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
 			}
 		}
@@ -1210,8 +1020,8 @@ class SendFragment : DaggerFragment() {
 
 	private fun hideAmountNotEnoughWarning() {
 		binding.apply {
-			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.green))
+			edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.greey))
+			txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.greey))
 			txtNotEnoughMoneyWarning.visibility = View.GONE
 		}
 	}
