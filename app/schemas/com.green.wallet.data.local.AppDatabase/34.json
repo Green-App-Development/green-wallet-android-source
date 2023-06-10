@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 34,
-    "identityHash": "7dcd1ce0807bd7e59ef7a40310d39df5",
+    "identityHash": "200153cfa21882ff1c586f42737ad34a",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -611,12 +611,62 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "OrderEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `code` TEXT NOT NULL, `time_created` INTEGER NOT NULL, PRIMARY KEY(`order_hash`))",
+        "fields": [
+          {
+            "fieldPath": "order_hash",
+            "columnName": "order_hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount_to_send",
+            "columnName": "amount_to_send",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "give_address",
+            "columnName": "give_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time_created",
+            "columnName": "time_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "order_hash"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7dcd1ce0807bd7e59ef7a40310d39df5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '200153cfa21882ff1c586f42737ad34a')"
     ]
   }
 }

@@ -37,6 +37,7 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.viewBinding
 import io.flutter.plugin.common.MethodChannel
@@ -47,7 +48,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 
 class ImpMnemonicFragment : DaggerDialogFragment() {
@@ -129,6 +129,10 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 		VLog.d("OnCreate View on Import Mnemonics on $dialog")
 		val view = inflater.inflate(R.layout.fragment_impmnemonic, container, false)
 		curActivity().impMnemonicsFragmentView = view
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 		return view
 	}
 
@@ -422,11 +426,11 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 			map["mnemonic"] = mnemonicString
 			map["prefix"] = getPrefixForAddressFromNetworkType(curNetworkType)
 			map["tokens"] = convertListToStringWithSpace(defaultTokensOnMainScreen.map { it.hash })
-			map["observer"]=12
-			map["non_observer"]=5
+			map["observer"] = 12
+			map["non_observer"] = 5
 			VLog.d("Calling flutter generate hash : $mnemonicString")
 			methodChannel.invokeMethod("generateHashImport", map)
-		}catch (ex:Exception){
+		} catch (ex: Exception) {
 			VLog.d("Exception in calling flutter module to generate hash : ${ex.message}")
 			adjustingAssureTxt(24)
 		}
@@ -1015,11 +1019,18 @@ class ImpMnemonicFragment : DaggerDialogFragment() {
 	override fun onResume() {
 		super.onResume()
 		VLog.d("OnResume on import mnemonic fragment")
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 	}
 
 	override fun onPause() {
 		super.onPause()
 		VLog.d("OnPause on import mnemonic fragment")
+		getMainActivity().window.clearFlags(
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 	}
 
 	override fun onStop() {

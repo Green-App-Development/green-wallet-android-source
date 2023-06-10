@@ -5,3 +5,6 @@
 /build/temp
 /build/tmp
 /build/outputs/logs
+private_wallet.json
+cert.final
+google-services.json

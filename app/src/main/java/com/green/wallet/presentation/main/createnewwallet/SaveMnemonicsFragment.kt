@@ -23,6 +23,7 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.getColorResource
+import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,6 +73,10 @@ class SaveMnemonicsFragment : DaggerDialogFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentSavemnemonicsBinding.inflate(inflater)
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
 		return binding.root
 	}
 
@@ -183,6 +188,16 @@ class SaveMnemonicsFragment : DaggerDialogFragment() {
 		initStatusBarColor()
 	}
 
+
+	override fun onResume() {
+		super.onResume()
+		// Add this code in the onCreate() method of your Activity
+		getMainActivity().window.setFlags(
+			WindowManager.LayoutParams.FLAG_SECURE,
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
 	private fun getMnemonicsFromList(): String {
 		val mneMnemonicsString = StringBuilder()
 		for (i in 0 until mnemonicsList.size) {
@@ -191,8 +206,23 @@ class SaveMnemonicsFragment : DaggerDialogFragment() {
 		return mneMnemonicsString.toString()
 	}
 
+
+	override fun onPause() {
+		super.onPause()
+		getMainActivity().window.clearFlags(
+			WindowManager.LayoutParams.FLAG_SECURE
+		)
+	}
+
+	override fun onStop() {
+		super.onStop()
+	}
+
 	private fun curActivity() = requireActivity() as MainActivity
 
+	override fun onDestroyView() {
+		super.onDestroyView()
+	}
 
 	private fun initStatusBarColor() {
 		dialog?.apply {
