@@ -21,8 +21,18 @@ class FragmentQRSend : Fragment() {
 
 	private lateinit var binding: FragmentQrcodeSendBinding
 
+
+	companion object {
+		const val SEND_ADDRESS_KEY = "send_address_key"
+	}
+
+	private var address = ""
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		arguments?.let {
+			address = it.getString(SEND_ADDRESS_KEY, "")
+		}
 	}
 
 	override fun onCreateView(
@@ -42,7 +52,7 @@ class FragmentQRSend : Fragment() {
 	private fun FragmentQrcodeSendBinding.initViews() {
 		try {
 			val qrgEncoder =
-				QRGEncoder("Hello", null, QRGContents.Type.TEXT, 1500)
+				QRGEncoder(address, null, QRGContents.Type.TEXT, 1500)
 			qrgEncoder.colorBlack =
 				ContextCompat.getColor(getMainActivity(), R.color.qr_black)
 			qrgEncoder.colorWhite =

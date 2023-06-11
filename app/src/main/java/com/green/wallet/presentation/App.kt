@@ -57,6 +57,9 @@ class App : DaggerApplication() {
 	lateinit var walletInteract: WalletInteract
 
 	@Inject
+	lateinit var exchangeInteract: ExchangeInteract
+
+	@Inject
 	lateinit var notificationHelper: NotificationHelper
 
 	lateinit var appComponent: AppComponent
@@ -98,11 +101,7 @@ class App : DaggerApplication() {
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.Main).launch {
-//			nftInteract.getHomeAddedWalletWithNFTTokensFlow()
-			val guid = UUID.randomUUID().toString().replace("-", "").uppercase()
-			VLog.d(
-				"GUID of the user : $guid Len : ${guid.length}"
-			)
+
 		}
 	}
 
@@ -151,6 +150,11 @@ class App : DaggerApplication() {
 	private fun quickNavigationIfUserUnBoarded() {
 		CoroutineScope(Dispatchers.IO).launch {
 			isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, true)
+			val guid = prefs.getSettingString(PrefsManager.USER_GUID, "")
+			if (guid.isEmpty()) {
+				val generateGuid = UUID.randomUUID().toString().replace("-", "").uppercase()
+				prefs.saveSettingString(PrefsManager.USER_GUID, generateGuid)
+			}
 		}
 	}
 
@@ -201,6 +205,7 @@ class App : DaggerApplication() {
 				delay(1000L * 30L)
 				VLog.d("Start requesting Balance Each Wallets Periodically:")
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
+				exchangeInteract.updateOrderStatusPeriodically()
 			}
 		}
 		updateCryptoJob?.cancel()

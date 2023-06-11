@@ -29,11 +29,11 @@ import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
-import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
+import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
@@ -63,6 +63,7 @@ class ExchangeFragment : DaggerFragment() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: ExchangeViewModel by viewModels { viewModelFactory }
+	private val swapMainSharedVM: SwapMainViewModel by viewModels { viewModelFactory }
 
 	override fun onAttach(context: Context) {
 		super.onAttach(context)
@@ -70,12 +71,14 @@ class ExchangeFragment : DaggerFragment() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		VLog.d("On Create on exchange fragment")
+		VLog.d("On Create on exchange fragment : SharedVM : $swapMainSharedVM")
+		swapMainSharedVM.showingExchange = true
 	}
 
 	private var smallContainer = 300
 	private var bigContainer = 418
 	private var hasOneFocusLeast = false
+	private var btnExchangeEnabled = mutableSetOf<Int>()
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -87,6 +90,8 @@ class ExchangeFragment : DaggerFragment() {
 		binding.registerViews()
 		binding.registerFilters()
 		binding.initSpinners()
+		vm.changeToDefault()
+		initChiaWalletAdapter()
 		return binding.root
 	}
 
@@ -94,31 +99,47 @@ class ExchangeFragment : DaggerFragment() {
 		lifecycleScope.launchWhenCreated {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				vm.chiaWalletList.collectLatest {
-					val list = it.map { "Chia ${it.fingerPrint}" }
-					val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list)
-					binding.walletSpinner.apply {
-						this.adapter = adapter
-						onItemSelectedListener = object : OnItemSelectedListener {
-							override fun onItemSelected(
-								p0: AdapterView<*>?,
-								p1: View?,
-								p2: Int,
-								p3: Long
-							) {
-								vm.walletPosition = p2
-								adapter.selectedPosition = p2
-								binding.apply {
-									edtFingerPrint.text = hidePublicKey(it[p2].fingerPrint)
-									edtGetAddress.text = formatString(10, it[p2].address, 6)
+					it?.let {
+						if (it.isNotEmpty()) {
+							val list = it.map { "Chia ${it.fingerPrint}" }
+							val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list)
+							binding.walletSpinner.apply {
+								this.adapter = adapter
+								onItemSelectedListener = object : OnItemSelectedListener {
+									override fun onItemSelected(
+										p0: AdapterView<*>?,
+										p1: View?,
+										p2: Int,
+										p3: Long
+									) {
+										vm.walletPosition = p2
+										adapter.selectedPosition = p2
+										binding.apply {
+											edtFingerPrint.text = hidePublicKey(it[p2].fingerPrint)
+											edtGetAddress.text = formatString(10, it[p2].address, 6)
+										}
+									}
+
+									override fun onNothingSelected(p0: AdapterView<*>?) {
+
+									}
+
+								}
+								setSelection(vm.walletPosition)
+							}
+						} else {
+							getMainActivity().apply {
+								dialogManager.showFailureDialog(
+									this,
+									status = getStringResource(R.string.pop_up_failed_create_a_mnemonic_phrase_title),
+									description = getStringResource(R.string.exchange_fail),
+									action = getStringResource(R.string.network_description_btn),
+									false
+								) {
+									getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
 								}
 							}
-
-							override fun onNothingSelected(p0: AdapterView<*>?) {
-
-							}
-
 						}
-						setSelection(vm.walletPosition)
 					}
 				}
 			}
@@ -171,10 +192,8 @@ class ExchangeFragment : DaggerFragment() {
 			getMainActivity().apply {
 				dialogManager.showQuestionDialogExchange(
 					this,
-					"Фиксированный курс",
-					"Сумма к получению останется неизменной независимо от изменений на рынке.\n" +
-							"\n" +
-							"Фиксированный курс обновляется каждые 30 сек.",
+					getStringResource(R.string.fixed_rate),
+					getStringResource(R.string.fixed_rate_txt),
 					getStringResource(R.string.ok_button)
 				) {
 
@@ -245,10 +264,46 @@ class ExchangeFragment : DaggerFragment() {
 
 		edtGetAddressUSDT.addTextChangedListener {
 			if (it?.isNotEmpty() == true) {
+				btnExchangeEnabled.add(2)
 				imgIcScanUsdt.visibility = View.VISIBLE
-			}
+			} else
+				btnExchangeEnabled.remove(2)
+			updateEnabledBtnExchangeNow()
 		}
 
+		btnExchange.setOnClickListener {
+			requestingOrder()
+		}
+
+	}
+
+	private fun requestingOrder() {
+		val amountToSend = binding.edtAmountFrom.text.toString().toDouble()
+		var getCoin = ""
+		var getAddress = ""
+		if (tokenToSpinner.selectedItemPosition == 0) {
+			getAddress = vm.chiaWalletList.value?.get(vm.walletPosition)!!.address
+			getCoin = "XCH"
+		} else {
+			getCoin = "USDT"
+			getAddress = binding.edtGetAddressUSDT.text.toString()
+		}
+		lifecycleScope.launch {
+			val res = vm.requestingOrder(amountToSend, getAddress, getCoin)
+			when (res.state) {
+				Resource.State.SUCCESS -> {
+					getMainActivity().move2OrderDetailsFragment(res.data!!)
+				}
+
+				Resource.State.ERROR -> {
+					manageExceptionDialogsForRest(getMainActivity(), dialogManager, res.error)
+				}
+
+				Resource.State.LOADING -> {
+
+				}
+			}
+		}
 	}
 
 
@@ -269,7 +324,7 @@ class ExchangeFragment : DaggerFragment() {
 		}
 
 	private var prevEnterAddressJob: Job? = null
-	private fun getAddressToSend() {
+	private fun getQRDecodedAddressToSend() {
 		prevEnterAddressJob?.cancel()
 		prevEnterAddressJob = lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -453,10 +508,9 @@ class ExchangeFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		getAddressToSend()
-		initChiaWalletAdapter()
+		getQRDecodedAddressToSend()
 		initFromTokenExchangeRequest()
-		vm.requestExchangeRate("XCH")
+		vm.requestExchangeRate(if (vm.tokenToSpinner == 1) "XCH" else "USDT")
 	}
 
 	private fun initGetAddressLayoutUpdate() {
@@ -486,8 +540,21 @@ class ExchangeFragment : DaggerFragment() {
 							Resource.State.SUCCESS -> {
 								val res = it.data!!
 								VLog.d("Result of request exchange rate : $res")
-								binding.initLimitToMinAndMax(res)
-								calculateOneUnitToken(res)
+								if (res.give_address.isNotEmpty()) {
+									binding.initLimitToMinAndMax(res)
+									calculateOneUnitToken(res)
+								} else {
+									getMainActivity().apply {
+										dialogManager.showWarningOrderExistDialog(
+											getMainActivity(),
+											getStringResource(R.string.complete_exchange),
+											getStringResource(R.string.complete_exchange_txt),
+											getStringResource(R.string.my_orders)
+										) {
+											swapMainSharedVM.move2RequestHistory()
+										}
+									}
+								}
 							}
 
 							Resource.State.ERROR -> {
@@ -509,19 +576,21 @@ class ExchangeFragment : DaggerFragment() {
 		if (tokenFromSpinner.selectedItemPosition == 0) {
 			val xchInUSDT = res.rateXCH / res.rateUSDT
 			binding.txtCoursePrice.text =
-				"1 XCH = ${formattedDollarWithPrecision(xchInUSDT, 2)} USDT"
+				"1 XCH = ${formattedDollarWithPrecision(xchInUSDT, 4)} USDT"
 		} else {
-			val xchInUSDT = res.rateUSDT / res.rateXCH
+			val usdtInXCH = res.rateUSDT / res.rateXCH
 			binding.txtCoursePrice.text =
-				"1 USDT = ${formattedDollarWithPrecision(xchInUSDT, 2)} XCH"
+				"1 USDT = ${formattedDollarWithPrecision(usdtInXCH, 4)} XCH"
 		}
+
 	}
 
 	private fun FragmentExchangeBinding.initLimitToMinAndMax(res: ExchangeRate) {
 		edtAmountFrom.addTextChangedListener {
 			val amount = it.toString().toDoubleOrNull()
 			if (amount == null || amount !in res.min..res.max) {
-				btnExchange.isEnabled = false
+				btnExchangeEnabled.remove(1)
+				updateEnabledBtnExchangeNow()
 				constraintCommentLimitAmount.visibility = View.GONE
 				if (amount != null) {
 					var textValidate = ""
@@ -529,19 +598,54 @@ class ExchangeFragment : DaggerFragment() {
 						if (tokenFromSpinner.selectedItemPosition == 0) "XCH" else "USDT"
 					val network =
 						if (tokenFromSpinner.selectedItemPosition == 0) "Chia Network" else "TRC-20"
+					var minSum = getMainActivity().getStringResource(R.string.min_sum)
+					val maxSum = getMainActivity().getStringResource(R.string.max_sum)
 					textValidate = if (amount < res.min) {
-						"Минимальная сумма: ${res.min} $tokenCode $network"
+						"$minSum: ${res.min} $tokenCode $network"
 					} else {
-						"Mаксимальная сумма: ${res.max} $tokenCode $network"
+						"$maxSum: ${res.max} $tokenCode $network"
 					}
 					constraintCommentLimitAmount.visibility = View.VISIBLE
 					txtMinSumRequired.text = textValidate
 				}
 			} else {
 				constraintCommentLimitAmount.visibility = View.GONE
-				btnExchange.isEnabled = true
+				btnExchangeEnabled.add(1)
+				updateEnabledBtnExchangeNow()
+				val rate =
+					if (tokenFromSpinner.selectedItemPosition == 0) res.rateXCH / res.rateUSDT else res.rateUSDT / res.rateXCH
+				edtAmountTo.text = formattedDollarWithPrecision(amount * rate, 4)
+				vm.rateConversion = rate
 			}
 		}
+		edtAmountFrom.setText(edtAmountFrom.text.toString())
+	}
+
+	private fun updateEnabledBtnExchangeNow() {
+		btnExchange.isEnabled =
+			if (tokenToSpinner.selectedItemPosition == 1) btnExchangeEnabled.size >= 2 else btnExchangeEnabled.contains(
+				1
+			)
+	}
+
+	override fun onStart() {
+		super.onStart()
+		VLog.d("On Start on exchange fragment")
+	}
+
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On Resume on exchange fragment")
+	}
+
+	override fun onStop() {
+		super.onStop()
+		VLog.d("On Stop on exchange fragment")
+	}
+
+	override fun onPause() {
+		super.onPause()
+		VLog.d("On Pause on exchange fragment")
 	}
 
 	override fun onDestroyView() {
