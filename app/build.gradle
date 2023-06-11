@@ -48,6 +48,7 @@ android {
 	}
 
 	signingConfigs {
+
 		release {
 			// Configuration details for release signing
 			storeFile file("$rootDir/app/cert.final")
