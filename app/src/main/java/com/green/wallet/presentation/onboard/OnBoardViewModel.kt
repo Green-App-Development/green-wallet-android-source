@@ -88,7 +88,7 @@ class OnBoardViewModel @Inject constructor(
 	fun saveAppInstallTime(value: Long) {
 		viewModelScope.launch {
 			prefs.saveSettingLong(PrefsManager.APP_INSTALL_TIME, value)
-			val guid = UUID.randomUUID().toString()
+			val guid = UUID.randomUUID().toString().replace("-", "").uppercase()
 			VLog.d("Saving GUID : $guid")
 			prefs.saveSettingString(PrefsManager.USER_GUID, guid)
 		}

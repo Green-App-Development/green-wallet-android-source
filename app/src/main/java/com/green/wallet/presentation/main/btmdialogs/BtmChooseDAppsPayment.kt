@@ -23,9 +23,15 @@ class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 		const val AMOUNT_KEY = "amount_key"
 	}
 
+	private var address: String = ""
+	private var amount: Double = 0.0
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
+		arguments?.let {
+			address = it.getString(ADDRESS_KEY, "")
+			amount = it.getDouble(AMOUNT_KEY, 0.0)
+		}
 	}
 
 	override fun onCreateView(
@@ -44,12 +50,9 @@ class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 
 	private fun registerClicks() {
 		binding.apply {
-
-			val address = ""
-			val amount = 0.001
 			relItemTrust.setOnClickListener {
 				val deepLink =
-					"https://link.trustwallet.com/send?coin=ethereum&address=$address&amount=$amount&referrer=com.green.wallet"
+					"https://link.trustwallet.com/send?asset=c195_tTR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&address=$address&amount=$amount&memo=GreenWallet"
 				navigateToOtherApp(deepLink)
 			}
 			relItemMetaMask.setOnClickListener {
@@ -58,7 +61,7 @@ class BtmChooseDAppsPayment : BottomSheetDialogFragment() {
 				navigateToOtherApp(deepLink)
 			}
 			relPayAddress.setOnClickListener {
-				curActivity().move2QRSendFragment()
+				curActivity().move2QRSendFragment(address)
 			}
 		}
 	}
