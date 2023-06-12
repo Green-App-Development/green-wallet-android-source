@@ -1,6 +1,5 @@
 # Green Wallet - non-custodial wallet for Chia
 
-## Developed:
 [![N|Solid](https://green-app.io/wp-content/uploads/2022/01/cropped-logo_green_app_development2.png)](https://green-app.io/)
 
 Green Wallet is an open source non-custodial wallet for Chia (XCH) with a user-friendly interface.
