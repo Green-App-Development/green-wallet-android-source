@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 class UserNFTTokensFragment : DaggerFragment() {
 
-	private val binding by viewBinding(FragmentUserNftBinding::bind)
+	private lateinit var  binding:FragmentUserNftBinding
 
 
 	@Inject
@@ -66,7 +66,8 @@ class UserNFTTokensFragment : DaggerFragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		return inflater.inflate(R.layout.fragment_user_nft, container, false)
+		binding=FragmentUserNftBinding.inflate(layoutInflater)
+		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -131,7 +131,7 @@ class SendFragment : DaggerFragment() {
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
-	): View? {
+	): View {
 		binding = FragmentSendBinding.inflate(layoutInflater)
 		VLog.d("OnCreateView on send Fragment")
 		curActivity().sendCoinsFragmentView = view
