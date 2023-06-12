@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "add_flut" ]
+    branches: [ "main" ]
 
 jobs:
   build:
