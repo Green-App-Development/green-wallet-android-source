@@ -619,6 +619,10 @@ class ExchangeFragment : DaggerFragment() {
 			}
 		}
 		edtAmountFrom.setText(edtAmountFrom.text.toString())
+		edtCommissionExchange.text = res.commissionInPercent + "%"
+		edtCommissionNetwork.text =
+			res.commission + " ${if (vm.tokenToSpinner == 1) "XCH" else "USDT"}"
+
 	}
 
 	private fun updateEnabledBtnExchangeNow() {
