@@ -130,6 +130,16 @@ class StandardWalletService extends BaseWalletService {
     return SpendBundle(coinSpends: spends, aggregatedSignature: aggregate);
   }
 
+  List<FullCoin> convertXchCoinsToFull(List<Coin> coins) {
+    return coins
+        .map((coin) => FullCoin(
+      coin: coin,
+      parentCoinSpend: null,
+    ))
+        .toList();
+  }
+
+
   void validateSpendBundle(SpendBundle spendBundle) {
     validateSpendBundleSignature(spendBundle);
 

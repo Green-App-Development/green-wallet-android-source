@@ -36,7 +36,7 @@ Icon?
 .tags*
 
 build/
-.android/
 .ios/
+.android/
 .flutter-plugins
 .flutter-plugins-dependencies
