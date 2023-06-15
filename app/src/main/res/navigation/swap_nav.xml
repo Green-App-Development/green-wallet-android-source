@@ -18,5 +18,11 @@
 			tools:layout="@layout/fragment_request" />
 
 
+	<fragment
+			android:id="@+id/fragment_tibet_swap"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.TibetSwapFragment"
+			android:label="TibetSwap"
+			tools:layout="@layout/fragment_tibetswap" />
+
 
 </navigation>

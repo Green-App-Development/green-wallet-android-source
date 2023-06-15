@@ -1,5 +1,7 @@
 package com.green.wallet.presentation.custom
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.view.View
@@ -50,5 +52,26 @@ class AnimationManager @Inject constructor(private var context: Context) {
 
 		})
 	}
+
+	fun moveViewToRightByWidth(view: View, width: Int) {
+		val centerX = view.x
+		val desiredX = centerX + width
+		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
+		translateX.duration = 300
+		val animSet = AnimatorSet()
+		animSet.playTogether(translateX)
+		animSet.start()
+	}
+
+	fun moveViewToLeftByWidth(view: View, width: Int) {
+		val centerX = view.x
+		val desiredX = centerX - width
+		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
+		translateX.duration = 300
+		val animSet = AnimatorSet()
+		animSet.playTogether(translateX)
+		animSet.start()
+	}
+
 
 }

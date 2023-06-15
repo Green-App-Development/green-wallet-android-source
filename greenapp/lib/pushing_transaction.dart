@@ -873,7 +873,7 @@ class PushingTransaction {
 
     final offer = await offerService.createOffer(
       requesteAmounts: {
-        null: [100000000000],
+        null: [1000000000],
       },
       offerredAmounts: {
         OfferAssetData.cat(
