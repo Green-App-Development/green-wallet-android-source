@@ -223,7 +223,8 @@ class PushingTransaction {
           break;
       }
     });
-    testingMethod();
+    offeringXCHForCat();
+    // testingMethod();
   }
 
   Future<void> cachedWalletKeyChain(
@@ -873,7 +874,7 @@ class PushingTransaction {
 
     final offer = await offerService.createOffer(
       requesteAmounts: {
-        null: [1000000000],
+        null: [100000000000],
       },
       offerredAmounts: {
         OfferAssetData.cat(
@@ -889,6 +890,80 @@ class PushingTransaction {
 
     print("Offer from gad to xch");
     print(offer.toBench32());
+  }
+
+  Future<void> offeringXCHForCat() async {
+    var mnemonic = [
+      "blast",
+      "song",
+      "refuse",
+      "excess",
+      "filter",
+      "unhappy",
+      "tag",
+      "extra",
+      "bless",
+      "grain",
+      "broom",
+      "vanish"
+    ];
+
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+
+    KeychainCoreSecret keychainSecret =
+        KeychainCoreSecret.fromMnemonic(mnemonic);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 5; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList);
+
+    const fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final standartWalletService = StandardWalletService();
+
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    keychain.unhardenedMap.entries.forEach((element) {
+      puzzleHashes.add(element.key);
+    });
+
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+
+    debugPrint("My Response From retrieving just xch coins  : $responseDataCAT");
+    List<FullCoin> ? xchCoins;
+
+    xchCoins=standartWalletService.convertXchCoinsToFull(
+      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
+    );
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final gwtHash = Bytes.fromHex(
+      "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02",
+    );
+
+    final offer = await offerService.createOffer(
+      requesteAmounts: {
+        OfferAssetData.cat(
+          tailHash: gwtHash,
+        ): [-1000]
+      },
+      offerredAmounts: {null: 100000000},
+
+      coins: xchCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+      //fee: 1000000,
+    );
+
+    print("Offer from xch to gad ${offer.toBench32()}");
+
 
   }
 
