@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.green.wallet.R
-import com.green.wallet.databinding.FragmentHomeBinding
 import com.green.wallet.databinding.FragmentUserNftBinding
 import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.presentation.custom.AnimationManager
@@ -22,13 +21,11 @@ import com.green.wallet.presentation.custom.ViewPagerPosition
 import com.green.wallet.presentation.custom.convertPixelToDp
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.main.send.NetworkAdapter
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_send.swipeRefresh
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,8 +33,7 @@ import javax.inject.Inject
 
 class UserNFTTokensFragment : DaggerFragment() {
 
-	private val binding by viewBinding(FragmentUserNftBinding::bind)
-
+	private val binding: FragmentUserNftBinding by viewBinding(FragmentUserNftBinding::bind)
 
 	@Inject
 	lateinit var animManager: AnimationManager
@@ -126,7 +122,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 			})
 			val rect = Rect()
 			nftViewPager.getGlobalVisibleRect(rect)
-			swipeRefreshNft.topY = rect.top+35
+			swipeRefreshNft.topY = rect.top + 35
 			swipeRefreshNft.bottomY = rect.bottom
 		}
 	}

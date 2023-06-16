@@ -11,6 +11,7 @@ import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
@@ -74,9 +75,12 @@ class ExchangeViewModel @Inject constructor(
 		VLog.d("Call from view model to get exchange request rate : $fromToken")
 		requestJob?.cancel()
 		requestJob = viewModelScope.launch() {
-			val res = exchangeInteract.getExchangeRequest(fromToken)
-			if (isActive) {
-				_exchangeRequest.emit(res)
+			while (true) {
+				val res = exchangeInteract.getExchangeRequest(fromToken)
+				if (isActive) {
+					_exchangeRequest.emit(res)
+				}
+				delay(30 * 1000L)
 			}
 		}
 	}

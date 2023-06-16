@@ -1,6 +1,7 @@
 package com.green.wallet.data.interact
 
 import com.example.common.tools.mapNetworkOrderStatusToLocal
+import com.green.wallet.data.local.Converters
 import com.green.wallet.data.local.OrderExchangeDao
 import com.green.wallet.data.local.entity.OrderEntity
 import com.green.wallet.data.network.ExchangeService
@@ -93,7 +94,9 @@ class ExchangeInteractImpl @Inject constructor(
 									max = res.fromUSDT.toXCH.max.toDoubleOrNull() ?: 0.0,
 									give_address = res.fromUSDT.address,
 									rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
-									rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
+									rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0,
+									res.fromUSDT.toXCH.usdtFee.exchange,
+									res.fromUSDT.toXCH.usdtFee.usdt,
 								)
 							}
 
@@ -103,13 +106,15 @@ class ExchangeInteractImpl @Inject constructor(
 									max = res.fromXCH.toUSDT.max.toDoubleOrNull() ?: 0.0,
 									give_address = res.fromXCH.address,
 									rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
-									rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0
+									rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0,
+									res.fromXCH.toUSDT.xchFee.exchange,
+									res.fromXCH.toUSDT.xchFee.xch,
 								)
 							}
 						}
 						return Resource.success(resExchange)
 					}
-					return Resource.success(ExchangeRate(0.0, 0.0, "", 0.0, 0.0))
+					return Resource.success(ExchangeRate(0.0, 0.0, "", 0.0, 0.0, "", ""))
 				}
 			} else {
 				VLog.d("Request is not success for exchange rate : ${request.message()}")
@@ -135,21 +140,26 @@ class ExchangeInteractImpl @Inject constructor(
 				VLog.d("ExchangeStatus : $exchangeStatus of orderItem : $order")
 				if (status != order.status) {
 					orderExchangeDao.updateOrderStatusByHash(status, order.order_hash)
+					val resLanguageResource =
+						prefsInteract.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+					val resMap = Converters.stringToHashMap(resLanguageResource)
+					val messageOrderStatusUpdate =
+						resMap["notif_status_updated"] ?: "New exchange request status"
+
 					if (status == OrderStatus.Success) {
 						orderExchangeDao.updateOrderTxIDByHash(
 							exchangeStatus.result.get.txID ?: "",
 							order.order_hash
 						)
-						notifHelper.callGreenAppNotificationMessages(
-							"Order ${order.order_hash} Status Updated to Success",
-							System.currentTimeMillis()
-						)
-					}
-					if (status == OrderStatus.Cancelled) {
-						notifHelper.callGreenAppNotificationMessages(
-							"Order ${order.order_hash} Status Updated to Cancelled",
-							System.currentTimeMillis()
-						)
+						val statusCompleted = resMap["status_completed"] ?: "Completed"
+						val message =
+							messageOrderStatusUpdate + " ${order.order_hash} $statusCompleted"
+						notifHelper.callGreenAppNotificationMessages(message,System.currentTimeMillis())
+					} else if (status == OrderStatus.Cancelled) {
+						val statusCancelled = resMap["status_canceled"] ?: "Cancelled"
+						val message =
+							messageOrderStatusUpdate + " ${order.order_hash} $statusCancelled"
+						notifHelper.callGreenAppNotificationMessages(message,System.currentTimeMillis())
 					}
 				}
 			} else

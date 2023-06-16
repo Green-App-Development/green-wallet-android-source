@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/intro_nav"
-    app:startDestination="@id/entPasscodeFragment">
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/intro_nav"
+		app:startDestination="@id/entPasscodeFragment">
 
-    <fragment
-        android:id="@+id/timeFragment"
-        android:name="com.green.wallet.presentation.intro.time.IntroTimeFragment"
-        android:label="TimeFragment"
-        tools:layout="@layout/fragment_time" />
+	<fragment
+			android:id="@+id/timeFragment"
+			android:name="com.green.wallet.presentation.intro.time.IntroTimeFragment"
+			android:label="TimeFragment"
+			tools:layout="@layout/fragment_time" />
 
-    <fragment
-        android:id="@+id/entPasscodeFragment"
-        android:name="com.green.wallet.presentation.intro.authenticate.AuthFragmentIntro"
-        android:label="EntPasswordFragment"
-        tools:layout="@layout/fragment_enter_password_intro">
-        <action
-            android:id="@+id/action_entPasswordFragment_to_timeFragment"
-            app:destination="@id/timeFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/iconFragment"
-        android:name="com.green.wallet.presentation.onboard.icon.IconFragment"
-        android:label="IconFragment"
-        tools:layout="@layout/fragment_icon">
-        <action
-            android:id="@+id/action_iconFragment_to_entPasswordFragment"
-            app:destination="@id/entPasscodeFragment" />
-    </fragment>
+	<fragment
+			android:id="@+id/entPasscodeFragment"
+			android:name="com.green.wallet.presentation.intro.authenticate.AuthFragmentIntro"
+			android:label="EntPasswordFragment"
+			tools:layout="@layout/fragment_enter_password_intro">
+		<action
+				android:id="@+id/action_entPasswordFragment_to_timeFragment"
+				app:destination="@id/timeFragment" />
+	</fragment>
+	<fragment
+			android:id="@+id/iconFragment"
+			android:name="com.green.wallet.presentation.onboard.icon.IconFragment"
+			android:label="IconFragment"
+			tools:layout="@layout/fragment_icon">
+		<action
+				android:id="@+id/action_iconFragment_to_entPasswordFragment"
+				app:destination="@id/entPasscodeFragment" />
+	</fragment>
 
+
+	<fragment
+			android:id="@+id/fragment_tibet_swap"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.TibetSwapFragment"
+			android:label="TibetSwap"
+			tools:layout="@layout/fragment_tibetswap" />
 
 </navigation>

@@ -1,16 +1,15 @@
+import 'dart:collection';
 import 'dart:typed_data';
-
-import 'package:chia_crypto_utils/src/core/models/conditions/assert_puzzle_condition.dart';
 
 import '../../cat/index.dart';
 import '../../clvm.dart';
 import '../../core/index.dart';
+import '../../core/models/conditions/assert_puzzle_condition.dart';
 import '../../core/models/outer_puzzle.dart';
 import '../../nft1.0/index.dart';
 import '../../standard/index.dart';
 import '../../utils.dart';
 import '../index.dart';
-import '../../core/models/outer_puzzle.dart' as outerPuzzle;
 import '../utils/build_keychain.dart';
 
 class TradeManagerService extends BaseWalletService {
@@ -19,33 +18,52 @@ class TradeManagerService extends BaseWalletService {
 
   /// `generate_secure_bundle` simulates a wallet's `generate_signed_transaction`
   /// but doesn't bother with non-offer announcements
-  Offer createOfferBundle(
-      {required List<FullCoin> selectedCoins,
-      required List<AssertPuzzleCondition> announcements,
-      required Map<Bytes?, int> offeredAmounts,
-      required WalletKeychain keychain,
-      required int fee,
-      required Puzzlehash changePuzzlehash,
-      required Map<Bytes, PuzzleInfo> driverDict,
-      required Map<Bytes?, List<NotarizedPayment>> notarizedPayments,
-      required bool old}) {
+  Offer createOfferBundle({
+    required Map<OfferAssetData?, List<FullCoin>> selectedCoins,
+    required List<AssertPuzzleCondition> announcements,
+    required Map<Bytes?, int> offeredAmounts,
+    required WalletKeychain keychain,
+    required int fee,
+    required Puzzlehash changePuzzlehash,
+    required Map<Bytes, PuzzleInfo> driverDict,
+    required Map<Bytes?, List<NotarizedPayment>> notarizedPayments,
+    required bool old,
+  }) {
     final transactions = <SpendBundle>[];
 
-    final feeLeftToPay = fee;
+    int feeLeftToPay = fee;
+    List<Coin> xchCoins = (selectedCoins[null] ?? []).map((e) => e.toCoin()).toList();
 
-    offeredAmounts.forEach((assetId, amount) {
+    List<MapEntry<Bytes?, int>> entries = offeredAmounts.entries.toList();
+    entries.sort((a, b) {
+      if (a.key == null && b.key == null) {
+        return 0;
+      } else if (a.key == null) {
+        return -1;
+      } else if (b.key == null) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    LinkedHashMap<Bytes?, int> sortedOfferedAmounts = LinkedHashMap.fromEntries(entries);
+
+    sortedOfferedAmounts.forEach((assetId, amount) {
       if (assetId == null) {
         final standarBundle = StandardWalletService().createSpendBundle(
           payments: [
             Payment(offeredAmounts[assetId]!.abs(), Offer.ph(old)),
           ],
-          coinsInput: selectedCoins,
+          coinsInput: xchCoins,
           keychain: keychain,
           fee: feeLeftToPay,
           puzzleAnnouncementsToAssert: announcements,
           changePuzzlehash: changePuzzlehash,
         );
         transactions.add(standarBundle);
+        feeLeftToPay = 0;
+        xchCoins = [];
       } else {
         bool isCat = driverDict[assetId]!.type == AssetType.CAT;
 
@@ -55,12 +73,13 @@ class TradeManagerService extends BaseWalletService {
               Offer.ph(old).toBytes(),
             ]),
           ];
-          final catCoins = selectedCoins
-              .where((element) => element.isCatCoin)
+          final catCoins = selectedCoins[OfferAssetData.cat(tailHash: assetId)]!
               .map((e) => e.toCatCoin())
               .toList();
-          final standardsCoins =
-              selectedCoins.where((element) => !element.isCatCoin).map((e) => e.coin).toList();
+          var standardsCoins = <Coin>[];
+          if (feeLeftToPay > 0) {
+            standardsCoins = xchCoins;
+          }
           final catBundle = CatWalletService().createSpendBundle(
             payments: catPayments,
             catCoinsInput: catCoins,
@@ -73,6 +92,7 @@ class TradeManagerService extends BaseWalletService {
           final catBytes = catBundle.toBytes();
           final _ = SpendBundle.fromBytes(catBytes);
           transactions.add(catBundle);
+          feeLeftToPay = 0;
         } else {
           throw Exception("Not implemented for ${driverDict[assetId]?.type}}");
         }
@@ -92,7 +112,7 @@ class TradeManagerService extends BaseWalletService {
   }
 
   Offer createOfferForIds(
-      {required List<FullCoin> coins,
+      {required Map<OfferAssetData?, List<FullCoin>> coins,
       required Map<Bytes, PuzzleInfo> driverDict,
       required Map<Bytes?, List<Payment>> requiredPayments,
       required Map<Bytes?, int> offeredAmounts,
@@ -102,10 +122,10 @@ class TradeManagerService extends BaseWalletService {
       required WalletKeychain keychain,
       required bool old}) {
     final chiaRequestedPayments = requiredPayments;
-
+    final coinsList = coins.values.expand((element) => element).toList();
     final chiaNotariedPayments = Offer.notarizePayments(
       requestedPayments: chiaRequestedPayments,
-      coins: coins,
+      coins: coinsList,
     );
     final chiaAnnouncements = Offer.calculateAnnouncements(
       notarizedPayment: chiaNotariedPayments,
@@ -157,7 +177,7 @@ class TradeManagerService extends BaseWalletService {
   }
 
   int? calculateRoyalty(PuzzleInfo puzzleInfo) {
-    bool isRoyalty = puzzleInfo.checkType(types: [
+    var isRoyalty = puzzleInfo.checkType(types: [
       AssetType.SINGLETON,
       AssetType.METADATA,
       AssetType.OWNERSHIP,
@@ -176,13 +196,13 @@ class TradeManagerService extends BaseWalletService {
       } else if (royaltyPercentageRaw is int) {
         return royaltyPercentageRaw;
       } else {
-        return int.parse(royaltyPercentageRaw);
+        return int.parse(royaltyPercentageRaw as String);
       }
     }
     return null;
   }
 
-  int calculateRoyaltyAmount(int fungibleAmount, int percentageRaw) {
+  static int calculateRoyaltyAmount({required int fungibleAmount, required int percentageRaw}) {
     return (fungibleAmount.abs() * (percentageRaw / 10000)).floor();
   }
 
@@ -265,7 +285,8 @@ class TradeManagerService extends BaseWalletService {
 
     if (royaltyPercentage != null && fungibleAssetAmount.length == 1) {
       final fungibleAmount = fungibleAssetAmount.values.first;
-      royaltyAmount = calculateRoyaltyAmount(fungibleAmount, royaltyPercentage!);
+      royaltyAmount =
+          calculateRoyaltyAmount(fungibleAmount: fungibleAmount, percentageRaw: royaltyPercentage!);
     }
 
     final invertOfferred = convertRequestedToOffered(requestedAmounts);
@@ -387,7 +408,7 @@ class TradeManagerService extends BaseWalletService {
     } else {
       final offerWallet = TradeManagerService();
       final responseOffer = await offerWallet.createOfferForIds(
-        coins: coins,
+        coins: groupedCoins,
         driverDict: preparedData.driverDict,
         requiredPayments: preparedData.payments,
         offeredAmounts: preparedData.offerredAmounts,
@@ -523,7 +544,7 @@ class TradeManagerService extends BaseWalletService {
     } else {
       final offerWallet = TradeManagerService();
       final offer = offerWallet.createOfferForIds(
-        coins: coins,
+        coins: preparedCoins,
         driverDict: preparedData.driverDict,
         requiredPayments: preparedData.payments,
         offeredAmounts: preparedData.offerredAmounts,
@@ -536,7 +557,7 @@ class TradeManagerService extends BaseWalletService {
     }
   }
 
-  Future<Map<Bytes, PuzzleInfo>> _createDict(
+  Future<Map<Bytes, PuzzleInfo>> createDict(
       {required Map<OfferAssetData?, List<int>> requestedAmounts,
       required Map<OfferAssetData?, int> offerredAmounts,
       required Map<OfferAssetData, FullNFTCoinInfo> nftCoins}) async {
@@ -586,7 +607,7 @@ class TradeManagerService extends BaseWalletService {
       }
     });
     Map<Bytes, PuzzleInfo> driverDict = offerDriverDict ??
-        await _createDict(
+        await createDict(
           requestedAmounts: requestedAmounts,
           offerredAmounts: offerredAmounts,
           nftCoins: nftCoins,

@@ -30,8 +30,8 @@ android {
 		applicationId "com.green.wallet"
 		minSdk 26
 		targetSdk 32
-		versionCode 14 //for Google Play
-		versionName "0.0.83"
+		versionCode 16 //for Google Play
+		versionName "0.0.85"
 
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -240,5 +240,8 @@ dependencies {
 
 	implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
 	implementation "androidx.room:room-paging:$room_version"
+
+//	debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
+
 
 }

@@ -16,36 +16,36 @@ import kotlinx.coroutines.launch
 class IconFragment : Fragment() {
 
 
-    private val binding by viewBinding(FragmentIconBinding::bind)
+	lateinit var binding: FragmentIconBinding
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		binding = FragmentIconBinding.inflate(layoutInflater)
+		return binding.root
+	}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_icon, container, false)
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		changeAppIcon()
+		navigateUserToPasscodeFragment()
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        changeAppIcon()
-        navigateUserToPasscodeFragment()
-    }
+	private fun navigateUserToPasscodeFragment() {
+		lifecycleScope.launch {
+			delay(2000)
+			curActivity().move2EntPasscodeFragment()
+		}
+	}
 
-    private fun navigateUserToPasscodeFragment() {
-        lifecycleScope.launch {
-            delay(2000)
-            curActivity().move2EntPasscodeFragment()
-        }
-    }
+	private fun changeAppIcon() {
+		lifecycleScope.launch {
+			val nightMode = curActivity().introViewModel.getNightModeIsOn()
+			binding.imgIcon.setImageResource(if (nightMode) R.drawable.green_ic_night else R.drawable.green_ic_light)
+		}
+	}
 
-    private fun changeAppIcon() {
-        lifecycleScope.launch {
-            val nightMode = curActivity().introViewModel.getNightModeIsOn()
-            binding.imgIcon.setImageResource(if (nightMode) R.drawable.green_ic_night else R.drawable.green_ic_light)
-        }
-    }
-
-    private fun curActivity() = requireActivity() as IntroActivity
+	private fun curActivity() = requireActivity() as IntroActivity
 
 }

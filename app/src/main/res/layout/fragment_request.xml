@@ -10,10 +10,40 @@
 			android:id="@+id/rec_view_requests"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:visibility="gone"
 			app:layout_constraintEnd_toEndOf="parent"
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent"
 			tools:itemCount="10"
 			tools:listitem="@layout/item_request" />
+
+	<TextView
+			android:id="@+id/txt_no_order_history"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal"
+			android:text="@string/no_order_history"
+			android:textColor="@color/txt_no_trans"
+			android:textSize="16sp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/guideline56"
+			app:layout_constraintStart_toStartOf="@+id/guideline55"
+			app:layout_constraintTop_toTopOf="parent"
+
+			/>
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline55"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.15" />
+
+	<androidx.constraintlayout.widget.Guideline
+			android:id="@+id/guideline56"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			app:layout_constraintGuide_percent="0.85" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

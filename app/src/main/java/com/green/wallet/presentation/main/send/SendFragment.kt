@@ -59,7 +59,7 @@ import javax.inject.Inject
 
 class SendFragment : DaggerFragment() {
 
-	private val binding by viewBinding(FragmentSendBinding::bind)
+	private lateinit var binding: FragmentSendBinding
 	private lateinit var networkAdapter: DynamicSpinnerAdapter
 	private lateinit var tokenAdapter: DynamicSpinnerAdapter
 	private lateinit var walletAdapter: WalletListAdapter
@@ -131,11 +131,11 @@ class SendFragment : DaggerFragment() {
 		inflater: LayoutInflater,
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
-	): View? {
-		val view = inflater.inflate(R.layout.fragment_send, container, false)
+	): View {
+		binding = FragmentSendBinding.inflate(layoutInflater)
 		VLog.d("OnCreateView on send Fragment")
 		curActivity().sendCoinsFragmentView = view
-		return view
+		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

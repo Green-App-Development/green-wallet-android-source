@@ -393,5 +393,6 @@
 	<string name="complete_exchange" />
 	<string name="complete_exchange_txt" />
 	<string name="fixed_rate_txt" />
-
+	<string name="no_order_history" />
+	<string name="notif_status_updated" />
 </resources>

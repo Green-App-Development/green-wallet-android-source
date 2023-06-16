@@ -213,10 +213,9 @@ class PushingTransaction {
               var puzzleHashHex = call.arguments.toString();
               debugPrint("Puzzle Hash Hex got called : $puzzleHashHex");
               var minterDid = Address.fromPuzzlehash(
-                  Puzzlehash.fromHex(
-                      puzzleHashHex),
-                  "did:chia:");
-              _channel.invokeMethod("puzzle_hash_to_address", minterDid.address);
+                  Puzzlehash.fromHex(puzzleHashHex), "did:chia:");
+              _channel.invokeMethod(
+                  "puzzle_hash_to_address", minterDid.address);
             } catch (ex) {
               _channel.invokeMethod("exception");
             }
@@ -224,7 +223,8 @@ class PushingTransaction {
           break;
       }
     });
-    // testingMethod();
+    offeringXCHForCat();
+    testingMethod();
   }
 
   Future<void> cachedWalletKeyChain(
@@ -787,21 +787,6 @@ class PushingTransaction {
   }
 
   void testingMethod() async {
-    // var mnemonic = [
-    //   "faint",
-    //   "step",
-    //   "noise",
-    //   "upper",
-    //   "anchor",
-    //   "audit",
-    //   "make",
-    //   "will",
-    //   "buyer",
-    //   "shed",
-    //   "cliff",
-    //   "chalk"
-    // ];
-
     var mnemonic = [
       "blast",
       "song",
@@ -817,12 +802,9 @@ class PushingTransaction {
       "vanish"
     ];
 
-    debugPrint(
-        "Minter DID From Hex : ${Address.fromPuzzlehash(Puzzlehash.fromHex('c23ecd8c8992e61f23c312f3eeb100301301fa9a6bb0e53539acdfc74b08881a'), "did:chia:")}");
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
-
-    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+    const fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -834,92 +816,275 @@ class PushingTransaction {
     final keychain = WalletKeychain.fromWalletSets(walletsSetList);
 
     const fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
 
-    final nftService =
-        NftNodeWalletService(fullNode: fullNode, keychain: keychain);
-    debugPrint("Testing getting all nft coins");
-    var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-        parent_coin_info: Bytes.fromHex(
-            "0xbf7190615ff980708097ef9eed73454fcab3fd845c529429a6d9e26941ab2f1c"),
-        puzzle_hash: Puzzlehash.fromHex(
-            "7bbc9355cc8cbb20d46af4a71f2e5e2bc12bb37af44821b3be9d719837c6cd9b"));
-    debugPrint("NFTCoins after retrieving : $nftCoins");
-    final nftCoin = nftCoins[0];
+    final keyChainCAT = keychain
+      ..addOuterPuzzleHashesForAssetId(Puzzlehash.fromHex(
+          '7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02'));
 
-    final nftFullCoin_ = await nftService.convertFullCoin(nftCoin);
-    final nftInfo = nftFullCoin_.toNftCoinInfo();
+    final myOuterPuzzlehashes = keyChainCAT.getOuterPuzzleHashesForAssetId(
+        Puzzlehash.fromHex(
+            '7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02'));
 
-    final info = UncurriedNFT.uncurry(nftInfo.fullPuzzle);
-    final launcherId = info.singletonLauncherId.atom;
-    final address = NftAddress.fromPuzzlehash(Puzzlehash(launcherId)).address;
-    debugPrint("Address of nft found : $address");
-    Map<String, dynamic> mapToAndroid = {};
-    mapToAndroid["nft_hash"] = nftCoin.coin.parentCoinInfo;
-    mapToAndroid["launcherId"] = info.singletonLauncherId.toHex();
-    mapToAndroid["didOwner"] = info.ownerDid?.toHex();
-    mapToAndroid["royaltyPercentage"] = info.tradePricePercentage.toString();
-    mapToAndroid["dataUris"] = info.dataUris.toList();
-    mapToAndroid["dataHash"] = info.dataHash;
-    mapToAndroid["metadataUris"] = info.metadata.toList();
-    mapToAndroid["metadataHash"] = info.metadataUpdaterHash;
-    mapToAndroid["licenseUris"] = info.licenseUris.toList();
-    mapToAndroid["licenseHash"] = info.licenseHash;
-    mapToAndroid["seriesTotal"] = info.seriesTotal;
-    mapToAndroid["seriesNumber"] = info.seriesNumber;
-    mapToAndroid["supportsDid"] = info.supportDid;
-    mapToAndroid["launcherPuzzlehash"] = info.launcherPuzhash.toHex();
+    keyChainCAT.hardenedMap.keys.forEach((element) {
+      var outer = WalletKeychain.makeOuterPuzzleHash(
+          element,
+          Puzzlehash.fromHex(
+              '7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02'));
+      myOuterPuzzlehashes.add(outer);
+    });
 
-    debugPrint("Map To Android on testing : $mapToAndroid");
-    // final nftFullCoin = await nftService.convertFullCoin(nftCoin);
-    // debugPrint("NFTFullCoin : $nftFullCoin");
+    final responseDataCAT =
+        await fullNode.getCoinsByPuzzleHashes(myOuterPuzzlehashes);
+    debugPrint("My Response From retrieving cat  : $responseDataCAT");
+    List<Future<void>> futures = [];
+    List<CatCoin> catCoins = [];
+    List<Coin> allCatCoins = responseDataCAT;
+    for (final coin in allCatCoins) {
+      futures.add(getCatCoinsDetail(
+          coin: coin,
+          httpUrl: "",
+          catCoins: catCoins,
+          fullNode: fullNode));
+    }
 
-    return;
-    // var bundleNFT = NftWallet().createTransferSpendBundle(
-    //   nftCoin: nftFullCoin.toNftCoinInfo(),
-    //   keychain: keychain,
-    //   targetPuzzleHash: Address(
-    //           "xch10w7fx4wv3jajp4r27jn37tj790qjhvm673yzrva7n4cesd7xekds5yhrsx")
-    //       .toPuzzlehash(),
-    //   standardCoinsForFee: [],
-    //   fee: 0,
-    //   changePuzzlehash: keychain.puzzlehashes[0],
-    // );
-    // var bundleNFTJson = bundleNFT.toJson();
-    // print("BundleNFTJson : $bundleNFTJson");
-    // _channel.invokeMethod('nftSpendBundle', {"spendBundle": bundleNFTJson});
-    //
-    // print("Puzzle Hash Hint : ${keychain.puzzlehashes.first.toHex()}");
-    //
-    // Map<String, dynamic> body = {
-    //   "hint": keychain.puzzlehashes.first.toHex(),
-    //   "include_spent_coins": false
-    // };
-    //
-    // final response = await post(
-    //     Uri.parse(
-    //         "https://chia.green-app.io/full-node/get_coin_records_by_hint"),
-    //     headers: <String, String>{
-    //       'Content-Type': 'application/json; charset=UTF-8',
-    //     },
-    //     body: jsonEncode(body));
-    //
-    // var resCoinRecords = CoinRecordsResponse.fromJson(
-    //   jsonDecode(response.body) as Map<String, dynamic>,
-    // );
-    // print("NFT Coin Records : ${resCoinRecords.coinRecords}");
-    // var allNftCoins =
-    //     resCoinRecords.coinRecords.map((record) => record.toCoin()).toList();
-    // List<FullCoin> fullCoins = [];
-    // List<Future<void>> futures = [];
-    //
-    // for (final coin in allNftCoins) {
-    //   futures.add(getFullCoinsDetail(
-    //       coin: coin,
-    //       httpUrl: "https://chia.green-app.io/full-node",
-    //       fullCoins: fullCoins));
-    //   await Future.wait(futures);
-    // }
-    // print("NFTCoins after hydration : $allNftCoins");
+    debugPrint("Offering cat coins future size : ${futures.length}");
+    await Future.wait(futures);
+    debugPrint("Offering cat coins : $catCoins");
+    final fullCoins = catCoins
+        .map((e) => FullCoin.fromCoin(
+            Coin(
+              confirmedBlockIndex: 0,
+              spentBlockIndex: 0,
+              coinbase: false,
+              timestamp: 0,
+              parentCoinInfo: e.parentCoinInfo,
+              puzzlehash: e.puzzlehash,
+              amount: e.amount,
+            ),
+            e.parentCoinSpend))
+        .toList();
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final gwtHash = Bytes.fromHex(
+      "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02",
+    );
+
+    final offer = await offerService.createOffer(
+      requesteAmounts: {
+        null: [100000000000],
+      },
+      offerredAmounts: {
+        OfferAssetData.cat(
+          tailHash: gwtHash,
+        ): -1000
+      },
+
+      coins: fullCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+      //fee: 1000000,
+    );
+
+    print("Offer from gad to xch");
+    print(offer.toBench32());
+  }
+
+  Future<void> offeringXCHForCat() async {
+    var mnemonic = [
+      "blast",
+      "song",
+      "refuse",
+      "excess",
+      "filter",
+      "unhappy",
+      "tag",
+      "extra",
+      "bless",
+      "grain",
+      "broom",
+      "vanish"
+    ];
+
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+    const fullNodeRpc = FullNodeHttpRpc("");
+
+    KeychainCoreSecret keychainSecret =
+        KeychainCoreSecret.fromMnemonic(mnemonic);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 5; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList);
+
+    const fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final standartWalletService = StandardWalletService();
+
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    keychain.unhardenedMap.entries.forEach((element) {
+      puzzleHashes.add(element.key);
+    });
+
+    final responseDataXCH = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+
+    debugPrint(
+        "My Response From retrieving just xch coins  : $responseDataXCH");
+    List<FullCoin>? xchCoins;
+
+    xchCoins = standartWalletService.convertXchCoinsToFull(
+      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
+    );
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final gwtHash = Bytes.fromHex(
+      "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02",
+    );
+
+    final offer = await offerService.createOffer(
+      requesteAmounts: {
+        OfferAssetData.cat(
+          tailHash: gwtHash,
+        ): [-1000]
+      },
+      offerredAmounts: {null: 100000000},
+
+      coins: xchCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+      //fee: 1000000,
+    );
+
+    print("Offering XCH to GWT ${offer.toBench32()}");
+  }
+
+  Future<void> offeringCatForXCH() async {
+    var mnemonic = [
+      "blast",
+      "song",
+      "refuse",
+      "excess",
+      "filter",
+      "unhappy",
+      "tag",
+      "extra",
+      "bless",
+      "grain",
+      "broom",
+      "vanish"
+    ];
+
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+    const fullNodeRpc = FullNodeHttpRpc("");
+
+    KeychainCoreSecret keychainSecret =
+        KeychainCoreSecret.fromMnemonic(mnemonic);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 5; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final gwtHash = Puzzlehash.fromHex(
+      "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02",
+    );
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList)
+      ..addOuterPuzzleHashesForAssetId(gwtHash);
+
+    const fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final standartWalletService = StandardWalletService();
+
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    for (var element in keychain.unhardenedMap.entries) {
+      puzzleHashes.add(element.key);
+    }
+    var myOuterPuzzlehashes = keychain.getOuterPuzzleHashesForAssetId(gwtHash);
+
+    for (var element in keychain.hardenedMap.keys) {
+      var outer = WalletKeychain.makeOuterPuzzleHash(
+        element,
+        gwtHash,
+      );
+      myOuterPuzzlehashes.add(outer);
+    }
+
+    // remove duplicate puzzlehashes
+    myOuterPuzzlehashes = myOuterPuzzlehashes.toSet().toList();
+
+    /// Search for the cat coins for offered
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(
+      myOuterPuzzlehashes,
+    );
+
+    debugPrint(
+        "My Response From retrieving just cat coins  : $responseDataCAT");
+
+    List<CatCoin> catCoins = [];
+    List<Coin> basicCatCoins = responseDataCAT;
+
+    // hydrate cat coins
+    for (final coin in basicCatCoins) {
+      await getCatCoinsDetail(
+        coin: coin,
+        httpUrl: "",
+        catCoins: catCoins,
+        fullNode: fullNode,
+      );
+    }
+
+    // hydrate full coins
+    List<FullCoin>? fullCatCoins = catCoins.map((e) {
+      //Search for the Coin
+      final coinFounded =
+          basicCatCoins.where((coin_) => coin_.id == e.id).toList();
+
+      final coin = coinFounded.first;
+      //pass the coin founded
+      return FullCoin.fromCoin(coin, e.parentCoinSpend);
+    }).toList();
+
+    //search for xch full coins
+    final xchFullCoins = standartWalletService.convertXchCoinsToFull(
+      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
+    );
+
+    // concatenate all coins, the OfferService will be grouped for asset
+    final allCoins = fullCatCoins;
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final offer = await offerService.createOffer(
+      offerredAmounts: {
+        //Remember, always use the offerred amount is negative
+        OfferAssetData.cat(
+          tailHash: gwtHash,
+        ): -1000
+      },
+      requesteAmounts: {
+        // Remember, always use the requested amount is positive
+        null: [
+          100000000,
+        ]
+      },
+      coins: allCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+      //fee: 1000000,
+    );
+
+    print("Offering CAT for xch ${offer.toBench32()}");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
@@ -1160,7 +1325,7 @@ class PushingTransaction {
 
     final response = await post(
         Uri.parse(
-            'https://chia.green-app.io/full-node/get_coin_records_by_parent_ids'),
+            ''),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

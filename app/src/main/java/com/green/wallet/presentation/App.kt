@@ -27,6 +27,7 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.lang.IllegalStateException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
