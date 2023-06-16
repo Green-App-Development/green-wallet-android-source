@@ -395,172 +395,287 @@
 
 		</ScrollView>
 
-<!--		<ScrollView-->
-<!--				android:id="@+id/scroll_liquidity"-->
-<!--				android:layout_width="match_parent"-->
-<!--				android:layout_height="wrap_content"-->
-<!--				app:layout_constraintEnd_toEndOf="parent"-->
-<!--				app:layout_constraintStart_toStartOf="parent"-->
-<!--				app:layout_constraintTop_toTopOf="parent">-->
+		<ScrollView
+				android:id="@+id/scroll_liquidity"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent">
 
-<!--			<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--					android:layout_width="match_parent"-->
-<!--					android:layout_height="wrap_content">-->
+			<androidx.constraintlayout.widget.ConstraintLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
 
-<!--				<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--						android:layout_width="match_parent"-->
-<!--						android:layout_height="267dp"-->
-<!--						android:background="@drawable/card_view_bcg_shape_bottom"-->
-<!--						app:layout_constraintEnd_toEndOf="parent"-->
-<!--						app:layout_constraintStart_toStartOf="parent"-->
-<!--						app:layout_constraintTop_toTopOf="parent">-->
+				<androidx.constraintlayout.widget.ConstraintLayout
+						android:layout_width="match_parent"
+						android:layout_height="267dp"
+						android:background="@drawable/card_view_bcg_shape_bottom"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent">
 
+					<androidx.constraintlayout.widget.ConstraintLayout
+							android:id="@+id/top_container"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							app:layout_constraintTop_toTopOf="parent">
 
-<!--					<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--							android:id="@+id/layout_exchange_tibet"-->
-<!--							android:layout_width="match_parent"-->
-<!--							android:layout_height="75dp"-->
-<!--							android:layout_marginStart="7dp"-->
-<!--							android:layout_marginTop="15dp"-->
-<!--							android:layout_marginEnd="7dp"-->
-<!--							android:background="@drawable/bcg_edt_course_exchange"-->
-<!--							app:layout_constraintTop_toTopOf="parent">-->
+						<androidx.constraintlayout.widget.ConstraintLayout
+								android:id="@+id/layout_exchange_tibet"
+								android:layout_width="match_parent"
+								android:layout_height="75dp"
+								android:layout_marginStart="7dp"
+								android:layout_marginTop="15dp"
+								android:layout_marginEnd="7dp"
+								android:background="@drawable/bcg_edt_course_exchange"
+								app:layout_constraintTop_toTopOf="parent">
 
-<!--						<TextView-->
-<!--								android:id="@+id/txtYouSendingTibet"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:layout_marginStart="10dp"-->
-<!--								android:layout_marginTop="10dp"-->
-<!--								android:text="@string/you_send"-->
-<!--								android:textColor="@color/grey_txt_color"-->
-<!--								android:textFontWeight="400"-->
-<!--								android:textSize="12sp"-->
-<!--								android:visibility="visible"-->
-<!--								app:layout_constraintStart_toStartOf="parent"-->
-<!--								app:layout_constraintTop_toTopOf="parent" />-->
+							<TextView
+									android:id="@+id/txtYouSendingTibet"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="10dp"
+									android:layout_marginTop="10dp"
+									android:text="@string/you_send"
+									android:textColor="@color/grey_txt_color"
+									android:textFontWeight="400"
+									android:textSize="12sp"
+									android:visibility="visible"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toTopOf="parent" />
 
-<!--						<EditText-->
-<!--								android:id="@+id/edtAmountTibet"-->
-<!--								android:layout_width="0dp"-->
-<!--								android:layout_height="35dp"-->
-<!--								android:layout_marginStart="10dp"-->
-<!--								android:background="@android:color/transparent"-->
-<!--								android:imeOptions="actionDone"-->
-<!--								android:inputType="numberDecimal"-->
-<!--								android:maxLines="1"-->
-<!--								android:singleLine="true"-->
-<!--								android:text=""-->
-<!--								android:textColor="@color/secondary_text_color"-->
-<!--								android:textSize="18sp"-->
-<!--								app:layout_constraintEnd_toStartOf="@+id/view8"-->
-<!--								app:layout_constraintStart_toStartOf="parent"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/txtYouSendingTibet" />-->
+							<EditText
+									android:id="@+id/edtAmountTibet"
+									android:layout_width="0dp"
+									android:layout_height="35dp"
+									android:layout_marginStart="10dp"
+									android:background="@android:color/transparent"
+									android:imeOptions="actionDone"
+									android:inputType="numberDecimal"
+									android:maxLines="1"
+									android:singleLine="true"
+									android:text=""
+									android:textColor="@color/secondary_text_color"
+									android:textSize="18sp"
+									app:layout_constraintEnd_toStartOf="@+id/view9"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toBottomOf="@+id/txtYouSendingTibet" />
 
-<!--						<View-->
-<!--								android:id="@+id/green_line_edt_tibet"-->
-<!--								android:layout_width="0dp"-->
-<!--								android:layout_height="1dp"-->
-<!--								android:layout_marginStart="10dp"-->
-<!--								android:background="@color/green"-->
-<!--								android:visibility="gone"-->
-<!--								app:layout_constraintEnd_toStartOf="@id/guideline61"-->
-<!--								app:layout_constraintStart_toStartOf="parent"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/edtAmountTibet" />-->
+							<View
+									android:id="@+id/green_line_edt_liquid"
+									android:layout_width="0dp"
+									android:layout_height="1dp"
+									android:layout_marginStart="10dp"
+									android:background="@color/green"
+									android:visibility="gone"
+									app:layout_constraintEnd_toStartOf="@id/guideline64"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toBottomOf="@+id/edtAmountTibet" />
 
-<!--						<TextView-->
-<!--								android:id="@+id/edtFromNetworkTibet"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:layout_marginStart="9dp"-->
-<!--								android:layout_marginTop="10dp"-->
-<!--								android:text="Chia Network"-->
-<!--								android:textColor="@color/grey_txt_color"-->
-<!--								android:textFontWeight="400"-->
-<!--								android:textSize="12sp"-->
-<!--								android:visibility="visible"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/guideline61"-->
-<!--								app:layout_constraintTop_toTopOf="parent" />-->
+							<TextView
+									android:id="@+id/edtFromNetworkTibet"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="9dp"
+									android:layout_marginTop="10dp"
+									android:text="LP"
+									android:textColor="@color/grey_txt_color"
+									android:textFontWeight="400"
+									android:textSize="12sp"
+									android:visibility="visible"
+									app:layout_constraintStart_toStartOf="@+id/guideline64"
+									app:layout_constraintTop_toTopOf="parent" />
 
-<!--						<TextView-->
-<!--								android:id="@+id/edtTokenTibet"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:layout_marginStart="9dp"-->
-<!--								android:layout_marginTop="5dp"-->
-<!--								android:text="XCH"-->
-<!--								android:textColor="@color/secondary_text_color"-->
-<!--								android:textSize="18sp"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/guideline61"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkTibet" />-->
-
-
-<!--						<RelativeLayout-->
-<!--								android:layout_width="0dp"-->
-<!--								android:layout_height="0dp"-->
-<!--								android:layout_alignParentBottom="true"-->
-<!--								app:layout_constraintEnd_toEndOf="@+id/edtTokenTibet"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/edtTokenTibet"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/edtTokenTibet">-->
-
-<!--							<com.green.wallet.presentation.custom.CustomSpinner-->
-<!--									android:id="@+id/tokenTibetSpinner"-->
-<!--									android:layout_width="match_parent"-->
-<!--									android:layout_height="0dp"-->
-<!--									android:background="@drawable/selector_spinner_bcg_color" />-->
-
-<!--						</RelativeLayout>-->
-
-<!--						<ImageView-->
-<!--								android:id="@+id/imgArrowTibet"-->
-<!--								android:layout_width="15dp"-->
-<!--								android:layout_height="15dp"-->
-<!--								android:layout_centerVertical="true"-->
-<!--								android:layout_marginEnd="20dp"-->
-<!--								android:src="@drawable/ic_arrow_downword"-->
-<!--								app:layout_constraintBottom_toBottomOf="@+id/edtTokenTibet"-->
-<!--								app:layout_constraintEnd_toEndOf="parent"-->
-<!--								app:layout_constraintTop_toTopOf="@+id/edtTokenTibet" />-->
-
-<!--						<View-->
-<!--								android:id="@+id/view9"-->
-<!--								android:layout_width="1dp"-->
-<!--								android:layout_height="0dp"-->
-<!--								android:layout_marginTop="7dp"-->
-<!--								android:layout_marginBottom="7dp"-->
-<!--								android:background="@color/line_divider"-->
-<!--								app:layout_constraintBottom_toBottomOf="parent"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/guideline64"-->
-<!--								app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--						<androidx.constraintlayout.widget.Guideline-->
-<!--								android:id="@+id/guideline64"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:orientation="vertical"-->
-<!--								app:layout_constraintGuide_percent="0.65" />-->
-
-<!--					</androidx.constraintlayout.widget.ConstraintLayout>-->
+							<TextView
+									android:id="@+id/edtTokenTibet"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="9dp"
+									android:layout_marginTop="5dp"
+									android:text="TIBET-..."
+									android:textColor="@color/secondary_text_color"
+									android:textSize="18sp"
+									app:layout_constraintStart_toStartOf="@+id/guideline64"
+									app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkTibet" />
 
 
-<!--					<ImageView-->
-<!--							android:id="@+id/img_swap"-->
-<!--							android:layout_width="30dp"-->
-<!--							android:layout_height="30dp"-->
-<!--							android:layout_marginEnd="8dp"-->
-<!--							android:rotation="90"-->
-<!--							android:src="@drawable/ic_swap_large"-->
-<!--							app:layout_constraintBottom_toBottomOf="@+id/txtCoursePrice"-->
-<!--							app:layout_constraintEnd_toEndOf="parent"-->
-<!--							app:layout_constraintTop_toTopOf="@+id/txtCoursePrice" />-->
+							<RelativeLayout
+									android:layout_width="0dp"
+									android:layout_height="0dp"
+									android:layout_alignParentBottom="true"
+									app:layout_constraintEnd_toEndOf="@+id/edtTokenTibet"
+									app:layout_constraintStart_toStartOf="@+id/edtTokenTibet"
+									app:layout_constraintTop_toBottomOf="@+id/edtTokenTibet">
+
+								<com.green.wallet.presentation.custom.CustomSpinner
+										android:id="@+id/tokenTibetSpinner"
+										android:layout_width="match_parent"
+										android:layout_height="0dp"
+										android:background="@drawable/selector_spinner_bcg_color" />
+
+							</RelativeLayout>
+
+							<ImageView
+									android:id="@+id/imgArrowTibet"
+									android:layout_width="15dp"
+									android:layout_height="15dp"
+									android:layout_centerVertical="true"
+									android:layout_marginEnd="20dp"
+									android:src="@drawable/ic_arrow_downword"
+									app:layout_constraintBottom_toBottomOf="@+id/edtTokenTibet"
+									app:layout_constraintEnd_toEndOf="parent"
+									app:layout_constraintTop_toTopOf="@+id/edtTokenTibet" />
+
+							<View
+									android:id="@+id/view9"
+									android:layout_width="1dp"
+									android:layout_height="0dp"
+									android:layout_marginTop="7dp"
+									android:layout_marginBottom="7dp"
+									android:background="@color/line_divider"
+									app:layout_constraintBottom_toBottomOf="parent"
+									app:layout_constraintStart_toStartOf="@+id/guideline64"
+									app:layout_constraintTop_toTopOf="parent" />
+
+							<androidx.constraintlayout.widget.Guideline
+									android:id="@+id/guideline64"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:orientation="vertical"
+									app:layout_constraintGuide_percent="0.65" />
+
+						</androidx.constraintlayout.widget.ConstraintLayout>
+
+					</androidx.constraintlayout.widget.ConstraintLayout>
 
 
-<!--				</androidx.constraintlayout.widget.ConstraintLayout>-->
+					<ImageView
+							android:id="@+id/img_swap_liquid"
+							android:layout_width="30dp"
+							android:layout_height="30dp"
+							android:layout_marginTop="10dp"
+							android:layout_marginEnd="15dp"
+							android:rotation="90"
+							android:src="@drawable/ic_swap_large"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintTop_toBottomOf="@id/top_container" />
+
+					<androidx.constraintlayout.widget.ConstraintLayout
+							android:id="@+id/bottom_container"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							app:layout_constraintTop_toBottomOf="@+id/img_swap_liquid">
+
+						<androidx.constraintlayout.widget.ConstraintLayout
+								android:id="@+id/layout_exchange_cat"
+								android:layout_width="match_parent"
+								android:layout_height="75dp"
+								android:layout_marginStart="7dp"
+								android:layout_marginTop="10dp"
+								android:layout_marginEnd="7dp"
+								android:background="@drawable/bcg_edt_course_exchange"
+								app:layout_constraintTop_toTopOf="parent">
+
+							<TextView
+									android:id="@+id/txtYouSendingXCH"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="10dp"
+									android:layout_marginTop="10dp"
+									android:text="@string/you_send"
+									android:textColor="@color/grey_txt_color"
+									android:textFontWeight="400"
+									android:textSize="12sp"
+									android:visibility="visible"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toTopOf="parent" />
+
+							<EditText
+									android:id="@+id/edtAmountHCH"
+									android:layout_width="0dp"
+									android:layout_height="35dp"
+									android:layout_marginStart="10dp"
+									android:background="@android:color/transparent"
+									android:imeOptions="actionDone"
+									android:inputType="numberDecimal"
+									android:maxLines="1"
+									android:singleLine="true"
+									android:text=""
+									android:textColor="@color/secondary_text_color"
+									android:textSize="18sp"
+									app:layout_constraintEnd_toStartOf="@+id/view10"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toBottomOf="@+id/txtYouSendingXCH" />
+
+							<View
+									android:id="@+id/green_line_edt_xch"
+									android:layout_width="0dp"
+									android:layout_height="1dp"
+									android:layout_marginStart="10dp"
+									android:background="@color/green"
+									android:visibility="gone"
+									app:layout_constraintEnd_toStartOf="@id/guideline66"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toBottomOf="@+id/edtAmountHCH" />
+
+							<TextView
+									android:id="@+id/edtFromNetworkXCH"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="9dp"
+									android:layout_marginTop="10dp"
+									android:text="Chia Network"
+									android:textColor="@color/grey_txt_color"
+									android:textFontWeight="400"
+									android:textSize="12sp"
+									android:visibility="visible"
+									app:layout_constraintStart_toStartOf="@+id/guideline66"
+									app:layout_constraintTop_toTopOf="parent" />
+
+							<TextView
+									android:id="@+id/edtTokenXCH"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="9dp"
+									android:layout_marginTop="5dp"
+									android:text="XCH"
+									android:textColor="@color/secondary_text_color"
+									android:textSize="18sp"
+									app:layout_constraintStart_toStartOf="@+id/guideline66"
+									app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkXCH" />
 
 
-<!--			</androidx.constraintlayout.widget.ConstraintLayout>-->
+							<View
+									android:id="@+id/view10"
+									android:layout_width="1dp"
+									android:layout_height="0dp"
+									android:layout_marginTop="7dp"
+									android:layout_marginBottom="7dp"
+									android:background="@color/line_divider"
+									app:layout_constraintBottom_toBottomOf="parent"
+									app:layout_constraintStart_toStartOf="@+id/guideline66"
+									app:layout_constraintTop_toTopOf="parent" />
 
-<!--		</ScrollView>-->
+							<androidx.constraintlayout.widget.Guideline
+									android:id="@+id/guideline66"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:orientation="vertical"
+									app:layout_constraintGuide_percent="0.65" />
+
+
+						</androidx.constraintlayout.widget.ConstraintLayout>
+
+					</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+		</ScrollView>
 
 
 	</androidx.constraintlayout.widget.ConstraintLayout>

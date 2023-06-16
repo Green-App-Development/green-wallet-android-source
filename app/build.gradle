@@ -241,7 +241,7 @@ dependencies {
 	implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
 	implementation "androidx.room:room-paging:$room_version"
 
-//	debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
+	debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
 
 
 }

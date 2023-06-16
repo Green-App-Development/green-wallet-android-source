@@ -191,7 +191,7 @@ class App : DaggerApplication() {
 		}
 
 		methodChannel.setMethodCallHandler { call, result ->
-			if (call.method == "nftSpendBundle") {
+			if (call.method == "offer") {
 				val bundleNFT = call.arguments.toString()
 				VLog.d("BundleNFT on Android : $bundleNFT")
 			}

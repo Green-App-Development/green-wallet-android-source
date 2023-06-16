@@ -1,14 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:chia_crypto_utils/chia_crypto_utils.dart' hide Client;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_splash_screen_module/main.dart';
 import 'package:http/http.dart';
 import 'dart:math';
-import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
 
 import 'nft_service.dart';
 
@@ -224,7 +220,8 @@ class PushingTransaction {
       }
     });
     offeringXCHForCat();
-    testingMethod();
+    // offeringCatForXCH();
+    // testingMethod();
   }
 
   Future<void> cachedWalletKeyChain(
@@ -436,7 +433,7 @@ class PushingTransaction {
     }
   }
 
-  Future<void> getCatCoinsDetail(
+  static Future<void> getCatCoinsDetail(
       {required Coin coin,
       required String httpUrl,
       required List<CatCoin> catCoins,
@@ -647,7 +644,7 @@ class PushingTransaction {
 
       _channel.invokeMethod("getHash", mapToAndroid);
     } catch (ex) {
-      debugPrint("Exception occurred in generating keys : ${ex}");
+      debugPrint("Exception occurred in generating keys : $ex");
     }
   }
 
@@ -704,7 +701,7 @@ class PushingTransaction {
 
       _channel.invokeMethod("getHash", mapToAndroid);
     } catch (ex) {
-      debugPrint("Exception occurred in generating keys : ${ex}");
+      debugPrint("Exception occurred in generating keys : $ex");
     }
   }
 
@@ -892,7 +889,7 @@ class PushingTransaction {
     print(offer.toBench32());
   }
 
-  Future<void> offeringXCHForCat() async {
+  static Future<void> offeringXCHForCat() async {
     var mnemonic = [
       "blast",
       "song",
@@ -932,10 +929,10 @@ class PushingTransaction {
       puzzleHashes.add(element.key);
     });
 
-    final responseDataXCH = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
 
     debugPrint(
-        "My Response From retrieving just xch coins  : $responseDataXCH");
+        "My Response From retrieving just xch coins  : $responseDataCAT");
     List<FullCoin>? xchCoins;
 
     xchCoins = standartWalletService.convertXchCoinsToFull(
@@ -953,20 +950,20 @@ class PushingTransaction {
       requesteAmounts: {
         OfferAssetData.cat(
           tailHash: gwtHash,
-        ): [-1000]
+        ): [1000]
       },
-      offerredAmounts: {null: 100000000},
-
+      offerredAmounts: {null: -100},
       coins: xchCoins,
       changePuzzlehash: changePh,
       targetPuzzleHash: targePh,
-      //fee: 1000000,
     );
+    final str = offer.toBench32();
 
-    print("Offering XCH to GWT ${offer.toBench32()}");
+    _channel.invokeMethod("offer", {"offer": str});
+    // debugPrint("Offering xch for gad : ${str}");
   }
 
-  Future<void> offeringCatForXCH() async {
+  static Future<void> offeringCatForXCH() async {
     var mnemonic = [
       "blast",
       "song",
@@ -1028,7 +1025,7 @@ class PushingTransaction {
     );
 
     debugPrint(
-        "My Response From retrieving just cat coins  : $responseDataCAT");
+        "My Response From retrieving just xch coins  : $responseDataCAT");
 
     List<CatCoin> catCoins = [];
     List<Coin> basicCatCoins = responseDataCAT;
@@ -1046,12 +1043,18 @@ class PushingTransaction {
     // hydrate full coins
     List<FullCoin>? fullCatCoins = catCoins.map((e) {
       //Search for the Coin
-      final coinFounded =
-          basicCatCoins.where((coin_) => coin_.id == e.id).toList();
+      final coinFounded = basicCatCoins
+          .where(
+            (coin_) => coin_.id == e.id,
+          )
+          .toList();
 
       final coin = coinFounded.first;
-      //pass the coin founded
-      return FullCoin.fromCoin(coin, e.parentCoinSpend);
+
+      return FullCoin.fromCoin(
+        coin,
+        e.parentCoinSpend,
+      );
     }).toList();
 
     //search for xch full coins
@@ -1060,7 +1063,7 @@ class PushingTransaction {
     );
 
     // concatenate all coins, the OfferService will be grouped for asset
-    final allCoins = fullCatCoins;
+    final allCoins = fullCatCoins + xchFullCoins;
 
     final changePh = keychain.puzzlehashes[0];
     final targePh = keychain.puzzlehashes[1];
@@ -1075,7 +1078,7 @@ class PushingTransaction {
       requesteAmounts: {
         // Remember, always use the requested amount is positive
         null: [
-          100000000,
+          10000000,
         ]
       },
       coins: allCoins,
@@ -1083,8 +1086,9 @@ class PushingTransaction {
       targetPuzzleHash: targePh,
       //fee: 1000000,
     );
+    final str = offer.toBench32();
+    _channel.invokeMethod("offer", {"offer": str});
 
-    print("Offering CAT for xch ${offer.toBench32()}");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
@@ -1231,7 +1235,7 @@ class PushingTransaction {
 
       final nftFullCoin = await nftService.convertFullCoin(nftCoin);
       debugPrint("Converting to FullNFTCoin : $nftFullCoin");
-      debugPrint('Standard XCH for fee : ${standardCoinsForFee}');
+      debugPrint('Standard XCH for fee : $standardCoinsForFee');
 
       final destPuzzleHash = Address(destAddress).toPuzzlehash();
       await Future.wait(futures);
