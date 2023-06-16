@@ -932,12 +932,13 @@ class PushingTransaction {
       puzzleHashes.add(element.key);
     });
 
-    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+    final responseDataXCH = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
 
-    debugPrint("My Response From retrieving just xch coins  : $responseDataCAT");
-    List<FullCoin> ? xchCoins;
+    debugPrint(
+        "My Response From retrieving just xch coins  : $responseDataXCH");
+    List<FullCoin>? xchCoins;
 
-    xchCoins=standartWalletService.convertXchCoinsToFull(
+    xchCoins = standartWalletService.convertXchCoinsToFull(
       await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
     );
 
@@ -962,9 +963,128 @@ class PushingTransaction {
       //fee: 1000000,
     );
 
-    print("Offer from xch to gad ${offer.toBench32()}");
+    print("Offering XCH to GWT ${offer.toBench32()}");
+  }
 
+  Future<void> offeringCatForXCH() async {
+    var mnemonic = [
+      "blast",
+      "song",
+      "refuse",
+      "excess",
+      "filter",
+      "unhappy",
+      "tag",
+      "extra",
+      "bless",
+      "grain",
+      "broom",
+      "vanish"
+    ];
 
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+
+    KeychainCoreSecret keychainSecret =
+        KeychainCoreSecret.fromMnemonic(mnemonic);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 5; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final gwtHash = Puzzlehash.fromHex(
+      "7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02",
+    );
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList)
+      ..addOuterPuzzleHashesForAssetId(gwtHash);
+
+    const fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final standartWalletService = StandardWalletService();
+
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    for (var element in keychain.unhardenedMap.entries) {
+      puzzleHashes.add(element.key);
+    }
+    var myOuterPuzzlehashes = keychain.getOuterPuzzleHashesForAssetId(gwtHash);
+
+    for (var element in keychain.hardenedMap.keys) {
+      var outer = WalletKeychain.makeOuterPuzzleHash(
+        element,
+        gwtHash,
+      );
+      myOuterPuzzlehashes.add(outer);
+    }
+
+    // remove duplicate puzzlehashes
+    myOuterPuzzlehashes = myOuterPuzzlehashes.toSet().toList();
+
+    /// Search for the cat coins for offered
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(
+      myOuterPuzzlehashes,
+    );
+
+    debugPrint(
+        "My Response From retrieving just cat coins  : $responseDataCAT");
+
+    List<CatCoin> catCoins = [];
+    List<Coin> basicCatCoins = responseDataCAT;
+
+    // hydrate cat coins
+    for (final coin in basicCatCoins) {
+      await getCatCoinsDetail(
+        coin: coin,
+        httpUrl: "https://chia.green-app.io/full-node",
+        catCoins: catCoins,
+        fullNode: fullNode,
+      );
+    }
+
+    // hydrate full coins
+    List<FullCoin>? fullCatCoins = catCoins.map((e) {
+      //Search for the Coin
+      final coinFounded =
+          basicCatCoins.where((coin_) => coin_.id == e.id).toList();
+
+      final coin = coinFounded.first;
+      //pass the coin founded
+      return FullCoin.fromCoin(coin, e.parentCoinSpend);
+    }).toList();
+
+    //search for xch full coins
+    final xchFullCoins = standartWalletService.convertXchCoinsToFull(
+      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
+    );
+
+    // concatenate all coins, the OfferService will be grouped for asset
+    final allCoins = fullCatCoins;
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final offer = await offerService.createOffer(
+      offerredAmounts: {
+        //Remember, always use the offerred amount is negative
+        OfferAssetData.cat(
+          tailHash: gwtHash,
+        ): -1000
+      },
+      requesteAmounts: {
+        // Remember, always use the requested amount is positive
+        null: [
+          100000000,
+        ]
+      },
+      coins: allCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+      //fee: 1000000,
+    );
+
+    print("Offering CAT for xch ${offer.toBench32()}");
   }
 
   void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
