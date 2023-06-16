@@ -224,7 +224,7 @@ class PushingTransaction {
       }
     });
     offeringXCHForCat();
-    // testingMethod();
+    testingMethod();
   }
 
   Future<void> cachedWalletKeyChain(
@@ -804,7 +804,7 @@ class PushingTransaction {
 
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+    const fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -843,7 +843,7 @@ class PushingTransaction {
     for (final coin in allCatCoins) {
       futures.add(getCatCoinsDetail(
           coin: coin,
-          httpUrl: "https://chia.green-app.io/full-node",
+          httpUrl: "",
           catCoins: catCoins,
           fullNode: fullNode));
     }
@@ -910,7 +910,7 @@ class PushingTransaction {
 
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+    const fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -984,7 +984,7 @@ class PushingTransaction {
 
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+    const fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -1037,7 +1037,7 @@ class PushingTransaction {
     for (final coin in basicCatCoins) {
       await getCatCoinsDetail(
         coin: coin,
-        httpUrl: "https://chia.green-app.io/full-node",
+        httpUrl: "",
         catCoins: catCoins,
         fullNode: fullNode,
       );
@@ -1325,7 +1325,7 @@ class PushingTransaction {
 
     final response = await post(
         Uri.parse(
-            'https://chia.green-app.io/full-node/get_coin_records_by_parent_ids'),
+            ''),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
