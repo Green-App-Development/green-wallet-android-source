@@ -961,6 +961,7 @@ class PushingTransaction {
 
     _channel.invokeMethod("offer", {"offer": str});
     // debugPrint("Offering xch for gad : ${str}");
+
   }
 
   static Future<void> offeringCatForXCH() async {

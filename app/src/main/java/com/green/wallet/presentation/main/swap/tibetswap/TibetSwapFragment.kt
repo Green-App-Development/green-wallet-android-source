@@ -53,6 +53,8 @@ class TibetSwapFragment : DaggerFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding.prepareRelChosen()
+		binding.logicSwap()
+		binding.logicLiquidity()
 	}
 
 
@@ -74,6 +76,20 @@ class TibetSwapFragment : DaggerFragment() {
 	}
 
 
+	private fun FragmentTibetswapBinding.logicSwap() {
+		if (vm.xchToCAT) {
+			imgArrowFrom.visibility=View.GONE
+
+		} else {
+
+		}
+	}
+
+	private fun FragmentTibetswapBinding.logicLiquidity() {
+
+	}
+
+
 	private fun FragmentTibetswapBinding.listeners(width: Int) {
 
 		txtSwap.setOnClickListener {
@@ -83,7 +99,8 @@ class TibetSwapFragment : DaggerFragment() {
 			animManager.moveViewToLeftByWidth(relChosen, width)
 			txtSwap.setTextColor(requireActivity().getColorResource(R.color.green))
 			txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.greey))
-
+			scrollLiquidity.visibility = View.GONE
+			scrollSwap.visibility = View.VISIBLE
 		}
 
 		txtLiquidity.setOnClickListener {
@@ -93,7 +110,8 @@ class TibetSwapFragment : DaggerFragment() {
 			animManager.moveViewToRightByWidth(relChosen, width)
 			txtSwap.setTextColor(requireActivity().getColorResource(R.color.greey))
 			txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.green))
-
+			scrollLiquidity.visibility = View.VISIBLE
+			scrollSwap.visibility = View.GONE
 		}
 
 	}
