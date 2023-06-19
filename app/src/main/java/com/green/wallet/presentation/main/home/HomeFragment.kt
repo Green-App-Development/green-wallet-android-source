@@ -135,7 +135,10 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 //		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
 		initSwipeRefreshLayout()
 		homeFragmentViewModel.updateCryptoCurrencyCourse("Chia Network")
-		getMainActivity().move2BtmWalletChooseDialog()
+		lifecycleScope.launch {
+			delay(1000)
+			getMainActivity().move2BtmWalletChooseDialog()
+		}
 	}
 
 	private fun initSwipeRefreshLayout() {

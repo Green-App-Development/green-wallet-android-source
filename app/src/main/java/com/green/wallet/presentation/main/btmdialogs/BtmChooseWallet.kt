@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.green.wallet.R
 import com.green.wallet.databinding.DialogBtmChooseWalletBinding
+import com.green.wallet.databinding.ItemWalletBtmChooseBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel
+import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 
 class BtmChooseWallet : BottomSheetDialogFragment() {
@@ -43,13 +46,17 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
 
 	private fun DialogBtmChooseWalletBinding.initFingerPrints() {
 
-//		for (i in 123456 until 123460) {
-//			val view = ItemWalletBtmChooseBinding.inflate(layoutInflater).root
-//			VLog.d("Inflating view hash code  : ${view.hashCode()}")
-//			container.addView(view)
-//		}
+		for (i in 123456 until 123460) {
+			val bindingWallet = ItemWalletBtmChooseBinding.inflate(layoutInflater)
+			VLog.d("Inflating view hash code  : ${view.hashCode()}")
+			bindingWallet.
+			containerWallet.addView(bindingWallet.root)
+		}
 
 	}
 
+	override fun getTheme(): Int {
+		return R.style.AppBottomSheetDialogTheme
+	}
 
 }
