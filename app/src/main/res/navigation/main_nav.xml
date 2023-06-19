@@ -291,5 +291,11 @@
 			android:label=""
 			tools:layout="@layout/fragment_send_swap" />
 
+	<dialog
+			android:id="@+id/btmSheetDialogChooseWallet"
+			android:name="com.green.wallet.presentation.main.btmdialogs.BtmChooseWallet"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_btm_choose_wallet" />
+
 
 </navigation>

@@ -195,10 +195,8 @@ abstract class ViewModelsModule {
 	@IntoMap
 	@Binds
 	@ViewModelKey(TibetSwapViewModel::class)
+	@AppScope
 	abstract fun bindingTibetSwapViewModel(viewModel: TibetSwapViewModel): ViewModel
-
-
-
 
 
 }

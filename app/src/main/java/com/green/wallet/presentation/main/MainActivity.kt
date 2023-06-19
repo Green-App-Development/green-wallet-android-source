@@ -923,6 +923,10 @@ class MainActivity : BaseActivity() {
 		navController.navigate(btmChooseDApps, bundle)
 	}
 
+	fun move2BtmWalletChooseDialog() {
+		navController.navigate(btmSheetDialogChooseWallet)
+	}
+
 	fun move2WalletSettings(address: String) {
 		val bundle = bundleOf(
 			WalletSettingsFragment.ADDRESS_KEY to address

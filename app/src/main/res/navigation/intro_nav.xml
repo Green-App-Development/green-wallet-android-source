@@ -3,7 +3,7 @@
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
 		android:id="@+id/intro_nav"
-		app:startDestination="@id/fragment_tibet_swap">
+		app:startDestination="@id/entPasscodeFragment">
 
 	<fragment
 			android:id="@+id/timeFragment"

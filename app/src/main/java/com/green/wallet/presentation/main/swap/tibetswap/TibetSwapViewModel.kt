@@ -14,5 +14,4 @@ class TibetSwapViewModel
 	var isShowingDetailsTran = false
 
 
-
 }

@@ -46,7 +46,6 @@ class IntroActivity : BaseActivity() {
 	}
 
 
-
 	override fun onNewIntent(intent: Intent?) {
 		super.onNewIntent(intent)
 		VLog.d(
@@ -78,10 +77,12 @@ class IntroActivity : BaseActivity() {
 					setSystemUiLightStatusBar(isLightStatusBar = getStatusBarBcgColorBasedOnTime())
 					window.statusBarColor = getStatusBcgBarColorBasedOnTime(this)
 				}
+
 				R.id.entPasscodeFragment -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
+
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
@@ -148,6 +149,7 @@ class IntroActivity : BaseActivity() {
 	fun move2EntPasscodeFragment() {
 
 	}
+
 
 	fun move2OnboardingActivity(reset_app_clicked: Boolean) {
 		Intent(this, OnBoardActivity::class.java).apply {
