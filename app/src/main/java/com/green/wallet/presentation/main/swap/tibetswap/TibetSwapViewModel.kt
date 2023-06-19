@@ -11,5 +11,8 @@ class TibetSwapViewModel
 	var isShowingSwap = true
 
 	var xchToCAT = true
+	var isShowingDetailsTran = false
+
+
 
 }
