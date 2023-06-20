@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.btmdialogs
+package com.green.wallet.presentation.main.swap.tibetswap
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,6 @@ import com.green.wallet.databinding.DialogBtmChooseWalletBinding
 import com.green.wallet.databinding.ItemWalletBtmChooseBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.di.factory.ViewModelFactory
-import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel
 import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 
@@ -41,15 +40,19 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 		binding.initFingerPrints()
-
+		VLog.d("On View Created ChooseWallet with vm : $vm")
 	}
 
 	private fun DialogBtmChooseWalletBinding.initFingerPrints() {
 
 		for (i in 123456 until 123460) {
 			val bindingWallet = ItemWalletBtmChooseBinding.inflate(layoutInflater)
-			VLog.d("Inflating view hash code  : ${view.hashCode()}")
-			bindingWallet.
+			bindingWallet.apply {
+				txtPublicKey.text =
+					"Приватный ключ с публичным отпечатком  ${bindingWallet.hashCode()}"
+				if (i == 123459)
+					viewDivider.visibility = View.GONE
+			}
 			containerWallet.addView(bindingWallet.root)
 		}
 

@@ -293,9 +293,15 @@
 
 	<dialog
 			android:id="@+id/btmSheetDialogChooseWallet"
-			android:name="com.green.wallet.presentation.main.btmdialogs.BtmChooseWallet"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmChooseWallet"
 			android:label="btmDialog"
 			tools:layout="@layout/dialog_btm_choose_wallet" />
+
+	<dialog
+			android:id="@+id/btmSheetDialogCreateOffer"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferDialog"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_btm_create_offer" />
 
 
 </navigation>

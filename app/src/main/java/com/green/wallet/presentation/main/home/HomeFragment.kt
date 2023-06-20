@@ -135,10 +135,7 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 //		homeFragmentViewModel.changeCryptCourseEvery10Seconds()
 		initSwipeRefreshLayout()
 		homeFragmentViewModel.updateCryptoCurrencyCourse("Chia Network")
-		lifecycleScope.launch {
-			delay(1000)
-			getMainActivity().move2BtmWalletChooseDialog()
-		}
+
 	}
 
 	private fun initSwipeRefreshLayout() {
@@ -345,6 +342,8 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		}
 
 		icHomeQr.setOnClickListener {
+			getMainActivity().move2BtmCreateOfferDialog()
+			return@setOnClickListener
 			if (hasAtLeastOneWallet)
 				requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
 			else
