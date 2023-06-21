@@ -6,104 +6,127 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.green.wallet.R
 import com.green.wallet.databinding.DialogBtmCreateOfferBinding
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 
-    private lateinit var binding: DialogBtmCreateOfferBinding
+	private lateinit var binding: DialogBtmCreateOfferBinding
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-    private val vm: TibetSwapViewModel by viewModels { viewModelFactory }
+	@Inject
+	lateinit var viewModelFactory: ViewModelFactory
+	private val vm: TibetSwapViewModel by viewModels { viewModelFactory }
+
+	@Inject
+	lateinit var animManager: AnimationManager
+
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		(requireActivity().application as App).appComponent.inject(this)
+	}
+
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		binding = DialogBtmCreateOfferBinding.inflate(layoutInflater)
+		return binding.root
+	}
+
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		VLog.d("On View Created Create Offer with vm : $vm")
+//		binding.clickedFeeOptions()
+		binding.listeners()
+	}
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (requireActivity().application as App).appComponent.inject(this)
-    }
+	private fun DialogBtmCreateOfferBinding.listeners() {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = DialogBtmCreateOfferBinding.inflate(layoutInflater)
-        return binding.root
-    }
+		relChosenLongClick.setOnClickListener {
+			clickedPositionsFee(0)
+		}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        VLog.d("On View Created Create Offer with vm : $vm")
-        binding.clickedFeeOptions()
+		relChosenMediumClick.setOnClickListener {
+			clickedPositionsFee(1)
+		}
 
-    }
+		relChosenShortClick.setOnClickListener {
+			clickedPositionsFee(2)
+		}
 
-    private fun DialogBtmCreateOfferBinding.clickedFeeOptions() {
+	}
 
-        relChosenFee.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val width = relChosenFee.width
-                changePositionsClick(width = width)
-                val layoutParams = relChosenFee.layoutParams as ConstraintLayout.LayoutParams
-                layoutParams.endToStart = ConstraintLayout.LayoutParams.UNSET
-                layoutParams.startToStart = ConstraintLayout.LayoutParams.UNSET
-                layoutParams.topToTop = ConstraintLayout.LayoutParams.UNSET
-                layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                relChosenFee.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-        })
 
-    }
+	private fun DialogBtmCreateOfferBinding.clickedPositionsFee(pos: Int) {
+		val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)
+		for (i in 0 until layouts.size) {
+			if (i == pos) {
+				layouts[i].visibility = View.VISIBLE
+			} else {
+				layouts[i].visibility = View.INVISIBLE
+			}
+		}
+	}
 
-    private fun DialogBtmCreateOfferBinding.changePositionsClick(width: Int) {
+	private fun DialogBtmCreateOfferBinding.changePositionsClick(width: Int) {
 
-        txtLong.setOnClickListener {
+		txtLong.setOnClickListener {
 
-        }
+		}
+		lifecycleScope.launch {
+			delay(1000)
+//			changePositionsFeeCombinations(2, 3, width)
+		}
 
-    }
+	}
 
-    private fun changePositionsFeeCombinations(from: Int, to: Int) {
+	private fun changePositionsFeeCombinations(from: Int, to: Int, width: Int) {
 
-        val key = "$from|$to"
-        when (key) {
-            "1|2" -> {
+		val key = "$from|$to"
+		when (key) {
+			"1|2" -> {
 
-            }
+			}
 
-            "1|3" -> {
+			"1|3" -> {
 
-            }
+			}
 
-            "2|1" -> {
+			"2|1" -> {
 
-            }
+			}
 
-            "2|3" -> {
+			"2|3" -> {
+//				animManager.moveViewToRightByWidth(binding.relChosenFee, width)
+			}
 
-            }
+			"3|1" -> {
 
-            "3|1" -> {
+			}
 
-            }
+			"3|2" -> {
 
-            "3|2" -> {
+			}
+		}
 
-            }
-        }
+	}
 
-    }
-
-    override fun getTheme(): Int {
-        return R.style.AppBottomSheetDialogTheme
-    }
+	override fun getTheme(): Int {
+		return R.style.AppBottomSheetDialogTheme
+	}
 
 
 }

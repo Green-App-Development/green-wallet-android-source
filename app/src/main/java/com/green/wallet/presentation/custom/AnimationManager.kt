@@ -63,7 +63,22 @@ class AnimationManager @Inject constructor(private var context: Context) {
 		val centerX = view.x
 		val desiredX = centerX + width
 		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
-		translateX.duration = 300
+//		translateX.duration = 300
+		translateX.duration = 2000
+		val animSet = AnimatorSet()
+		animSet.playTogether(translateX)
+		prevAnimSet = animSet
+		animSet.start()
+		return false
+	}
+
+	fun moveViewToRightByWidthNoAnim(view: View, width: Int): Boolean {
+		if (prevAnimSet?.isRunning == true)
+			return true
+		val centerX = view.x
+		val desiredX = centerX + width
+		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
+		translateX.duration = 1
 		val animSet = AnimatorSet()
 		animSet.playTogether(translateX)
 		prevAnimSet = animSet
