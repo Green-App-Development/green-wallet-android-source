@@ -12,7 +12,10 @@ class TibetSwapViewModel
 	var isShowingSwap = true
 
 	var xchToCAT = true
-	var isShowingDetailsTran = false
+	var nextHeight = 435
+	val containerBiggerSize = 435
+	val containerSmallerSize = 265
+	var nextContainerBigger = true
 
 	init {
 		VLog.d("On create tibet vm : $this")

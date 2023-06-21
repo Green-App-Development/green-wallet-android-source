@@ -77,7 +77,7 @@
 				android:id="@+id/scroll_swap"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:visibility="gone"
+				android:visibility="visible"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent">
@@ -89,7 +89,7 @@
 				<androidx.constraintlayout.widget.ConstraintLayout
 						android:id="@+id/containerSwap"
 						android:layout_width="match_parent"
-						android:layout_height="435dp"
+						android:layout_height="265dp"
 						android:background="@drawable/card_view_bcg_shape_bottom"
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="parent"
@@ -578,7 +578,7 @@
 				android:id="@+id/scroll_liquidity"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:visibility="visible"
+				android:visibility="gone"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent">

@@ -71,7 +71,7 @@ class TibetSwapFragment : DaggerFragment() {
 				layoutParams.startToStart = UNSET
 				relChosen.viewTreeObserver.removeOnGlobalLayoutListener(this)
 				relChosen.layoutParams = layoutParams
-				binding.listeners(width)
+				binding.listenersForSwapDest(width)
 			}
 		})
 	}
@@ -79,17 +79,17 @@ class TibetSwapFragment : DaggerFragment() {
 
 	private fun FragmentTibetswapBinding.initDetailsTransSwap() {
 		//detail tran
-		if (vm.isShowingDetailsTran) {
+		if (!vm.nextContainerBigger) {
 			animManager.rotateBy180ForwardNoAnimation(
 				imgArrowDownDetailTrans,
 				requireActivity()
 			)
 			val params = containerSwap.layoutParams
-			params.height = requireActivity().convertDpToPixel(containerBiggerSize)
+			params.height = requireActivity().convertDpToPixel(vm.containerBiggerSize)
 			containerSwap.layoutParams = params
 		} else {
 			val params = containerSwap.layoutParams
-			params.height = requireActivity().convertDpToPixel(containerSmallerSize)
+			params.height = requireActivity().convertDpToPixel(vm.containerSmallerSize)
 			containerSwap.layoutParams = params
 		}
 		imgArrowDownDetailTrans.setOnClickListener {
@@ -97,13 +97,11 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 	}
 
-	private var nextHeight = 435
 	lateinit var animTransDetail: ValueAnimator
-	private var containerBigger = true
 	fun initAnimationCollapsingDetailTransaction(layout: View) {
 		if (this::animTransDetail.isInitialized && animTransDetail.isRunning)
 			return
-		val newHeightPixel = (nextHeight * resources.displayMetrics.density).toInt()
+		val newHeightPixel = (vm.nextHeight * resources.displayMetrics.density).toInt()
 		animTransDetail = ValueAnimator.ofInt(layout.height, newHeightPixel)
 		animTransDetail.duration = 500 // duration in milliseconds
 		animTransDetail.interpolator = DecelerateInterpolator()
@@ -113,15 +111,15 @@ class TibetSwapFragment : DaggerFragment() {
 			layout.requestLayout()
 		}
 		animTransDetail.start()
-		if (containerBigger) {
+		if (vm.nextContainerBigger) {
 			animManager.rotateBy180Forward(binding.imgArrowDownDetailTrans, requireActivity())
 		} else
 			animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, requireActivity())
-		containerBigger = !containerBigger
-		if (containerBigger) {
-			nextHeight = containerBiggerSize
+		vm.nextContainerBigger = !vm.nextContainerBigger
+		if (vm.nextContainerBigger) {
+			vm.nextHeight = vm.containerBiggerSize
 		} else {
-			nextHeight = containerSmallerSize
+			vm.nextHeight = vm.containerSmallerSize
 		}
 	}
 
@@ -169,8 +167,6 @@ class TibetSwapFragment : DaggerFragment() {
 
 	}
 
-	private var containerBiggerSize = 435
-	private var containerSmallerSize = 265
 
 	private fun choosingXCHToCAT(xchToCat: Boolean) {
 		binding.apply {
@@ -307,7 +303,7 @@ class TibetSwapFragment : DaggerFragment() {
 		toTibet = !toTibet
 	}
 
-	private fun FragmentTibetswapBinding.listeners(width: Int) {
+	private fun FragmentTibetswapBinding.listenersForSwapDest(width: Int) {
 
 		txtSwap.setOnClickListener {
 			if (vm.isShowingSwap)
@@ -335,6 +331,13 @@ class TibetSwapFragment : DaggerFragment() {
 			scrollSwap.visibility = View.GONE
 		}
 
+		if (!vm.isShowingSwap) {
+			animManager.moveViewToRightByWidthNoAnim(relChosen, width)
+			txtSwap.setTextColor(requireActivity().getColorResource(R.color.greey))
+			txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.green))
+			scrollLiquidity.visibility = View.VISIBLE
+			scrollSwap.visibility = View.GONE
+		}
 	}
 
 
