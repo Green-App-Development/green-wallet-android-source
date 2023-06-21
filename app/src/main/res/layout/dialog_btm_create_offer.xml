@@ -1,320 +1,321 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-	<LinearLayout
-			android:id="@+id/containerWallet"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/dialog_bg"
-			android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/containerWallet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg"
+        android:orientation="vertical">
 
-		<ImageView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_horizontal"
-				android:src="@drawable/home_indicator" />
-
-
-		<androidx.constraintlayout.widget.ConstraintLayout
-				android:layout_width="match_parent"
-				android:layout_height="370dp"
-				android:layout_marginTop="20dp"
-				android:background="@drawable/bcg_create_offer">
-
-			<TextView
-					android:id="@+id/textView18"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="9dp"
-					android:text="Create Offer"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="16sp"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/home_indicator" />
 
 
-			<TextView
-					android:id="@+id/textView19"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="15dp"
-					android:text="Current account"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="16sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView18" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="370dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bcg_create_offer">
 
-			<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="10dp"
-					android:text="xch1jihbwkl...4ciyc"
-					android:textColor="@color/secondary_text_color"
-					android:textFontWeight="500"
-					app:layout_constraintBottom_toBottomOf="@+id/textView19"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/textView19" />
-
-			<View
-					android:id="@+id/view_divider"
-					android:layout_width="match_parent"
-					android:layout_height="1dp"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="8dp"
-					android:layout_marginEnd="10dp"
-					android:background="@color/network_item_line_divider"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView19" />
-
-			<TextView
-					android:id="@+id/textView20"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="10dp"
-					android:text="Estimated wallet balance change"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="16sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/view_divider" />
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:text="Create Offer"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-			<TextView
-					android:id="@+id/textView21"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="12dp"
-					android:text="XCH"
-					android:textColor="@color/secondary_text_color"
-					android:textFontWeight="500"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView20" />
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:text="Current account"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="xch1jihbwkl...4ciyc"
+                android:textColor="@color/secondary_text_color"
+                android:textFontWeight="500"
+                app:layout_constraintBottom_toBottomOf="@+id/textView19"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView19" />
+
+            <View
+                android:id="@+id/view_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:background="@color/network_item_line_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Estimated wallet balance change"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_divider" />
 
 
-			<TextView
-					android:id="@+id/textView22"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="8dp"
-					android:layout_marginTop="7dp"
-					android:text="GWT"
-					android:textColor="@color/secondary_text_color"
-					android:textFontWeight="500"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-			<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="10dp"
-					android:text="-1 XCH"
-					android:textColor="@color/red_mnemonic"
-					app:layout_constraintBottom_toBottomOf="@+id/textView21"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/textView21" />
-
-			<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="10dp"
-					android:text="+20 313 GWT"
-					android:textColor="@color/green"
-					app:layout_constraintBottom_toBottomOf="@+id/textView22"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/textView22" />
-
-			<View
-					android:id="@+id/view_divider_1"
-					android:layout_width="match_parent"
-					android:layout_height="1dp"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="20dp"
-					android:layout_marginEnd="10dp"
-					android:background="@color/network_item_line_divider"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView22" />
-
-			<TextView
-					android:id="@+id/txtSpendableBalanceAmount"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="8dp"
-					android:text="Spendable Balance"
-					android:textColor="@color/greey"
-					android:textFontWeight="400"
-					android:textSize="12sp"
-					android:visibility="visible"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/view_divider_1" />
-
-			<TextView
-					android:id="@+id/textView24"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="10dp"
-					android:text="Fee"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="14sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmount" />
-
-			<androidx.constraintlayout.widget.ConstraintLayout
-					android:id="@+id/constraintLayout3"
-					android:layout_width="match_parent"
-					android:layout_height="60dp"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="10dp"
-					android:layout_marginEnd="10dp"
-					android:background="@drawable/bcg_fee_rectangle"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView24">
-
-				<androidx.constraintlayout.widget.Guideline
-						android:id="@+id/guideline65"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:orientation="vertical"
-						app:layout_constraintGuide_begin="122dp" />
-
-				<androidx.constraintlayout.widget.Guideline
-						android:id="@+id/guideline68"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:orientation="vertical"
-						app:layout_constraintGuide_percent="0.66" />
-
-				<RelativeLayout
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toStartOf="@+id/guideline68"
-						app:layout_constraintStart_toStartOf="@+id/guideline65"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<TextView
-						android:id="@+id/textView23"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:text="Long"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toStartOf="@+id/guideline65"
-						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintTop_toTopOf="parent"
-						tools:layout_editor_absoluteY="6dp" />
-
-				<TextView
-						android:id="@+id/textView28"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="0 XCH"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="@+id/textView23"
-						app:layout_constraintStart_toStartOf="@+id/textView23"
-						app:layout_constraintTop_toBottomOf="@+id/textView23" />
-
-				<TextView
-						android:id="@+id/textView26"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:text="Medium"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toStartOf="@+id/guideline68"
-						app:layout_constraintStart_toStartOf="@+id/guideline65"
-						app:layout_constraintTop_toTopOf="parent"
-						tools:layout_editor_absoluteY="6dp" />
-
-				<TextView
-						android:id="@+id/textView29"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="0.00005 XCH"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="@+id/textView26"
-						app:layout_constraintStart_toStartOf="@+id/textView26"
-						app:layout_constraintTop_toBottomOf="@+id/textView26" />
-
-				<TextView
-						android:id="@+id/textView27"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:text="Short"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintStart_toStartOf="@+id/guideline68"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="0.0005 XCH"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="@+id/textView27"
-						app:layout_constraintStart_toStartOf="@+id/textView27"
-						app:layout_constraintTop_toBottomOf="@+id/textView27" />
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:text="XCH"
+                android:textColor="@color/secondary_text_color"
+                android:textFontWeight="500"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
 
-			</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="7dp"
+                android:text="GWT"
+                android:textColor="@color/secondary_text_color"
+                android:textFontWeight="500"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
-			<TextView
-					android:id="@+id/textView25"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="15dp"
-					android:text="Custom"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="14sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="-1 XCH"
+                android:textColor="@color/red_mnemonic"
+                app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView21" />
 
-		</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="+20 313 GWT"
+                android:textColor="@color/green"
+                app:layout_constraintBottom_toBottomOf="@+id/textView22"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView22" />
 
-		<com.google.android.material.button.MaterialButton
-				android:id="@+id/btnGenerateOffer"
-				style="@style/Widget.AppTheme.MaterialButton"
-				android:layout_width="match_parent"
-				android:layout_height="60dp"
-				android:layout_marginStart="10dp"
-				android:layout_marginTop="20dp"
-				android:layout_marginEnd="10dp"
-				android:layout_marginBottom="10dp"
-				android:background="@drawable/btn_background_draw"
-				android:enabled="true"
-				android:text="Sign"
-				android:textAllCaps="false"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintHorizontal_bias="0.0"
-				app:layout_constraintStart_toStartOf="parent" />
+            <View
+                android:id="@+id/view_divider_1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:background="@color/network_item_line_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView22" />
 
-	</LinearLayout>
+            <TextView
+                android:id="@+id/txtSpendableBalanceAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:text="Spendable Balance"
+                android:textColor="@color/greey"
+                android:textFontWeight="400"
+                android:textSize="12sp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_divider_1" />
+
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Fee"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmount" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bcg_fee_rectangle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView24">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline65"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="122dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline68"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.66" />
+
+                <RelativeLayout
+                    android:id="@+id/rel_chosen_fee"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/bcg_fee_choosen"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline68"
+                    app:layout_constraintStart_toStartOf="@+id/guideline65"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txtLong"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Long"
+                    android:textColor="@color/greey"
+                    android:textFontWeight="500"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline65"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 XCH"
+                    android:textColor="@color/greey"
+                    android:textFontWeight="500"
+                    app:layout_constraintEnd_toEndOf="@+id/txtLong"
+                    app:layout_constraintStart_toStartOf="@+id/txtLong"
+                    app:layout_constraintTop_toBottomOf="@+id/txtLong" />
+
+                <TextView
+                    android:id="@+id/txtMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Medium"
+                    android:textColor="@color/greey"
+                    android:textFontWeight="500"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline68"
+                    app:layout_constraintStart_toStartOf="@+id/guideline65"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_editor_absoluteY="6dp" />
+
+                <TextView
+                    android:id="@+id/textView29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.00005 XCH"
+                    android:textColor="@color/greey"
+                    android:textFontWeight="500"
+                    app:layout_constraintEnd_toEndOf="@+id/txtMedium"
+                    app:layout_constraintStart_toStartOf="@+id/txtMedium"
+                    app:layout_constraintTop_toBottomOf="@+id/txtMedium" />
+
+                <TextView
+                    android:id="@+id/txtShort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Short"
+                    android:textColor="@color/greey"
+                    android:textFontWeight="500"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline68"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0005 XCH"
+                    android:textColor="@color/greey"
+                    android:textFontWeight="500"
+                    app:layout_constraintEnd_toEndOf="@+id/txtShort"
+                    app:layout_constraintStart_toStartOf="@+id/txtShort"
+                    app:layout_constraintTop_toBottomOf="@+id/txtShort" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:text="Custom"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGenerateOffer"
+            style="@style/Widget.AppTheme.MaterialButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_background_draw"
+            android:enabled="true"
+            android:text="Sign"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

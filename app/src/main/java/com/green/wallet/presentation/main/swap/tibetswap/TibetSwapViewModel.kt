@@ -8,10 +8,11 @@ class TibetSwapViewModel
 
 ) : ViewModel() {
 
-	var isShowingSwap = true
+    var isShowingSwap = true
 
-	var xchToCAT = true
-	var isShowingDetailsTran = false
+    var xchToCAT = true
+    var isShowingDetailsTran = false
+    var curChosenFee = 0
 
 
 }
