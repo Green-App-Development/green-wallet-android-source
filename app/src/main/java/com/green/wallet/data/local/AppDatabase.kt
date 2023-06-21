@@ -18,10 +18,10 @@ import com.green.wallet.data.local.entity.*
 		NFTInfoEntity::class, NFTCoinEntity::class,
 		OrderEntity::class
 	],
-	version = 35,
+	version = 36,
 	exportSchema = true,
 	autoMigrations = [
-		AutoMigration(from = 25, to = 34)
+		AutoMigration(from = 25, to = 34),
 	]
 )
 @TypeConverters(Converters::class)
@@ -113,6 +113,17 @@ abstract class AppDatabase : RoomDatabase() {
             )
         """.trimIndent()
 				database.execSQL(createTableQuery)
+			}
+
+		}
+
+		val migration35To36 = object : Migration(35, 36) {
+
+			override fun migrate(database: SupportSQLiteDatabase) {
+				val addColumn = """
+           ALTER TABLE TokenEntity ADD COLUMN pair_id TEXT NOT NULL
+        """.trimIndent()
+				database.execSQL(addColumn)
 			}
 
 		}

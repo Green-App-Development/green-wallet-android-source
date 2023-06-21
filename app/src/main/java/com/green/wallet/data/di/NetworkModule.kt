@@ -1,8 +1,10 @@
 package com.green.wallet.data.di
 
+import androidx.navigation.Navigator
 import com.green.wallet.BuildConfig
 import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.GreenAppService
+import com.green.wallet.data.network.TibetExchangeService
 import com.green.wallet.data.network.getUnsafeOkHttpClient
 import com.green.wallet.presentation.di.application.AppScope
 import dagger.Module
@@ -24,7 +26,25 @@ class NetworkModule {
 		val interceptor = HttpLoggingInterceptor().apply {
 			level = HttpLoggingInterceptor.Level.BODY
 		}
+
 		return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL_GREEN_APP)
+			.client(getUnsafeOkHttpClient(interceptor))
+			.addConverterFactory(
+				GsonConverterFactory.create()
+			).build()
+	}
+
+
+	@AppScope
+	@Provides
+	@Named("retrofit_tibet_api")
+	fun provideTibetRetrofitInstance(): Retrofit {
+
+		val interceptor = HttpLoggingInterceptor().apply {
+			level = HttpLoggingInterceptor.Level.BODY
+		}
+
+		return Retrofit.Builder().baseUrl(BuildConfig.TIBET_API)
 			.client(getUnsafeOkHttpClient(interceptor))
 			.addConverterFactory(
 				GsonConverterFactory.create()
@@ -42,6 +62,13 @@ class NetworkModule {
 	fun provideExchangeService(@Named("retrofit_green_app") retrofit: Retrofit) = retrofit.create(
 		ExchangeService::class.java
 	)
+
+	@Provides
+	fun provideTibetExchangeService(@Named("retrofit_tibet_api") retrofit: Retrofit) =
+		retrofit.create(
+			TibetExchangeService::class.java
+		)
+
 
 	@Provides
 	@AppScope
