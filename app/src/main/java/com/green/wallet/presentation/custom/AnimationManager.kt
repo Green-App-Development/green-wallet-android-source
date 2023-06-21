@@ -63,8 +63,7 @@ class AnimationManager @Inject constructor(private var context: Context) {
 		val centerX = view.x
 		val desiredX = centerX + width
 		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
-//		translateX.duration = 300
-		translateX.duration = 2000
+		translateX.duration = 300
 		val animSet = AnimatorSet()
 		animSet.playTogether(translateX)
 		prevAnimSet = animSet

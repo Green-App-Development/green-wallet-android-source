@@ -35,6 +35,8 @@ class ExchangeViewModel @Inject constructor(
 	var walletPosition = 0
 	var tokenToSpinner = 1
 	var rateConversion = 0.0
+	var containerBigger = true
+
 
 	init {
 		VLog.d("Creating exchange view model : $this")
@@ -90,5 +92,10 @@ class ExchangeViewModel @Inject constructor(
 		_exchangeRequest.value = null
 	}
 
+
+	override fun onCleared() {
+		super.onCleared()
+		VLog.d("On cleared of exchange view model : $this")
+	}
 
 }

@@ -67,6 +67,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 			clickedPositionsFee(2)
 		}
 
+
 	}
 
 
@@ -79,18 +80,6 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 				layouts[i].visibility = View.INVISIBLE
 			}
 		}
-	}
-
-	private fun DialogBtmCreateOfferBinding.changePositionsClick(width: Int) {
-
-		txtLong.setOnClickListener {
-
-		}
-		lifecycleScope.launch {
-			delay(1000)
-//			changePositionsFeeCombinations(2, 3, width)
-		}
-
 	}
 
 	private fun changePositionsFeeCombinations(from: Int, to: Int, width: Int) {

@@ -13,6 +13,8 @@ class SwapMainViewModel @Inject constructor() : ViewModel() {
 
 	lateinit var swapNavController: NavController
 	var showingExchange = false
+	var prevDest: Int = -1
+	var prevVisitedDest = mutableSetOf<Int>()
 
 	fun initSwapNavController(navController: NavController) {
 		this.swapNavController = navController

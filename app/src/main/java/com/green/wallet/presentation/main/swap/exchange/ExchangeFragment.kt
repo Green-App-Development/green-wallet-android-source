@@ -413,7 +413,6 @@ class ExchangeFragment : DaggerFragment() {
 		}
 	}
 
-	var containerBigger = true
 	lateinit var anim: ValueAnimator
 
 	private fun FragmentExchangeBinding.registerFilters() {
@@ -453,7 +452,7 @@ class ExchangeFragment : DaggerFragment() {
 			initAnimationCollapsingDetailTransaction(layout)
 		}
 		binding.apply {
-			if (!containerBigger) {
+			if (!vm.containerBigger) {
 				animManager.rotateBy180ForwardNoAnimation(
 					imgArrowDownDetailTrans,
 					getMainActivity()
@@ -494,12 +493,12 @@ class ExchangeFragment : DaggerFragment() {
 			layout.requestLayout()
 		}
 		anim.start()
-		if (containerBigger) {
+		if (vm.containerBigger) {
 			animManager.rotateBy180Forward(binding.imgArrowDownDetailTrans, getMainActivity())
 		} else
 			animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, getMainActivity())
-		containerBigger = !containerBigger
-		if (containerBigger) {
+		vm.containerBigger = !vm.containerBigger
+		if (vm.containerBigger) {
 			nextHeight = bigContainer
 		} else {
 			nextHeight = smallContainer

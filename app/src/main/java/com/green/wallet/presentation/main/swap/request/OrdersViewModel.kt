@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.domain.interact.ExchangeInteract
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +18,7 @@ class OrdersViewModel @Inject constructor(
 	val orderList = _orderList.asStateFlow()
 
 	init {
+		VLog.d("On Create of orders vm : $this")
 		retrievingAllOrderList()
 	}
 
@@ -26,6 +28,12 @@ class OrdersViewModel @Inject constructor(
 				_orderList.emit(it)
 			}
 		}
+	}
+
+
+	override fun onCleared() {
+		super.onCleared()
+		VLog.d("On cleared of orders vm : $this")
 	}
 
 }

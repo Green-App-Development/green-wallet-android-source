@@ -8,16 +8,13 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
-import com.green.wallet.presentation.App
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_swap_main.*
 import javax.inject.Inject
 
 class SwapMainFragment : DaggerFragment() {
@@ -58,27 +55,80 @@ class SwapMainFragment : DaggerFragment() {
 
 	private fun registerNavListener() {
 		navController.addOnDestinationChangedListener { controller, destination, arguments ->
-			if (destination.id == R.id.fragment_exchange) {
-				txtClicked(txtExchange)
-				txtUnClicked(txtMyRequests)
-			} else {
-				txtClicked(txtMyRequests)
-				txtUnClicked(txtExchange)
-			}
+			binding.clickedChosenDestinations(destination.id)
+		}
+		if (vm.prevDest != -1) {
+			navController.navigate(vm.prevDest)
 		}
 	}
 
 	private fun FragmentSwapMainBinding.registerClicks() {
+
+		//0
 		txtExchange.setOnClickListener {
-			if (vm.showingExchange) return@setOnClickListener
-			vm.showingExchange = true
-			navController.popBackStack()
+			clickedChosenDestinations(R.id.fragment_exchange)
+			navController.popBackStack(R.id.fragment_exchange, false)
+			vm.prevVisitedDest.clear()
 		}
+
+		//1
 		txtMyRequests.setOnClickListener {
-			if (!vm.showingExchange) return@setOnClickListener
-			vm.showingExchange = false
-			navController.navigate(R.id.fragment_request)
+			if (clickedChosenDestinations(R.id.fragment_request)) {
+				if (!vm.prevVisitedDest.contains(1)) {
+					vm.prevVisitedDest.add(1)
+					navController.navigate(R.id.fragment_request)
+				} else {
+					val res = navController.popBackStack(
+						R.id.fragment_request,
+						false
+					)
+					if (res)
+						vm.prevVisitedDest.remove(2)
+					VLog.d(
+						"Already have been to fragment request  : $res"
+					)
+				}
+			}
 		}
+
+		//2
+		txtTibetSwap.setOnClickListener {
+			if (clickedChosenDestinations(R.id.fragment_tibet_swap)) {
+				if (!vm.prevVisitedDest.contains(2)) {
+					vm.prevVisitedDest.add(2)
+					navController.navigate(R.id.fragment_tibet_swap)
+				} else {
+					val res = navController.popBackStack(
+						R.id.fragment_tibet_swap,
+						false
+					)
+					if (res)
+						vm.prevVisitedDest.remove(1)
+					VLog.d(
+						"Already have been to tibet fragment swap : $res"
+					)
+				}
+			}
+		}
+
+
+	}
+
+	private fun FragmentSwapMainBinding.clickedChosenDestinations(dest: Int): Boolean {
+		if (vm.prevDest == dest)
+			return false
+		vm.prevDest = dest
+		val destList =
+			listOf(R.id.fragment_exchange, R.id.fragment_tibet_swap, R.id.fragment_request)
+		val txtClicks = listOf(txtExchange, txtTibetSwap, txtMyRequests)
+		for (i in 0 until destList.size) {
+			if (destList[i] == dest) {
+				txtClicked(txtClicks[i])
+			} else {
+				txtUnClicked(txtClicks[i])
+			}
+		}
+		return true
 	}
 
 	private fun txtClicked(txt: TextView?) {

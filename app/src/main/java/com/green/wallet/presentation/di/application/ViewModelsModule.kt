@@ -184,6 +184,7 @@ abstract class ViewModelsModule {
 	@IntoMap
 	@Binds
 	@ViewModelKey(OrdersViewModel::class)
+	@AppScope
 	abstract fun bindingOrdersViewModel(viewModel: OrdersViewModel): ViewModel
 
 	@IntoMap
