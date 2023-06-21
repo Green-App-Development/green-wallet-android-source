@@ -51,6 +51,8 @@ abstract class InteractModule {
 	@Binds
 	abstract fun bindExchangeInteractImpl(exchangeInteract: ExchangeInteractImpl): ExchangeInteract
 
+	@Binds
+	abstract fun bindTibetInteractImpl(tibetInteractImpl: TibetInteractImpl): TibetInteract
 
 
 }

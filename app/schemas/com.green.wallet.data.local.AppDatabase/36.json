@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "53f2b7344601c17804bf56c7fc8288c8",
+    "identityHash": "04cd9fb3a00c3e175449779d5d43acc2",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -268,7 +268,7 @@
       },
       {
         "tableName": "TokenEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `name` TEXT NOT NULL, `hash` TEXT NOT NULL, `logo_url` TEXT NOT NULL, `price` REAL NOT NULL, `default_tail` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `pair_id` TEXT NOT NULL, PRIMARY KEY(`code`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`code` TEXT NOT NULL, `name` TEXT NOT NULL, `hash` TEXT NOT NULL, `logo_url` TEXT NOT NULL, `price` REAL NOT NULL, `default_tail` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `pair_id` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`code`))",
         "fields": [
           {
             "fieldPath": "code",
@@ -316,7 +316,8 @@
             "fieldPath": "pair_id",
             "columnName": "pair_id",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -702,7 +703,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '53f2b7344601c17804bf56c7fc8288c8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '04cd9fb3a00c3e175449779d5d43acc2')"
     ]
   }
 }

@@ -63,6 +63,9 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var notificationHelper: NotificationHelper
 
+	@Inject
+	lateinit var tibetInteract: TibetInteract
+
 	lateinit var appComponent: AppComponent
 	lateinit var swapNavController: NavController
 
@@ -126,6 +129,9 @@ class App : DaggerApplication() {
 				getVerifiedDidList()
 				getAgreementsText()
 				updateCoinDetails()
+			}
+			with(tibetInteract) {
+				getTokensWithPairID()
 			}
 			supportInteract.getFAQQuestionAnswers()
 			with(cryptocurrencyInteract) {

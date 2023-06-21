@@ -35,7 +35,7 @@ class TokenInteractImpl @Inject constructor(
 				imported,
 				if (!walletEntity.hashListImported.containsKey(tokenEntity.hash)) 0 else tokenEntity.default_tail
 			)
-		}.filter { token: Token ->  !arrayOf("XCH", "XCC").contains(token.code) })
+		}.filter { token: Token -> !arrayOf("XCH", "XCC").contains(token.code) })
 	}
 
 	override suspend fun getTokenPriceByCode(code: String): Double {
@@ -47,6 +47,10 @@ class TokenInteractImpl @Inject constructor(
 
 	override suspend fun getTokenListDefaultOnMainScreen(): List<Token> =
 		tokenDao.getTokensDefaultOnScreen().map { it.toToken(imported = false, 1) }
+
+	override suspend fun getTokenListPairIDExist(): List<Token> {
+		return tokenDao.getTokenListEntityPairIdIsNotEmpty().map { it.toToken(imported = false, 1) }
+	}
 
 
 }

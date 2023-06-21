@@ -12,6 +12,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTibetswapBinding
 import com.green.wallet.presentation.custom.AnimationManager
@@ -22,6 +23,8 @@ import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TibetSwapFragment : DaggerFragment() {
@@ -56,6 +59,37 @@ class TibetSwapFragment : DaggerFragment() {
 		binding.logicSwap()
 		binding.logicLiquidity()
 		binding.initDetailsTransSwap()
+		initAdapters()
+	}
+
+	private fun initAdapters() {
+
+		lifecycleScope.launch {
+			vm.tokenList.collectLatest {
+
+				val ad1 = TokenSpinnerAdapter(requireActivity(), listOf("XCH"))
+				val ad2 = TokenSpinnerAdapter(requireActivity(), listOf("GWT", "USDT", "TION"))
+
+				binding.imgSwap.setOnClickListener {
+					vm.xchToCAT = !vm.xchToCAT
+					if (vm.xchToCAT) {
+						binding.changeSwapAdapter(ad1, ad2)
+						choosingXCHToCAT(true)
+					} else {
+						binding.changeSwapAdapter(ad2, ad1)
+						choosingXCHToCAT(false)
+					}
+				}
+				if (vm.xchToCAT) {
+					binding.changeSwapAdapter(ad1, ad2)
+					choosingXCHToCAT(true)
+				} else {
+					binding.changeSwapAdapter(ad2, ad1)
+					choosingXCHToCAT(false)
+				}
+			}
+		}
+
 	}
 
 
@@ -125,26 +159,6 @@ class TibetSwapFragment : DaggerFragment() {
 
 	private fun FragmentTibetswapBinding.logicSwap() {
 
-		//swap btn
-		val ad1 = TokenSpinnerAdapter(requireActivity(), listOf("XCH"))
-		val ad2 = TokenSpinnerAdapter(requireActivity(), listOf("GWT", "USDT", "TION"))
-		imgSwap.setOnClickListener {
-			vm.xchToCAT = !vm.xchToCAT
-			if (vm.xchToCAT) {
-				changeSwapAdapter(ad1, ad2)
-				choosingXCHToCAT(true)
-			} else {
-				changeSwapAdapter(ad2, ad1)
-				choosingXCHToCAT(false)
-			}
-		}
-		if (vm.xchToCAT) {
-			changeSwapAdapter(ad1, ad2)
-			choosingXCHToCAT(true)
-		} else {
-			changeSwapAdapter(ad2, ad1)
-			choosingXCHToCAT(false)
-		}
 		imgArrowToSwap.setOnClickListener {
 			tokenToSpinner.performClick()
 		}

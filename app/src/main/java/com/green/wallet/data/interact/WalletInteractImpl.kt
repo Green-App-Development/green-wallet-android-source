@@ -157,7 +157,7 @@ class WalletInteractImpl @Inject constructor(
 				val amount = hashWithAmount[hash] ?: 0.0
 				val tokenPrice = token.price
 				val curTotalAmountInUSD = tokenPrice * amount
-				VLog.d("TokenPrice for $token is $tokenPrice in walletInteractImpl")
+//				VLog.d("TokenPrice for $token is $tokenPrice in walletInteractImpl")
 				val tokenWallet = TokenWallet(
 					token.name,
 					token.code,

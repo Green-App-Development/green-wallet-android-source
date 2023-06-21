@@ -121,7 +121,7 @@ abstract class AppDatabase : RoomDatabase() {
 
 			override fun migrate(database: SupportSQLiteDatabase) {
 				val addColumn = """
-           ALTER TABLE TokenEntity ADD COLUMN pair_id TEXT NOT NULL
+           ALTER TABLE TokenEntity ADD COLUMN pair_id TEXT NOT NULL DEFAULT ''
         """.trimIndent()
 				database.execSQL(addColumn)
 			}

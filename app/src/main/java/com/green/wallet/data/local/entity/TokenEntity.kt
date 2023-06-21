@@ -16,6 +16,7 @@ data class TokenEntity(
 	var price: Double = 0.0,
 	val default_tail: Int,
 	var enabled: Boolean,
+	@ColumnInfo(name="pair_id", defaultValue = "")
 	var pair_id: String = ""
 ) {
 

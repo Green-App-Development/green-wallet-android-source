@@ -30,5 +30,10 @@ interface TokenDao {
 	@Query("UPDATE TokenEntity SET enabled=:enabled WHERE code=:code")
 	suspend fun updateTokenEnable(code: String, enabled: Boolean = false): Int
 
+	@Query("UPDATE TokenEntity SET pair_id=:pair_id WHERE hash=:hash")
+	suspend fun updateTokenEntityPairIDByHash(pair_id: String, hash: String): Int
+
+	@Query("SELECT * FROM TokenEntity WHERE pair_id!=''")
+	suspend fun getTokenListEntityPairIdIsNotEmpty(): List<TokenEntity>
 
 }
