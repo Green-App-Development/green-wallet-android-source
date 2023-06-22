@@ -177,11 +177,12 @@ class App : DaggerApplication() {
 		FlutterEngineCache
 			.getInstance()
 			.put(FLUTTER_ENGINE, flutterEngine)
-		VLog.d("LOG_TAG", "warmupFlutterEngine: got initialized  $flutterEngine")
+		VLog.d("LOG_TAG warmupFlutterEngine: got initialized  $flutterEngine")
 		val methodChannel = MethodChannel(
 			flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
+
 		CoroutineScope(Dispatchers.IO + handler).launch {
 			//wait for flutter engine to warm up
 			delay(500L)
@@ -196,12 +197,18 @@ class App : DaggerApplication() {
 			}
 		}
 
-		methodChannel.setMethodCallHandler { call, result ->
-			if (call.method == "offer") {
-				val bundleNFT = call.arguments.toString()
-				VLog.d("BundleNFT on Android : $bundleNFT")
+		CoroutineScope(Dispatchers.Main).launch {
+			delay(2000)
+			withContext(Dispatchers.Main) {
+				methodChannel.setMethodCallHandler { call, result ->
+					if (call.method == "offer") {
+						val bundleNFT = call.arguments.toString()
+						VLog.d("BundleNFT on Android : $bundleNFT")
+					}
+				}
 			}
 		}
+
 
 	}
 
