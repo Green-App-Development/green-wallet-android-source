@@ -49,7 +49,8 @@ class TokenInteractImpl @Inject constructor(
 		tokenDao.getTokensDefaultOnScreen().map { it.toToken(imported = false, 1) }
 
 	override suspend fun getTokenListPairIDExist(): List<Token> {
-		return tokenDao.getTokenListEntityPairIdIsNotEmpty().map { it.toToken(imported = false, 1) }
+		return tokenDao.getTokenListEntityPairIdIsNotEmpty()
+			.map { it.toToken(imported = false, 1, pair_id = it.pair_id) }
 	}
 
 

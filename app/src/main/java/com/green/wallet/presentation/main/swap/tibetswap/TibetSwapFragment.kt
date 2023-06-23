@@ -10,19 +10,32 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.START
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTibetswapBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.convertDpToPixel
+import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
+import com.green.wallet.presentation.tools.PRECISION_CAT
+import com.green.wallet.presentation.tools.PRECISION_XCH
+import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
+import com.green.wallet.presentation.tools.makeGreenDuringFocus
+import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountFrom
+import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,6 +51,13 @@ class TibetSwapFragment : DaggerFragment() {
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: TibetSwapViewModel by viewModels { viewModelFactory }
 
+	val ad1 by lazy {
+		TokenSpinnerAdapter(requireActivity(), listOf("XCH"))
+	}
+
+	val ad2 by lazy {
+		TokenSpinnerAdapter(requireActivity(), listOf(""))
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -55,23 +75,48 @@ class TibetSwapFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		binding.prepareRelChosen()
-		binding.logicSwap()
-		binding.logicLiquidity()
-		binding.initDetailsTransSwap()
-		initAdapters()
+		with(binding) {
+			prepareRelChosen()
+			logicSwap()
+			logicLiquidity()
+			initDetailsTransSwap()
+		}
+		initTokenSwapAdapters()
+		initCalculateOutput()
 	}
 
-	private fun initAdapters() {
+	private fun initCalculateOutput() {
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.tibetSwap.collectLatest {
+					it?.let {
+						when (it.state) {
+							Resource.State.SUCCESS -> {
+								val amountOut =
+									it.data!!.amount_out / if (vm.xchToCAT) PRECISION_CAT else PRECISION_XCH
+								edtAmountTo.text = formattedDollarWithPrecision(amountOut, 12)
+							}
+
+							Resource.State.ERROR -> {
+
+							}
+
+							Resource.State.LOADING -> {
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private fun initTokenSwapAdapters() {
 
 		lifecycleScope.launch {
-			vm.tokenList.collectLatest {
-
-				val ad1 = TokenSpinnerAdapter(requireActivity(), listOf("XCH"))
-				val ad2 = TokenSpinnerAdapter(requireActivity(), listOf("GWT", "USDT", "TION"))
-
-				binding.imgSwap.setOnClickListener {
-					vm.xchToCAT = !vm.xchToCAT
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.tokenList.collectLatest {
+					ad2.updateData(it.map { it.code })
 					if (vm.xchToCAT) {
 						binding.changeSwapAdapter(ad1, ad2)
 						choosingXCHToCAT(true)
@@ -80,15 +125,20 @@ class TibetSwapFragment : DaggerFragment() {
 						choosingXCHToCAT(false)
 					}
 				}
-				if (vm.xchToCAT) {
-					binding.changeSwapAdapter(ad1, ad2)
-					choosingXCHToCAT(true)
-				} else {
-					binding.changeSwapAdapter(ad2, ad1)
-					choosingXCHToCAT(false)
-				}
 			}
 		}
+
+		binding.imgSwap.setOnClickListener {
+			vm.xchToCAT = !vm.xchToCAT
+			if (vm.xchToCAT) {
+				binding.changeSwapAdapter(ad1, ad2)
+				choosingXCHToCAT(true)
+			} else {
+				binding.changeSwapAdapter(ad2, ad1)
+				choosingXCHToCAT(false)
+			}
+		}
+
 
 	}
 
@@ -178,6 +228,27 @@ class TibetSwapFragment : DaggerFragment() {
 			requireActivity()
 		)
 
+		edtAmountFrom.addTextChangedListener {
+			val amount = it.toString().toDoubleOrNull() ?: 0.0
+			if (amount != 0.0) {
+				vm.onInputSwapAmountChanged(amount)
+			}
+			vm.swapInputState = it.toString()
+			btnGenerateOffer.isEnabled = amount != 0.0
+		}
+
+		edtAmountFrom.setOnFocusChangeListener { p0, p1 ->
+			if (p1) {
+				getMainActivity().makeGreenDuringFocus(txtYouSending)
+				greenLineEdt.visibility = View.VISIBLE
+			} else {
+				getMainActivity().makeGreyDuringNonFocus(txtYouSending)
+				greenLineEdt.visibility = View.GONE
+			}
+		}
+
+		edtAmountFrom.setText(vm.swapInputState)
+
 
 	}
 
@@ -212,6 +283,9 @@ class TibetSwapFragment : DaggerFragment() {
 				val opt = ad1.dataOptions[p2]
 				edtTokenFrom.text = opt
 				ad1.selectedPosition = p2
+				if (!vm.xchToCAT) {
+					vm.catAdapPosition = p2
+				}
 			}
 
 			override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -225,6 +299,9 @@ class TibetSwapFragment : DaggerFragment() {
 				val opt = ad2.dataOptions[p2]
 				edtTokenTo.text = opt
 				ad2.selectedPosition = p2
+				if (vm.xchToCAT) {
+					vm.catAdapPosition = p2
+				}
 			}
 
 			override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -232,8 +309,9 @@ class TibetSwapFragment : DaggerFragment() {
 			}
 
 		}
-		tokenFromSpinner.setSelection(ad1.selectedPosition)
-		tokenToSpinner.setSelection(ad2.selectedPosition)
+
+		tokenFromSpinner.setSelection(if (vm.xchToCAT) 0 else vm.catAdapPosition)
+		tokenToSpinner.setSelection(if (vm.xchToCAT) vm.catAdapPosition else 0)
 
 	}
 
@@ -295,13 +373,12 @@ class TibetSwapFragment : DaggerFragment() {
 
 	}
 
-	private var toTibet = false
 	private fun FragmentTibetswapBinding.changeLayoutPositions() {
 		val layoutTibet = layoutExchangeTibet
 		val layoutXCHCAT = layoutXCHCAT
 		topContainer.removeAllViews()
 		bottomContainer.removeAllViews()
-		if (toTibet) {
+		if (vm.toTibet) {
 			topContainer.addView(layoutXCHCAT)
 			bottomContainer.addView(layoutTibet)
 			txtYouSendingXCH.text = requireActivity().getStringResource(R.string.you_send)
@@ -314,7 +391,7 @@ class TibetSwapFragment : DaggerFragment() {
 			txtYouSendingCAT.text = requireActivity().getStringResource(R.string.you_receive)
 			txtYouSendingTibet.text = requireActivity().getStringResource(R.string.you_send)
 		}
-		toTibet = !toTibet
+		vm.toTibet = !vm.toTibet
 	}
 
 	private fun FragmentTibetswapBinding.listenersForSwapDest(width: Int) {

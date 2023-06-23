@@ -16,11 +16,11 @@ data class TokenEntity(
 	var price: Double = 0.0,
 	val default_tail: Int,
 	var enabled: Boolean,
-	@ColumnInfo(name="pair_id", defaultValue = "")
+	@ColumnInfo(name = "pair_id", defaultValue = "")
 	var pair_id: String = ""
 ) {
 
-	fun toToken(imported: Boolean, default_tail: Int) =
-		Token(name, code, hash, logo_url, imported, default_tail)
+	fun toToken(imported: Boolean, default_tail: Int, pair_id: String = "") =
+		Token(name, code, hash, logo_url, imported, default_tail, pairID = pair_id)
 
 }

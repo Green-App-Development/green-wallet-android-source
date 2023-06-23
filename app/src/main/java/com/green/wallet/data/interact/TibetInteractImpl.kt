@@ -2,7 +2,10 @@ package com.green.wallet.data.interact
 
 import com.green.wallet.data.local.TokenDao
 import com.green.wallet.data.network.TibetExchangeService
+import com.green.wallet.domain.domainmodel.TibetSwap
+import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.interact.TibetInteract
+import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import javax.inject.Inject
 
@@ -12,9 +15,8 @@ class TibetInteractImpl
 	private val tokenDao: TokenDao
 ) : TibetInteract {
 
-	override suspend fun getTokensWithPairID() {
+	override suspend fun saveTokensPairID() {
 		try {
-
 			val res = tibetService.getTokensWithPairID()
 			if (res.isSuccessful) {
 				val tokenList = res.body()!!
@@ -30,6 +32,23 @@ class TibetInteractImpl
 			}
 		} catch (ex: Exception) {
 			VLog.d("Exception occurred while getting tokens with pair : ${ex.message}")
+		}
+	}
+
+	override suspend fun calculateAmountInAndOut(
+		amountIn: Long,
+		isXCH: Boolean,
+		pairId: String
+	): Resource<TibetSwap> {
+		return try {
+			val res = tibetService.calculateAmountInOut(pairId, amountIn, isXCH)
+			if (res.isSuccessful) {
+				return Resource.success(res.body()!!.toTibetSwap())
+			} else
+				throw Exception(res.message())
+		} catch (ex: Exception) {
+			VLog.d("Exception caught in calculating amount out : ${ex.message}")
+			Resource.error(ex)
 		}
 	}
 

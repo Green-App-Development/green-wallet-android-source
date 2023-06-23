@@ -27,7 +27,6 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.lang.IllegalStateException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -105,7 +104,13 @@ class App : DaggerApplication() {
 
 	private fun testingMethod() {
 		CoroutineScope(Dispatchers.Main).launch {
-
+			delay(4000)
+			methodChannel.setMethodCallHandler { call, result ->
+				if (call.method == "offer") {
+					val bundleNFT = call.arguments.toString()
+					VLog.d("BundleNFT on Android : $bundleNFT")
+				}
+			}
 		}
 	}
 
@@ -131,7 +136,7 @@ class App : DaggerApplication() {
 				updateCoinDetails()
 			}
 			with(tibetInteract) {
-				getTokensWithPairID()
+				saveTokensPairID()
 			}
 			supportInteract.getFAQQuestionAnswers()
 			with(cryptocurrencyInteract) {
@@ -145,7 +150,10 @@ class App : DaggerApplication() {
 		val constraints =
 			Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 		val periodicWorkRequest =
-			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(15000, TimeUnit.MILLISECONDS)
+			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(
+				15000,
+				TimeUnit.MILLISECONDS
+			)
 				.setConstraints(constraints)
 		WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
 			SYNC_WORK_TAG,
@@ -165,6 +173,7 @@ class App : DaggerApplication() {
 		}
 	}
 
+	lateinit var methodChannel: MethodChannel
 	private fun warmupFlutterEngine() {
 		flutterEngine = FlutterEngine(this)
 
@@ -178,7 +187,7 @@ class App : DaggerApplication() {
 			.getInstance()
 			.put(FLUTTER_ENGINE, flutterEngine)
 		VLog.d("LOG_TAG warmupFlutterEngine: got initialized  $flutterEngine")
-		val methodChannel = MethodChannel(
+		methodChannel = MethodChannel(
 			flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
@@ -196,19 +205,6 @@ class App : DaggerApplication() {
 				}
 			}
 		}
-
-		CoroutineScope(Dispatchers.Main).launch {
-			delay(2000)
-			withContext(Dispatchers.Main) {
-				methodChannel.setMethodCallHandler { call, result ->
-					if (call.method == "offer") {
-						val bundleNFT = call.arguments.toString()
-						VLog.d("BundleNFT on Android : $bundleNFT")
-					}
-				}
-			}
-		}
-
 
 	}
 

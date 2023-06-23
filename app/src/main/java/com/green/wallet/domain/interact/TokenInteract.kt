@@ -17,4 +17,6 @@ interface TokenInteract {
 	suspend fun getTokenListDefaultOnMainScreen(): List<Token>
 
 	suspend fun getTokenListPairIDExist(): List<Token>
+
+
 }
