@@ -584,12 +584,6 @@ class MainActivity : BaseActivity() {
 		navController.popBackStack()
 	}
 
-
-	fun backPressedOnImpMnemonicFragment() {
-		val bundle = bundleOf(HomeFragment.SHOW_DIALOG_ONE to true)
-		navController.navigate(homeFragment, bundle)
-	}
-
 	fun move2AllWalletFragment() {
 		navController.navigate(action_walletFragment_to_allWalletFragment)
 	}
@@ -923,7 +917,7 @@ class MainActivity : BaseActivity() {
 		navController.navigate(btmChooseDApps, bundle)
 	}
 
-	fun move2BtmWalletChooseDialog() {
+	fun move2BtmChooseWalletDialog() {
 		navController.navigate(btmSheetDialogChooseWallet)
 	}
 
@@ -937,6 +931,8 @@ class MainActivity : BaseActivity() {
 		)
 		navController.navigate(walletSettings, bundle)
 	}
+
+
 
 
 }

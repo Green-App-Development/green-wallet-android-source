@@ -12,6 +12,7 @@ data class TibetSwapDto(
 	val price_impact: Double,
 	val price_warning: Boolean
 ) {
+
 	fun toTibetSwap() = TibetSwap(
 		amount_in,
 		amount_out,
@@ -22,4 +23,6 @@ data class TibetSwapDto(
 		price_impact,
 		price_warning
 	)
+
+
 }

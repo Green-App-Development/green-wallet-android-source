@@ -25,6 +25,8 @@ class SwapMainFragment : DaggerFragment() {
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: SwapMainViewModel by viewModels { viewModelFactory }
 
+	val destList =
+		listOf(R.id.fragment_exchange, R.id.fragment_tibet_swap, R.id.fragment_request)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -46,7 +48,7 @@ class SwapMainFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		VLog.d("On ViewCreated SwapMainFragment")
+		VLog.d("On ViewCreated SwapMainFragment : $vm and PrevDest : ${vm.prevDestID}")
 		navController =
 			(childFragmentManager.findFragmentById(R.id.my_nav_swap) as NavHostFragment).navController
 		vm.initSwapNavController(navController)
@@ -54,11 +56,12 @@ class SwapMainFragment : DaggerFragment() {
 	}
 
 	private fun registerNavListener() {
+		if (vm.prevDestID != -1) {
+			navController.navigate(vm.prevDestID)
+			binding.clickedChosenDestinations(vm.prevDestID, true)
+		}
 		navController.addOnDestinationChangedListener { controller, destination, arguments ->
 			binding.clickedChosenDestinations(destination.id)
-		}
-		if (vm.prevDest != -1) {
-			navController.navigate(vm.prevDest)
 		}
 	}
 
@@ -114,12 +117,13 @@ class SwapMainFragment : DaggerFragment() {
 
 	}
 
-	private fun FragmentSwapMainBinding.clickedChosenDestinations(dest: Int): Boolean {
-		if (vm.prevDest == dest)
+	private fun FragmentSwapMainBinding.clickedChosenDestinations(
+		dest: Int,
+		ignorePrevID: Boolean = false
+	): Boolean {
+		if (vm.prevDestID == dest && !ignorePrevID)
 			return false
-		vm.prevDest = dest
-		val destList =
-			listOf(R.id.fragment_exchange, R.id.fragment_tibet_swap, R.id.fragment_request)
+		vm.prevDestID = dest
 		val txtClicks = listOf(txtExchange, txtTibetSwap, txtMyRequests)
 		for (i in 0 until destList.size) {
 			if (destList[i] == dest) {

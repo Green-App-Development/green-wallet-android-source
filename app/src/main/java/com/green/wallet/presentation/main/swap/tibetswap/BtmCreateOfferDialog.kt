@@ -5,17 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.common.tools.formatString
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.green.wallet.R
 import com.green.wallet.databinding.DialogBtmCreateOfferBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.formattedDollarWithPrecision
+import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.di.factory.ViewModelFactory
+import com.green.wallet.presentation.tools.PRECISION_CAT
+import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getColorResource
+import com.green.wallet.presentation.tools.getMainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -67,9 +75,34 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 			clickedPositionsFee(2)
 		}
 
+		val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
+		txtCAT.text = tokenCode
+		txtWalletAddress.text = formatString(10, vm.curWallet?.address ?: "", 6)
+		if (vm.tibetSwap.value?.data != null) {
+			val amountIn = formattedDoubleAmountWithPrecision((vm.tibetSwap.value!!.data?.amount_in
+				?: 0L) / if (vm.xchToCAT) PRECISION_XCH else PRECISION_CAT)
+			val amountOut = formattedDoubleAmountWithPrecision((vm.tibetSwap.value!!.data?.amount_out
+				?: 0L) / if (vm.xchToCAT) PRECISION_CAT else PRECISION_XCH)
+			if (vm.xchToCAT) {
+				txtMinus(txtXCHValue, amountIn, "XCH")
+				txtPlus(txtCATValue, amountOut, tokenCode)
+			} else {
+				txtPlus(txtXCHValue, amountIn, "XCH")
+				txtMinus(txtCATValue, amountOut, tokenCode)
+			}
+		}
 
 	}
 
+	private fun txtPlus(txt: TextView, value: String, token: String) {
+		txt.setText("+ $value $token")
+		txt.setTextColor(requireActivity().getColorResource(R.color.green))
+	}
+
+	private fun txtMinus(txt: TextView, value: String, token: String) {
+		txt.setText("- $value $token")
+		txt.setTextColor(requireActivity().getColorResource(R.color.red_mnemonic))
+	}
 
 	private fun DialogBtmCreateOfferBinding.clickedPositionsFee(pos: Int) {
 		val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)

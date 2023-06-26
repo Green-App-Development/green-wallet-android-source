@@ -5,6 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.green.wallet.R
 import com.green.wallet.databinding.DialogBtmChooseWalletBinding
@@ -12,6 +15,8 @@ import com.green.wallet.databinding.ItemWalletBtmChooseBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BtmChooseWallet : BottomSheetDialogFragment() {
@@ -45,15 +50,27 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
 
 	private fun DialogBtmChooseWalletBinding.initFingerPrints() {
 
-		for (i in 123456 until 123460) {
-			val bindingWallet = ItemWalletBtmChooseBinding.inflate(layoutInflater)
-			bindingWallet.apply {
-				txtPublicKey.text =
-					"Приватный ключ с публичным отпечатком  ${bindingWallet.hashCode()}"
-				if (i == 123459)
-					viewDivider.visibility = View.GONE
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.walletList.collectLatest { walletList ->
+
+					for (i in 0 until walletList.size) {
+						val bindingWallet = ItemWalletBtmChooseBinding.inflate(layoutInflater)
+						val wallet = walletList[i]
+						bindingWallet.apply {
+							txtPublicKey.text =
+								"Приватный ключ с публичным отпечатком  ${wallet.fingerPrint}"
+							root.setOnClickListener {
+								vm.curWallet = wallet
+								dismiss()
+							}
+							if (i == walletList.size - 1)
+								viewDivider.visibility = View.GONE
+						}
+						containerWallet.addView(bindingWallet.root)
+					}
+				}
 			}
-			containerWallet.addView(bindingWallet.root)
 		}
 
 	}

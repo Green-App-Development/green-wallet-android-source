@@ -10,7 +10,6 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.START
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -34,7 +33,6 @@ import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountFrom
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -75,6 +73,7 @@ class TibetSwapFragment : DaggerFragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		chooseWalletIfNeeded()
 		with(binding) {
 			prepareRelChosen()
 			logicSwap()
@@ -83,6 +82,24 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 		initTokenSwapAdapters()
 		initCalculateOutput()
+	}
+
+	private fun chooseWalletIfNeeded() {
+		if (vm.curWallet != null)
+			return
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.walletList.collectLatest {
+					if (it.isNotEmpty()) {
+						if (it.size == 1) {
+							vm.curWallet = it[0]
+						} else {
+							getMainActivity().move2BtmChooseWalletDialog()
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private fun initCalculateOutput() {
@@ -137,11 +154,15 @@ class TibetSwapFragment : DaggerFragment() {
 				binding.changeSwapAdapter(ad2, ad1)
 				choosingXCHToCAT(false)
 			}
+			resetTextAmountFrom()
 		}
-
 
 	}
 
+	private fun resetTextAmountFrom() {
+		VLog.d("Resetting text amount from : ${binding.edtAmountFrom.text}")
+		binding.edtAmountFrom.setText(binding.edtAmountFrom.text.toString())
+	}
 
 	private fun FragmentTibetswapBinding.prepareRelChosen() {
 		relChosen.viewTreeObserver.addOnGlobalLayoutListener(object :
@@ -228,7 +249,9 @@ class TibetSwapFragment : DaggerFragment() {
 			requireActivity()
 		)
 
+
 		edtAmountFrom.addTextChangedListener {
+			VLog.d("Text Changed On edtAmountFrom : $it")
 			val amount = it.toString().toDoubleOrNull() ?: 0.0
 			if (amount != 0.0) {
 				vm.onInputSwapAmountChanged(amount)
@@ -249,9 +272,15 @@ class TibetSwapFragment : DaggerFragment() {
 
 		edtAmountFrom.setText(vm.swapInputState)
 
+		btnGenerateOffer.setOnClickListener {
+			if (vm.isShowingSwap) {
+				getMainActivity().move2BtmCreateOfferDialog()
+			}
+		}
+
+		vm.startDebounceValue()
 
 	}
-
 
 	private fun choosingXCHToCAT(xchToCat: Boolean) {
 		binding.apply {
@@ -286,6 +315,7 @@ class TibetSwapFragment : DaggerFragment() {
 				if (!vm.xchToCAT) {
 					vm.catAdapPosition = p2
 				}
+				resetTextAmountFrom()
 			}
 
 			override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -302,6 +332,7 @@ class TibetSwapFragment : DaggerFragment() {
 				if (vm.xchToCAT) {
 					vm.catAdapPosition = p2
 				}
+				resetTextAmountFrom()
 			}
 
 			override fun onNothingSelected(p0: AdapterView<*>?) {

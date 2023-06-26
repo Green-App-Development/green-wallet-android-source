@@ -54,6 +54,7 @@
 					app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
 			<TextView
+					android:id="@+id/txtWalletAddress"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginEnd="10dp"
@@ -104,7 +105,7 @@
 
 
 			<TextView
-					android:id="@+id/textView22"
+					android:id="@+id/txtCAT"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="8dp"
@@ -116,6 +117,7 @@
 					app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
 			<TextView
+					android:id="@+id/txtXCHValue"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginEnd="10dp"
@@ -126,14 +128,15 @@
 					app:layout_constraintTop_toTopOf="@+id/textView21" />
 
 			<TextView
+					android:id="@+id/txtCATValue"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginEnd="10dp"
 					android:text="+20 313 GWT"
 					android:textColor="@color/green"
-					app:layout_constraintBottom_toBottomOf="@+id/textView22"
+					app:layout_constraintBottom_toBottomOf="@+id/txtCAT"
 					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/textView22" />
+					app:layout_constraintTop_toTopOf="@+id/txtCAT" />
 
 			<View
 					android:id="@+id/view_divider_1"
@@ -145,7 +148,7 @@
 					android:background="@color/network_item_line_divider"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView22" />
+					app:layout_constraintTop_toBottomOf="@+id/txtCAT" />
 
 			<TextView
 					android:id="@+id/txtSpendableBalanceAmount"
@@ -264,7 +267,6 @@
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="@+id/guideline68"
 						app:layout_constraintTop_toTopOf="parent" />
-
 
 
 				<RelativeLayout
