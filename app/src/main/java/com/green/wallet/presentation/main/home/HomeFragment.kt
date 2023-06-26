@@ -342,8 +342,6 @@ class HomeFragment : DaggerFragment(), ViewPagerWalletsAdapter.ViewPagerWalletCl
 		}
 
 		icHomeQr.setOnClickListener {
-			getMainActivity().move2BtmCreateOfferDialog()
-			return@setOnClickListener
 			if (hasAtLeastOneWallet)
 				requestPermissions.launch(arrayOf(android.Manifest.permission.CAMERA))
 			else

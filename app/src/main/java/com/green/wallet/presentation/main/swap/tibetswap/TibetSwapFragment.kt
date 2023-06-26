@@ -34,6 +34,7 @@ import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -146,6 +147,7 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 
 		binding.imgSwap.setOnClickListener {
+			resetTextAmountFrom()
 			vm.xchToCAT = !vm.xchToCAT
 			if (vm.xchToCAT) {
 				binding.changeSwapAdapter(ad1, ad2)
@@ -154,7 +156,6 @@ class TibetSwapFragment : DaggerFragment() {
 				binding.changeSwapAdapter(ad2, ad1)
 				choosingXCHToCAT(false)
 			}
-			resetTextAmountFrom()
 		}
 
 	}
@@ -230,6 +231,8 @@ class TibetSwapFragment : DaggerFragment() {
 
 	private fun FragmentTibetswapBinding.logicSwap() {
 
+		vm.startDebounceValueSwap()
+
 		imgArrowToSwap.setOnClickListener {
 			tokenToSpinner.performClick()
 		}
@@ -270,7 +273,6 @@ class TibetSwapFragment : DaggerFragment() {
 			}
 		}
 
-		edtAmountFrom.setText(vm.swapInputState)
 
 		btnGenerateOffer.setOnClickListener {
 			if (vm.isShowingSwap) {
@@ -278,7 +280,7 @@ class TibetSwapFragment : DaggerFragment() {
 			}
 		}
 
-		vm.startDebounceValue()
+		edtAmountFrom.setText(vm.swapInputState)
 
 	}
 
@@ -460,6 +462,11 @@ class TibetSwapFragment : DaggerFragment() {
 			scrollLiquidity.visibility = View.VISIBLE
 			scrollSwap.visibility = View.GONE
 		}
+	}
+
+
+	override fun onDestroyView() {
+		super.onDestroyView()
 	}
 
 

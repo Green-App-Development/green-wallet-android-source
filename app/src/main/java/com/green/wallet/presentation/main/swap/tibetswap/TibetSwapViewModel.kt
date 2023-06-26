@@ -17,6 +17,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -50,7 +51,6 @@ class TibetSwapViewModel @Inject constructor(
 	val walletList = _walletList.asStateFlow()
 
 
-	private val coroutineScope = CoroutineScope(Dispatchers.Main)
 	private val userSwapInputChannel = Channel<Double>()
 
 	var swapInputState = ""
@@ -70,10 +70,13 @@ class TibetSwapViewModel @Inject constructor(
 
 	fun onInputSwapAmountChanged(amount: Double) = userSwapInputChannel.trySend(amount)
 
-	fun startDebounceValue() {
+	private var swapMainScope: CoroutineScope? = null
+	fun startDebounceValueSwap() {
+		swapMainScope?.cancel()
+		swapMainScope = CoroutineScope(Dispatchers.Main)
 		val debouncedFlow = userSwapInputChannel.receiveAsFlow().debounce(INPUT_DEBOUNCE_VALUE)
-		coroutineScope.launch {
-			debouncedFlow.collect { input ->
+		swapMainScope?.launch {
+			debouncedFlow.collectLatest { input ->
 				calculateAmountOut(input, _tokenList.value[catAdapPosition].pairID, xchToCAT)
 			}
 		}
@@ -95,7 +98,7 @@ class TibetSwapViewModel @Inject constructor(
 	override fun onCleared() {
 		super.onCleared()
 		VLog.d("On cleared tibet vm and cancelled scope : $this")
-		coroutineScope.cancel()
+		swapMainScope?.cancel()
 	}
 
 }
