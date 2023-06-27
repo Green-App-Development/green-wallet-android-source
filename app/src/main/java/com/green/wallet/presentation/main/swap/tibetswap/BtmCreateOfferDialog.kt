@@ -156,7 +156,11 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 
 	}
 
-	private suspend fun generateOfferXCHToCAT(amountFrom: Long, amountTo: Long, assetId: String) {
+	private suspend fun generateOfferXCHToCAT(
+		amountFrom: Long,
+		amountTo: Long,
+		assetId: String
+	) {
 		dialogManager.showProgress(requireActivity())
 		val wallet = vm.curWallet ?: return
 		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
@@ -229,7 +233,11 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 	}
 
 
-	private suspend fun generateOfferCATToXCH(amountFrom: Long, amountTo: Long, assetId: String) {
+	private suspend fun generateOfferCATToXCH(
+		amountFrom: Long,
+		amountTo: Long,
+		assetId: String
+	) {
 		dialogManager.showProgress(requireActivity())
 		val wallet = vm.curWallet ?: return
 		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node

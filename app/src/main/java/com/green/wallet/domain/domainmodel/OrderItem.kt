@@ -1,5 +1,6 @@
 package com.green.wallet.domain.domainmodel
 
+import com.green.wallet.data.local.entity.OrderEntity
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.OrderType
 
@@ -16,4 +17,21 @@ data class OrderItem(
 	val txID: String,
 	val fee: Double,
 	val orderType: OrderType
-)
+) {
+
+	fun toOrderEntity() = OrderEntity(
+		hash,
+		status,
+		amountToSend,
+		giveAddress,
+		timeCreated,
+		rate,
+		sendCoin,
+		getCoin,
+		getAddress,
+		txID,
+		fee,
+		orderType
+	)
+
+}

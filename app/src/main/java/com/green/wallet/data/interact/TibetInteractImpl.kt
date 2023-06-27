@@ -1,5 +1,6 @@
 package com.green.wallet.data.interact
 
+import com.green.wallet.data.local.OrderExchangeDao
 import com.green.wallet.data.local.TokenDao
 import com.green.wallet.data.network.TibetExchangeService
 import com.green.wallet.domain.domainmodel.TibetSwap
@@ -53,7 +54,7 @@ class TibetInteractImpl
 	}
 
 	override suspend fun pushOfferToTibet(pair: String, offer: String): Resource<String> {
-		return try {
+		try {
 			val body = hashMapOf<String, Any>()
 			body["offer"] = offer
 			body["action"] = "SWAP"
@@ -76,7 +77,6 @@ class TibetInteractImpl
 			VLog.d("Pushing  offer to tibet exception : ${ex.message}")
 			return Resource.error(ex)
 		}
-
 	}
 
 
