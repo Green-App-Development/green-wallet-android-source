@@ -41,7 +41,8 @@ fun Dialog.setDefaultParams(dialogAnim: Int) {
 }
 
 fun formattedTime(value: Long) = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Date(value))
-fun formattedTimeForOrderItem(value: Long) = SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
+fun formattedTimeForOrderItem(value: Long) =
+	SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
 
 fun formattedDay(value: Long) = SimpleDateFormat("dd.MM.yyyy").format(Date(value))
 
@@ -226,6 +227,18 @@ fun mapNetworkOrderStatusToLocal(status: String): OrderStatus {
 		"success" -> OrderStatus.Success
 		else -> OrderStatus.Cancelled
 	}
+}
+
+fun convertNetworkTypeForFlutter(networkType: String): String {
+	val lowercaseNetwork = networkType.lowercase()
+	if (lowercaseNetwork.contains("chia")) {
+		if (lowercaseNetwork.contains("testnet"))
+			return "Chia TestNet"
+		return "Chia"
+	}
+	if (lowercaseNetwork.contains("testnet"))
+		return "Chives TestNet"
+	return "Chives"
 }
 
 

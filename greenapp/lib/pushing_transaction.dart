@@ -241,17 +241,237 @@ class PushingTransaction {
             }
           }
           break;
-        case "catToXCH":
+        case "CATToXCH":
           {
-            try {} catch (ex) {
+            try {
+              var args = call.arguments;
+              var mnemonics = args["mnemonics"].toString().split(' ');
+              var url = args["url"].toString();
+              var assetId = args["asset_id"].toString();
+              var xchAmount = int.parse(args["amountTo"].toString());
+              var catAmount = int.parse(args["amountFrom"].toString());
+              var observer = int.parse(args["observer"].toString());
+              var nonObserver = int.parse(args["nonObserver"].toString());
+              tibetSwapCATToXCH(
+                  mnemonics: mnemonics,
+                  url: url,
+                  assetId: assetId,
+                  xchAmount: xchAmount,
+                  catAmount: catAmount,
+                  observer: observer,
+                  nonObserver: nonObserver);
+            } catch (ex) {
+              debugPrint(
+                  "Exception occurred in exchanging cat for xch : ${ex.toString()}");
               _channel.invokeMethod("exception");
             }
+            break;
+          }
+        case "XCHToCAT":
+          {
+            try {
+              var args = call.arguments;
+              var mnemonics = args["mnemonics"].toString().split(' ');
+              var url = args["url"].toString();
+              var assetId = args["asset_id"].toString();
+              var catAmount = int.parse(args["amountTo"].toString());
+              var xchAmount = int.parse(args["amountFrom"].toString());
+              var observer = int.parse(args["observer"].toString());
+              var nonObserver = int.parse(args["nonObserver"].toString());
+              tibetSwapXCHToCAT(
+                  mnemonics: mnemonics,
+                  url: url,
+                  assetId: assetId,
+                  xchAmount: xchAmount,
+                  catAmount: catAmount,
+                  observer: observer,
+                  nonObserver: nonObserver);
+            } catch (ex) {
+              debugPrint(
+                  "Exception occurred in exchanging xch for cat : ${ex.toString()}");
+              _channel.invokeMethod("exception");
+            }
+            break;
           }
       }
     });
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
+  }
+
+  Future<void> tibetSwapXCHToCAT(
+      {required List<String> mnemonics,
+      required String url,
+      required String assetId,
+      required int xchAmount,
+      required int catAmount,
+      required int observer,
+      required int nonObserver}) async {
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+    final fullNodeRpc = FullNodeHttpRpc(url);
+
+    KeychainCoreSecret keychainSecret =
+        KeychainCoreSecret.fromMnemonic(mnemonics);
+    final walletsSetList = <WalletSet>[];
+    for (var i = 0; i < 5; i++) {
+      final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
+      walletsSetList.add(set1);
+    }
+    final keychain = WalletKeychain.fromWalletSets(walletsSetList);
+
+    final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final standartWalletService = StandardWalletService();
+
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    keychain.unhardenedMap.entries.forEach((element) {
+      puzzleHashes.add(element.key);
+    });
+
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+
+    debugPrint(
+        "My Response From retrieving just xch coins  : $responseDataCAT");
+    List<FullCoin>? xchCoins;
+
+    xchCoins = standartWalletService.convertXchCoinsToFull(
+      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
+    );
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final assetHash = Bytes.fromHex(
+      assetId,
+    );
+
+    final offer = await offerService.createOffer(
+      requesteAmounts: {
+        OfferAssetData.cat(
+          tailHash: assetHash,
+        ): [catAmount]
+      },
+      offerredAmounts: {null: -xchAmount},
+      coins: xchCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+    );
+    final str = offer.toBench32();
+    debugPrint("Offering xch for cat : $str");
+    _channel.invokeMethod("offer", {"offer": str});
+  }
+
+  Future<void> tibetSwapCATToXCH(
+      {required List<String> mnemonics,
+      required String url,
+      required String assetId,
+      required int xchAmount,
+      required int catAmount,
+      required int observer,
+      required int nonObserver}) async {
+    var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+    var keychain = cachedWalletChains[key] ??
+        generateKeyChain(mnemonics, observer, nonObserver);
+    var catHash = Puzzlehash.fromHex(assetId);
+
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+    final keyChainCAT = keychain
+      ..addOuterPuzzleHashesForAssetId(Puzzlehash.fromHex(assetId));
+
+    var fullNodeRpc = FullNodeHttpRpc(url);
+    var fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService =
+        OffersService(fullNode: fullNode, keychain: keyChainCAT);
+    final standartWalletService = StandardWalletService();
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    for (var element in keychain.unhardenedMap.entries) {
+      puzzleHashes.add(element.key);
+    }
+    var myOuterPuzzlehashes = keychain.getOuterPuzzleHashesForAssetId(catHash);
+
+    for (var element in keychain.hardenedMap.keys) {
+      var outer = WalletKeychain.makeOuterPuzzleHash(
+        element,
+        catHash,
+      );
+      myOuterPuzzlehashes.add(outer);
+    }
+
+    // remove duplicate puzzlehashes
+    myOuterPuzzlehashes = myOuterPuzzlehashes.toSet().toList();
+
+    /// Search for the cat coins for offered
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(
+      myOuterPuzzlehashes,
+    );
+
+    List<CatCoin> catCoins = [];
+    List<Coin> basicCatCoins = responseDataCAT;
+
+    // hydrate cat coins
+    for (final coin in basicCatCoins) {
+      await getCatCoinsDetail(
+        coin: coin,
+        httpUrl: url,
+        catCoins: catCoins,
+        fullNode: fullNode,
+      );
+    }
+
+    // hydrate full coins
+    List<FullCoin>? fullCatCoins = catCoins.map((e) {
+      //Search for the Coin
+      final coinFounded = basicCatCoins
+          .where(
+            (coin_) => coin_.id == e.id,
+          )
+          .toList();
+
+      final coin = coinFounded.first;
+
+      return FullCoin.fromCoin(
+        coin,
+        e.parentCoinSpend,
+      );
+    }).toList();
+
+    //search for xch full coins
+    final xchFullCoins = standartWalletService.convertXchCoinsToFull(
+      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
+    );
+
+    // concatenate all coins, the OfferService will be grouped for asset
+    final allCoins = fullCatCoins + xchFullCoins;
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final offer = await offerService.createOffer(
+      offerredAmounts: {
+        //Remember, always use the offerred amount is negative
+        OfferAssetData.cat(
+          tailHash: catHash,
+        ): -catAmount
+      },
+      requesteAmounts: {
+        // Remember, always use the requested amount is positive
+        null: [
+          xchAmount,
+        ]
+      },
+      coins: allCoins,
+      changePuzzlehash: changePh,
+      targetPuzzleHash: targePh,
+      //fee: 1000000,
+    );
+    final str = offer.toBench32();
+    debugPrint("Offer generate cat to xch : $str");
+    _channel.invokeMethod("offer", {"offer": str});
   }
 
   Future<void> tibetSwapXCHToCat(
@@ -982,7 +1202,7 @@ class PushingTransaction {
 
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+    const fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -1070,7 +1290,7 @@ class PushingTransaction {
 
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    const fullNodeRpc = FullNodeHttpRpc("https://chia.green-app.io/full-node");
+    const fullNodeRpc = FullNodeHttpRpc("");
 
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
@@ -1123,7 +1343,7 @@ class PushingTransaction {
     for (final coin in basicCatCoins) {
       await getCatCoinsDetail(
         coin: coin,
-        httpUrl: "https://chia.green-app.io/full-node",
+        httpUrl: "",
         catCoins: catCoins,
         fullNode: fullNode,
       );
@@ -1177,7 +1397,6 @@ class PushingTransaction {
     );
     final str = offer.toBench32();
     debugPrint("Offer str cat for xch : $str");
-    _channel.invokeMethod("offer", {"offer cat for xch : ": str});
     _channel.invokeMethod("offer", {"offer cat for xch : ": str});
   }
 

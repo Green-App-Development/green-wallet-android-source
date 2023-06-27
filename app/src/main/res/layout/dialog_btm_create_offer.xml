@@ -22,7 +22,7 @@
 
 		<androidx.constraintlayout.widget.ConstraintLayout
 				android:layout_width="match_parent"
-				android:layout_height="370dp"
+				android:layout_height="375dp"
 				android:layout_marginTop="20dp"
 				android:background="@drawable/bcg_create_offer">
 
@@ -369,7 +369,7 @@
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
 		<com.google.android.material.button.MaterialButton
-				android:id="@+id/btnGenerateOffer"
+				android:id="@+id/btnSign"
 				style="@style/Widget.AppTheme.MaterialButton"
 				android:layout_width="match_parent"
 				android:layout_height="60dp"

@@ -1,6 +1,7 @@
 package com.green.wallet.domain.domainmodel
 
 import com.green.wallet.presentation.tools.OrderStatus
+import com.green.wallet.presentation.tools.OrderType
 
 data class OrderItem(
 	val hash: String,
@@ -11,7 +12,8 @@ data class OrderItem(
 	val rate: Double,
 	val getCoin: String,
 	val sendCoin: String,
-	val getAddress:String,
-	val txID:String,
-	val fee:Double
+	val getAddress: String,
+	val txID: String,
+	val fee: Double,
+	val orderType: OrderType
 )

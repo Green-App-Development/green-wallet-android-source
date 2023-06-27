@@ -638,18 +638,6 @@ class SwapSendFragment : DaggerFragment() {
 		}
 	}
 
-	private fun convertNetworkTypeForFlutter(networkType: String): String {
-		val lowercaseNetwork = networkType.lowercase()
-		if (lowercaseNetwork.contains("chia")) {
-			if (lowercaseNetwork.contains("testnet"))
-				return "Chia TestNet"
-			return "Chia"
-		}
-		if (lowercaseNetwork.contains("testnet"))
-			return "Chives TestNet"
-		return "Chives"
-	}
-
 	private suspend fun listenToCreatingSpendBundleRes(
 		url: String,
 		amount: Double,

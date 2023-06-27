@@ -1,4 +1,4 @@
-package com.green.wallet.domain.usecases
+package com.green.wallet.domain.usecases.tibet
 
 import com.green.wallet.domain.domainmodel.TibetSwap
 import com.green.wallet.domain.interact.TibetInteract

@@ -99,20 +99,8 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
-		testingMethod()
 	}
 
-	private fun testingMethod() {
-		CoroutineScope(Dispatchers.Main).launch {
-			delay(4000)
-			methodChannel.setMethodCallHandler { call, result ->
-				if (call.method == "offer") {
-					val bundleNFT = call.arguments.toString()
-					VLog.d("BundleNFT on Android : $bundleNFT")
-				}
-			}
-		}
-	}
 
 	private fun subscribingToTopic() {
 		FirebaseMessaging.getInstance().subscribeToTopic("news")

@@ -2,15 +2,19 @@ package com.green.wallet.presentation.main.swap.tibetswap
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.TibetSwap
 import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
-import com.green.wallet.domain.usecases.TibetSwapUseCases
+import com.green.wallet.domain.usecases.tibet.TibetSwapUseCases
 import com.green.wallet.presentation.tools.INPUT_DEBOUNCE_VALUE
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -26,7 +30,9 @@ import javax.inject.Inject
 class TibetSwapViewModel @Inject constructor(
 	private val tokenInteract: TokenInteract,
 	private val tibetSwapUseCases: TibetSwapUseCases,
-	private val walletInteract: WalletInteract
+	private val walletInteract: WalletInteract,
+	val prefsManager: PrefsManager,
+	private val spentCoinsInteract: SpentCoinsInteract
 ) : ViewModel() {
 
 	var isShowingSwap = true
@@ -50,13 +56,19 @@ class TibetSwapViewModel @Inject constructor(
 	private val _walletList = MutableStateFlow<List<Wallet>>(emptyList())
 	val walletList = _walletList.asStateFlow()
 
+	private val _pushingOfferTibet = MutableStateFlow<Resource<String>?>(null)
+	val pushingOfferTibet = _pushingOfferTibet.asStateFlow()
 
 	private val userSwapInputChannel = Channel<Double>()
 
 	var swapInputState = ""
 
+	private val handler = CoroutineExceptionHandler { context, throwable ->
+		VLog.d("Exception in tibet swap view model : $throwable")
+	}
+
 	init {
-		VLog.d("On create tibet vm : $this")
+		VLog.d("On create tibet vm swap : $this")
 		retrieveTokenList()
 		initWalletList()
 	}
@@ -70,7 +82,7 @@ class TibetSwapViewModel @Inject constructor(
 
 	fun onInputSwapAmountChanged(amount: Double) = userSwapInputChannel.trySend(amount)
 
-	private var swapMainScope: CoroutineScope? = null
+	var swapMainScope: CoroutineScope? = null
 	fun startDebounceValueSwap() {
 		swapMainScope?.cancel()
 		swapMainScope = CoroutineScope(Dispatchers.Main)
@@ -95,10 +107,12 @@ class TibetSwapViewModel @Inject constructor(
 		}
 	}
 
+	suspend fun pushOfferToTibet(pairID: String, offer: String) =
+		tibetSwapUseCases.pushOfferToTibet(pairID, offer)
+
 	override fun onCleared() {
 		super.onCleared()
 		VLog.d("On cleared tibet vm and cancelled scope : $this")
-		swapMainScope?.cancel()
 	}
 
 }

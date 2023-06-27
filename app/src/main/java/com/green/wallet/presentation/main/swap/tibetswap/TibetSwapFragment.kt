@@ -467,6 +467,8 @@ class TibetSwapFragment : DaggerFragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
+		VLog.d("On Destroy view for Tibet swap fragment")
+		vm.swapMainScope?.cancel()
 	}
 
 

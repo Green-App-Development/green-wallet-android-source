@@ -52,5 +52,32 @@ class TibetInteractImpl
 		}
 	}
 
+	override suspend fun pushOfferToTibet(pair: String, offer: String): Resource<String> {
+		return try {
+			val body = hashMapOf<String, Any>()
+			body["offer"] = offer
+			body["action"] = "SWAP"
+			body["total_donation_amount"] = 0
+			body["donation_addresses"] = listOf<String>()
+			body["donation_weights"] = listOf<String>()
+			VLog.d("Making request to Tibet body : $body pair : $pair")
+			val res = tibetService.pushingOfferToTibet(pair_id = pair, body = body)
+			if (res.isSuccessful) {
+				val success = res.body()!!.asJsonObject.get("success").asBoolean
+				VLog.d("Result from pushing offer : $res and success : $success")
+				if (success) {
+					val offerId = res.body()!!.asJsonObject.get("offer_id").asString
+					return Resource.success(offerId)
+				}
+				return Resource.error(Exception(res.message()))
+			} else
+				throw Exception(res.message())
+		} catch (ex: Exception) {
+			VLog.d("Pushing  offer to tibet exception : ${ex.message}")
+			return Resource.error(ex)
+		}
+
+	}
+
 
 }

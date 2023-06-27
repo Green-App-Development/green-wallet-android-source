@@ -14,6 +14,7 @@ import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.custom.NotificationHelper
 import com.green.wallet.presentation.custom.parseException
 import com.green.wallet.presentation.tools.OrderStatus
+import com.green.wallet.presentation.tools.OrderType
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
@@ -63,7 +64,8 @@ class ExchangeInteractImpl @Inject constructor(
 						send_coin = if (get_coin == "XCH") "USDT" else "XCH",
 						get_address = get_address,
 						tx_ID = "",
-						fee = 0.0
+						fee = 0.0,
+						order_type = OrderType.XCH_USDT
 					)
 					orderExchangeDao.insertOrderExchange(orderExchange)
 					return Resource.success(orderHash)
@@ -154,12 +156,18 @@ class ExchangeInteractImpl @Inject constructor(
 						val statusCompleted = resMap["status_completed"] ?: "Completed"
 						val message =
 							messageOrderStatusUpdate + " ${order.order_hash} $statusCompleted"
-						notifHelper.callGreenAppNotificationMessages(message,System.currentTimeMillis())
+						notifHelper.callGreenAppNotificationMessages(
+							message,
+							System.currentTimeMillis()
+						)
 					} else if (status == OrderStatus.Cancelled) {
 						val statusCancelled = resMap["status_canceled"] ?: "Cancelled"
 						val message =
 							messageOrderStatusUpdate + " ${order.order_hash} $statusCancelled"
-						notifHelper.callGreenAppNotificationMessages(message,System.currentTimeMillis())
+						notifHelper.callGreenAppNotificationMessages(
+							message,
+							System.currentTimeMillis()
+						)
 					}
 				}
 			} else

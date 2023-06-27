@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.presentation.tools.OrderStatus
+import com.green.wallet.presentation.tools.OrderType
 
 
 @Entity(tableName = "OrderEntity")
@@ -21,7 +22,8 @@ data class OrderEntity(
 	val get_coin: String,
 	val get_address: String,
 	val tx_ID: String,
-	val fee: Double
+	val fee: Double,
+	val order_type: OrderType
 ) {
 
 	fun toOrderItem() =
@@ -36,7 +38,8 @@ data class OrderEntity(
 			send_coin,
 			get_address,
 			tx_ID,
-			fee
+			fee = fee,
+			orderType = order_type
 		)
 
 
