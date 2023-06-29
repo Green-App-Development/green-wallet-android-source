@@ -6,13 +6,9 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.common.tools.convertNetworkTypeForFlutter
 import com.example.common.tools.formatString
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
@@ -22,7 +18,6 @@ import com.green.wallet.databinding.DialogBtmCreateOfferBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
-import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -35,9 +30,6 @@ import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,6 +46,8 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 
 	@Inject
 	lateinit var dialogManager: DialogManager
+
+	private var feePosition = 1
 
 
 	val methodChannel by lazy {
@@ -104,22 +98,23 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		val amountTo = vm.tibetSwap.value!!.data?.amount_out ?: 0L
 		val assetId = vm.tibetSwap.value?.data?.asset_id ?: ""
 		val pairId = vm.tokenList.value[vm.catAdapPosition].pairID
-		if (vm.tibetSwap.value?.data != null) {
-			val amountIn = formattedDoubleAmountWithPrecision(
-				(vm.tibetSwap.value!!.data?.amount_in
-					?: 0L) / if (vm.xchToCAT) PRECISION_XCH else PRECISION_CAT
-			)
-			val amountOut = formattedDoubleAmountWithPrecision(
-				(vm.tibetSwap.value!!.data?.amount_out
-					?: 0L) / if (vm.xchToCAT) PRECISION_CAT else PRECISION_XCH
-			)
-			if (vm.xchToCAT) {
-				txtMinus(txtXCHValue, amountIn, "XCH")
-				txtPlus(txtCATValue, amountOut, tokenCode)
-			} else {
-				txtPlus(txtXCHValue, amountOut, "XCH")
-				txtMinus(txtCATValue, amountIn, tokenCode)
-			}
+		val amountIn =
+			(vm.tibetSwap.value!!.data?.amount_in
+				?: 0L) / if (vm.xchToCAT) PRECISION_XCH else PRECISION_CAT
+
+		val amountOut =
+			(vm.tibetSwap.value!!.data?.amount_out
+				?: 0L) / if (vm.xchToCAT) PRECISION_CAT else PRECISION_XCH
+
+		val amountInStr = formattedDoubleAmountWithPrecision(amountIn)
+		val amountOutStr = formattedDoubleAmountWithPrecision(amountOut)
+
+		if (vm.xchToCAT) {
+			txtMinus(txtXCHValue, amountInStr, "XCH")
+			txtPlus(txtCATValue, amountOutStr, tokenCode)
+		} else {
+			txtPlus(txtXCHValue, amountOutStr, "XCH")
+			txtMinus(txtCATValue, amountInStr, tokenCode)
 		}
 
 		btnSign.setOnClickListener {
@@ -148,7 +143,15 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 				val resultArgs = call.arguments as HashMap<String, String>
 				val offer = resultArgs["offer"].toString()
 				VLog.d("Offer from Flutter : $offer")
-				pushingOfferToTibet(pairId, offer)
+				pushingOfferToTibet(
+					pairId,
+					offer,
+					amountIn,
+					amountOut,
+					tokenCode,
+					vm.xchToCAT,
+					getFeeBasedOnPosition()
+				)
 			} else if (call.method == "exception") {
 				showFailedSendingTransaction()
 			}
@@ -165,7 +168,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		val wallet = vm.curWallet ?: return
 		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
 		val argSpendBundle = hashMapOf<String, Any>()
-		argSpendBundle["fee"] = 0.0
+		argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
 		argSpendBundle["amountFrom"] = amountFrom
 		argSpendBundle["amountTo"] = amountTo
 		argSpendBundle["mnemonics"] = wallet.mnemonics.joinToString(" ")
@@ -177,9 +180,18 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		methodChannel.invokeMethod("XCHToCAT", argSpendBundle)
 	}
 
-	private fun pushingOfferToTibet(pairId: String, offer: String) {
+	private fun pushingOfferToTibet(
+		pairId: String,
+		offer: String,
+		amountFrom: Double,
+		amountTo: Double,
+		catCode: String,
+		isInputXCH: Boolean,
+		fee: Double
+	) {
 		lifecycleScope.launch {
-			val res = vm.pushOfferToTibet(pairId, offer)
+			val res =
+				vm.pushOfferToTibet(pairId, offer, amountFrom, amountTo, catCode, isInputXCH, fee)
 			when (res.state) {
 				Resource.State.ERROR -> {
 
@@ -229,9 +241,15 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 				}
 			}
 		}
-
 	}
 
+	private fun getFeeBasedOnPosition(): Double {
+		return when (feePosition) {
+			0 -> 0.0
+			1 -> 0.0005
+			else -> 0.0005
+		}
+	}
 
 	private suspend fun generateOfferCATToXCH(
 		amountFrom: Long,
@@ -242,7 +260,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		val wallet = vm.curWallet ?: return
 		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
 		val argSpendBundle = hashMapOf<String, Any>()
-		argSpendBundle["fee"] = 0.0
+		argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
 		argSpendBundle["amountFrom"] = amountFrom
 		argSpendBundle["amountTo"] = amountTo
 		argSpendBundle["mnemonics"] = wallet.mnemonics.joinToString(" ")
@@ -271,6 +289,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 	}
 
 	private fun DialogBtmCreateOfferBinding.clickedPositionsFee(pos: Int) {
+		feePosition = pos
 		val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)
 		for (i in 0 until layouts.size) {
 			if (i == pos) {

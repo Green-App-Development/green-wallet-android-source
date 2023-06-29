@@ -1,10 +1,8 @@
 package com.green.wallet.data.interact
 
-import com.green.wallet.data.local.OrderExchangeDao
 import com.green.wallet.data.local.TokenDao
 import com.green.wallet.data.network.TibetExchangeService
-import com.green.wallet.domain.domainmodel.TibetSwap
-import com.green.wallet.domain.domainmodel.Token
+import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
@@ -40,7 +38,7 @@ class TibetInteractImpl
 		amountIn: Long,
 		isXCH: Boolean,
 		pairId: String
-	): Resource<TibetSwap> {
+	): Resource<TibetSwapResponse> {
 		return try {
 			val res = tibetService.calculateAmountInOut(pairId, amountIn, isXCH)
 			if (res.isSuccessful) {

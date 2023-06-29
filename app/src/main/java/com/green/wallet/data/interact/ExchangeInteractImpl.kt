@@ -3,12 +3,14 @@ package com.green.wallet.data.interact
 import com.example.common.tools.mapNetworkOrderStatusToLocal
 import com.green.wallet.data.local.Converters
 import com.green.wallet.data.local.OrderExchangeDao
+import com.green.wallet.data.local.TibetDao
 import com.green.wallet.data.local.entity.OrderEntity
 import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.dto.exchangestatus.ExchangeStatus
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.ExchangeRate
 import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.custom.NotificationHelper
@@ -26,7 +28,8 @@ class ExchangeInteractImpl @Inject constructor(
 	private val exchangeService: ExchangeService,
 	private val prefsInteract: PrefsInteract,
 	private val orderExchangeDao: OrderExchangeDao,
-	private val notifHelper: NotificationHelper
+	private val notifHelper: NotificationHelper,
+	private val tibetDao: TibetDao
 ) : ExchangeInteract {
 
 
@@ -64,8 +67,7 @@ class ExchangeInteractImpl @Inject constructor(
 						send_coin = if (get_coin == "XCH") "USDT" else "XCH",
 						get_address = get_address,
 						tx_ID = "",
-						fee = 0.0,
-						order_type = OrderType.XCH_USDT
+						fee = 0.0
 					)
 					orderExchangeDao.insertOrderExchange(orderExchange)
 					return Resource.success(orderHash)
@@ -181,6 +183,12 @@ class ExchangeInteractImpl @Inject constructor(
 
 	override fun getAllOrderEntityList(): Flow<List<OrderItem>> {
 		return orderExchangeDao.getAllOrderEntityList().map { it.map { it.toOrderItem() } }
+	}
+
+	override suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange) {
+		val tibet = tibetSwapExchange.toTibetSwapEntity()
+		VLog.d("Inserting tibet swap exchange : $tibetSwapExchange")
+		tibetDao.insertTibetEntity(tibet)
 	}
 
 	private suspend fun getOrderStatus(orderHash: String): ExchangeStatus? {

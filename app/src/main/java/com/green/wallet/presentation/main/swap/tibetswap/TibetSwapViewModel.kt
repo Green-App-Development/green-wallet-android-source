@@ -3,8 +3,7 @@ package com.green.wallet.presentation.main.swap.tibetswap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
-import com.green.wallet.domain.domainmodel.SpentCoin
-import com.green.wallet.domain.domainmodel.TibetSwap
+import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.SpentCoinsInteract
@@ -50,7 +49,7 @@ class TibetSwapViewModel @Inject constructor(
 	private val _tokenList = MutableStateFlow<List<Token>>(emptyList())
 	val tokenList = _tokenList.asStateFlow()
 
-	private val _tibetSwap = MutableStateFlow<Resource<TibetSwap>?>(null)
+	private val _tibetSwap = MutableStateFlow<Resource<TibetSwapResponse>?>(null)
 	val tibetSwap = _tibetSwap.asStateFlow()
 
 	private val _walletList = MutableStateFlow<List<Wallet>>(emptyList())
@@ -107,8 +106,24 @@ class TibetSwapViewModel @Inject constructor(
 		}
 	}
 
-	suspend fun pushOfferToTibet(pairID: String, offer: String) =
-		tibetSwapUseCases.pushOfferToTibet(pairID, offer)
+	suspend fun pushOfferToTibet(
+		pairID: String,
+		offer: String,
+		amountFrom: Double,
+		amountTo: Double,
+		catCode: String,
+		isInputXCH: Boolean,
+		fee: Double
+	) =
+		tibetSwapUseCases.pushOfferToTibet(
+			pairID,
+			offer,
+			amountFrom,
+			amountTo,
+			catCode,
+			isInputXCH,
+			fee
+		)
 
 	override fun onCleared() {
 		super.onCleared()

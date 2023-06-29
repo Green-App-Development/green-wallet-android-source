@@ -252,6 +252,7 @@ class PushingTransaction {
               var catAmount = int.parse(args["amountFrom"].toString());
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
+              var fee = int.parse(args["fee"].toString());
               tibetSwapCATToXCH(
                   mnemonics: mnemonics,
                   url: url,
@@ -259,7 +260,9 @@ class PushingTransaction {
                   xchAmount: xchAmount,
                   catAmount: catAmount,
                   observer: observer,
-                  nonObserver: nonObserver);
+                  nonObserver: nonObserver,
+                  fee:fee
+              );
             } catch (ex) {
               debugPrint(
                   "Exception occurred in exchanging cat for xch : ${ex.toString()}");
@@ -278,6 +281,7 @@ class PushingTransaction {
               var xchAmount = int.parse(args["amountFrom"].toString());
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
+              var fee = int.parse(args["fee"].toString());
               tibetSwapXCHToCAT(
                   mnemonics: mnemonics,
                   url: url,
@@ -285,7 +289,8 @@ class PushingTransaction {
                   xchAmount: xchAmount,
                   catAmount: catAmount,
                   observer: observer,
-                  nonObserver: nonObserver);
+                  nonObserver: nonObserver,
+                  fee: fee);
             } catch (ex) {
               debugPrint(
                   "Exception occurred in exchanging xch for cat : ${ex.toString()}");
@@ -307,7 +312,8 @@ class PushingTransaction {
       required int xchAmount,
       required int catAmount,
       required int observer,
-      required int nonObserver}) async {
+      required int nonObserver,
+      required int fee}) async {
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
     final fullNodeRpc = FullNodeHttpRpc(url);
@@ -350,16 +356,18 @@ class PushingTransaction {
     );
 
     final offer = await offerService.createOffer(
-      requesteAmounts: {
-        OfferAssetData.cat(
-          tailHash: assetHash,
-        ): [catAmount]
-      },
-      offerredAmounts: {null: -xchAmount},
-      coins: xchCoins,
-      changePuzzlehash: changePh,
-      targetPuzzleHash: targePh,
-    );
+        requesteAmounts: {
+          OfferAssetData.cat(
+            tailHash: assetHash,
+          ): [catAmount]
+        },
+        offerredAmounts: {
+          null: -xchAmount
+        },
+        coins: xchCoins,
+        changePuzzlehash: changePh,
+        targetPuzzleHash: targePh,
+        fee: fee);
     final str = offer.toBench32();
     debugPrint("Offering xch for cat : $str");
     _channel.invokeMethod("offer", {"offer": str});
@@ -372,7 +380,9 @@ class PushingTransaction {
       required int xchAmount,
       required int catAmount,
       required int observer,
-      required int nonObserver}) async {
+      required int nonObserver,
+      required int fee
+      }) async {
     var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
     var keychain = cachedWalletChains[key] ??
         generateKeyChain(mnemonics, observer, nonObserver);
@@ -467,7 +477,7 @@ class PushingTransaction {
       coins: allCoins,
       changePuzzlehash: changePh,
       targetPuzzleHash: targePh,
-      //fee: 1000000,
+      fee:fee,
     );
     final str = offer.toBench32();
     debugPrint("Offer generate cat to xch : $str");

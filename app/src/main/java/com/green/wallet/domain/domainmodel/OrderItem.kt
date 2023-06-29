@@ -15,8 +15,7 @@ data class OrderItem(
 	val sendCoin: String,
 	val getAddress: String,
 	val txID: String,
-	val fee: Double,
-	val orderType: OrderType
+	val fee: Double
 ) {
 
 	fun toOrderEntity() = OrderEntity(
@@ -30,8 +29,7 @@ data class OrderItem(
 		getCoin,
 		getAddress,
 		txID,
-		fee,
-		orderType
+		fee
 	)
 
 }

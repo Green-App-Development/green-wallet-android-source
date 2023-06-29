@@ -16,9 +16,9 @@ import com.green.wallet.data.local.entity.*
 		NotifOtherEntity::class, TokenEntity::class,
 		SpentCoinsEntity::class, FaqItemEntity::class,
 		NFTInfoEntity::class, NFTCoinEntity::class,
-		OrderEntity::class
+		OrderEntity::class, TibetSwapEntity::class
 	],
-	version = 37,
+	version = 36,
 	exportSchema = true,
 	autoMigrations = [
 		AutoMigration(from = 25, to = 34),
@@ -37,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val nftCoinsDao: NftCoinsDao
 	abstract val nftInfoDao: NftInfoDao
 	abstract val orderExchangeDao: OrderExchangeDao
+	abstract val tibetDao: TibetDao
 
 	companion object {
 
@@ -124,22 +125,22 @@ abstract class AppDatabase : RoomDatabase() {
            ALTER TABLE TokenEntity ADD COLUMN pair_id TEXT NOT NULL DEFAULT ''
         """.trimIndent()
 				database.execSQL(addColumn)
-			}
 
-		}
-
-
-		val migration36To37 = object : Migration(36, 37) {
-
-			override fun migrate(database: SupportSQLiteDatabase) {
-				val addColumn = """
-           ALTER TABLE OrderEntity ADD COLUMN order_type TEXT NOT NULL DEFAULT 'XCH_USDT'
+				val createTableTibetSwap = """
+            CREATE TABLE IF NOT EXISTS TibetSwapEntity (
+                offer_id TEXT PRIMARY KEY NOT NULL,
+				send_amount REAL NOT NULL,
+                receive_amount REAL NOT NULL,
+                send_coin TEXT NOT NULL,
+                receive_coin TEXT NOT NULL,
+                fee REAL NOT NULL,
+                time_created INTEGER NOT NULL
+            )
         """.trimIndent()
-				database.execSQL(addColumn)
+				database.execSQL(createTableTibetSwap)
 			}
 
 		}
-
 
 	}
 

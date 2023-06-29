@@ -1,6 +1,6 @@
 package com.green.wallet.domain.domainmodel
 
-data class TibetSwap(
+data class TibetSwapResponse(
 	val amount_in: Long,
 	val amount_out: Long,
 	val asset_id: String,

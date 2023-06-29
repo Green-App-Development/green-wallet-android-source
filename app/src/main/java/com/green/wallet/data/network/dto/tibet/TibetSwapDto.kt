@@ -1,6 +1,6 @@
 package com.green.wallet.data.network.dto.tibet
 
-import com.green.wallet.domain.domainmodel.TibetSwap
+import com.green.wallet.domain.domainmodel.TibetSwapResponse
 
 data class TibetSwapDto(
 	val amount_in: Long,
@@ -13,7 +13,7 @@ data class TibetSwapDto(
 	val price_warning: Boolean
 ) {
 
-	fun toTibetSwap() = TibetSwap(
+	fun toTibetSwap() = TibetSwapResponse(
 		amount_in,
 		amount_out,
 		asset_id,
