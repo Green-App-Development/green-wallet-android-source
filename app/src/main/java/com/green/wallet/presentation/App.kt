@@ -204,6 +204,7 @@ class App : DaggerApplication() {
 				VLog.d("Start requesting Balance Each Wallets Periodically:")
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
 				exchangeInteract.updateOrderStatusPeriodically()
+				exchangeInteract.updateTibetSwapExchangeStatus()
 			}
 		}
 		updateCryptoJob?.cancel()

@@ -28,6 +28,7 @@ import com.green.wallet.R.id.*
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
 import com.green.wallet.presentation.custom.*
@@ -60,6 +61,7 @@ import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
 import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.swap.send.SwapSendFragment
+import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
@@ -324,6 +326,11 @@ class MainActivity : BaseActivity() {
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
 
+				fragmentTibetSwapDetail -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+
 				else -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -481,7 +488,8 @@ class MainActivity : BaseActivity() {
 					fragmentOrderDetail,
 					btmChooseDApps,
 					fragmentQrCodeSend,
-					fragmentSwapSend
+					fragmentSwapSend,
+					fragmentTibetSwapDetail
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -884,6 +892,12 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentOrderDetail, bundle)
 	}
 
+	fun move2TibetSwapExchangeDetail(item: TibetSwapExchange) {
+		val bundle = bundleOf()
+		bundle.putParcelable(TibetSwapDetailFragment.TIBET_SWAP_OFFER_KEY, item)
+		navController.navigate(fragmentTibetSwapDetail, bundle)
+	}
+
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {
 		val bundle = bundleOf(
 			BtmSheetDialogChooseNetwork.DATA_LIST_KEY to dataList,
@@ -931,8 +945,6 @@ class MainActivity : BaseActivity() {
 		)
 		navController.navigate(walletSettings, bundle)
 	}
-
-
 
 
 }

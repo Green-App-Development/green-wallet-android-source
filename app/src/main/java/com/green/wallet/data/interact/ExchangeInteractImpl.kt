@@ -5,6 +5,8 @@ import com.green.wallet.data.local.Converters
 import com.green.wallet.data.local.OrderExchangeDao
 import com.green.wallet.data.local.TibetDao
 import com.green.wallet.data.local.entity.OrderEntity
+import com.green.wallet.data.local.entity.TibetSwapEntity
+import com.green.wallet.data.network.DexieService
 import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.dto.exchangestatus.ExchangeStatus
 import com.green.wallet.data.preference.PrefsManager
@@ -20,7 +22,9 @@ import com.green.wallet.presentation.tools.OrderType
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import java.util.Comparator
 import java.util.UUID
 import javax.inject.Inject
 
@@ -29,7 +33,8 @@ class ExchangeInteractImpl @Inject constructor(
 	private val prefsInteract: PrefsInteract,
 	private val orderExchangeDao: OrderExchangeDao,
 	private val notifHelper: NotificationHelper,
-	private val tibetDao: TibetDao
+	private val tibetDao: TibetDao,
+	private val dexieService: DexieService
 ) : ExchangeInteract {
 
 
@@ -181,14 +186,64 @@ class ExchangeInteractImpl @Inject constructor(
 
 	}
 
-	override fun getAllOrderEntityList(): Flow<List<OrderItem>> {
-		return orderExchangeDao.getAllOrderEntityList().map { it.map { it.toOrderItem() } }
+	override fun getAllOrderListFlow(): Flow<List<Any>> {
+		val ordersFlow =
+			orderExchangeDao.getAllOrderEntityList().map { it.map { it.toOrderItem() } }
+		val tibetSwapFlow =
+			tibetDao.getTibetSwapEntitiesListFlow().map { it.map { it.toTibetSwapExchange() } }
+		return combine(ordersFlow, tibetSwapFlow) { orders, tibetSwap ->
+			(orders + tibetSwap).sortedBy { item ->
+				when (item) {
+					is OrderEntity -> item.time_created
+					is TibetSwapEntity -> item.time_created
+					else -> 0L
+				}
+			}
+		}
 	}
 
 	override suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange) {
 		val tibet = tibetSwapExchange.toTibetSwapEntity()
 		VLog.d("Inserting tibet swap exchange : $tibetSwapExchange")
 		tibetDao.insertTibetEntity(tibet)
+	}
+
+	override suspend fun updateTibetSwapExchangeStatus() {
+		val tibetSwapList = tibetDao.getTibetSwapListInProgressStatus(OrderStatus.InProgress)
+		for (tibetSwap in tibetSwapList) {
+			val spentHeight = getTibetSwapSpentHeight(tibetSwap)
+			if (spentHeight != null) {
+				notifHelper.callGreenAppNotificationMessages(
+					"Tibet Swap XCH CAT : ${tibetSwap.offer_id} success ",
+					System.currentTimeMillis()
+				)
+				tibetDao.updateTibetSwapEntityStatusToCompleted(
+					status = OrderStatus.Success,
+					offer_id = tibetSwap.offer_id
+				)
+				tibetDao.updateTibetSwapEntityHeightToCompleted(
+					height = spentHeight,
+					offer_id = tibetSwap.offer_id
+				)
+			}
+		}
+	}
+
+	private suspend fun getTibetSwapSpentHeight(tibetSwap: TibetSwapEntity): Int? {
+		try {
+			val res = dexieService.getTibetSwapOfferStatus(tibetSwap.offer_id)
+			if (res.isSuccessful) {
+				val spentIndex =
+					res.body()!!.asJsonObject.get("offer").asJsonObject.get("spent_block_index")?.asInt
+				if (spentIndex != null)
+					return spentIndex
+				return null
+			} else
+				throw Exception(res.message())
+		} catch (ex: Exception) {
+			VLog.d("Exception in getting tibet swap status : ${ex.message}")
+		}
+		return null
 	}
 
 	private suspend fun getOrderStatus(orderHash: String): ExchangeStatus? {

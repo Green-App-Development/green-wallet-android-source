@@ -23,10 +23,10 @@ interface ExchangeInteract {
 	suspend fun updateOrderStatusPeriodically()
 
 	suspend fun updateOrderStatusByHash(hash: String)
-
-	fun getAllOrderEntityList(): Flow<List<OrderItem>>
+	fun getAllOrderListFlow(): Flow<List<Any>>
 
 	suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange)
 
+	suspend fun updateTibetSwapExchangeStatus()
 
 }

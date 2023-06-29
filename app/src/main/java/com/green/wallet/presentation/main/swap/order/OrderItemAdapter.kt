@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.swap.request
+package com.green.wallet.presentation.main.swap.order
 
 import android.text.SpannableString
 import android.text.Spanned
@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.common.tools.requestDateFormat
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.OrderItem
-import com.green.wallet.domain.domainmodel.RequestItem
+import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
@@ -26,24 +28,56 @@ class OrderItemAdapter(
 	val activity: MainActivity,
 	val listener: OnClickRequestItemListener
 ) :
-	RecyclerView.Adapter<OrderItemAdapter.RequestItemViewHolder>() {
+	RecyclerView.Adapter<ViewHolder>() {
 
-	val data = mutableListOf<OrderItem>()
+	var data = listOf<Any>()
 
-	fun updateRequestList(incoming: List<OrderItem>) {
-		data.clear()
-		data.addAll(incoming)
-		notifyDataSetChanged()
+	fun updateRequestList(incoming: List<Any>) {
+		val diffResult = DiffUtil.calculateDiff(OrdersUtilCallback(data, incoming))
+		data = incoming
+		diffResult.dispatchUpdatesTo(this)
 	}
 
-	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestItemViewHolder {
-		val view =
-			LayoutInflater.from(parent.context).inflate(R.layout.item_request, parent, false)
-		return RequestItemViewHolder(view)
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+		return when (viewType) {
+			TYPE_ORDER -> {
+				val view =
+					LayoutInflater.from(parent.context)
+						.inflate(R.layout.item_request_order, parent, false)
+
+				RequestItemViewHolder(view)
+			}
+
+			else -> {
+				val view =
+					LayoutInflater.from(parent.context)
+						.inflate(R.layout.item_request_order, parent, false)
+
+				RequestItemViewHolder(view)
+			}
+		}
 	}
 
-	override fun onBindViewHolder(holder: RequestItemViewHolder, position: Int) {
-		holder.onBind(data[position])
+	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+		when (holder) {
+			is RequestItemViewHolder -> {
+				when (data[position]) {
+					is OrderItem ->
+						holder.onBindOrderItem(data[position] as OrderItem)
+
+					is TibetSwapExchange ->
+						holder.onBindTibetSwapItem(data[position] as TibetSwapExchange)
+				}
+			}
+		}
+	}
+
+	override fun getItemViewType(position: Int): Int {
+		val element = data[position]
+		return when (element) {
+			is OrderItem -> TYPE_ORDER
+			else -> TYPE_TIBET_SWAP
+		}
 	}
 
 	override fun getItemCount() = data.size
@@ -58,9 +92,9 @@ class OrderItemAdapter(
 		val detailBtn = v.findViewById<TextView>(R.id.txtDetailRequest)
 		val txtDate = v.findViewById<TextView>(R.id.txtDate)
 
-		fun onBind(item: OrderItem) {
+		fun onBindOrderItem(item: OrderItem) {
 			hashId.text = "${activity.getStringResource(R.string.order_title)} #${item.hash}"
-			val amountToReceive= formattedDollarWithPrecision(item.amountToSend*item.rate,4)
+			val amountToReceive = formattedDollarWithPrecision(item.amountToSend * item.rate, 4)
 			when (item.status) {
 				OrderStatus.Waiting -> {
 					txtSend.text =
@@ -104,7 +138,42 @@ class OrderItemAdapter(
 			txtDate.text = requestDateFormat(item.timeCreated)
 			initChangeColorStatusTxt(item.status, txtStatus)
 			detailBtn.setOnClickListener {
-				listener.onClickDetailItem(item.hash)
+				listener.onClickDetailItem(item)
+			}
+		}
+
+		fun onBindTibetSwapItem(item: TibetSwapExchange) {
+			hashId.text = "Create Offer"
+			val formatSend = formattedDoubleAmountWithPrecision(item.send_amount)
+			val formatReceive = formattedDoubleAmountWithPrecision(item.receive_amount)
+			when (item.status) {
+				OrderStatus.Success -> {
+					txtSend.text =
+						"${activity.getStringResource(R.string.sent_flow)}: -${formatSend} ${item.send_coin}"
+					txtReceive.text =
+						"${activity.getStringResource(R.string.received_flow)}: +${formatReceive} ${item.receive_coin}"
+					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_green))
+					txtStatus.text = activity.getStringResource(R.string.status_completed)
+				}
+
+				OrderStatus.InProgress -> {
+					txtSend.text =
+						"${activity.getStringResource(R.string.you_sent_flow)}: -${formatSend} ${item.send_coin}"
+					txtReceive.text =
+						"${activity.getStringResource(R.string.you_will_receive)}: +${formatReceive} ${item.receive_coin}"
+					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_orange))
+					txtStatus.text = activity.getStringResource(R.string.status_in_process)
+				}
+			}
+			changeAmountColor(txtSend, activity.getColorResource(R.color.red_mnemonic))
+			changeAmountColor(
+				txtReceive,
+				activity.getColorResource(if (item.status != OrderStatus.Cancelled) R.color.green else R.color.red_mnemonic)
+			)
+			txtDate.text = requestDateFormat(item.time_created)
+			initChangeColorStatusTxt(item.status, txtStatus)
+			detailBtn.setOnClickListener {
+				listener.onClickDetailItem(item)
 			}
 		}
 
@@ -120,7 +189,7 @@ class OrderItemAdapter(
 			txtStatus.setTextColor(clr)
 		}
 
-		fun changeAmountColor(txt: TextView, clr: Int) {
+		private fun changeAmountColor(txt: TextView, clr: Int) {
 			val text = txt.text.toString()
 			val pivot = text.indexOf(":")
 			val spannableString = SpannableString(text)
@@ -138,8 +207,39 @@ class OrderItemAdapter(
 		}
 	}
 
+
+	private companion object {
+		private const val TYPE_ORDER = 1
+		private const val TYPE_TIBET_SWAP = 2
+	}
+
+
+	inner class OrdersUtilCallback(
+		val oldAddressList: List<Any>,
+		val newAddressList: List<Any>
+	) :
+		DiffUtil.Callback() {
+
+		override fun getOldListSize(): Int {
+			return oldAddressList.size
+		}
+
+		override fun getNewListSize(): Int {
+			return newAddressList.size
+		}
+
+		override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+			return oldAddressList[oldItemPosition] == newAddressList[newItemPosition]
+		}
+
+		override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+			return oldAddressList[oldItemPosition] == newAddressList[newItemPosition]
+		}
+
+	}
+
 	interface OnClickRequestItemListener {
-		fun onClickDetailItem(hash: String)
+		fun onClickDetailItem(item: Any)
 	}
 
 

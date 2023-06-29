@@ -34,10 +34,11 @@ import com.green.wallet.presentation.main.support.faq.FAQFragment
 import com.green.wallet.presentation.main.swap.exchange.ExchangeFragment
 import com.green.wallet.presentation.main.swap.main.SwapMainFragment
 import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
-import com.green.wallet.presentation.main.swap.request.OrdersFragment
+import com.green.wallet.presentation.main.swap.order.OrdersFragment
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.swap.send.SwapSendFragment
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapFragment
+import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -193,6 +194,9 @@ abstract class InjectorBuildersModule {
 	@ContributesAndroidInjector()
 	abstract fun injectIntoTibetSwapFragment(): TibetSwapFragment
 
+
+	@ContributesAndroidInjector()
+	abstract fun injectIntoTibetSwapItemDetailFragment(): TibetSwapDetailFragment
 
 
 

@@ -24,7 +24,7 @@ import com.green.wallet.presentation.main.send.SendFragmentViewModel
 import com.green.wallet.presentation.main.support.SupportViewModel
 import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
-import com.green.wallet.presentation.main.swap.request.OrdersViewModel
+import com.green.wallet.presentation.main.swap.order.OrdersViewModel
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailViewModel
 import com.green.wallet.presentation.main.swap.send.SwapSendViewModel
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel

@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.swap.request
+package com.green.wallet.presentation.main.swap.order
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,8 +14,8 @@ class OrdersViewModel @Inject constructor(
 	private val exchangeInteract: ExchangeInteract
 ) : ViewModel() {
 
-	private val _orderList = MutableStateFlow<List<OrderItem>>(emptyList())
-	val orderList = _orderList.asStateFlow()
+	private val _exchangeList = MutableStateFlow<List<Any>>(emptyList())
+	val exchangeList = _exchangeList.asStateFlow()
 
 	init {
 		VLog.d("On Create of orders vm : $this")
@@ -24,8 +24,8 @@ class OrdersViewModel @Inject constructor(
 
 	private fun retrievingAllOrderList() {
 		viewModelScope.launch {
-			exchangeInteract.getAllOrderEntityList().collect {
-				_orderList.emit(it)
+			exchangeInteract.getAllOrderListFlow().collect {
+				_exchangeList.emit(it)
 			}
 		}
 	}

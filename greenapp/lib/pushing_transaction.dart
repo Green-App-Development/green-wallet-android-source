@@ -261,8 +261,7 @@ class PushingTransaction {
                   catAmount: catAmount,
                   observer: observer,
                   nonObserver: nonObserver,
-                  fee:fee
-              );
+                  fee: fee);
             } catch (ex) {
               debugPrint(
                   "Exception occurred in exchanging cat for xch : ${ex.toString()}");
@@ -381,8 +380,7 @@ class PushingTransaction {
       required int catAmount,
       required int observer,
       required int nonObserver,
-      required int fee
-      }) async {
+      required int fee}) async {
     var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
     var keychain = cachedWalletChains[key] ??
         generateKeyChain(mnemonics, observer, nonObserver);
@@ -455,6 +453,8 @@ class PushingTransaction {
       await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
     );
 
+    debugPrint("Sending xch full coins for offer fee : $xchFullCoins");
+
     // concatenate all coins, the OfferService will be grouped for asset
     final allCoins = fullCatCoins + xchFullCoins;
 
@@ -477,7 +477,7 @@ class PushingTransaction {
       coins: allCoins,
       changePuzzlehash: changePh,
       targetPuzzleHash: targePh,
-      fee:fee,
+      fee: fee,
     );
     final str = offer.toBench32();
     debugPrint("Offer generate cat to xch : $str");

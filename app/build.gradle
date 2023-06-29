@@ -39,7 +39,7 @@ android {
 		buildConfigField "String", "CHIA_CHIVES_CHANGE_24", "\"${properties.getProperty("CHIA_CHIVES_CHANGE_24")}\""
 		buildConfigField "String", "BASE_URL_GREEN_APP", "\"${properties.getProperty("BASE_URL_GREEN_APP")}\""
 		buildConfigField "String", "TIBET_API", "\"${properties.getProperty("TIBET_API")}\""
-
+		buildConfigField "String", "DEXIE_API", "\"${properties.getProperty("DEXIE_API")}\""
 
 		javaCompileOptions {
 			annotationProcessorOptions {

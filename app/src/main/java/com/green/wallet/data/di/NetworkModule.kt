@@ -2,6 +2,7 @@ package com.green.wallet.data.di
 
 import androidx.navigation.Navigator
 import com.green.wallet.BuildConfig
+import com.green.wallet.data.network.DexieService
 import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.GreenAppService
 import com.green.wallet.data.network.TibetExchangeService
@@ -38,7 +39,7 @@ class NetworkModule {
 	@AppScope
 	@Provides
 	@Named("retrofit_tibet_api")
-	fun provideTibetRetrofitInstance(): Retrofit {
+	fun provideDexieRetrofitInstance(): Retrofit {
 
 		val interceptor = HttpLoggingInterceptor().apply {
 			level = HttpLoggingInterceptor.Level.BODY
@@ -50,6 +51,23 @@ class NetworkModule {
 				GsonConverterFactory.create()
 			).build()
 	}
+
+	@AppScope
+	@Provides
+	@Named("retrofit_dexie_api")
+	fun provideTibetRetrofitInstance(): Retrofit {
+
+		val interceptor = HttpLoggingInterceptor().apply {
+			level = HttpLoggingInterceptor.Level.BODY
+		}
+
+		return Retrofit.Builder().baseUrl(BuildConfig.DEXIE_API)
+			.client(getUnsafeOkHttpClient(interceptor))
+			.addConverterFactory(
+				GsonConverterFactory.create()
+			).build()
+	}
+
 
 	@Provides
 	@AppScope
@@ -69,6 +87,12 @@ class NetworkModule {
 			TibetExchangeService::class.java
 		)
 
+
+	@Provides
+	fun provideDexieExchangeService(@Named("retrofit_dexie_api") retrofit: Retrofit) =
+		retrofit.create(
+			DexieService::class.java
+		)
 
 	@Provides
 	@AppScope

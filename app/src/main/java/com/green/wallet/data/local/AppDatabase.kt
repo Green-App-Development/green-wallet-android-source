@@ -134,7 +134,8 @@ abstract class AppDatabase : RoomDatabase() {
                 send_coin TEXT NOT NULL,
                 receive_coin TEXT NOT NULL,
                 fee REAL NOT NULL,
-                time_created INTEGER NOT NULL
+                time_created INTEGER NOT NULL,
+                status TEXT NOT NULL
             )
         """.trimIndent()
 				database.execSQL(createTableTibetSwap)

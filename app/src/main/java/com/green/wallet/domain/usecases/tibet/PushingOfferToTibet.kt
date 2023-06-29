@@ -3,7 +3,9 @@ package com.green.wallet.domain.usecases.tibet
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.TibetInteract
+import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
+import com.green.wallet.presentation.tools.Status
 import javax.inject.Inject
 
 class PushingOfferToTibet @Inject constructor(
@@ -32,7 +34,9 @@ class PushingOfferToTibet @Inject constructor(
 				send_coin = sendTokenCode,
 				receive_coin = getTokenCode,
 				fee = fee,
-				time_created = System.currentTimeMillis()
+				time_created = System.currentTimeMillis(),
+				status = OrderStatus.InProgress,
+				height = 0
 			)
 			exchangeInteract.insertTibetSwap(tibetSwapExchange)
 		}

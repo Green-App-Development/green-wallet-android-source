@@ -303,5 +303,11 @@
 			android:label="btmDialog"
 			tools:layout="@layout/dialog_btm_create_offer" />
 
+	<fragment
+			android:id="@+id/fragmentTibetSwapDetail"
+			android:name="com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment"
+			android:label="Tibet Swap Detail"
+			tools:layout="@layout/fragment_tibet_swap_detail" />
+
 
 </navigation>

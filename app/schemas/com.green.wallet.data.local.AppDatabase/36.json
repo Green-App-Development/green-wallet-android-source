@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "732e02d1a5de4025ac143fcd688e7e81",
+    "identityHash": "69d0dacfd4730fd8b75eeb7d00874556",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -701,7 +701,7 @@
       },
       {
         "tableName": "TibetSwapEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `send_amount` REAL NOT NULL, `receive_amount` REAL NOT NULL, `send_coin` TEXT NOT NULL, `receive_coin` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `send_amount` REAL NOT NULL, `receive_amount` REAL NOT NULL, `send_coin` TEXT NOT NULL, `receive_coin` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
         "fields": [
           {
             "fieldPath": "offer_id",
@@ -744,6 +744,18 @@
             "columnName": "time_created",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -759,7 +771,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '732e02d1a5de4025ac143fcd688e7e81')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '69d0dacfd4730fd8b75eeb7d00874556')"
     ]
   }
 }

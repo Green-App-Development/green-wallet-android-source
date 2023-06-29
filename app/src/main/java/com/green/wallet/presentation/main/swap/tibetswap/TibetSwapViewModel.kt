@@ -86,7 +86,7 @@ class TibetSwapViewModel @Inject constructor(
 		swapMainScope?.cancel()
 		swapMainScope = CoroutineScope(Dispatchers.Main)
 		val debouncedFlow = userSwapInputChannel.receiveAsFlow().debounce(INPUT_DEBOUNCE_VALUE)
-		swapMainScope?.launch {
+		swapMainScope?.launch(handler) {
 			debouncedFlow.collectLatest { input ->
 				calculateAmountOut(input, _tokenList.value[catAdapPosition].pairID, xchToCAT)
 			}
