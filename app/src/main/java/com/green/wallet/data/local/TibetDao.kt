@@ -9,6 +9,7 @@ import com.green.wallet.data.local.entity.TibetSwapEntity
 import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.presentation.tools.OrderStatus
 import kotlinx.coroutines.flow.Flow
+import java.util.Optional
 
 
 @Dao
@@ -29,5 +30,9 @@ interface TibetDao {
 
 	@Query("SELECT * FROM TibetSwapEntity ORDER BY time_created DESC")
 	fun getTibetSwapEntitiesListFlow(): Flow<List<TibetSwapEntity>>
+
+	@Query("SELECT * FROM TibetSwapEntity WHERE offer_id=:offer_id")
+	fun getTibetSwapEntityByOfferId(offer_id: String): Flow<TibetSwapEntity>
+
 
 }

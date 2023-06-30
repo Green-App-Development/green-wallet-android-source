@@ -18,14 +18,11 @@ import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.custom.NotificationHelper
 import com.green.wallet.presentation.custom.parseException
 import com.green.wallet.presentation.tools.OrderStatus
-import com.green.wallet.presentation.tools.OrderType
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import java.util.Comparator
-import java.util.UUID
 import javax.inject.Inject
 
 class ExchangeInteractImpl @Inject constructor(
@@ -227,6 +224,10 @@ class ExchangeInteractImpl @Inject constructor(
 				)
 			}
 		}
+	}
+
+	override  fun getTibetSwapDetailByOfferId(offerId: String): Flow<TibetSwapExchange> {
+		return tibetDao.getTibetSwapEntityByOfferId(offerId).map { it.toTibetSwapExchange() }
 	}
 
 	private suspend fun getTibetSwapSpentHeight(tibetSwap: TibetSwapEntity): Int? {

@@ -894,7 +894,7 @@ class MainActivity : BaseActivity() {
 
 	fun move2TibetSwapExchangeDetail(item: TibetSwapExchange) {
 		val bundle = bundleOf()
-		bundle.putParcelable(TibetSwapDetailFragment.TIBET_SWAP_OFFER_KEY, item)
+		bundle.putString(TibetSwapDetailFragment.TIBET_SWAP_OFFER_KEY, item.offer_id)
 		navController.navigate(fragmentTibetSwapDetail, bundle)
 	}
 

@@ -246,7 +246,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 	private fun getFeeBasedOnPosition(): Double {
 		return when (feePosition) {
 			0 -> 0.0
-			1 -> 0.0005
+			1 -> 0.00000005
 			else -> 0.0005
 		}
 	}

@@ -58,7 +58,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_centerVertical="true"
-				android:text="Заявка #001766"
+				android:text="Create Offer"
 				android:textColor="@color/green"
 				android:textFontWeight="600"
 				android:textSize="23sp"

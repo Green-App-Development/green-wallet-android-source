@@ -28,6 +28,7 @@ import com.green.wallet.presentation.main.swap.order.OrdersViewModel
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailViewModel
 import com.green.wallet.presentation.main.swap.send.SwapSendViewModel
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel
+import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsViewModel
@@ -198,6 +199,11 @@ abstract class ViewModelsModule {
 	@ViewModelKey(TibetSwapViewModel::class)
 	@AppScope
 	abstract fun bindingTibetSwapViewModel(viewModel: TibetSwapViewModel): ViewModel
+
+	@IntoMap
+	@Binds
+	@ViewModelKey(TibetSwapDetailViewModel::class)
+	abstract fun bindingTibetSwapDetailViewModel(viewModel: TibetSwapDetailViewModel): ViewModel
 
 
 }
