@@ -99,6 +99,17 @@ class TibetSwapViewModel @Inject constructor(
 		_tibetSwap.emit(res)
 	}
 
+	suspend fun getSpendableBalanceByTokenCodeAndAddress(
+		address: String,
+		tokenCode: String,
+		assetID: String
+	) =
+		spentCoinsInteract.getSpendableBalanceByTokenCode(
+			assetID = assetID,
+			tokenCode = tokenCode,
+			address = address
+		)
+
 	private fun retrieveTokenList() {
 		viewModelScope.launch {
 			val res = tokenInteract.getTokenListPairIDExist()
@@ -125,9 +136,34 @@ class TibetSwapViewModel @Inject constructor(
 			fee
 		)
 
+	suspend fun pushingOfferXCHCATToTibet(
+		pairID: String,
+		offer: String,
+		amountFrom: Double,
+		amountTo: Double,
+		catCode: String,
+		isInputXCH: Boolean,
+		fee: Double,
+		spentXCHCoinsJson: String
+	) =
+		tibetSwapUseCases.pushOfferXCHCATToTibet(
+			pairID,
+			offer,
+			amountFrom,
+			amountTo,
+			catCode,
+			isInputXCH,
+			fee,
+			spentXCHCoinsJson,
+			curWallet!!.address
+		)
+
 	override fun onCleared() {
 		super.onCleared()
 		VLog.d("On cleared tibet vm and cancelled scope : $this")
 	}
+
+	suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
+		spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
 
 }

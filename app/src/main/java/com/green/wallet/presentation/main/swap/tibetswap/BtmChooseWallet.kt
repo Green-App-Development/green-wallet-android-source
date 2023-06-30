@@ -46,6 +46,7 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		binding.initFingerPrints()
 		VLog.d("On View Created ChooseWallet with vm : $vm")
+		dialog?.setCanceledOnTouchOutside(false)
 	}
 
 	private fun DialogBtmChooseWalletBinding.initFingerPrints() {

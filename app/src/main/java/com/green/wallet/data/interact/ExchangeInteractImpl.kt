@@ -3,6 +3,7 @@ package com.green.wallet.data.interact
 import com.example.common.tools.mapNetworkOrderStatusToLocal
 import com.green.wallet.data.local.Converters
 import com.green.wallet.data.local.OrderExchangeDao
+import com.green.wallet.data.local.SpentCoinsDao
 import com.green.wallet.data.local.TibetDao
 import com.green.wallet.data.local.entity.OrderEntity
 import com.green.wallet.data.local.entity.TibetSwapEntity
@@ -31,7 +32,8 @@ class ExchangeInteractImpl @Inject constructor(
 	private val orderExchangeDao: OrderExchangeDao,
 	private val notifHelper: NotificationHelper,
 	private val tibetDao: TibetDao,
-	private val dexieService: DexieService
+	private val dexieService: DexieService,
+	private val spentCoinsDao: SpentCoinsDao
 ) : ExchangeInteract {
 
 
@@ -222,11 +224,12 @@ class ExchangeInteractImpl @Inject constructor(
 					height = spentHeight,
 					offer_id = tibetSwap.offer_id
 				)
+				spentCoinsDao.deleteSpentConsByTimeCreated(tibetSwap.time_created)
 			}
 		}
 	}
 
-	override  fun getTibetSwapDetailByOfferId(offerId: String): Flow<TibetSwapExchange> {
+	override fun getTibetSwapDetailByOfferId(offerId: String): Flow<TibetSwapExchange> {
 		return tibetDao.getTibetSwapEntityByOfferId(offerId).map { it.toTibetSwapExchange() }
 	}
 

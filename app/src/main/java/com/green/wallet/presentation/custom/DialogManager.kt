@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import com.green.wallet.R
+import com.green.wallet.databinding.DialogPriceChangedWarningBinding
 import com.green.wallet.databinding.DialogWarningOrderExistBinding
 import com.green.wallet.presentation.di.application.AppScope
 import com.green.wallet.presentation.tools.getColorResource
@@ -400,6 +401,35 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 	) {
 		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
 		val binding = DialogWarningOrderExistBinding.inflate(activity.layoutInflater)
+		dialog.setContentView(binding.root)
+		val width = activity.resources.displayMetrics.widthPixels
+		binding.apply {
+			txtStatus.text = status
+			txtDescription.text = statement
+			btnAction.text = btnText
+			btnAction.setOnClickListener {
+				dialog.dismiss()
+				onClick()
+			}
+		}
+		dialog.window?.setLayout(
+			width,
+			WindowManager.LayoutParams.WRAP_CONTENT
+		)
+		dialog.setCanceledOnTouchOutside(false)
+		dialog.show()
+	}
+
+
+	fun showWarningPriceChangeDialog(
+		activity: Activity,
+		status: String,
+		statement: String,
+		btnText: String,
+		onClick: () -> Unit
+	) {
+		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
+		val binding = DialogPriceChangedWarningBinding.inflate(activity.layoutInflater)
 		dialog.setContentView(binding.root)
 		val width = activity.resources.displayMetrics.widthPixels
 		binding.apply {

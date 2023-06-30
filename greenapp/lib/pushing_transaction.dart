@@ -273,6 +273,7 @@ class PushingTransaction {
           {
             try {
               var args = call.arguments;
+              var spentXCHCoins = args['spentXCHCoins'];
               var mnemonics = args["mnemonics"].toString().split(' ');
               var url = args["url"].toString();
               var assetId = args["asset_id"].toString();
@@ -289,7 +290,8 @@ class PushingTransaction {
                   catAmount: catAmount,
                   observer: observer,
                   nonObserver: nonObserver,
-                  fee: fee);
+                  fee: fee,
+                  spentXCHCoinsJson: spentXCHCoins);
             } catch (ex) {
               debugPrint(
                   "Exception occurred in exchanging xch for cat : ${ex.toString()}");
@@ -312,7 +314,8 @@ class PushingTransaction {
       required int catAmount,
       required int observer,
       required int nonObserver,
-      required int fee}) async {
+      required int fee,
+      required String spentXCHCoinsJson}) async {
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
     final fullNodeRpc = FullNodeHttpRpc(url);
@@ -337,15 +340,42 @@ class PushingTransaction {
       puzzleHashes.add(element.key);
     });
 
+    List<String> spentCoinsParents = [];
+    if (spentXCHCoinsJson.isNotEmpty) {
+      List<dynamic> spentCoinsJsonDecoded = json.decode(spentXCHCoinsJson);
+      for (var item in spentCoinsJsonDecoded) {
+        var parent_coin_info = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parent_coin_info);
+      }
+    }
+
     final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
 
     debugPrint(
         "My Response From retrieving just xch coins  : $responseDataCAT");
-    List<FullCoin>? xchCoins;
 
-    xchCoins = standartWalletService.convertXchCoinsToFull(
-      await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
-    );
+    debugPrint("Already spent xch coins  : $responseDataCAT");
+
+    var curAmount = 0;
+    final totalAmount = xchAmount + fee;
+    List<Coin> neededCoins = [];
+    List<Coin> totalCoins = await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+    for (var coin in totalCoins) {
+      var isCoinSpent =
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
+      debugPrint("Found spent coins for xch parent coin info $isCoinSpent");
+      if (!isCoinSpent) {
+        curAmount += coin.amount;
+        neededCoins.add(coin);
+        if (curAmount >= totalAmount) {
+          break;
+        }
+      }
+    }
+
+    List<FullCoin>? xchFullCoins;
+
+    xchFullCoins = standartWalletService.convertXchCoinsToFull(neededCoins);
 
     final changePh = keychain.puzzlehashes[0];
     final targePh = keychain.puzzlehashes[1];
@@ -363,13 +393,15 @@ class PushingTransaction {
         offerredAmounts: {
           null: -xchAmount
         },
-        coins: xchCoins,
+        coins: xchFullCoins,
         changePuzzlehash: changePh,
         targetPuzzleHash: targePh,
         fee: fee);
     final str = offer.toBench32();
     debugPrint("Offering xch for cat : $str");
-    _channel.invokeMethod("offer", {"offer": str});
+
+    _channel.invokeMethod(
+        "XCHToCAT", {"offer": str, "spentXCHCoins": jsonEncode(neededCoins)});
   }
 
   Future<void> tibetSwapCATToXCH(

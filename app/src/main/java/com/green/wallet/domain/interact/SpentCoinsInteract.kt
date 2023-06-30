@@ -24,5 +24,11 @@ interface SpentCoinsInteract {
 		tokenCode: String
 	): Flow<DoubleArray>
 
+	suspend fun getSpendableBalanceByTokenCode(
+		assetID: String,
+		tokenCode: String,
+		address: String
+	): Flow<Double>
+
 
 }

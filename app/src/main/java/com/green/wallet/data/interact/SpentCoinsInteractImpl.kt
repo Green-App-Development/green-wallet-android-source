@@ -7,12 +7,16 @@ import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
+import com.green.wallet.data.local.WalletDao
 import kotlinx.coroutines.flow.*
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
 
-class SpentCoinsInteractImpl @Inject constructor(private val spentCoinsDao: SpentCoinsDao) :
+class SpentCoinsInteractImpl @Inject constructor(
+	private val spentCoinsDao: SpentCoinsDao,
+	private val walletDao: WalletDao
+) :
 	SpentCoinsInteract {
 
 	override suspend fun insertSpentCoinsJson(
@@ -85,6 +89,21 @@ class SpentCoinsInteractImpl @Inject constructor(private val spentCoinsDao: Spen
 		VLog.d("TokenAmount : $tokenAmountFlow and FeeAmount : $feeAmountFlow")
 
 		return tokenAmountFlow.combine(feeAmountFlow) { token, fee -> doubleArrayOf(token, fee) }
+	}
+
+	override suspend fun getSpendableBalanceByTokenCode(
+		assetID: String,
+		tokenCode: String,
+		address: String
+	): Flow<Double> {
+		val walletEntity = walletDao.getWalletByAddress(address)[0]
+		if (assetID.isEmpty()) {
+			return spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, tokenCode)
+				.map { list -> walletEntity.balance - (list.map { it.amount }.sum()) }
+		}
+		val tokenAmount = walletEntity.hashWithAmount[assetID] ?: 0.0
+		return spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, tokenCode)
+			.map { list -> tokenAmount - (list.map { it.amount }.sum()) }
 	}
 
 
