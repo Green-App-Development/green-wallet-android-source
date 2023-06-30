@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
@@ -41,7 +42,6 @@ class SwapMainFragment : DaggerFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentSwapMainBinding.inflate(layoutInflater)
-		binding.registerClicks()
 		VLog.d("On CreateView SwapMainFragment")
 		return binding.root
 	}
@@ -52,78 +52,42 @@ class SwapMainFragment : DaggerFragment() {
 		navController =
 			(childFragmentManager.findFragmentById(R.id.my_nav_swap) as NavHostFragment).navController
 		vm.initSwapNavController(navController)
-		registerNavListener()
+		binding.registerClicks()
 	}
 
-	private fun registerNavListener() {
-		if (vm.prevDestID != -1) {
-			navController.navigate(vm.prevDestID)
-			binding.clickedChosenDestinations(vm.prevDestID, true)
-		}
-		navController.addOnDestinationChangedListener { controller, destination, arguments ->
-			binding.clickedChosenDestinations(destination.id)
-		}
-	}
 
 	private fun FragmentSwapMainBinding.registerClicks() {
 
 		//0
 		txtExchange.setOnClickListener {
-			clickedChosenDestinations(R.id.fragment_exchange)
-			navController.popBackStack(R.id.fragment_exchange, false)
-			vm.prevVisitedDest.clear()
+			vm.navigateTo(destList[0])
 		}
 
 		//1
-		txtMyRequests.setOnClickListener {
-			if (clickedChosenDestinations(R.id.fragment_request)) {
-				if (!vm.prevVisitedDest.contains(1)) {
-					vm.prevVisitedDest.add(1)
-					navController.navigate(R.id.fragment_request)
-				} else {
-					val res = navController.popBackStack(
-						R.id.fragment_request,
-						false
-					)
-					if (res)
-						vm.prevVisitedDest.remove(2)
-					VLog.d(
-						"Already have been to fragment request  : $res"
-					)
-				}
-			}
+		txtTibetSwap.setOnClickListener {
+			vm.navigateTo(destList[1])
 		}
 
 		//2
-		txtTibetSwap.setOnClickListener {
-			if (clickedChosenDestinations(R.id.fragment_tibet_swap)) {
-				if (!vm.prevVisitedDest.contains(2)) {
-					vm.prevVisitedDest.add(2)
-					navController.navigate(R.id.fragment_tibet_swap)
-				} else {
-					val res = navController.popBackStack(
-						R.id.fragment_tibet_swap,
-						false
-					)
-					if (res)
-						vm.prevVisitedDest.remove(1)
-					VLog.d(
-						"Already have been to tibet fragment swap : $res"
-					)
-				}
-			}
+		txtMyRequests.setOnClickListener {
+			vm.navigateTo(destList[2])
 		}
 
+		vm.addDestId(R.id.fragment_exchange)
+		if (vm.prevDestID != -1)
+			vm.navigateTo(vm.prevDestID)
+
+		navController.addOnDestinationChangedListener { controller, destination, arguments ->
+			clickedChosenDestinations(
+				destination.id
+			)
+		}
 
 	}
 
 	private fun FragmentSwapMainBinding.clickedChosenDestinations(
-		dest: Int,
-		ignorePrevID: Boolean = false
+		dest: Int
 	): Boolean {
-		if (vm.prevDestID == dest && !ignorePrevID)
-			return false
-		vm.prevDestID = dest
 		val txtClicks = listOf(txtExchange, txtTibetSwap, txtMyRequests)
 		for (i in 0 until destList.size) {
 			if (destList[i] == dest) {
