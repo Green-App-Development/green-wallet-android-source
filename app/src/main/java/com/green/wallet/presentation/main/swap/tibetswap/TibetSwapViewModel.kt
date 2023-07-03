@@ -117,23 +117,28 @@ class TibetSwapViewModel @Inject constructor(
 		}
 	}
 
-	suspend fun pushOfferToTibet(
+	suspend fun pushOfferCATXCHToTibet(
 		pairID: String,
 		offer: String,
 		amountFrom: Double,
 		amountTo: Double,
 		catCode: String,
 		isInputXCH: Boolean,
-		fee: Double
+		fee: Double,
+		spentXCHCoinsJson: String,
+		spentCATCoinsJson: String
 	) =
-		tibetSwapUseCases.pushOfferToTibet(
+		tibetSwapUseCases.pushOfferCATXCHToTibet(
 			pairID,
 			offer,
 			amountFrom,
 			amountTo,
 			catCode,
 			isInputXCH,
-			fee
+			fee,
+			spentXCHCoinsJson,
+			spentCATCoinsJson,
+			fk_address = curWallet!!.address
 		)
 
 	suspend fun pushingOfferXCHCATToTibet(

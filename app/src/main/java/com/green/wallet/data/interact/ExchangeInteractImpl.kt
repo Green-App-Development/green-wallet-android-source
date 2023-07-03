@@ -22,6 +22,7 @@ import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -189,7 +190,11 @@ class ExchangeInteractImpl @Inject constructor(
 		val ordersFlow =
 			orderExchangeDao.getAllOrderEntityList().map { it.map { it.toOrderItem() } }
 		val tibetSwapFlow =
-			tibetDao.getTibetSwapEntitiesListFlow().map { it.map { it.toTibetSwapExchange() } }
+			tibetDao.getTibetSwapEntitiesListFlow().map {
+				it.map {
+					it.toTibetSwapExchange()
+				}
+			}
 		return combine(ordersFlow, tibetSwapFlow) { orders, tibetSwap ->
 			(orders + tibetSwap).sortedBy { item ->
 				when (item) {
@@ -224,7 +229,8 @@ class ExchangeInteractImpl @Inject constructor(
 					height = spentHeight,
 					offer_id = tibetSwap.offer_id
 				)
-				spentCoinsDao.deleteSpentConsByTimeCreated(tibetSwap.time_created)
+				val rows = spentCoinsDao.deleteSpentConsByTimeCreated(tibetSwap.time_created)
+				VLog.d("Deleted spent coins row affected : $rows")
 			}
 		}
 	}

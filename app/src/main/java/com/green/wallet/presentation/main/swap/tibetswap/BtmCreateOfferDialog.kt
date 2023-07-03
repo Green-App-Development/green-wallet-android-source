@@ -98,6 +98,15 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 						VLog.d("Spendable balance $spendable Amount : $amountIn and Fee : ${getFeeBasedOnPosition()}")
 						spendableBalanceTxt(balance = spendable, diff >= 0.0, "XCH")
 					}
+				} else {
+					vm.getSpendableBalanceByTokenCodeAndAddress(
+						address = vm.curWallet!!.address,
+						tokenCode,
+						assetId
+					).collectLatest { spendable ->
+						val diff = spendable - amountIn
+						spendableBalanceTxt(balance = spendable, diff >= 0.0, tokenCode)
+					}
 				}
 			}
 		}
@@ -147,6 +156,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		btnSign.setOnClickListener {
 			VLog.d("Btn sign is clicked on dialog")
 			if (vm.xchToCAT) {
+				initMethodChannelHandler(pairId, amountIn, amountOut, tokenCode)
 				lifecycleScope.launch {
 					generateOfferXCHToCAT(
 						amountFrom = amountFrom,
@@ -155,16 +165,32 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 					)
 				}
 			} else {
+				initMethodChannelHandler(pairId, amountIn, amountOut, tokenCode)
 				lifecycleScope.launch {
 					generateOfferCATToXCH(
 						amountFrom = amountFrom,
 						amountTo = amountTo,
-						assetId = assetId
+						assetId = assetId,
+						tokenCode = tokenCode
 					)
 				}
 			}
 		}
 
+
+		initSpendableBalance(
+			if (vm.xchToCAT) "" else assetID,
+			if (vm.xchToCAT) "XCH" else tokenCode,
+			amountIn = amountIn
+		)
+	}
+
+	private fun initMethodChannelHandler(
+		pairId: String,
+		amountIn: Double,
+		amountOut: Double,
+		tokenCode: String
+	) {
 		methodChannel.setMethodCallHandler { call, result ->
 			if (call.method == "XCHToCAT") {
 				val resultArgs = call.arguments as HashMap<String, String>
@@ -181,28 +207,27 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 					getFeeBasedOnPosition(),
 					spentXCHCoins = spentXCHCoins
 				)
-			} else if (call.method == "offer") {
+			} else if (call.method == "offerCATToXCH") {
 				val resultArgs = call.arguments as HashMap<String, String>
 				val offer = resultArgs["offer"].toString()
-				VLog.d("Offer from Flutter : $offer")
-				pushingOfferToTibet(
+				val spentXCHCoins = resultArgs["XCHCoins"].toString()
+				val spentCATCoins = resultArgs["CATCoins"].toString()
+				VLog.d("Args from Flutter : $resultArgs")
+				pushingOfferToTibetCATToXCH(
 					pairId,
 					offer,
 					amountIn,
 					amountOut,
 					tokenCode,
 					vm.xchToCAT,
-					getFeeBasedOnPosition()
+					getFeeBasedOnPosition(),
+					spentXCHCoins,
+					spentCATCoins
 				)
 			} else if (call.method == "exception") {
 				showFailedTibetSwap()
 			}
 		}
-		initSpendableBalance(
-			if (vm.xchToCAT) "" else assetID,
-			if (vm.xchToCAT) "XCH" else tokenCode,
-			amountIn = amountIn
-		)
 	}
 
 	private suspend fun generateOfferXCHToCAT(
@@ -273,18 +298,30 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 	}
 
 
-	private fun pushingOfferToTibet(
+	private fun pushingOfferToTibetCATToXCH(
 		pairId: String,
 		offer: String,
 		amountFrom: Double,
 		amountTo: Double,
 		catCode: String,
 		isInputXCH: Boolean,
-		fee: Double
+		fee: Double,
+		spentXCHCoins: String,
+		spentCATCoins: String
 	) {
 		lifecycleScope.launch {
 			val res =
-				vm.pushOfferToTibet(pairId, offer, amountFrom, amountTo, catCode, isInputXCH, fee)
+				vm.pushOfferCATXCHToTibet(
+					pairId,
+					offer,
+					amountFrom,
+					amountTo,
+					catCode,
+					isInputXCH,
+					fee,
+					spentXCHCoins,
+					spentCATCoins
+				)
 			when (res.state) {
 				Resource.State.ERROR -> {
 					showFailedTibetSwap()
@@ -345,11 +382,18 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 	private suspend fun generateOfferCATToXCH(
 		amountFrom: Long,
 		amountTo: Long,
-		assetId: String
+		assetId: String,
+		tokenCode: String
 	) {
 		dialogManager.showProgress(requireActivity())
 		val wallet = vm.curWallet ?: return
 		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
+		val spentCoinsXCH =
+			vm.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, "XCH")
+		val spentCoinsCAT =
+			vm.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, tokenCode)
+		val totalCoins = spentCoinsXCH.toMutableList()
+		totalCoins.addAll(spentCoinsCAT)
 		val argSpendBundle = hashMapOf<String, Any>()
 		argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
 		argSpendBundle["amountFrom"] = amountFrom
@@ -359,6 +403,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		argSpendBundle["asset_id"] = assetId
 		argSpendBundle["observer"] = wallet.observerHash
 		argSpendBundle["nonObserver"] = wallet.nonObserverHash
+		argSpendBundle["spentCoins"] = Gson().toJson(totalCoins)
 		VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
 		methodChannel.invokeMethod("CATToXCH", argSpendBundle)
 	}
