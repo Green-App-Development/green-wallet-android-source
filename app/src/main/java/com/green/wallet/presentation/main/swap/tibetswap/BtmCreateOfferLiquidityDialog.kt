@@ -110,7 +110,6 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 
 		btnSign.setOnClickListener {
 			if (vm.toTibet) {
-
 				lifecycleScope.launch {
 					generateOfferToTibet(
 						xchAmount,

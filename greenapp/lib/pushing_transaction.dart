@@ -286,11 +286,13 @@ class PushingTransaction {
             var tibetAssetId=args["tibet_asset_id"].toString();
             var xchAmount = int.parse(args["xchAmount"].toString());
             var catAmount = int.parse(args["catAmount"].toString());
-            var liquidityAmount = int.parse(args["catAmount"].toString());
+            var liquidityAmount = int.parse(args["liquidityAmount"].toString());
             var observer = int.parse(args["observer"].toString());
             var nonObserver = int.parse(args["nonObserver"].toString());
             var fee = int.parse(args["fee"].toString());
+            generateOfferCATToTibet(
 
+            )
           }catch(ex){
             debugPrint("Exception in offering cat to tibet : $ex");
             _channel.invokeMethod("exception");
@@ -303,6 +305,9 @@ class PushingTransaction {
     // offeringCatForXCH();
     // testingMethod();
   }
+
+
+
 
   Future<void> tibetSwapXCHToCAT(
       {required List<String> mnemonics,
