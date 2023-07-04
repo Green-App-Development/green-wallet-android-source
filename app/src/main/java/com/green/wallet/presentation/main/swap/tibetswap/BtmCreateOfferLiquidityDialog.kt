@@ -79,6 +79,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		VLog.d("On View Created Create Offer with vm : $vm")
 		binding.listeners()
+		binding.offerValues()
 	}
 
 	private fun initSpendableBalance(assetId: String, tokenCode: String, amountIn: Double) {
@@ -87,6 +88,34 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 
 			}
 		}
+	}
+
+	private fun DialogBtmCreateOfferLiquidityBinding.offerValues() {
+
+		val xchAmount = vm.xchDeposit
+		val catAmount = vm.catTibetAmount
+		val token = vm.tokenList.value[vm.catLiquidityAdapterPos]
+		val tibetToken = vm.tokenTibetList.value[vm.catLiquidityAdapterPos]
+		val liquidity = vm.liquidityAmount
+		if (vm.toTibet) {
+			txtMinus(txtXCHValue, xchAmount, "XCH")
+			txtMinus(txtCATValue, catAmount, token.code)
+			txtPlus(txtLiquidityAmount, liquidity, tibetToken.code)
+		} else {
+			txtPlus(txtXCHValue, xchAmount, "XCH")
+			txtPlus(txtCATValue, catAmount, token.code)
+			txtMinus(txtLiquidityAmount, liquidity, tibetToken.code)
+		}
+
+		btnSign.setOnClickListener {
+			if (vm.toTibet) {
+
+
+			}else{
+
+			}
+		}
+
 	}
 
 	private fun DialogBtmCreateOfferLiquidityBinding.listeners() {
@@ -102,15 +131,6 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		relChosenShortClick.setOnClickListener {
 			clickedPositionsFee(2)
 		}
-
-
-		btnSign.setOnClickListener {
-			VLog.d("Btn sign is clicked on dialog")
-
-		}
-
-
-
 
 	}
 
@@ -250,13 +270,13 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		}
 	}
 
-	private fun txtPlus(txt: TextView, value: String, token: String) {
-		txt.setText("+ $value $token")
+	private fun txtPlus(txt: TextView, value: Double, token: String) {
+		txt.setText("+ ${formattedDoubleAmountWithPrecision(value)} $token")
 		txt.setTextColor(requireActivity().getColorResource(R.color.green))
 	}
 
-	private fun txtMinus(txt: TextView, value: String, token: String) {
-		txt.setText("- $value $token")
+	private fun txtMinus(txt: TextView, value: Double, token: String) {
+		txt.setText("- ${formattedDoubleAmountWithPrecision(value)} $token")
 		txt.setTextColor(requireActivity().getColorResource(R.color.red_mnemonic))
 	}
 

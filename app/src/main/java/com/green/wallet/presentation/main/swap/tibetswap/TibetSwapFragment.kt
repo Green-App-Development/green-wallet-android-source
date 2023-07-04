@@ -422,6 +422,7 @@ class TibetSwapFragment : DaggerFragment() {
 				adTibetLiquidity.selectedPosition = p2
 				val tokenCode = adTibetLiquidity.dataOptions[p2].removeSuffix("-XCH")
 				edtTokenCAT.text = tokenCode
+				vm.catLiquidityAdapterPos=p2
 				val tokenPos = getPositionOfCodeFromAdCATLiquidity(tokenCode)
 				if (tokenPos != -1) {
 					tokenTibetCatSpinner.setSelection(tokenPos)
@@ -437,8 +438,6 @@ class TibetSwapFragment : DaggerFragment() {
 		edtAmountCatTibet.addTextChangedListener {
 			calculateTibetLiquidity(it.toString())
 		}
-
-
 
 	}
 
@@ -473,6 +472,9 @@ class TibetSwapFragment : DaggerFragment() {
 		xchDeposit += liquidity
 		xchDeposit /= PRECISION_XCH
 		edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xchDeposit))
+		vm.xchDeposit = xchDeposit
+		vm.catTibetAmount = amount
+		vm.liquidityAmount = liquidity / 1000.0
 	}
 
 	private fun FragmentTibetswapBinding.changeLayoutPositions() {
