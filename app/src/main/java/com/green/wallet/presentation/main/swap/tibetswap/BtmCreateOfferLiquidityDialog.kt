@@ -24,6 +24,7 @@ import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
@@ -110,12 +111,45 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		btnSign.setOnClickListener {
 			if (vm.toTibet) {
 
-
-			}else{
+				lifecycleScope.launch {
+					generateOfferToTibet(
+						xchAmount,
+						catAmount,
+						liquidity,
+						token.hash,
+						tibetToken.hash
+					)
+				}
+			} else {
 
 			}
 		}
 
+	}
+
+	private suspend fun generateOfferToTibet(
+		xchAmount: Double,
+		catAmount: Double,
+		liquidity: Double,
+		tokenHash: String,
+		tibetHash: String
+	) {
+		dialogManager.showProgress(requireActivity())
+		val wallet = vm.curWallet ?: return
+		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
+		val argSpendBundle = hashMapOf<String, Any>()
+		argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
+		argSpendBundle["xchAmount"] = xchAmount
+		argSpendBundle["catAmount"] = catAmount
+		argSpendBundle["liquidityAmount"] = liquidity
+		argSpendBundle["mnemonics"] = wallet.mnemonics.joinToString(" ")
+		argSpendBundle["url"] = url
+		argSpendBundle["token_asset_id"] = tokenHash
+		argSpendBundle["tibet_asset_id"] = tibetHash
+		argSpendBundle["observer"] = wallet.observerHash
+		argSpendBundle["nonObserver"] = wallet.nonObserverHash
+		VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
+		methodChannel.invokeMethod("CATToTibet", argSpendBundle)
 	}
 
 	private fun DialogBtmCreateOfferLiquidityBinding.listeners() {

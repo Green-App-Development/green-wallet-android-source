@@ -277,6 +277,26 @@ class PushingTransaction {
             }
             break;
           }
+        case "CATToTibet" :{
+          try{
+            var args = call.arguments;
+            var mnemonics = args["mnemonics"].toString().split(' ');
+            var url = args["url"].toString();
+            var tokenAssetId = args["token_asset_id"].toString();
+            var tibetAssetId=args["tibet_asset_id"].toString();
+            var xchAmount = int.parse(args["xchAmount"].toString());
+            var catAmount = int.parse(args["catAmount"].toString());
+            var liquidityAmount = int.parse(args["catAmount"].toString());
+            var observer = int.parse(args["observer"].toString());
+            var nonObserver = int.parse(args["nonObserver"].toString());
+            var fee = int.parse(args["fee"].toString());
+
+          }catch(ex){
+            debugPrint("Exception in offering cat to tibet : $ex");
+            _channel.invokeMethod("exception");
+          }
+        }
+        break;
       }
     });
     // offeringXCHForCat();
