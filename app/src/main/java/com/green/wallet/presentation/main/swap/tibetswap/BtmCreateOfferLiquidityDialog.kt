@@ -148,7 +148,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		argSpendBundle["observer"] = wallet.observerHash
 		argSpendBundle["nonObserver"] = wallet.nonObserverHash
 		VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
-		methodChannel.invokeMethod("CATToTibet", argSpendBundle)
+		methodChannel.invokeMethod("CATToAddLiquidity", argSpendBundle)
 	}
 
 	private fun DialogBtmCreateOfferLiquidityBinding.listeners() {
