@@ -241,6 +241,16 @@ fun convertNetworkTypeForFlutter(networkType: String): String {
 	return "Chives"
 }
 
+fun getLiquidityQuote(
+	knownIn: Long,
+	knownReserve: Long,
+	unknownReserve: Long
+): Long {
+	if (knownReserve == 0L || unknownReserve == 0L || knownIn == 0L) return 0
+	val output = (unknownReserve * knownIn / knownReserve)
+
+	return output
+}
 
 
 

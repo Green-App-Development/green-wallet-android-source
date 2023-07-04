@@ -18,5 +18,7 @@ interface TokenInteract {
 
 	suspend fun getTokenListPairIDExist(): List<Token>
 
+	suspend fun getTibetTokenList(): List<Token>
+
 
 }

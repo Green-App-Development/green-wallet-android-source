@@ -298,10 +298,17 @@
 			tools:layout="@layout/dialog_btm_choose_wallet" />
 
 	<dialog
-			android:id="@+id/btmSheetDialogCreateOffer"
-			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferDialog"
+			android:id="@+id/btmSheetDialogCreateOfferXCHCAT"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferXCHCATDialog"
 			android:label="btmDialog"
-			tools:layout="@layout/dialog_btm_create_offer" />
+			tools:layout="@layout/dialog_btm_create_offer_xchcat" />
+
+	<dialog
+			android:id="@+id/btmSheetDialogCreateLiquidityOffer"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferLiquidityDialog"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_btm_create_offer_liquidity" />
+
 
 	<fragment
 			android:id="@+id/fragmentTibetSwapDetail"

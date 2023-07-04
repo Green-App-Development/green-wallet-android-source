@@ -53,5 +53,11 @@ class TokenInteractImpl @Inject constructor(
 			.map { it.toToken(imported = false, 1, pair_id = it.pair_id) }
 	}
 
+	override suspend fun getTibetTokenList(): List<Token> {
+		return tokenDao.getTibetTokenList().map {
+			it.toToken(false, 1, "")
+		}
+	}
+
 
 }

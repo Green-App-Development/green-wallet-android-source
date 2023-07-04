@@ -116,6 +116,7 @@ class WalletInteractImpl @Inject constructor(
 //		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
 		val hashListMutList = walletEntity.hashListImported.keys.toMutableList()
+		VLog.d("Hash List Mut List On Home  : $hashListMutList")
 		val tokensDefault = tokenDao.getTokensDefaultOnScreen().map { it.hash }
 		val assetIds = mutableListOf<AssetIDWithPriority>()
 		for (hash in hashListMutList) {
@@ -167,8 +168,10 @@ class WalletInteractImpl @Inject constructor(
 					token.hash
 				)
 				totalAmountInUSD += curTotalAmountInUSD
-				if (amount == 0.0 && !token.enabled)
+				if (amount == 0.0 && !token.enabled) {
+					VLog.d("Token with hash : $hash is not enabled and amount 0.0")
 					continue
+				}
 				tokenList.add(tokenWallet)
 			} else {
 				VLog.d("Given hash doesn't exist in tokens db : $hash")

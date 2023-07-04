@@ -36,4 +36,7 @@ interface TokenDao {
 	@Query("SELECT * FROM TokenEntity WHERE pair_id!=''")
 	suspend fun getTokenListEntityPairIdIsNotEmpty(): List<TokenEntity>
 
+	@Query("SELECT * FROM TokenEntity WHERE code LIKE '%' || :space || '%'")
+	suspend fun getTibetTokenList(space: String = "-"): List<TokenEntity>
+
 }

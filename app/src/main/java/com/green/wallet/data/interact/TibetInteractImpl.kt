@@ -2,6 +2,7 @@ package com.green.wallet.data.interact
 
 import com.green.wallet.data.local.TokenDao
 import com.green.wallet.data.network.TibetExchangeService
+import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.presentation.tools.Resource
@@ -74,6 +75,19 @@ class TibetInteractImpl
 		} catch (ex: Exception) {
 			VLog.d("Pushing  offer to tibet exception : ${ex.message}")
 			return Resource.error(ex)
+		}
+	}
+
+	override suspend fun getTibetLiquidity(pairId: String): TibetLiquidity? {
+		return try {
+			val res = tibetService.getTibetLiquidityByPairId(pairId)
+			if (res.isSuccessful) {
+				res.body()!!.toTibetLiquidity()
+			} else
+				throw Exception(res.message())
+		} catch (ex: Exception) {
+			VLog.d("Exception in getting tibet liquidity : ${ex.message}")
+			null
 		}
 	}
 

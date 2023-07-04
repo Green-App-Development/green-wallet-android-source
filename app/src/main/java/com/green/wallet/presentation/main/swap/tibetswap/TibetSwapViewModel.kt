@@ -3,10 +3,12 @@ package com.green.wallet.presentation.main.swap.tibetswap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.SpentCoinsInteract
+import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.domain.usecases.tibet.TibetSwapUseCases
@@ -23,7 +25,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import okhttp3.internal.notify
 import javax.inject.Inject
 
 class TibetSwapViewModel @Inject constructor(
@@ -31,7 +35,8 @@ class TibetSwapViewModel @Inject constructor(
 	private val tibetSwapUseCases: TibetSwapUseCases,
 	private val walletInteract: WalletInteract,
 	val prefsManager: PrefsManager,
-	private val spentCoinsInteract: SpentCoinsInteract
+	private val spentCoinsInteract: SpentCoinsInteract,
+	private val tibetInteract: TibetInteract
 ) : ViewModel() {
 
 	var isShowingSwap = true
@@ -42,12 +47,23 @@ class TibetSwapViewModel @Inject constructor(
 	val containerSmallerSize = 265
 	var nextContainerBigger = true
 	var catAdapPosition = 0
-	var toTibet: Boolean = false
+	var catLiquidityAdapterPos = -1
+	var toTibet: Boolean = true
 
 	var curWallet: Wallet? = null
+	var curTibetLiquidity: TibetLiquidity? = null
+
+	var xchDeposit: Double = 0.0
+	var catTibetAmount: Double = 0.0
+	var liquidityAmount: Double = 0.0
+
 
 	private val _tokenList = MutableStateFlow<List<Token>>(emptyList())
 	val tokenList = _tokenList.asStateFlow()
+
+	private val _tokenTibetList = MutableStateFlow<List<Token>>(emptyList())
+	val tokenTibetList = _tokenTibetList.asStateFlow()
+
 
 	private val _tibetSwap = MutableStateFlow<Resource<TibetSwapResponse>?>(null)
 	val tibetSwap = _tibetSwap.asStateFlow()
@@ -69,7 +85,15 @@ class TibetSwapViewModel @Inject constructor(
 	init {
 		VLog.d("On create tibet vm swap : $this")
 		retrieveTokenList()
+		retrieveTibetTokenList()
 		initWalletList()
+	}
+
+	private fun retrieveTibetTokenList() {
+		viewModelScope.launch {
+			val res = tokenInteract.getTibetTokenList()
+			_tokenTibetList.emit(res)
+		}
 	}
 
 	private fun initWalletList() {
@@ -162,6 +186,9 @@ class TibetSwapViewModel @Inject constructor(
 			spentXCHCoinsJson,
 			curWallet!!.address
 		)
+
+	suspend fun getTibetLiquidity(pairID: String) = tibetInteract.getTibetLiquidity(pairID)
+
 
 	override fun onCleared() {
 		super.onCleared()

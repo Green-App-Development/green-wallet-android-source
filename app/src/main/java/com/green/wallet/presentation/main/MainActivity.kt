@@ -935,9 +935,14 @@ class MainActivity : BaseActivity() {
 		navController.navigate(btmSheetDialogChooseWallet)
 	}
 
-	fun move2BtmCreateOfferDialog() {
-		navController.navigate(btmSheetDialogCreateOffer)
+	fun move2BtmCreateOfferXCHCATDialog() {
+		navController.navigate(btmSheetDialogCreateOfferXCHCAT)
 	}
+
+	fun move2BtmCreateOfferLiquidityDialog() {
+		navController.navigate(btmSheetDialogCreateLiquidityOffer)
+	}
+
 
 	fun move2WalletSettings(address: String) {
 		val bundle = bundleOf(

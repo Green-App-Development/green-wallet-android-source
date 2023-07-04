@@ -17,7 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.green.wallet.R
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
-import com.green.wallet.databinding.DialogBtmCreateOfferBinding
+import com.green.wallet.databinding.DialogBtmCreateOfferXchcatBinding
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
@@ -38,9 +38,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class BtmCreateOfferDialog : BottomSheetDialogFragment() {
+class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 
-	private lateinit var binding: DialogBtmCreateOfferBinding
+	private lateinit var binding: DialogBtmCreateOfferXchcatBinding
 
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
@@ -75,7 +75,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		container: ViewGroup?,
 		savedInstanceState: Bundle?
 	): View {
-		binding = DialogBtmCreateOfferBinding.inflate(layoutInflater)
+		binding = DialogBtmCreateOfferXchcatBinding.inflate(layoutInflater)
 		return binding.root
 	}
 
@@ -112,7 +112,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		}
 	}
 
-	private fun DialogBtmCreateOfferBinding.listeners() {
+	private fun DialogBtmCreateOfferXchcatBinding.listeners() {
 
 		relChosenLongClick.setOnClickListener {
 			clickedPositionsFee(0)
@@ -434,7 +434,7 @@ class BtmCreateOfferDialog : BottomSheetDialogFragment() {
 		return Gson().fromJson(item, NetworkItem::class.java)
 	}
 
-	private fun DialogBtmCreateOfferBinding.clickedPositionsFee(pos: Int) {
+	private fun DialogBtmCreateOfferXchcatBinding.clickedPositionsFee(pos: Int) {
 		feePosition = pos
 		val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)
 		for (i in 0 until layouts.size) {

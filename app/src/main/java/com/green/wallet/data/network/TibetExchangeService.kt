@@ -2,8 +2,8 @@ package com.green.wallet.data.network
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.green.wallet.data.network.dto.tibet.TibetLiquidityDto
 import com.green.wallet.data.network.dto.tibet.TibetSwapDto
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -29,6 +29,10 @@ interface TibetExchangeService {
 		@Body body: HashMap<String, Any>
 	): Response<JsonObject>
 
+	@GET("pair/{pair_id}")
+	suspend fun getTibetLiquidityByPairId(
+		@Path("pair_id") pair_id: String
+	): Response<TibetLiquidityDto>
 
 
 }

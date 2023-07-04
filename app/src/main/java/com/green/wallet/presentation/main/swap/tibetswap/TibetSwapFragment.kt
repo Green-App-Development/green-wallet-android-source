@@ -16,11 +16,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.common.tools.getLiquidityQuote
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTibetswapBinding
 import com.green.wallet.presentation.custom.AnimationManager
+import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
+import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.TokenSpinnerAdapter
 import com.green.wallet.presentation.tools.PRECISION_CAT
@@ -33,7 +36,10 @@ import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountLiquidity
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
+import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountXCH
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,12 +56,20 @@ class TibetSwapFragment : DaggerFragment() {
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: TibetSwapViewModel by viewModels { viewModelFactory }
 
-	val ad1 by lazy {
+	val ad1Swap by lazy {
 		TokenSpinnerAdapter(requireActivity(), listOf("XCH"))
 	}
 
-	val ad2 by lazy {
+	val ad2Swap by lazy {
 		TokenSpinnerAdapter(requireActivity(), listOf(""))
+	}
+
+	val adCATLiquidity by lazy {
+		TokenSpinnerAdapter(requireActivity(), listOf(""))
+	}
+
+	val adTibetLiquidity by lazy {
+		DynamicSpinnerAdapter(150, requireActivity(), listOf(""))
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +77,7 @@ class TibetSwapFragment : DaggerFragment() {
 	}
 
 	override fun onCreateView(
-		inflater: LayoutInflater,
-		container: ViewGroup?,
-		savedInstanceState: Bundle?
+		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
 		binding = FragmentTibetswapBinding.inflate(layoutInflater)
 		return binding.root
@@ -76,18 +88,42 @@ class TibetSwapFragment : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		chooseWalletIfNeeded()
 		with(binding) {
+			commonListeners()
 			prepareRelChosen()
 			logicSwap()
 			logicLiquidity()
 			initDetailsTransSwap()
 		}
 		initTokenSwapAdapters()
+		initTokenTibetAdapter()
 		initCalculateOutput()
 	}
 
+	private fun FragmentTibetswapBinding.commonListeners() {
+		btnGenerateOffer.setOnClickListener {
+			if (vm.isShowingSwap) {
+				getMainActivity().move2BtmCreateOfferXCHCATDialog()
+			} else {
+				getMainActivity().move2BtmCreateOfferLiquidityDialog()
+			}
+		}
+	}
+
+	private fun initTokenTibetAdapter() {
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.tokenTibetList.collectLatest {
+					if (it.isNotEmpty()) {
+						adTibetLiquidity.updateData(it.map { it.code })
+					}
+				}
+			}
+		}
+	}
+
+
 	private fun chooseWalletIfNeeded() {
-		if (vm.curWallet != null)
-			return
+		if (vm.curWallet != null) return
 		lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				vm.walletList.collectLatest {
@@ -134,13 +170,18 @@ class TibetSwapFragment : DaggerFragment() {
 		lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				vm.tokenList.collectLatest {
-					ad2.updateData(it.map { it.code })
-					if (vm.xchToCAT) {
-						binding.changeSwapAdapter(ad1, ad2)
-						choosingXCHToCAT(true)
-					} else {
-						binding.changeSwapAdapter(ad2, ad1)
-						choosingXCHToCAT(false)
+					if (it.isNotEmpty()) {
+						ad2Swap.updateData(it.map { it.code })
+						if (vm.xchToCAT) {
+							binding.changeSwapAdapter(ad1Swap, ad2Swap)
+							choosingXCHToCAT(true)
+						} else {
+							binding.changeSwapAdapter(ad2Swap, ad1Swap)
+							choosingXCHToCAT(false)
+						}
+						adCATLiquidity.updateData(it.map { it.code })
+						if (vm.catLiquidityAdapterPos != -1)
+							binding.tokenTibetCatSpinner.setSelection(vm.catLiquidityAdapterPos)
 					}
 				}
 			}
@@ -150,10 +191,10 @@ class TibetSwapFragment : DaggerFragment() {
 			resetTextAmountFrom()
 			vm.xchToCAT = !vm.xchToCAT
 			if (vm.xchToCAT) {
-				binding.changeSwapAdapter(ad1, ad2)
+				binding.changeSwapAdapter(ad1Swap, ad2Swap)
 				choosingXCHToCAT(true)
 			} else {
-				binding.changeSwapAdapter(ad2, ad1)
+				binding.changeSwapAdapter(ad2Swap, ad1Swap)
 				choosingXCHToCAT(false)
 			}
 		}
@@ -166,8 +207,7 @@ class TibetSwapFragment : DaggerFragment() {
 	}
 
 	private fun FragmentTibetswapBinding.prepareRelChosen() {
-		relChosen.viewTreeObserver.addOnGlobalLayoutListener(object :
-			OnGlobalLayoutListener {
+		relChosen.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
 			override fun onGlobalLayout() {
 				val width = relChosen.width
 				VLog.d("Got width of view relChosen : $width")
@@ -187,8 +227,7 @@ class TibetSwapFragment : DaggerFragment() {
 		//detail tran
 		if (!vm.nextContainerBigger) {
 			animManager.rotateBy180ForwardNoAnimation(
-				imgArrowDownDetailTrans,
-				requireActivity()
+				imgArrowDownDetailTrans, requireActivity()
 			)
 			val params = containerSwap.layoutParams
 			params.height = requireActivity().convertDpToPixel(vm.containerBiggerSize)
@@ -205,8 +244,7 @@ class TibetSwapFragment : DaggerFragment() {
 
 	lateinit var animTransDetail: ValueAnimator
 	fun initAnimationCollapsingDetailTransaction(layout: View) {
-		if (this::animTransDetail.isInitialized && animTransDetail.isRunning)
-			return
+		if (this::animTransDetail.isInitialized && animTransDetail.isRunning) return
 		val newHeightPixel = (vm.nextHeight * resources.displayMetrics.density).toInt()
 		animTransDetail = ValueAnimator.ofInt(layout.height, newHeightPixel)
 		animTransDetail.duration = 500 // duration in milliseconds
@@ -219,8 +257,7 @@ class TibetSwapFragment : DaggerFragment() {
 		animTransDetail.start()
 		if (vm.nextContainerBigger) {
 			animManager.rotateBy180Forward(binding.imgArrowDownDetailTrans, requireActivity())
-		} else
-			animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, requireActivity())
+		} else animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, requireActivity())
 		vm.nextContainerBigger = !vm.nextContainerBigger
 		if (vm.nextContainerBigger) {
 			vm.nextHeight = vm.containerBiggerSize
@@ -242,14 +279,10 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 
 		animManager.animateArrowIconCustomSpinner(
-			tokenToSpinner,
-			imgArrowToSwap,
-			requireActivity()
+			tokenToSpinner, imgArrowToSwap, requireActivity()
 		)
 		animManager.animateArrowIconCustomSpinner(
-			tokenFromSpinner,
-			imgArrowFromSwap,
-			requireActivity()
+			tokenFromSpinner, imgArrowFromSwap, requireActivity()
 		)
 
 
@@ -270,13 +303,6 @@ class TibetSwapFragment : DaggerFragment() {
 			} else {
 				getMainActivity().makeGreyDuringNonFocus(txtYouSending)
 				greenLineEdt.visibility = View.GONE
-			}
-		}
-
-
-		btnGenerateOffer.setOnClickListener {
-			if (vm.isShowingSwap) {
-				getMainActivity().move2BtmCreateOfferDialog()
 			}
 		}
 
@@ -303,8 +329,7 @@ class TibetSwapFragment : DaggerFragment() {
 	}
 
 	private fun FragmentTibetswapBinding.changeSwapAdapter(
-		ad1: TokenSpinnerAdapter,
-		ad2: TokenSpinnerAdapter
+		ad1: TokenSpinnerAdapter, ad2: TokenSpinnerAdapter
 	) {
 
 		tokenFromSpinner.adapter = ad1
@@ -356,33 +381,34 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 
 		animManager.animateArrowIconCustomSpinner(
-			tokenTibetSpinner,
-			imgArrowTibet,
-			requireActivity()
+			tokenTibetSpinner, imgArrowTibet, requireActivity()
 		)
 		animManager.animateArrowIconCustomSpinner(
-			tokenTibetCatSpinner,
-			imgArrowCAT,
-			requireActivity()
+			tokenTibetCatSpinner, imgArrowCAT, requireActivity()
 		)
+
 		//cat Adapter
-		val catAdapter = TokenSpinnerAdapter(requireActivity(), listOf("NION", "USDT", "GWT"))
-		tokenTibetCatSpinner.adapter = catAdapter
+		tokenTibetCatSpinner.adapter = adCATLiquidity
 		imgArrowCAT.setOnClickListener {
 			tokenTibetCatSpinner.performClick()
 		}
 
 		//tibet Adapter
-		val tibetAdapter = TokenSpinnerAdapter(requireActivity(), listOf("NION", "USDT"))
-		tokenTibetSpinner.adapter = tibetAdapter
+		tokenTibetSpinner.adapter = adTibetLiquidity
 		imgArrowTibet.setOnClickListener {
 			tokenTibetSpinner.performClick()
 		}
 
 		tokenTibetCatSpinner.onItemSelectedListener = object : OnItemSelectedListener {
 			override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-				catAdapter.selectedPosition = p2
-				edtTokenCAT.text = catAdapter.dataOptions[p2]
+				adCATLiquidity.selectedPosition = p2
+				edtTokenCAT.text = adCATLiquidity.dataOptions[p2]
+				vm.catLiquidityAdapterPos = p2
+				initTibetLiquidity()
+				val tibetPos = getPositionOfCodeFromAdTibetLiquidity(adCATLiquidity.dataOptions[p2])
+				if (tibetPos != -1) {
+					tokenTibetSpinner.setSelection(tibetPos)
+				}
 			}
 
 			override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -393,8 +419,13 @@ class TibetSwapFragment : DaggerFragment() {
 
 		tokenTibetSpinner.onItemSelectedListener = object : OnItemSelectedListener {
 			override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-				tibetAdapter.selectedPosition = p2
-				edtTokenTibet.text = tibetAdapter.dataOptions[p2]
+				adTibetLiquidity.selectedPosition = p2
+				val tokenCode = adTibetLiquidity.dataOptions[p2].removeSuffix("-XCH")
+				edtTokenCAT.text = tokenCode
+				val tokenPos = getPositionOfCodeFromAdCATLiquidity(tokenCode)
+				if (tokenPos != -1) {
+					tokenTibetCatSpinner.setSelection(tokenPos)
+				}
 			}
 
 			override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -403,7 +434,45 @@ class TibetSwapFragment : DaggerFragment() {
 
 		}
 
+		edtAmountCatTibet.addTextChangedListener {
+			calculateTibetLiquidity(it.toString())
+		}
 
+
+
+	}
+
+	private var tibetLiquidityJob: Job? = null
+	private fun initTibetLiquidity() {
+		tibetLiquidityJob?.cancel()
+		tibetLiquidityJob = lifecycleScope.launch {
+			val pairID = vm.tokenList.value[vm.catLiquidityAdapterPos].pairID
+			val res = vm.getTibetLiquidity(pairID)
+			if (res != null) {
+				vm.curTibetLiquidity = res
+				binding.edtAmountCatTibet.setText(binding.edtAmountCatTibet.text.toString())
+			}
+		}
+	}
+
+	private fun calculateTibetLiquidity(str: String) {
+		if (!vm.toTibet) return
+		val amount = str.toDoubleOrNull() ?: return
+		val tibetLiquid = vm.curTibetLiquidity ?: return
+		val liquidity = getLiquidityQuote(
+			amount.toInt() * 1000L,
+			tibetLiquid.token_reserve,
+			tibetLiquid.liquidity
+		)
+		edtAmountLiquidity.setText((liquidity / 1000.0).toString())
+		var xchDeposit = getLiquidityQuote(
+			amount.toInt() * 1000L,
+			tibetLiquid.token_reserve,
+			tibetLiquid.xch_reserve
+		).toDouble()
+		xchDeposit += liquidity
+		xchDeposit /= PRECISION_XCH
+		edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xchDeposit))
 	}
 
 	private fun FragmentTibetswapBinding.changeLayoutPositions() {
@@ -411,30 +480,40 @@ class TibetSwapFragment : DaggerFragment() {
 		val layoutXCHCAT = layoutXCHCAT
 		topContainer.removeAllViews()
 		bottomContainer.removeAllViews()
+		vm.toTibet = !vm.toTibet
 		if (vm.toTibet) {
 			topContainer.addView(layoutXCHCAT)
 			bottomContainer.addView(layoutTibet)
 			txtYouSendingXCH.text = requireActivity().getStringResource(R.string.you_send)
 			txtYouSendingCAT.text = requireActivity().getStringResource(R.string.you_send)
 			txtYouSendingTibet.text = requireActivity().getStringResource(R.string.you_receive)
+			imgArrowTibet.visibility = View.GONE
+			imgArrowCAT.visibility = View.VISIBLE
+			edtTokenCAT.setTextColor(requireActivity().getColorResource(R.color.secondary_text_color))
+			edtTokenTibet.setTextColor(requireActivity().getColorResource(R.color.hint_color))
+			edtAmountLiquidity.isEnabled = false
+			edtAmountCatTibet.isEnabled = true
 		} else {
 			topContainer.addView(layoutTibet)
 			bottomContainer.addView(layoutXCHCAT)
 			txtYouSendingXCH.text = requireActivity().getStringResource(R.string.you_receive)
 			txtYouSendingCAT.text = requireActivity().getStringResource(R.string.you_receive)
 			txtYouSendingTibet.text = requireActivity().getStringResource(R.string.you_send)
+			imgArrowTibet.visibility = View.VISIBLE
+			imgArrowCAT.visibility = View.GONE
+			edtTokenCAT.setTextColor(requireActivity().getColorResource(R.color.hint_color))
+			edtTokenTibet.setTextColor(requireActivity().getColorResource(R.color.secondary_text_color))
+			edtAmountLiquidity.isEnabled = true
+			edtAmountCatTibet.isEnabled = false
 		}
-		vm.toTibet = !vm.toTibet
 	}
 
 	private fun FragmentTibetswapBinding.listenersForSwapDest(width: Int) {
 
 		txtSwap.setOnClickListener {
-			if (vm.isShowingSwap)
-				return@setOnClickListener
+			if (vm.isShowingSwap) return@setOnClickListener
 			val prevRunning = animManager.moveViewToLeftByWidth(relChosen, width)
-			if (prevRunning)
-				return@setOnClickListener
+			if (prevRunning) return@setOnClickListener
 			vm.isShowingSwap = true
 			txtSwap.setTextColor(requireActivity().getColorResource(R.color.green))
 			txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.greey))
@@ -443,11 +522,9 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 
 		txtLiquidity.setOnClickListener {
-			if (!vm.isShowingSwap)
-				return@setOnClickListener
+			if (!vm.isShowingSwap) return@setOnClickListener
 			val prevRunning = animManager.moveViewToRightByWidth(relChosen, width)
-			if (prevRunning)
-				return@setOnClickListener
+			if (prevRunning) return@setOnClickListener
 			vm.isShowingSwap = false
 			txtSwap.setTextColor(requireActivity().getColorResource(R.color.greey))
 			txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.green))
@@ -464,6 +541,21 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 	}
 
+	private fun getPositionOfCodeFromAdCATLiquidity(code: String): Int {
+		for (i in 0 until adCATLiquidity.dataOptions.size) {
+			if (adCATLiquidity.dataOptions[i] == code)
+				return i
+		}
+		return -1
+	}
+
+	private fun getPositionOfCodeFromAdTibetLiquidity(code: String): Int {
+		for (i in 0 until adTibetLiquidity.dataOptions.size) {
+			if (adTibetLiquidity.dataOptions[i].contains(code))
+				return i
+		}
+		return -1
+	}
 
 	override fun onDestroyView() {
 		super.onDestroyView()
