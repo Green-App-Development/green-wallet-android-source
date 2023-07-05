@@ -6,5 +6,7 @@ class TibetSwapUseCases @Inject constructor(
 	val calculateAmountOut: CalculateAmountOut,
 	val pushOfferToTibet: PushingOfferToTibet,
 	val pushOfferXCHCATToTibet: PushingOfferXCHCATToTibet,
-	val pushOfferCATXCHToTibet: PushingOfferCATXCHToTibet
+	val pushOfferCATXCHToTibet: PushingOfferCATXCHToTibet,
+	val addLiquidity: TibetAddLiquidity,
+	val removeLiquidity: TibetRemoveLiquidity
 )

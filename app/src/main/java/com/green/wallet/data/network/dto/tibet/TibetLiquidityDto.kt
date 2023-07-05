@@ -1,6 +1,6 @@
 package com.green.wallet.data.network.dto.tibet
 
-import com.green.wallet.domain.domainmodel.TibetLiquidity
+import com.green.wallet.domain.domainmodel.TibetLiquidityResponse
 
 data class TibetLiquidityDto(
 	val asset_id: String,
@@ -12,7 +12,7 @@ data class TibetLiquidityDto(
 	val xch_reserve: Long
 ) {
 
-	fun toTibetLiquidity() = TibetLiquidity(
+	fun toTibetLiquidity() = TibetLiquidityResponse(
 		asset_id,
 		last_coin_id_on_chain,
 		launcher_id,

@@ -180,8 +180,10 @@ class TibetSwapFragment : DaggerFragment() {
 							choosingXCHToCAT(false)
 						}
 						adCATLiquidity.updateData(it.map { it.code })
+						if (vm.catTibetAdapterPosition != -1)
+							binding.tokenTibetCatSpinner.setSelection(vm.catTibetAdapterPosition)
 						if (vm.catLiquidityAdapterPos != -1)
-							binding.tokenTibetCatSpinner.setSelection(vm.catLiquidityAdapterPos)
+							binding.tokenTibetSpinner.setSelection(vm.catLiquidityAdapterPos)
 					}
 				}
 			}
@@ -403,7 +405,7 @@ class TibetSwapFragment : DaggerFragment() {
 			override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
 				adCATLiquidity.selectedPosition = p2
 				edtTokenCAT.text = adCATLiquidity.dataOptions[p2]
-				vm.catLiquidityAdapterPos = p2
+				vm.catTibetAdapterPosition = p2
 				initTibetLiquidity()
 				val tibetPos = getPositionOfCodeFromAdTibetLiquidity(adCATLiquidity.dataOptions[p2])
 				if (tibetPos != -1) {
@@ -422,7 +424,7 @@ class TibetSwapFragment : DaggerFragment() {
 				adTibetLiquidity.selectedPosition = p2
 				val tokenCode = adTibetLiquidity.dataOptions[p2].removeSuffix("-XCH")
 				edtTokenCAT.text = tokenCode
-				vm.catLiquidityAdapterPos=p2
+				vm.catLiquidityAdapterPos = p2
 				val tokenPos = getPositionOfCodeFromAdCATLiquidity(tokenCode)
 				if (tokenPos != -1) {
 					tokenTibetCatSpinner.setSelection(tokenPos)
@@ -436,7 +438,7 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 
 		edtAmountCatTibet.addTextChangedListener {
-			calculateTibetLiquidity(it.toString())
+			btnGenerateOffer.isEnabled = calculateTibetLiquidity(it.toString())
 		}
 
 	}
@@ -445,7 +447,7 @@ class TibetSwapFragment : DaggerFragment() {
 	private fun initTibetLiquidity() {
 		tibetLiquidityJob?.cancel()
 		tibetLiquidityJob = lifecycleScope.launch {
-			val pairID = vm.tokenList.value[vm.catLiquidityAdapterPos].pairID
+			val pairID = vm.tokenList.value[vm.catTibetAdapterPosition].pairID
 			val res = vm.getTibetLiquidity(pairID)
 			if (res != null) {
 				vm.curTibetLiquidity = res
@@ -454,10 +456,10 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 	}
 
-	private fun calculateTibetLiquidity(str: String) {
-		if (!vm.toTibet) return
-		val amount = str.toDoubleOrNull() ?: return
-		val tibetLiquid = vm.curTibetLiquidity ?: return
+	private fun calculateTibetLiquidity(str: String): Boolean {
+		if (!vm.toTibet) return false
+		val amount = str.toDoubleOrNull() ?: return false
+		val tibetLiquid = vm.curTibetLiquidity ?: return false
 		val liquidity = getLiquidityQuote(
 			amount.toInt() * 1000L,
 			tibetLiquid.token_reserve,
@@ -475,6 +477,7 @@ class TibetSwapFragment : DaggerFragment() {
 		vm.xchDeposit = xchDeposit
 		vm.catTibetAmount = amount
 		vm.liquidityAmount = liquidity / 1000.0
+		return true
 	}
 
 	private fun FragmentTibetswapBinding.changeLayoutPositions() {

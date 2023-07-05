@@ -24,6 +24,7 @@ import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
@@ -31,7 +32,9 @@ import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.android.synthetic.main.dialog_btm_create_offer_liquidity.txtSpendableBalance1
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -83,33 +86,38 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		binding.offerValues()
 	}
 
-	private fun initSpendableBalance(assetId: String, tokenCode: String, amountIn: Double) {
-		lifecycleScope.launch(handler) {
-			repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-			}
-		}
-	}
-
 	private fun DialogBtmCreateOfferLiquidityBinding.offerValues() {
 
 		val xchAmount = vm.xchDeposit
 		val catAmount = vm.catTibetAmount
-		val token = vm.tokenList.value[vm.catLiquidityAdapterPos]
+		val token = vm.tokenList.value[vm.catTibetAdapterPosition]
 		val tibetToken = vm.tokenTibetList.value[vm.catLiquidityAdapterPos]
+		val wallet = vm.curWallet!!
+		VLog.d("Choosing token : $token  and Tibet Token : $tibetToken")
 		val liquidity = vm.liquidityAmount
 		if (vm.toTibet) {
 			txtMinus(txtXCHValue, xchAmount, "XCH")
 			txtMinus(txtCATValue, catAmount, token.code)
 			txtPlus(txtLiquidityAmount, liquidity, tibetToken.code)
+			//xch,cat
+			initSpendableBalance(
+				wallet.address,
+				token.code,
+				xchAmount,
+				catAmount,
+				catAssetId = token.hash
+			)
 		} else {
 			txtPlus(txtXCHValue, xchAmount, "XCH")
 			txtPlus(txtCATValue, catAmount, token.code)
 			txtMinus(txtLiquidityAmount, liquidity, tibetToken.code)
+			//tibet
+			initSpendableBalance(wallet.address, tibetToken.code, liquidity, tibetToken.hash)
 		}
 
 		btnSign.setOnClickListener {
 			if (vm.toTibet) {
+				initMethodChannelHandler()
 				lifecycleScope.launch {
 					generateOfferToTibet(
 						xchAmount,
@@ -120,10 +128,103 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					)
 				}
 			} else {
-
+				initMethodChannelHandler()
+				lifecycleScope.launch {
+					generateOfferRemoveLiqiuidty(
+						xchAmount,
+						catAmount,
+						liquidity,
+						token.hash,
+						tibetToken.hash
+					)
+				}
 			}
 		}
 
+	}
+
+	private fun initSpendableBalance(
+		address: String,
+		liquidityCode: String,
+		liquidityAmount: Double,
+		liquidityAssetId: String
+	) {
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				vm.getSpendableBalanceByTokenCodeAndAddress(
+					address,
+					liquidityCode,
+					liquidityAssetId
+				).collectLatest { spendable ->
+					spendableBalanceTxt(
+						binding.txtSpendableBalance1,
+						spendable,
+						spendable >= liquidityAmount,
+						liquidityCode
+					)
+				}
+			}
+		}
+	}
+
+	private fun initSpendableBalance(
+		address: String,
+		tokenCode: String,
+		xchAmount: Double,
+		catAmount: Double,
+		catAssetId: String
+	) {
+		lifecycleScope.launch {
+			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				launch {
+					vm.getSpendableBalanceByTokenCodeAndAddress(address, "XCH", catAssetId)
+						.collectLatest { spendable ->
+							val total = xchAmount + getFeeBasedOnPosition()
+							spendableBalanceTxt(
+								binding.txtSpendableBalance1,
+								spendable,
+								spendable >= total,
+								"XCH"
+							)
+						}
+				}
+				vm.getSpendableBalanceByTokenCodeAndAddress(address, tokenCode, catAssetId)
+					.collectLatest { spendable ->
+						spendableBalanceTxt(
+							binding.txtSpendableBalance2,
+							spendable,
+							spendable >= catAmount,
+							tokenCode
+						)
+					}
+			}
+		}
+	}
+
+
+	private suspend fun generateOfferRemoveLiqiuidty(
+		xchAmount: Double,
+		catAmount: Double,
+		liquidity: Double,
+		tokenHash: String,
+		tibetHash: String
+	) {
+		dialogManager.showProgress(requireActivity())
+		val wallet = vm.curWallet ?: return
+		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
+		val argSpendBundle = hashMapOf<String, Any>()
+		argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
+		argSpendBundle["xchAmount"] = (xchAmount * PRECISION_XCH).toLong()
+		argSpendBundle["catAmount"] = (catAmount * PRECISION_CAT).toLong()
+		argSpendBundle["liquidityAmount"] = (liquidity * PRECISION_CAT).toLong()
+		argSpendBundle["mnemonics"] = wallet.mnemonics.joinToString(" ")
+		argSpendBundle["url"] = url
+		argSpendBundle["token_asset_id"] = tokenHash
+		argSpendBundle["tibet_asset_id"] = tibetHash
+		argSpendBundle["observer"] = wallet.observerHash
+		argSpendBundle["nonObserver"] = wallet.nonObserverHash
+		VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
+		methodChannel.invokeMethod("CATToRemoveLiquidity", argSpendBundle)
 	}
 
 	private suspend fun generateOfferToTibet(
@@ -138,9 +239,9 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
 		val argSpendBundle = hashMapOf<String, Any>()
 		argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
-		argSpendBundle["xchAmount"] = xchAmount
-		argSpendBundle["catAmount"] = catAmount
-		argSpendBundle["liquidityAmount"] = liquidity
+		argSpendBundle["xchAmount"] = (xchAmount * PRECISION_XCH).toLong()
+		argSpendBundle["catAmount"] = (catAmount * PRECISION_CAT).toLong()
+		argSpendBundle["liquidityAmount"] = (liquidity * PRECISION_CAT).toLong()
 		argSpendBundle["mnemonics"] = wallet.mnemonics.joinToString(" ")
 		argSpendBundle["url"] = url
 		argSpendBundle["token_asset_id"] = tokenHash
@@ -168,13 +269,21 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 	}
 
 	private fun initMethodChannelHandler(
-		pairId: String,
-		amountIn: Double,
-		amountOut: Double,
-		tokenCode: String
+
 	) {
 		methodChannel.setMethodCallHandler { call, result ->
+			if (call.method == "CATToAddLiquidity") {
+				val resultArgs = call.arguments as HashMap<String, String>
+				val offer = resultArgs["offer"].toString()
+				val xchCoins = resultArgs["XCHCoins"].toString()
+				val catCoins = resultArgs["CATCoins"].toString()
+				VLog.d("Offer from Flutter : $offer")
 
+			} else if (call.method == "CATToRemoveLiquidity") {
+				val resultArgs = call.arguments as HashMap<String, String>
+				val offer = resultArgs["offer"].toString()
+
+			}
 		}
 	}
 
@@ -314,13 +423,18 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 	}
 
 	@SuppressLint("SetTextI18n")
-	private fun spendableBalanceTxt(balance: Double, isEnough: Boolean, tokenCode: String) {
+	private fun spendableBalanceTxt(
+		txtView: TextView,
+		balance: Double,
+		isEnough: Boolean,
+		tokenCode: String
+	) {
 		val format = if (balance < 0) "0" else formattedDoubleAmountWithPrecision(balance)
-//		binding.txtSpendableBalanceAmount.apply {
-//			text =
-//				requireActivity().getStringResource(R.string.spendable_balance) + " $format $tokenCode"
-//			setTextColor(requireActivity().getColorResource(if (isEnough) R.color.greey else R.color.red_mnemonic))
-//		}
+		txtView.apply {
+			text =
+				requireActivity().getStringResource(R.string.spendable_balance) + " $format $tokenCode"
+			setTextColor(requireActivity().getColorResource(if (isEnough) R.color.greey else R.color.red_mnemonic))
+		}
 	}
 
 	private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {

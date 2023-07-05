@@ -3,7 +3,7 @@ package com.green.wallet.presentation.main.swap.tibetswap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
-import com.green.wallet.domain.domainmodel.TibetLiquidity
+import com.green.wallet.domain.domainmodel.TibetLiquidityResponse
 import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.domainmodel.Wallet
@@ -25,9 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import okhttp3.internal.notify
 import javax.inject.Inject
 
 class TibetSwapViewModel @Inject constructor(
@@ -47,11 +45,12 @@ class TibetSwapViewModel @Inject constructor(
 	val containerSmallerSize = 265
 	var nextContainerBigger = true
 	var catAdapPosition = 0
+	var catTibetAdapterPosition = -1
 	var catLiquidityAdapterPos = -1
 	var toTibet: Boolean = true
 
 	var curWallet: Wallet? = null
-	var curTibetLiquidity: TibetLiquidity? = null
+	var curTibetLiquidity: TibetLiquidityResponse? = null
 
 	var xchDeposit: Double = 0.0
 	var catTibetAmount: Double = 0.0

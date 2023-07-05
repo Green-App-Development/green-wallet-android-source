@@ -175,12 +175,12 @@
 					app:layout_constraintTop_toBottomOf="@+id/txtTibetLiquidity" />
 
 			<TextView
-					android:id="@+id/txtSpendableBalanceAmountXCH"
+					android:id="@+id/txtSpendableBalance1"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="10dp"
 					android:layout_marginTop="8dp"
-					android:text="Spendable Balance"
+					android:text=""
 					android:textColor="@color/greey"
 					android:textFontWeight="400"
 					android:textSize="12sp"
@@ -189,17 +189,17 @@
 					app:layout_constraintTop_toBottomOf="@+id/view_divider_1" />
 
 			<TextView
-					android:id="@+id/txtSpendableBalanceAmountCAT"
+					android:id="@+id/txtSpendableBalance2"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginStart="10dp"
-					android:text="Spendable Balance"
+					android:text=""
 					android:textColor="@color/greey"
 					android:textFontWeight="400"
 					android:textSize="12sp"
 					android:visibility="visible"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmountXCH" />
+					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalance1" />
 
 
 			<TextView
@@ -213,7 +213,7 @@
 					android:textFontWeight="500"
 					android:textSize="14sp"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmountCAT" />
+					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalance2" />
 
 			<androidx.constraintlayout.widget.ConstraintLayout
 					android:id="@+id/constraintLayout3"
