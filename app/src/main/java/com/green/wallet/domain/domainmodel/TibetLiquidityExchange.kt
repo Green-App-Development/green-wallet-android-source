@@ -1,6 +1,6 @@
 package com.green.wallet.domain.domainmodel
 
-class TibetLiquidityResponse(
+class TibetLiquidityExchange(
 	val asset_id: String,
 	val last_coin_id_on_chain: String,
 	val launcher_id: String,
