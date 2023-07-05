@@ -24,10 +24,20 @@ class TibetAddLiquidity @Inject constructor(
         val res = tibetInteract.pushOfferToTibet(pairId, offer)
         if (res.state == Resource.State.SUCCESS) {
             val offerId = res.data!!
+            val timeCreated = System.currentTimeMillis()
             tibetLiquidity.offer_id = offerId
-
+            tibetLiquidity.time_created = timeCreated
+            spentCoinsInteract.insertSpentCoinsJson(xchCoins, timeCreated, "XCH", address)
+            spentCoinsInteract.insertSpentCoinsJson(
+                tokenCoins,
+                timeCreated,
+                tibetLiquidity.catToken,
+                address
+            )
+            tibetInteract.insertTibetLiquidity(tibetLiquidity)
         }
         return res
     }
+
 
 }

@@ -207,16 +207,18 @@ class TibetSwapViewModel @Inject constructor(
     suspend fun removeLiquidity(
         offer: String,
         pairId: String,
-        liquidCoins:String,
+        liquidCoins: String,
+        xchCoins: String,
         tibetLiquid: TibetLiquidity
     ) =
         tibetSwapUseCases.removeLiquidity(
-            offer,
-            pairId,
-            curWallet!!.address,
-            tibetLiquid
+            offer = offer,
+            pairId = pairId,
+            address = curWallet!!.address,
+            liquidityCoins = liquidCoins,
+            xchCoins = xchCoins,
+            tibetLiquidity = tibetLiquid
         )
-
 
 
     suspend fun getTibetLiquidity(pairID: String) = tibetInteract.getTibetLiquidity(pairID)

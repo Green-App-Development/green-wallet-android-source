@@ -4,6 +4,7 @@ import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TibetInteract
+import com.green.wallet.presentation.tools.Resource
 import javax.inject.Inject
 
 class TibetRemoveLiquidity @Inject constructor(
@@ -15,11 +16,26 @@ class TibetRemoveLiquidity @Inject constructor(
     suspend operator fun invoke(
         offer: String,
         pairId: String,
-        liquidityCoins:String,
+        xchCoins: String,
+        liquidityCoins: String,
         address: String,
         tibetLiquidity: TibetLiquidity
-    ) {
-
+    ): Resource<String> {
+        val res = tibetInteract.pushOfferToTibet(pairId, offer)
+        if (res.state == Resource.State.SUCCESS) {
+            val timeCreated = System.currentTimeMillis()
+            tibetLiquidity.time_created = timeCreated
+            tibetLiquidity.offer_id = res.data!!
+            spentCoinsInteract.insertSpentCoinsJson(
+                liquidityCoins,
+                timeCreated,
+                tibetLiquidity.liquidityToken,
+                address
+            )
+            spentCoinsInteract.insertSpentCoinsJson(xchCoins, timeCreated, "XCH", address)
+            tibetInteract.insertTibetLiquidity(tibetLiquidity)
+        }
+        return res
     }
 
 }

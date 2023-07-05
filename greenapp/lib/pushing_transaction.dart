@@ -292,6 +292,7 @@ class PushingTransaction {
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
+              var spentCoins = args["spentCoins"].toString();
               offerAddLiquidity(
                   mnemonics: mnemonics,
                   url: url,
@@ -303,7 +304,7 @@ class PushingTransaction {
                   fee: fee,
                   liquidityAmount: liquidityAmount,
                   tibetAssetID: tibetAssetId,
-                  spentCoinsJson: "");
+                  spentCoinsJson: spentCoins);
             } catch (ex) {
               debugPrint("Exception in offering cat to tibet : $ex");
               _channel.invokeMethod("exception");
@@ -320,10 +321,12 @@ class PushingTransaction {
               var tibetAssetId = args["tibet_asset_id"].toString();
               var xchAmount = int.parse(args["xchAmount"].toString());
               var catAmount = int.parse(args["catAmount"].toString());
-              var liquidityAmount = int.parse(args["liquidityAmount"].toString());
+              var liquidityAmount =
+                  int.parse(args["liquidityAmount"].toString());
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
+              var spentCoins = args["spentCoins"];
               offerRemoveLiquidity(
                   mnemonics: mnemonics,
                   url: url,
@@ -335,8 +338,7 @@ class PushingTransaction {
                   fee: fee,
                   liquidityAmount: liquidityAmount,
                   tibetAssetID: tibetAssetId,
-                  spentCoinsJson: ""
-              );
+                  spentCoinsJson: spentCoins);
             } catch (ex) {
               debugPrint("Exception in offering tibet to cat : $ex");
               _channel.invokeMethod("exception");
@@ -352,16 +354,16 @@ class PushingTransaction {
 
   Future<void> offerRemoveLiquidity(
       {required List<String> mnemonics,
-        required String url,
-        required String tokenAssetID,
-        required int xchAmount,
-        required int catAmount,
-        required int observer,
-        required int nonObserver,
-        required int fee,
-        required int liquidityAmount,
-        required String tibetAssetID,
-        required String spentCoinsJson}) async {
+      required String url,
+      required String tokenAssetID,
+      required int xchAmount,
+      required int catAmount,
+      required int observer,
+      required int nonObserver,
+      required int fee,
+      required int liquidityAmount,
+      required String tibetAssetID,
+      required String spentCoinsJson}) async {
     var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
     var keychain = cachedWalletChains[key] ??
         generateKeyChain(mnemonics, observer, nonObserver);
@@ -369,7 +371,7 @@ class PushingTransaction {
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
     final standartWalletService = StandardWalletService();
     final puzzleHashes =
-    keychain.hardenedMap.entries.map((e) => e.key).toList();
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
     for (var element in keychain.unhardenedMap.entries) {
       puzzleHashes.add(element.key);
     }
@@ -378,9 +380,10 @@ class PushingTransaction {
     var fullNodeRpc = FullNodeHttpRpc(url);
     var fullNode = ChiaFullNodeInterface(fullNodeRpc);
     final offerService =
-    OffersService(fullNode: fullNode, keychain: keyChainCAT);
+        OffersService(fullNode: fullNode, keychain: keyChainCAT);
 
-    var myOuterPuzzlehashes = keychain.getOuterPuzzleHashesForAssetId(tibetHash);
+    var myOuterPuzzlehashes =
+        keychain.getOuterPuzzleHashesForAssetId(tibetHash);
     for (var element in keychain.hardenedMap.keys) {
       var outer = WalletKeychain.makeOuterPuzzleHash(
         element,
@@ -409,7 +412,7 @@ class PushingTransaction {
     var neededCatCoins = [];
     for (final coin in basicCatCoins) {
       var isCoinSpent =
-      spentCoinsParents.contains(coin.parentCoinInfo.toString());
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
       if (!isCoinSpent) {
         curCATAmount += coin.amount;
         neededCatCoins.add(coin);
@@ -430,7 +433,7 @@ class PushingTransaction {
       final coinFounded = basicCatCoins
           .where(
             (coin_) => coin_.id == e.id,
-      )
+          )
           .toList();
 
       final coin = coinFounded.first;
@@ -444,12 +447,12 @@ class PushingTransaction {
     //search for xch full coins
     var curXCHAmount = 0;
     List<Coin> totalXCHCoins =
-    await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+        await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
     List<Coin> neededXCHCoins = [];
     if (fee > 0) {
       for (var coin in totalXCHCoins) {
         var isCoinSpent =
-        spentCoinsParents.contains(coin.parentCoinInfo.toString());
+            spentCoinsParents.contains(coin.parentCoinInfo.toString());
         if (!isCoinSpent) {
           curXCHAmount += coin.amount;
           neededXCHCoins.add(coin);
@@ -460,14 +463,13 @@ class PushingTransaction {
       }
     }
     final xchFullCoins =
-    standartWalletService.convertXchCoinsToFull(neededXCHCoins);
+        standartWalletService.convertXchCoinsToFull(neededXCHCoins);
     debugPrint("Need Cat coins : $neededCatCoins  XCH coins : $neededXCHCoins");
     final allCoins =
         fullCatCoins.toSet().toList() + xchFullCoins.toSet().toList();
     final changePh = keychain.puzzlehashes[0];
     final targePh = keychain.puzzlehashes[1];
     final tokenHash = Puzzlehash.fromHex(tokenAssetID);
-
 
     final offer = await offerService.createOffer(
       offerredAmounts: {
@@ -481,7 +483,7 @@ class PushingTransaction {
         OfferAssetData.cat(
           tailHash: tokenHash,
         ): [catAmount],
-        null : [xchAmount]
+        null: [xchAmount]
       },
       coins: allCoins,
       changePuzzlehash: changePh,
@@ -593,19 +595,19 @@ class PushingTransaction {
     List<Coin> totalXCHCoins =
         await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
     List<Coin> neededXCHCoins = [];
-    if (xchAmount > 0) {
-      for (var coin in totalXCHCoins) {
-        var isCoinSpent =
-            spentCoinsParents.contains(coin.parentCoinInfo.toString());
-        if (!isCoinSpent) {
-          curXCHAmount += coin.amount;
-          neededXCHCoins.add(coin);
-          if (curXCHAmount >= xchAmount) {
-            break;
-          }
+
+    for (var coin in totalXCHCoins) {
+      var isCoinSpent =
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
+      if (!isCoinSpent) {
+        curXCHAmount += coin.amount;
+        neededXCHCoins.add(coin);
+        if (curXCHAmount >= xchAmount + fee) {
+          break;
         }
       }
     }
+
     final xchFullCoins =
         standartWalletService.convertXchCoinsToFull(neededXCHCoins);
     debugPrint("Need Cat coins : $neededCatCoins  XCH coins : $neededXCHCoins");

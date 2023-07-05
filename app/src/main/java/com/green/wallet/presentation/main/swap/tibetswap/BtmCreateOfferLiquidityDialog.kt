@@ -33,7 +33,6 @@ import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.android.synthetic.main.dialog_btm_create_offer_liquidity.txtSpendableBalance1
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -132,12 +131,13 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
             if (vm.toTibet) {
                 initMethodChannelHandler(tibetLiquidity, pairId = token.pairID)
                 lifecycleScope.launch {
-                    generateOfferToTibet(
+                    generateOfferAddLiquidity(
                         xchAmount,
                         catAmount,
                         liquidity,
                         token.hash,
-                        tibetToken.hash
+                        tibetToken.hash,
+                        token.code
                     )
                 }
             } else {
@@ -148,7 +148,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                         catAmount,
                         liquidity,
                         token.hash,
-                        tibetToken.hash
+                        tibetToken.hash,
+                        liquidityCode = tibetToken.code
                     )
                 }
             }
@@ -220,12 +221,15 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         catAmount: Double,
         liquidity: Double,
         tokenHash: String,
-        tibetHash: String
+        tibetHash: String,
+        liquidityCode: String
     ) {
         dialogManager.showProgress(requireActivity())
         val wallet = vm.curWallet ?: return
         val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
         val argSpendBundle = hashMapOf<String, Any>()
+        val spentCoins =
+            vm.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, liquidityCode)
         argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
         argSpendBundle["xchAmount"] = (xchAmount * PRECISION_XCH).toLong()
         argSpendBundle["catAmount"] = (catAmount * PRECISION_CAT).toLong()
@@ -236,20 +240,26 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         argSpendBundle["tibet_asset_id"] = tibetHash
         argSpendBundle["observer"] = wallet.observerHash
         argSpendBundle["nonObserver"] = wallet.nonObserverHash
+        argSpendBundle["spentCoins"] = Gson().toJson(spentCoins)
         VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
         methodChannel.invokeMethod("CATToRemoveLiquidity", argSpendBundle)
     }
 
-    private suspend fun generateOfferToTibet(
+    private suspend fun generateOfferAddLiquidity(
         xchAmount: Double,
         catAmount: Double,
         liquidity: Double,
         tokenHash: String,
-        tibetHash: String
+        tibetHash: String,
+        tokenCode: String
     ) {
         dialogManager.showProgress(requireActivity())
         val wallet = vm.curWallet ?: return
         val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
+        val spentCoins =
+            vm.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, "XCH").toMutableList()
+        val catCoins = vm.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, tokenCode)
+        spentCoins.addAll(catCoins)
         val argSpendBundle = hashMapOf<String, Any>()
         argSpendBundle["fee"] = (getFeeBasedOnPosition() * PRECISION_XCH).toLong()
         argSpendBundle["xchAmount"] = (xchAmount * PRECISION_XCH).toLong()
@@ -261,6 +271,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         argSpendBundle["tibet_asset_id"] = tibetHash
         argSpendBundle["observer"] = wallet.observerHash
         argSpendBundle["nonObserver"] = wallet.nonObserverHash
+        argSpendBundle["spentCoins"] = Gson().toJson(spentCoins)
         VLog.d("Body From Sending Fragment to flutter : $argSpendBundle")
         methodChannel.invokeMethod("CATToAddLiquidity", argSpendBundle)
     }
@@ -287,7 +298,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
     ) {
         methodChannel.setMethodCallHandler { call, result ->
             if (call.method == "CATToAddLiquidity") {
-                val resultArgs = call.arguments as HashMap<String, String>
+                val resultArgs = call.arguments as HashMap<*, *>
                 val offer = resultArgs["offer"].toString()
                 val xchCoins = resultArgs["XCHCoins"].toString()
                 val catCoins = resultArgs["CATCoins"].toString()
@@ -300,10 +311,48 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                     pairID = pairId
                 )
             } else if (call.method == "CATToRemoveLiquidity") {
-                val resultArgs = call.arguments as HashMap<String, String>
+                val resultArgs = call.arguments as HashMap<*, *>
                 val offer = resultArgs["offer"].toString()
-                val liquidityTokens = resultArgs["liquidityCoins"]
+                val spentLiquidityCoins = resultArgs["liquidityCoins"].toString()
+                val spentXCHCoins = resultArgs["XCHCoins"].toString()
+                removeLiquidity(
+                    offer = offer,
+                    xchCoins = spentXCHCoins,
+                    tibetLiquidity = tibetLiquidity,
+                    pairID = pairId,
+                    liquidityCoins = spentLiquidityCoins
+                )
+            }
+        }
+    }
 
+    private fun removeLiquidity(
+        offer: String,
+        xchCoins: String,
+        liquidityCoins: String,
+        tibetLiquidity: TibetLiquidity,
+        pairID: String
+    ) {
+        lifecycleScope.launch {
+            val res = vm.removeLiquidity(
+                offer = offer,
+                pairId = pairID,
+                liquidCoins = liquidityCoins,
+                tibetLiquid = tibetLiquidity,
+                xchCoins = xchCoins
+            )
+            when (res.state) {
+                Resource.State.ERROR -> {
+                    showFailedTibetSwap()
+                }
+
+                Resource.State.SUCCESS -> {
+                    showSuccessSendMoneyDialog()
+                }
+
+                Resource.State.LOADING -> {
+
+                }
             }
         }
     }
@@ -317,10 +366,10 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
     ) {
         lifecycleScope.launch {
             val res = vm.addLiquidity(
-                offer,
+                offer = offer,
                 pairId = pairID,
-                xchCoins,
-                catCoins,
+                xchCoins = xchCoins,
+                catCoins = catCoins,
                 tibetLiquid = tibetLiquidity
             )
             when (res.state) {

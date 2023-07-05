@@ -11,7 +11,7 @@ data class TibetLiquidity(
     val liquidityAmount: Double,
     val liquidityToken: String,
     val fee: Double,
-    val time_created: Long,
+    var time_created: Long,
     val status: OrderStatus = OrderStatus.InProgress,
     val height: Int = 0,
     val addLiquidity: Boolean
