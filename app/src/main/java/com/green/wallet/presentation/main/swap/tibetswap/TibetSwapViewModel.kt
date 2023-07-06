@@ -223,7 +223,6 @@ class TibetSwapViewModel @Inject constructor(
 
     suspend fun getTibetLiquidity(pairID: String) = tibetInteract.getTibetLiquidity(pairID)
 
-
     override fun onCleared() {
         super.onCleared()
         VLog.d("On cleared tibet vm and cancelled scope : $this")

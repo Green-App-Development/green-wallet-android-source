@@ -196,15 +196,25 @@ class ExchangeInteractImpl @Inject constructor(
                     it.toTibetSwapExchange()
                 }
             }
-        return combine(ordersFlow, tibetSwapFlow) { orders, tibetSwap ->
-            (orders + tibetSwap).sortedBy { item ->
+
+        val tibetLiquidityOrder =
+            tibetDao.getTibetLiquidityEntityListFlow().map { it.map { it.toTibetLiquidity() } }
+
+        return combine(
+            ordersFlow,
+            tibetSwapFlow,
+            tibetLiquidityOrder
+        ) { orders, tibetSwap, liquidityList ->
+            (orders + tibetSwap + liquidityList).sortedBy { item ->
                 when (item) {
                     is OrderEntity -> item.time_created
                     is TibetSwapEntity -> item.time_created
+                    is TibetLiquidity -> item.time_created
                     else -> 0L
                 }
             }
         }
+
     }
 
     override suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange) {

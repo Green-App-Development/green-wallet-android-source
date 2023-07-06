@@ -495,7 +495,7 @@ class PushingTransaction {
     _channel.invokeMethod("CATToRemoveLiquidity", {
       "offer": str,
       "XCHCoins": jsonEncode(neededXCHCoins),
-      "CATCoins": jsonEncode(neededCatCoins)
+      "liquidityCoins": jsonEncode(neededCatCoins)
     });
   }
 
