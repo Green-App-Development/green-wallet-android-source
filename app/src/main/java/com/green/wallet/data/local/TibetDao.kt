@@ -36,11 +36,11 @@ interface TibetDao {
     @Query("SELECT * FROM TibetSwapEntity ORDER BY time_created DESC")
     fun getTibetSwapEntitiesListFlow(): Flow<List<TibetSwapEntity>>
 
-    @Query("SELECT * FROM TibetSwapEntity ORDER BY time_created DESC")
+    @Query("SELECT * FROM TibetLiquidityEntity ORDER BY time_created DESC")
     fun getTibetLiquidityEntityListFlow(): Flow<List<TibetLiquidityEntity>>
 
     @Query("SELECT * FROM TibetSwapEntity WHERE offer_id=:offer_id")
     fun getTibetSwapEntityByOfferId(offer_id: String): Flow<TibetSwapEntity>
-
+	
 
 }

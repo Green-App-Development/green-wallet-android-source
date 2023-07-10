@@ -242,14 +242,14 @@ fun convertNetworkTypeForFlutter(networkType: String): String {
 }
 
 fun getLiquidityQuote(
-	knownIn: Long,
+	knownIn: Double,
 	knownReserve: Long,
 	unknownReserve: Long
 ): Long {
-	if (knownReserve == 0L || unknownReserve == 0L || knownIn == 0L) return 0
+	if (knownReserve == 0L || unknownReserve == 0L || knownIn == 0.0) return 0
 	val output = (unknownReserve * knownIn / knownReserve)
 
-	return output
+	return output.toLong()
 }
 
 

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 37,
-    "identityHash": "72e28307c9602074b773584c9d6b0a33",
+    "identityHash": "62278c9022bbd508ebcf807df2fb0d61",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -621,7 +621,7 @@
       },
       {
         "tableName": "OrderEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `fee` REAL NOT NULL, `order_type` TEXT NOT NULL, PRIMARY KEY(`order_hash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `fee` REAL NOT NULL, PRIMARY KEY(`order_hash`))",
         "fields": [
           {
             "fieldPath": "order_hash",
@@ -688,12 +688,6 @@
             "columnName": "fee",
             "affinity": "REAL",
             "notNull": true
-          },
-          {
-            "fieldPath": "order_type",
-            "columnName": "order_type",
-            "affinity": "TEXT",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -704,12 +698,160 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "TibetSwapEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `send_amount` REAL NOT NULL, `receive_amount` REAL NOT NULL, `send_coin` TEXT NOT NULL, `receive_coin` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
+        "fields": [
+          {
+            "fieldPath": "offer_id",
+            "columnName": "offer_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "send_amount",
+            "columnName": "send_amount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receive_amount",
+            "columnName": "receive_amount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "send_coin",
+            "columnName": "send_coin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receive_coin",
+            "columnName": "receive_coin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fee",
+            "columnName": "fee",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time_created",
+            "columnName": "time_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "offer_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "TibetLiquidityEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `xchAmount` REAL NOT NULL, `catAmount` REAL NOT NULL, `catToken` TEXT NOT NULL, `liquidityAmount` REAL NOT NULL, `liquidityToken` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, `addLiquidity` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
+        "fields": [
+          {
+            "fieldPath": "offer_id",
+            "columnName": "offer_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xchAmount",
+            "columnName": "xchAmount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "catAmount",
+            "columnName": "catAmount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "catToken",
+            "columnName": "catToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "liquidityAmount",
+            "columnName": "liquidityAmount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "liquidityToken",
+            "columnName": "liquidityToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fee",
+            "columnName": "fee",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time_created",
+            "columnName": "time_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addLiquidity",
+            "columnName": "addLiquidity",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "offer_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '72e28307c9602074b773584c9d6b0a33')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62278c9022bbd508ebcf807df2fb0d61')"
     ]
   }
 }

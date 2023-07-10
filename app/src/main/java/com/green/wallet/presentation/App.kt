@@ -99,6 +99,7 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
+
 	}
 
 

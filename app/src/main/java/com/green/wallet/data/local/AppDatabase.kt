@@ -19,7 +19,7 @@ import com.green.wallet.data.local.entity.*
         OrderEntity::class, TibetSwapEntity::class,
         TibetLiquidityEntity::class
     ],
-    version = 36,
+    version = 37,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 25, to = 34),
@@ -143,6 +143,31 @@ abstract class AppDatabase : RoomDatabase() {
             }
 
         }
+
+
+		val migration36To37 = object : Migration(36, 37) {
+
+			override fun migrate(database: SupportSQLiteDatabase) {
+
+				val createTableTibetLiquidity = """
+            CREATE TABLE IF NOT EXISTS TibetLiquidityEntity (
+                offer_id TEXT PRIMARY KEY NOT NULL,
+				xchAmount REAL NOT NULL,
+                catAmount REAL NOT NULL,
+                catToken TEXT NOT NULL,
+				liquidityAmount REAL NOT NULL,
+				liquidityToken TEXT NOT NULL,
+                fee REAL NOT NULL,
+                time_created INTEGER NOT NULL,
+                status TEXT NOT NULL,
+				height INTEGER NOT NULL,
+				addLiquidity INTEGER NOT NULL
+            )
+        """.trimIndent()
+				database.execSQL(createTableTibetLiquidity)
+			}
+
+		}
 
     }
 

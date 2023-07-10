@@ -408,13 +408,13 @@ class PushingTransaction {
     List<CatCoin> catCoins = [];
     List<Coin> basicCatCoins = responseDataCAT;
     // hydrate cat coins
-    var curCATAmount = 0;
+    var curLiquidityAmount = 0;
     var neededCatCoins = [];
     for (final coin in basicCatCoins) {
       var isCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
       if (!isCoinSpent) {
-        curCATAmount += coin.amount;
+        curLiquidityAmount += coin.amount;
         neededCatCoins.add(coin);
         await getCatCoinsDetail(
           coin: coin,
@@ -422,7 +422,7 @@ class PushingTransaction {
           catCoins: catCoins,
           fullNode: fullNode,
         );
-        if (curCATAmount >= catAmount) {
+        if (curLiquidityAmount >= liquidityAmount) {
           break;
         }
       }
@@ -473,7 +473,6 @@ class PushingTransaction {
 
     final offer = await offerService.createOffer(
       offerredAmounts: {
-        null: -xchAmount,
         OfferAssetData.cat(
           tailHash: tibetHash,
         ): -liquidityAmount

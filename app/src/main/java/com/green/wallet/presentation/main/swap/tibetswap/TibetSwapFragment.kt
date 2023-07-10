@@ -425,6 +425,7 @@ class TibetSwapFragment : DaggerFragment() {
 				val tokenCode = adTibetLiquidity.dataOptions[p2].removeSuffix("-XCH")
 				edtTokenCAT.text = tokenCode
 				vm.catLiquidityAdapterPos = p2
+				initTibetLiquidity()
 				val tokenPos = getPositionOfCodeFromAdCATLiquidity(tokenCode)
 				if (tokenPos != -1) {
 					tokenTibetCatSpinner.setSelection(tokenPos)
@@ -441,6 +442,10 @@ class TibetSwapFragment : DaggerFragment() {
 			btnGenerateOffer.isEnabled = calculateTibetLiquidity(it.toString())
 		}
 
+		edtAmountLiquidity.addTextChangedListener {
+			btnGenerateOffer.isEnabled = calculateTibetCATXCH(it.toString())
+		}
+
 	}
 
 	private var tibetLiquidityJob: Job? = null
@@ -451,7 +456,12 @@ class TibetSwapFragment : DaggerFragment() {
 			val res = vm.getTibetLiquidity(pairID)
 			if (res != null) {
 				vm.curTibetLiquidity = res
-				binding.edtAmountCatTibet.setText(binding.edtAmountCatTibet.text.toString())
+				binding.apply {
+					if (vm.toTibet)
+						edtAmountCatTibet.setText(edtAmountCatTibet.text.toString())
+					else
+						edtAmountLiquidity.setText(edtAmountLiquidity.text.toString())
+				}
 			}
 		}
 	}
@@ -461,23 +471,41 @@ class TibetSwapFragment : DaggerFragment() {
 		val amount = str.toDoubleOrNull() ?: return false
 		val tibetLiquid = vm.curTibetLiquidity ?: return false
 		val liquidity = getLiquidityQuote(
-			amount.toInt() * 1000L,
+			amount * 1000L,
 			tibetLiquid.token_reserve,
 			tibetLiquid.liquidity
 		)
-		edtAmountLiquidity.setText((liquidity / 1000.0).toString())
+		binding.edtAmountLiquidity.setText((liquidity / 1000.0).toString())
 		var xchDeposit = getLiquidityQuote(
-			amount.toInt() * 1000L,
+			amount * 1000L,
 			tibetLiquid.token_reserve,
 			tibetLiquid.xch_reserve
 		).toDouble()
 		xchDeposit += liquidity
 		xchDeposit /= PRECISION_XCH
-		edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xchDeposit))
+		binding.edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xchDeposit))
 		vm.xchDeposit = xchDeposit
 		vm.catTibetAmount = amount
 		vm.liquidityAmount = liquidity / 1000.0
-		return true
+		return xchDeposit != 0.0 && liquidity != 0L
+	}
+
+	private fun calculateTibetCATXCH(str: String): Boolean {
+		if (vm.toTibet) return false
+		val amount = str.toDoubleOrNull() ?: return false
+		val tibetLiquid = vm.curTibetLiquidity ?: return false
+		val tokenAmount =
+			((amount * 1000L).toInt() * tibetLiquid.token_reserve) / tibetLiquid.liquidity
+		var xch = ((amount * 1000L).toLong() * tibetLiquid.xch_reserve) / tibetLiquid.liquidity
+		xch += (amount * 1000L).toLong()
+		binding.apply {
+			edtAmountCatTibet.setText(formattedDoubleAmountWithPrecision(tokenAmount / 1000.0))
+			edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xch / PRECISION_XCH))
+		}
+		vm.xchDeposit = xch / PRECISION_XCH
+		vm.liquidityAmount = amount
+		vm.catTibetAmount = tokenAmount / 1000.0
+		return xch != 0L && tokenAmount != 0L
 	}
 
 	private fun FragmentTibetswapBinding.changeLayoutPositions() {

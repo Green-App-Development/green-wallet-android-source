@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "69d0dacfd4730fd8b75eeb7d00874556",
+    "identityHash": "62278c9022bbd508ebcf807df2fb0d61",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -766,12 +766,92 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "TibetLiquidityEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `xchAmount` REAL NOT NULL, `catAmount` REAL NOT NULL, `catToken` TEXT NOT NULL, `liquidityAmount` REAL NOT NULL, `liquidityToken` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, `addLiquidity` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
+        "fields": [
+          {
+            "fieldPath": "offer_id",
+            "columnName": "offer_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xchAmount",
+            "columnName": "xchAmount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "catAmount",
+            "columnName": "catAmount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "catToken",
+            "columnName": "catToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "liquidityAmount",
+            "columnName": "liquidityAmount",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "liquidityToken",
+            "columnName": "liquidityToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fee",
+            "columnName": "fee",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "time_created",
+            "columnName": "time_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "height",
+            "columnName": "height",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addLiquidity",
+            "columnName": "addLiquidity",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "offer_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '69d0dacfd4730fd8b75eeb7d00874556')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62278c9022bbd508ebcf807df2fb0d61')"
     ]
   }
 }

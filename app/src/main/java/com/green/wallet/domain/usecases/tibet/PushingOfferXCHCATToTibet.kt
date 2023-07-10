@@ -4,6 +4,7 @@ import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TibetInteract
+import com.green.wallet.presentation.tools.ACTION_SWAP
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class PushingOfferXCHCATToTibet @Inject constructor(
 		spentXCHCoins: String,
 		fk_address: String
 	): Resource<String> {
-		val res = tibetInteract.pushOfferToTibet(pair, offer)
+		val res = tibetInteract.pushOfferToTibet(pair, offer, ACTION_SWAP)
 		if (res.state == Resource.State.SUCCESS) {
 			val offerId = res.data!!
 			val sendTokenCode = if (isInputXCH) "XCH" else catCode

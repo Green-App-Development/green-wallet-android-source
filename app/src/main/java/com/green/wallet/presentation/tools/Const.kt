@@ -21,3 +21,7 @@ const val PRECISION_CAT = 1_000.0
 
 const val SYNC_WORK_TAG = "syncWorker"
 
+const val ACTION_SWAP = "SWAP"
+const val ACTION_ADD_LIQUIDITY = "ADD_LIQUIDITY"
+const val ACTION_REMOVE_LIQUIDITY = "REMOVE_LIQUIDITY"
+
