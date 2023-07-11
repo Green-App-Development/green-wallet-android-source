@@ -39,6 +39,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountLiquidity
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountXCH
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
@@ -451,7 +452,9 @@ class TibetSwapFragment : DaggerFragment() {
 	private var tibetLiquidityJob: Job? = null
 	private fun initTibetLiquidity() {
 		tibetLiquidityJob?.cancel()
-		tibetLiquidityJob = lifecycleScope.launch {
+		tibetLiquidityJob = lifecycleScope.launch(CoroutineExceptionHandler { _, throwable ->
+
+		}) {
 			val pairID = vm.tokenList.value[vm.catTibetAdapterPosition].pairID
 			val res = vm.getTibetLiquidity(pairID)
 			if (res != null) {
@@ -526,6 +529,9 @@ class TibetSwapFragment : DaggerFragment() {
 			edtTokenTibet.setTextColor(requireActivity().getColorResource(R.color.hint_color))
 			edtAmountLiquidity.isEnabled = false
 			edtAmountCatTibet.isEnabled = true
+			txtLiquidityState.apply {
+				text = "Add liquidity"
+			}
 		} else {
 			topContainer.addView(layoutTibet)
 			bottomContainer.addView(layoutXCHCAT)
@@ -538,6 +544,8 @@ class TibetSwapFragment : DaggerFragment() {
 			edtTokenTibet.setTextColor(requireActivity().getColorResource(R.color.secondary_text_color))
 			edtAmountLiquidity.isEnabled = true
 			edtAmountCatTibet.isEnabled = false
+			txtLiquidityState.text = "Remove liquidity"
+
 		}
 	}
 

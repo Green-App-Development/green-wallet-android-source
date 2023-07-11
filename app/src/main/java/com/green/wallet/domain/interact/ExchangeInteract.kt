@@ -2,11 +2,9 @@ package com.green.wallet.domain.interact
 
 import com.green.wallet.domain.domainmodel.ExchangeRate
 import com.green.wallet.domain.domainmodel.OrderItem
-import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.tools.Resource
 import kotlinx.coroutines.flow.Flow
-import java.util.Optional
 
 interface ExchangeInteract {
 
@@ -32,5 +30,6 @@ interface ExchangeInteract {
     suspend fun updateTibetSwapExchangeStatus()
 
     fun getTibetSwapDetailByOfferId(offerId: String): Flow<TibetSwapExchange>
+	suspend  fun updateTibetLiquidityStatus()
 
 }

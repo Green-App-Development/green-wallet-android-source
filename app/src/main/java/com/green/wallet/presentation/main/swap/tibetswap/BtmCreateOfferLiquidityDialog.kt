@@ -90,6 +90,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 
 		val xchAmount = vm.xchDeposit
 		val catAmount = vm.catTibetAmount
+		if (vm.catLiquidityAdapterPos == -1) return
 		val token = vm.tokenList.value[vm.catTibetAdapterPosition]
 		val tibetToken = vm.tokenTibetList.value[vm.catLiquidityAdapterPos]
 		val wallet = vm.curWallet!!

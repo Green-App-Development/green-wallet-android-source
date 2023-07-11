@@ -589,17 +589,28 @@
 
 				<androidx.constraintlayout.widget.ConstraintLayout
 						android:layout_width="match_parent"
-						android:layout_height="320dp"
+						android:layout_height="340dp"
 						android:background="@drawable/card_view_bcg_shape_bottom"
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="parent"
 						app:layout_constraintTop_toTopOf="parent">
 
+					<TextView
+							android:id="@+id/txtLiquidityState"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="7dp"
+							android:layout_marginTop="7dp"
+							android:text="Add Liquidity"
+							android:textColor="@color/green"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="parent" />
+
 					<androidx.constraintlayout.widget.ConstraintLayout
 							android:id="@+id/top_container"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
-							app:layout_constraintTop_toTopOf="parent">
+							app:layout_constraintTop_toBottomOf="@id/txtLiquidityState">
 
 						<androidx.constraintlayout.widget.ConstraintLayout
 								android:id="@+id/layoutXCHCAT"
@@ -852,6 +863,7 @@
 							android:id="@+id/bottom_container"
 							android:layout_width="match_parent"
 							android:layout_height="wrap_content"
+							android:paddingTop="5dp"
 							app:layout_constraintTop_toBottomOf="@+id/img_swap_liquid">
 
 
@@ -860,7 +872,7 @@
 								android:layout_width="match_parent"
 								android:layout_height="75dp"
 								android:layout_marginStart="7dp"
-								android:layout_marginTop="15dp"
+								android:layout_marginTop="10dp"
 								android:layout_marginEnd="7dp"
 								android:background="@drawable/bcg_edt_course_exchange"
 								app:layout_constraintTop_toTopOf="parent">
@@ -885,12 +897,12 @@
 									android:layout_height="35dp"
 									android:layout_marginStart="10dp"
 									android:background="@android:color/transparent"
+									android:enabled="false"
 									android:imeOptions="actionDone"
 									android:inputType="numberDecimal"
 									android:maxLines="1"
 									android:singleLine="true"
 									android:text=""
-									android:enabled="false"
 									android:textColor="@color/secondary_text_color"
 									android:textSize="18sp"
 									app:layout_constraintEnd_toStartOf="@+id/view9"
@@ -957,8 +969,8 @@
 									android:layout_height="15dp"
 									android:layout_centerVertical="true"
 									android:layout_marginEnd="20dp"
-									android:visibility="invisible"
 									android:src="@drawable/ic_arrow_downword"
+									android:visibility="invisible"
 									app:layout_constraintBottom_toBottomOf="@+id/edtTokenTibet"
 									app:layout_constraintEnd_toEndOf="parent"
 									app:layout_constraintTop_toTopOf="@+id/edtTokenTibet" />

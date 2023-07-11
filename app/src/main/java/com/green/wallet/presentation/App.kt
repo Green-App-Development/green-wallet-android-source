@@ -206,6 +206,7 @@ class App : DaggerApplication() {
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
 				exchangeInteract.updateOrderStatusPeriodically()
 				exchangeInteract.updateTibetSwapExchangeStatus()
+				exchangeInteract.updateTibetLiquidityStatus()
 			}
 		}
 		updateCryptoJob?.cancel()

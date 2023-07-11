@@ -63,7 +63,7 @@ class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemList
 		prevOrderListJob = lifecycleScope.launchWhenCreated {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				vm.exchangeList.collectLatest {
-//					VLog.d("Updating order items list : $it")
+					VLog.d("Updating order items list : $it")
 					binding.hasSomeOrders(it.isNotEmpty())
 					orderAdapter.updateRequestList(it)
 				}

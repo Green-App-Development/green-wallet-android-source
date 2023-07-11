@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.swap.order
 
+import android.annotation.SuppressLint
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -8,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.VIEW_LOG_TAG
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.common.tools.requestDateFormat
 import com.green.wallet.R
@@ -22,10 +23,10 @@ import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.OrderStatus
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getDrawableResource
 import com.green.wallet.presentation.tools.getStringResource
-import kotlinx.android.synthetic.main.fragment_exchange.view.container
 
 class OrderItemAdapter(
 	val activity: MainActivity,
@@ -54,7 +55,7 @@ class OrderItemAdapter(
 			TYPE_TIBET_LIQUIDITY -> {
 				val view = LayoutInflater.from(parent.context)
 					.inflate(R.layout.item_request_tibet_liquidity, parent, false)
-				OrderItemTibetLiquidity(view)
+				OrderItemTibetLiquidityHolder(view)
 			}
 
 			else -> {
@@ -77,6 +78,10 @@ class OrderItemAdapter(
 					is TibetSwapExchange ->
 						holder.onBindTibetSwapItem(data[position] as TibetSwapExchange)
 				}
+			}
+
+			is OrderItemTibetLiquidityHolder -> {
+				holder.onBindTibetLiquidity(data[position] as TibetLiquidity)
 			}
 		}
 	}
@@ -187,18 +192,6 @@ class OrderItemAdapter(
 			}
 		}
 
-		private fun initChangeColorStatusTxt(status: OrderStatus, txtStatus: TextView) {
-			val clr = activity.getColorResource(
-				when (status) {
-					OrderStatus.Waiting -> R.color.blue_aspect_ratio
-					OrderStatus.Cancelled -> R.color.red_mnemonic
-					OrderStatus.InProgress -> R.color.orange
-					else -> R.color.green
-				}
-			)
-			txtStatus.setTextColor(clr)
-		}
-
 		private fun changeAmountColor(txt: TextView, clr: Int) {
 			val text = txt.text.toString()
 			val pivot = text.indexOf(":")
@@ -217,19 +210,76 @@ class OrderItemAdapter(
 		}
 	}
 
-	inner class OrderItemTibetLiquidity(val view: View) : ViewHolder(view) {
+	inner class OrderItemTibetLiquidityHolder(val view: View) : ViewHolder(view) {
 
 		private lateinit var binding: ItemRequestTibetLiquidityBinding
 
-		fun onBind(tibetLiquidity: TibetLiquidity) {
+		@SuppressLint("SetTextI18n")
+		fun onBindTibetLiquidity(item: TibetLiquidity) {
+			binding = ItemRequestTibetLiquidityBinding.bind(view)
+			binding.apply {
 
-			binding = ItemRequestTibetLiquidityBinding.inflate(activity.layoutInflater)
+				txtDate.text = requestDateFormat(item.time_created)
+				if (item.status == OrderStatus.InProgress) {
+					imgDot.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_orange))
+					txtStatusRequest.setTextColor(activity.getColorResource(R.color.orange))
+				} else {
+					imgDot.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_green))
+					txtStatusRequest.setTextColor(activity.getColorResource(R.color.green))
+				}
+				if (item.addLiquidity) {
+					txtSendAmountValue.apply {
+						setText(
+							"- ${formattedDoubleAmountWithPrecision(item.catAmount)} ${item.catToken} \n- ${
+								formattedDoubleAmountWithPrecision(
+									item.xchAmount
+								)
+							} XCH"
+						)
+						setTextColor(activity.getColorResource(R.color.red_mnemonic))
+					}
+					txtReceiveAmountValue.apply {
+						setText("+ ${formattedDoubleAmountWithPrecision(item.liquidityAmount)} ${item.liquidityToken}")
+						setTextColor(activity.getColorResource(R.color.green))
+					}
+				} else {
+					txtReceiveAmountValue.apply {
+						setText(
+							"+ ${formattedDoubleAmountWithPrecision(item.catAmount)} ${item.catToken} \n+ ${
+								formattedDoubleAmountWithPrecision(
+									item.xchAmount
+								)
+							} XCH"
+						)
+						setTextColor(activity.getColorResource(R.color.green))
+					}
+					txtSendAmountValue.apply {
+						setText("- ${formattedDoubleAmountWithPrecision(item.liquidityAmount)} ${item.liquidityToken}")
+						setTextColor(activity.getColorResource(R.color.red_mnemonic))
+					}
+				}
+				txtDetailRequest.setOnClickListener {
+					listener.onClickDetailItem(item)
+				}
 
+			}
 
 		}
 
 	}
 
+
+	private fun initChangeColorStatusTxt(status: OrderStatus, txtStatus: TextView) {
+		val clr = activity.getColorResource(
+			when (status) {
+				OrderStatus.Waiting -> R.color.blue_aspect_ratio
+				OrderStatus.Cancelled -> R.color.red_mnemonic
+				OrderStatus.InProgress -> R.color.orange
+				else -> R.color.green
+			}
+		)
+		txtStatus.setTextColor(clr)
+	}
 
 	private companion object {
 		private const val TYPE_ORDER = 1
