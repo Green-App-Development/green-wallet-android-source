@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.green.wallet.databinding.FragmentRequestBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
@@ -89,6 +90,10 @@ class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemList
 
 			is TibetSwapExchange -> {
 				getMainActivity().move2TibetSwapExchangeDetail(item)
+			}
+
+			is TibetLiquidity -> {
+				getMainActivity().move2TibetLiquidityDetail(item.offer_id)
 			}
 		}
 	}

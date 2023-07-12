@@ -7,8 +7,10 @@ import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetLiquidityExchange
 import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.interact.TibetInteract
+import com.green.wallet.presentation.tools.DEV_FEE_ADDRESS
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.WALLET_FEE_ADDRESS
 import javax.inject.Inject
 
 class TibetInteractImpl
@@ -55,14 +57,22 @@ class TibetInteractImpl
 		}
 	}
 
-	override suspend fun pushOfferToTibet(pair: String, offer: String,action:String): Resource<String> {
+	override suspend fun pushOfferToTibet(
+		pair: String,
+		offer: String,
+		action: String,
+		donationAmount: Double
+	): Resource<String> {
 		try {
 			val body = hashMapOf<String, Any>()
 			body["offer"] = offer
 			body["action"] = action
-			body["total_donation_amount"] = 0
-			body["donation_addresses"] = listOf<String>()
-			body["donation_weights"] = listOf<String>()
+			body["total_donation_amount"] = donationAmount
+			body["donation_addresses"] = listOf(
+				DEV_FEE_ADDRESS,
+				WALLET_FEE_ADDRESS
+			)
+			body["donation_weights"] = listOf(3, 5)
 			VLog.d("Making request to Tibet body : $body pair : $pair")
 			val res = tibetService.pushingOfferToTibet(pair_id = pair, body = body)
 			if (res.isSuccessful) {

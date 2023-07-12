@@ -24,9 +24,10 @@ class PushingOfferXCHCATToTibet @Inject constructor(
 		isInputXCH: Boolean,
 		fee: Double,
 		spentXCHCoins: String,
-		fk_address: String
+		fk_address: String,
+		donation_amount: Double
 	): Resource<String> {
-		val res = tibetInteract.pushOfferToTibet(pair, offer, ACTION_SWAP)
+		val res = tibetInteract.pushOfferToTibet(pair, offer, ACTION_SWAP, donation_amount)
 		if (res.state == Resource.State.SUCCESS) {
 			val offerId = res.data!!
 			val sendTokenCode = if (isInputXCH) "XCH" else catCode

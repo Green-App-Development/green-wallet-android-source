@@ -61,6 +61,7 @@ import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
 import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.swap.send.SwapSendFragment
+import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidityDetailsFragment
 import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -327,6 +328,11 @@ class MainActivity : BaseActivity() {
 				}
 
 				fragmentTibetSwapDetail -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+
+				fragmentTibetLiquidDetail -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
@@ -949,6 +955,12 @@ class MainActivity : BaseActivity() {
 			WalletSettingsFragment.ADDRESS_KEY to address
 		)
 		navController.navigate(walletSettings, bundle)
+	}
+
+	fun move2TibetLiquidityDetail(offerId: String) {
+		val bundle = bundleOf()
+		bundle.putString(TibetLiquidityDetailsFragment.TIBET_LIQUIDITY_OFFER_KEY, offerId)
+		navController.navigate(fragmentTibetLiquidDetail, bundle)
 	}
 
 

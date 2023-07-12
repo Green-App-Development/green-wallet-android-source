@@ -37,6 +37,7 @@ import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
 import com.green.wallet.presentation.main.swap.order.OrdersFragment
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.swap.send.SwapSendFragment
+import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidityDetailsFragment
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapFragment
 import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
@@ -198,7 +199,8 @@ abstract class InjectorBuildersModule {
 	@ContributesAndroidInjector()
 	abstract fun injectIntoTibetSwapItemDetailFragment(): TibetSwapDetailFragment
 
-
+	@ContributesAndroidInjector
+	abstract fun injectIntoTibetLiquidityDetailFragment(): TibetLiquidityDetailsFragment
 
 
 }

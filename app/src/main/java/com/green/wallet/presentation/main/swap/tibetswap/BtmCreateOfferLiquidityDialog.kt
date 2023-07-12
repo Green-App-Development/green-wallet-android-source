@@ -113,6 +113,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 			txtPlus(txtCATValue, catAmount, token.code)
 			txtMinus(txtLiquidityAmount, liquidity, tibetToken.code)
 			//tibet
+			vm.availableXCHAmount = 0.0
 			initSpendableBalance(wallet.address, tibetToken.code, liquidity, tibetToken.hash)
 		}
 
@@ -192,9 +193,10 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				launch {
-					vm.getSpendableBalanceByTokenCodeAndAddress(address, "XCH", catAssetId)
+					vm.getSpendableBalanceByTokenCodeAndAddress(address, "XCH", "")
 						.collectLatest { spendable ->
 							val total = xchAmount + getFeeBasedOnPosition()
+							vm.availableXCHAmount = spendable
 							spendableBalanceTxt(
 								binding.txtSpendableBalance1,
 								spendable,
@@ -463,6 +465,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 				requireActivity().getStringResource(R.string.spendable_balance) + " $format $tokenCode"
 			setTextColor(requireActivity().getColorResource(if (isEnough) R.color.greey else R.color.red_mnemonic))
 		}
+		binding.btnSign.isEnabled = isEnough
 	}
 
 	private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {

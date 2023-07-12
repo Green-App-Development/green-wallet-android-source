@@ -15,7 +15,12 @@ interface TibetInteract {
 		pairId: String
 	): Resource<TibetSwapResponse>
 
-	suspend fun pushOfferToTibet(pair: String, offer: String,action:String): Resource<String>
+	suspend fun pushOfferToTibet(
+		pair: String,
+		offer: String,
+		action: String,
+		donationAmount: Double = 0.0
+	): Resource<String>
 
 
 	suspend fun getTibetLiquidity(pairId: String): TibetLiquidityExchange?

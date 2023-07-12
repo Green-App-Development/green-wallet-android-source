@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.room.Index.Order
 import com.green.wallet.R
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.VLog
@@ -252,5 +251,20 @@ fun getLiquidityQuote(
 	return output.toLong()
 }
 
+fun getPercentOfValue(
+	value: Long,
+	percent: Double = 0.8
+): Double {
+	return (value * percent) / 100.0
+}
+
+fun hideFingerPrint(fingerPrint: Long): String {
+	runCatching {
+		val str = "$fingerPrint"
+		val stars = str.length - 4
+		return "*".repeat(stars) + str.substring(str.length - 4)
+	}
+	return "$fingerPrint"
+}
 
 

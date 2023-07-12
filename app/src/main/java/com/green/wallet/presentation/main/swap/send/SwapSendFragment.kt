@@ -17,28 +17,24 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.green.wallet.R
-import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
 import dagger.android.support.DaggerFragment
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.databinding.FragmentSendSwapBinding
-import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.main.send.SendFragmentViewModel
 import com.green.wallet.presentation.main.send.WalletListAdapter
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
@@ -51,9 +47,6 @@ import kotlinx.android.synthetic.main.fragment_listing.txtBlockChain
 import kotlinx.android.synthetic.main.fragment_receive.*
 import kotlinx.android.synthetic.main.fragment_receive.txtAddress
 import kotlinx.android.synthetic.main.fragment_send.*
-import kotlinx.android.synthetic.main.fragment_send.chosenNetworkRel
-import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
-import kotlinx.android.synthetic.main.fragment_send_swap.ic_wallet_list
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.math.BigDecimal
@@ -384,7 +377,7 @@ class SwapSendFragment : DaggerFragment() {
 	@SuppressLint("SetTextI18n")
 	private fun initCurWalletDetails(wallet: WalletWithTokens) {
 		txt_network_name.text = wallet.networkType.split(" ")[0]
-		txtHiddenPublicKey.text = hidePublicKey(wallet.fingerPrint)
+		txtHiddenPublicKey.text = hideFingerPrint(wallet.fingerPrint)
 
 		updateTokensSpinner(wallet.tokenWalletList)
 		verifySendingAddress(wallet.address)

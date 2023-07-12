@@ -22,7 +22,7 @@
 
 		<androidx.constraintlayout.widget.ConstraintLayout
 				android:layout_width="match_parent"
-				android:layout_height="410dp"
+				android:layout_height="420dp"
 				android:layout_marginTop="20dp"
 				android:background="@drawable/bcg_create_offer">
 
