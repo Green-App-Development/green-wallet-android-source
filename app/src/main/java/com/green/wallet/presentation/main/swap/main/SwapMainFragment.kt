@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
@@ -25,9 +24,6 @@ class SwapMainFragment : DaggerFragment() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: SwapMainViewModel by viewModels { viewModelFactory }
-
-	val destList =
-		listOf(R.id.fragment_exchange, R.id.fragment_tibet_swap, R.id.fragment_request)
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -60,17 +56,17 @@ class SwapMainFragment : DaggerFragment() {
 
 		//0
 		txtExchange.setOnClickListener {
-			vm.navigateTo(destList[0])
+			vm.navigateTo(vm.destList[0])
 		}
 
 		//1
 		txtTibetSwap.setOnClickListener {
-			vm.navigateTo(destList[1])
+			vm.navigateTo(vm.destList[1])
 		}
 
 		//2
 		txtMyRequests.setOnClickListener {
-			vm.navigateTo(destList[2])
+			vm.navigateTo(vm.destList[2])
 		}
 
 		vm.addDestId(R.id.fragment_exchange)
@@ -89,8 +85,8 @@ class SwapMainFragment : DaggerFragment() {
 		dest: Int
 	): Boolean {
 		val txtClicks = listOf(txtExchange, txtTibetSwap, txtMyRequests)
-		for (i in 0 until destList.size) {
-			if (destList[i] == dest) {
+		for (i in 0 until vm.destList.size) {
+			if (vm.destList[i] == dest) {
 				txtClicked(txtClicks[i])
 			} else {
 				txtUnClicked(txtClicks[i])

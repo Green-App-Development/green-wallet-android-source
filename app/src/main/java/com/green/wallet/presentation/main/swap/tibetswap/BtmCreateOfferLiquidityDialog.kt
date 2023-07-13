@@ -167,11 +167,22 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 	) {
 		lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
+				launch {
+					vm.getSpendableBalanceByTokenCodeAndAddress(
+						address,
+						"XCH",
+						""
+					).collectLatest { spendable ->
+						vm.availableXCHAmount = spendable
+						binding.clickedPositionsFee(feePosition)
+					}
+				}
 				vm.getSpendableBalanceByTokenCodeAndAddress(
 					address,
 					liquidityCode,
 					liquidityAssetId
 				).collectLatest { spendable ->
+					vm.catEnough = spendable >= liquidityAmount
 					spendableBalanceTxt(
 						binding.txtSpendableBalance1,
 						spendable,
@@ -196,17 +207,19 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					vm.getSpendableBalanceByTokenCodeAndAddress(address, "XCH", "")
 						.collectLatest { spendable ->
 							val total = xchAmount + getFeeBasedOnPosition()
-							vm.availableXCHAmount = spendable
+							vm.availableXCHAmount = spendable - xchAmount
 							spendableBalanceTxt(
 								binding.txtSpendableBalance1,
 								spendable,
 								spendable >= total,
 								"XCH"
 							)
+							binding.clickedPositionsFee(1)
 						}
 				}
 				vm.getSpendableBalanceByTokenCodeAndAddress(address, tokenCode, catAssetId)
 					.collectLatest { spendable ->
+						vm.catEnough = spendable >= catAmount
 						spendableBalanceTxt(
 							binding.txtSpendableBalance2,
 							spendable,
@@ -406,9 +419,9 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		requireActivity().apply {
 			dialogManager.showWarningPriceChangeDialog(
 				this,
-				"Цена изменилась",
-				" Верните3 сь на предыдущий шаг, чтобы получить актуальную цену",
-				"Вернуться"
+				getStringResource(R.string.price_update),
+				getStringResource(R.string.price_update_text),
+				getStringResource(R.string.return_btn)
 			) {
 
 			}
@@ -437,7 +450,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 	private fun getFeeBasedOnPosition(): Double {
 		return when (feePosition) {
 			0 -> 0.0
-			1 -> 0.00000005
+			1 -> 0.00005
 			else -> 0.0005
 		}
 	}
@@ -477,11 +490,50 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 	private fun DialogBtmCreateOfferLiquidityBinding.clickedPositionsFee(pos: Int) {
 		feePosition = pos
 		val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)
+		val txtViews = listOf(
+			listOf(txtLong, textView28),
+			listOf(txtMedium, textView29),
+			listOf(txtShort, txtShortValue)
+		)
 		for (i in 0 until layouts.size) {
 			if (i == pos) {
 				layouts[i].visibility = View.VISIBLE
 			} else {
 				layouts[i].visibility = View.INVISIBLE
+			}
+			requireActivity().apply {
+				txtViews[i][0].setTextColor(getColorResource(R.color.greey))
+				txtViews[i][1].setTextColor(getColorResource(R.color.greey))
+			}
+		}
+		val curFee = getFeeBasedOnPosition()
+		if (vm.toTibet) {
+			val enoughXCH = curFee <= vm.availableXCHAmount
+			binding.btnSign.isEnabled = enoughXCH && vm.catEnough
+			if (enoughXCH) {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+				}
+			} else {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.red_mnemonic))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.red_mnemonic))
+				}
+			}
+		} else {
+			val enoughXCH = curFee <= vm.availableXCHAmount
+			binding.btnSign.isEnabled = enoughXCH && vm.catEnough
+			if (enoughXCH) {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+				}
+			} else {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.red_mnemonic))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.red_mnemonic))
+				}
 			}
 		}
 	}

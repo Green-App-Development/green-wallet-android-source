@@ -410,5 +410,8 @@
 	<string name="price_impact" />
 	<string name="risk_warning"/>
 	<string name="risk_warning_text"/>
+	<string name="price_update"/>
+	<string name="price_update_text"/>
+
 
 </resources>

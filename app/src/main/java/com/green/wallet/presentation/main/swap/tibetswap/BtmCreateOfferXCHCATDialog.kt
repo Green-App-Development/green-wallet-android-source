@@ -97,9 +97,25 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					).collectLatest { spendable ->
 						val diff = spendable - (amountIn + getFeeBasedOnPosition())
 						VLog.d("Spendable balance $spendable Amount : $amountIn and Fee : ${getFeeBasedOnPosition()}")
-						spendableBalanceTxt(balance = spendable, diff >= 0.0, "XCH")
+						spendableBalanceTxt(
+							balance = spendable,
+							isEnough = diff >= 0.0,
+							tokenCode = "XCH"
+						)
+						vm.availableXCHAmount = spendable - amountIn
+						binding.clickedPositionsFee(1)
 					}
 				} else {
+					launch {
+						vm.getSpendableBalanceByTokenCodeAndAddress(
+							address = vm.curWallet!!.address,
+							"XCH",
+							""
+						).collectLatest { spendable ->
+							vm.availableXCHAmount = spendable
+							binding.clickedPositionsFee(1)
+						}
+					}
 					vm.getSpendableBalanceByTokenCodeAndAddress(
 						address = vm.curWallet!!.address,
 						tokenCode,
@@ -107,6 +123,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					).collectLatest { spendable ->
 						val diff = spendable - amountIn
 						spendableBalanceTxt(balance = spendable, diff >= 0.0, tokenCode)
+						binding.btnSign.isEnabled = diff >= 0.0
 					}
 				}
 			}
@@ -138,13 +155,21 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		var amountTo = vm.tibetSwap.value?.data?.amount_out ?: 0L
 		val assetId = vm.tibetSwap.value?.data?.asset_id ?: ""
 		val pairId = vm.tokenList.value[vm.catAdapPosition].pairID
-		var donationAmount: Double
+		val donationAmount: Double
+
+		val devFee =
+			requireActivity().getStringResource(R.string.fee_dev).removeSuffix("%").toDoubleOrNull()
+				?: 0.3
+		val walletFee = requireActivity().getStringResource(R.string.fee_wallet).removeSuffix("%")
+			.toDoubleOrNull() ?: 0.5
+
+		val total = devFee + walletFee
 
 		if (vm.xchToCAT) {
-			donationAmount = getPercentOfValue(value = amountFrom)
+			donationAmount = getPercentOfValue(value = amountFrom, percent = total)
 			amountFrom += donationAmount.toLong()
 		} else {
-			donationAmount = getPercentOfValue(value = amountTo)
+			donationAmount = getPercentOfValue(value = amountTo, percent = total)
 			amountTo -= donationAmount.toLong()
 		}
 
@@ -168,7 +193,15 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		btnSign.setOnClickListener {
 			VLog.d("Btn sign is clicked on dialog")
 			if (vm.xchToCAT) {
-				initMethodChannelHandler(pairId, amountIn, amountOut, tokenCode, donationAmount)
+				initMethodChannelHandler(
+					pairId,
+					amountIn,
+					amountOut,
+					tokenCode,
+					donationAmount,
+					devFee = (devFee * 10).toInt(),
+					walletFee = (walletFee * 10).toInt()
+				)
 				lifecycleScope.launch {
 					generateOfferXCHToCAT(
 						amountFrom = amountFrom,
@@ -177,7 +210,11 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					)
 				}
 			} else {
-				initMethodChannelHandler(pairId, amountIn, amountOut, tokenCode, donationAmount)
+				initMethodChannelHandler(
+					pairId, amountIn, amountOut, tokenCode, donationAmount,
+					devFee = (devFee * 10).toInt(),
+					walletFee = (walletFee * 10).toInt()
+				)
 				lifecycleScope.launch {
 					generateOfferCATToXCH(
 						amountFrom = amountFrom,
@@ -191,8 +228,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 
 
 		initSpendableBalance(
-			if (vm.xchToCAT) "" else assetID,
-			if (vm.xchToCAT) "XCH" else tokenCode,
+			assetId = if (vm.xchToCAT) "" else assetID,
+			tokenCode = if (vm.xchToCAT) "XCH" else tokenCode,
 			amountIn = amountIn
 		)
 	}
@@ -202,7 +239,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		amountIn: Double,
 		amountOut: Double,
 		tokenCode: String,
-		donationAmount: Double
+		donationAmount: Double,
+		devFee: Int = 3,
+		walletFee: Int = 5
 	) {
 		methodChannel.setMethodCallHandler { call, result ->
 			if (call.method == "XCHToCAT") {
@@ -219,7 +258,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					vm.xchToCAT,
 					getFeeBasedOnPosition(),
 					spentXCHCoins = spentXCHCoins,
-					donationAmount = donationAmount
+					donationAmount = donationAmount,
+					devFee = devFee,
+					walletFee = walletFee
 				)
 			} else if (call.method == "offerCATToXCH") {
 				val resultArgs = call.arguments as HashMap<String, String>
@@ -237,7 +278,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					getFeeBasedOnPosition(),
 					spentXCHCoins,
 					spentCATCoins,
-					donationAmount = donationAmount
+					donationAmount = donationAmount,
+					devFee = devFee,
+					walletFee = walletFee
 				)
 			} else if (call.method == "exception") {
 				showFailedTibetSwap()
@@ -279,7 +322,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		isInputXCH: Boolean,
 		fee: Double,
 		spentXCHCoins: String,
-		donationAmount: Double
+		donationAmount: Double,
+		devFee: Int,
+		walletFee: Int
 	) {
 		lifecycleScope.launch(offerXCHCATHandler) {
 			val res =
@@ -292,7 +337,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					isInputXCH,
 					fee,
 					spentXCHCoins,
-					donationAmount = donationAmount
+					donationAmount = donationAmount,
+					devFee,
+					walletFee
 				)
 			when (res.state) {
 				Resource.State.ERROR -> {
@@ -325,7 +372,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		fee: Double,
 		spentXCHCoins: String,
 		spentCATCoins: String,
-		donationAmount: Double
+		donationAmount: Double,
+		devFee: Int,
+		walletFee: Int
 	) {
 		lifecycleScope.launch {
 			val res =
@@ -339,7 +388,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					fee,
 					spentXCHCoins,
 					spentCATCoins,
-					donationAmount
+					donationAmount,
+					devFee,
+					walletFee
 				)
 			when (res.state) {
 				Resource.State.ERROR -> {
@@ -362,9 +413,9 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		requireActivity().apply {
 			dialogManager.showWarningPriceChangeDialog(
 				this,
-				"Цена изменилась",
-				" Верните3 сь на предыдущий шаг, чтобы получить актуальную цену",
-				"Вернуться"
+				getStringResource(R.string.price_update),
+				getStringResource(R.string.price_update_text),
+				getStringResource(R.string.return_btn)
 			) {
 
 			}
@@ -393,7 +444,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 	private fun getFeeBasedOnPosition(): Double {
 		return when (feePosition) {
 			0 -> 0.0
-			1 -> 0.00000005
+			1 -> 0.00005
 			else -> 0.0005
 		}
 	}
@@ -456,11 +507,50 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 	private fun DialogBtmCreateOfferXchcatBinding.clickedPositionsFee(pos: Int) {
 		feePosition = pos
 		val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)
+		val txtViews = listOf(
+			listOf(txtLong, textView28),
+			listOf(txtMedium, textView29),
+			listOf(txtShort, txtAmountFeeShort)
+		)
 		for (i in 0 until layouts.size) {
 			if (i == pos) {
 				layouts[i].visibility = View.VISIBLE
 			} else {
 				layouts[i].visibility = View.INVISIBLE
+			}
+			requireActivity().apply {
+				txtViews[i][0].setTextColor(getColorResource(R.color.greey))
+				txtViews[i][1].setTextColor(getColorResource(R.color.greey))
+			}
+		}
+		val curFee = getFeeBasedOnPosition()
+		if (vm.xchToCAT) {
+			val enoughAmountFee = curFee <= vm.availableXCHAmount
+			binding.btnSign.isEnabled = enoughAmountFee
+			if (enoughAmountFee) {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+				}
+			} else {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.red_mnemonic))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.red_mnemonic))
+				}
+			}
+		} else {
+			val enoughXCH = curFee <= vm.availableXCHAmount
+			binding.btnSign.isEnabled = enoughXCH && vm.catEnough
+			if (enoughXCH) {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+				}
+			} else {
+				requireActivity().apply {
+					txtViews[pos][0].setTextColor(getColorResource(R.color.red_mnemonic))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.red_mnemonic))
+				}
 			}
 		}
 	}

@@ -6,7 +6,6 @@ import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.presentation.tools.ACTION_SWAP
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
-import com.green.wallet.presentation.tools.Status
 import javax.inject.Inject
 
 class PushingOfferToTibet @Inject constructor(
@@ -23,7 +22,7 @@ class PushingOfferToTibet @Inject constructor(
 		isInputXCH: Boolean,
 		fee: Double
 	): Resource<String> {
-		val res = tibetInteract.pushOfferToTibet(pair, offer, ACTION_SWAP)
+		val res = tibetInteract.pushOfferToTibetLiquidity(pair, offer, ACTION_SWAP)
 		if (res.state == Resource.State.SUCCESS) {
 			val offerId = res.data!!
 			val sendTokenCode = if (isInputXCH) "XCH" else catCode

@@ -21,6 +21,9 @@ class SwapMainViewModel @Inject constructor() : ViewModel() {
 		VLog.d("Swap Main View Model : $this is created")
 	}
 
+	val destList =
+		listOf(R.id.fragment_exchange, R.id.fragment_tibet_swap, R.id.fragment_request)
+
 	fun move2RequestHistory() {
 		visitedDest.add(R.id.fragment_request)
 		prevDestID = R.id.fragment_request

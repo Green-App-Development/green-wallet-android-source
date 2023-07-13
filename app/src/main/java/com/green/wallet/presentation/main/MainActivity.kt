@@ -938,6 +938,8 @@ class MainActivity : BaseActivity() {
 	}
 
 	fun move2BtmChooseWalletDialog() {
+		if (navController.currentDestination?.id == btmSheetDialogChooseWallet)
+			return
 		navController.navigate(btmSheetDialogChooseWallet)
 	}
 

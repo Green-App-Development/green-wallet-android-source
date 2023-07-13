@@ -633,7 +633,7 @@
 							android:layout_height="wrap_content"
 							android:layout_marginStart="7dp"
 							android:layout_marginTop="7dp"
-							android:text="Add Liquidity"
+							android:text="@string/add_liquidity"
 							android:textColor="@color/green"
 							app:layout_constraintStart_toStartOf="parent"
 							app:layout_constraintTop_toTopOf="parent" />

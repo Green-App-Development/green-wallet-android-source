@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.main.swap.tibetswap
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Html
 import android.text.method.LinkMovementMethod
@@ -88,12 +89,14 @@ class TibetSwapFragment : DaggerFragment() {
 		inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 	): View {
 		binding = FragmentTibetswapBinding.inflate(layoutInflater)
+		VLog.d("On Create View on tibet swap fragment")
 		return binding.root
 	}
 
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		VLog.d("On View Created on tibet swap fragment")
 		chooseWalletIfNeeded()
 		with(binding) {
 			commonListeners()
@@ -146,6 +149,7 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 	}
 
+	@SuppressLint("SetTextI18n")
 	private fun initCalculateOutput() {
 		lifecycleScope.launch {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -157,10 +161,20 @@ class TibetSwapFragment : DaggerFragment() {
 									?: 0) / if (vm.xchToCAT) PRECISION_CAT else PRECISION_XCH
 								val priceWarning = it.data?.price_warning ?: false
 								edtAmountTo.text = formattedDollarWithPrecision(amountOut, 12)
-								binding.calculateCoursePrice(amountOut)
+								binding.apply {
+									calculateCoursePrice(amountOut)
+									linearAgree.visibility =
+										if (priceWarning) View.VISIBLE else View.GONE
+									edtUpdateCourse.setText(
+										"${
+											formattedDollarWithPrecision(
+												it.data?.price_impact ?: 0.0,
+												2
+											)
+										}%"
+									)
+								}
 								vm.isPriceImpacted = priceWarning
-								binding.linearAgree.visibility =
-									if (priceWarning) View.VISIBLE else View.GONE
 								initNoAnimationCollapsingDetailTransaction(containerSwap)
 							}
 
@@ -287,11 +301,7 @@ class TibetSwapFragment : DaggerFragment() {
 			animManager.rotateBy180Forward(binding.imgArrowDownDetailTrans, requireActivity())
 		} else animManager.rotateBy180Backward(binding.imgArrowDownDetailTrans, requireActivity())
 		vm.nextContainerBigger = !vm.nextContainerBigger
-//		if (vm.nextContainerBigger) {
-//			vm.nextHeight = vm.getContainerBiggerSize()
-//		} else {
-//			vm.nextHeight = vm.getContainerSmallerSize()
-//		}
+
 	}
 
 	fun initNoAnimationCollapsingDetailTransaction(layout: View) {
@@ -629,9 +639,9 @@ class TibetSwapFragment : DaggerFragment() {
 		}
 
 		binding.apply {
-			checkboxText.text =Html.fromHtml(
-				"The <a href=\"https://coinmarketcap.com/alexandria/glossary/price-impact\" style=\"color:#FF2222;\">price impact</a> for this trade is very high. Tick the box on the left to continue.")
-			checkboxText.movementMethod = LinkMovementMethod.getInstance()
+			checkboxText.text =
+				Html.fromHtml("The <u><font color='#FF0000'><a href=\"https://coinmarketcap.com/alexandria/glossary/price-impact\">price impact</a></font></u> for this trade is very high. Tick the box on the left to continue")
+			checkboxText.setMovementMethod(LinkMovementMethod.getInstance())
 		}
 
 	}
@@ -648,6 +658,26 @@ class TibetSwapFragment : DaggerFragment() {
 			if (adTibetLiquidity.dataOptions[i].contains(code)) return i
 		}
 		return -1
+	}
+
+	override fun onStart() {
+		super.onStart()
+		VLog.d("On Start on tibet swap fragment")
+	}
+
+	override fun onResume() {
+		super.onResume()
+		VLog.d("On Resume on tibet swap fragment")
+	}
+
+	override fun onPause() {
+		super.onPause()
+		VLog.d("On Pause on tibet swap fragment")
+	}
+
+	override fun onStop() {
+		super.onStop()
+		VLog.d("On Stop on tibet swap fragment")
 	}
 
 	override fun onDestroyView() {

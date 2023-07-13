@@ -43,7 +43,6 @@ class TibetSwapViewModel @Inject constructor(
 
 	var xchToCAT = true
 	var isPriceImpacted = false
-	var isCollapsed = true
 
 	//	val containerBiggerSize = if (isPriceImpacted) 480 else 435
 //	val containerSmallerSize = if (isPriceImpacted) 310 else 265
@@ -61,6 +60,7 @@ class TibetSwapViewModel @Inject constructor(
 	var catTibetAmount: Double = 0.0
 	var liquidityAmount: Double = 0.0
 	var availableXCHAmount: Double = 0.0
+	var catEnough = false
 
 	private val _tokenList = MutableStateFlow<List<Token>>(emptyList())
 	val tokenList = _tokenList.asStateFlow()
@@ -167,7 +167,9 @@ class TibetSwapViewModel @Inject constructor(
 		fee: Double,
 		spentXCHCoinsJson: String,
 		spentCATCoinsJson: String,
-		donationAmount: Double
+		donationAmount: Double,
+		devFee: Int,
+		walletFee: Int
 	) =
 		tibetSwapUseCases.pushOfferCATXCHToTibet(
 			pairID,
@@ -180,7 +182,9 @@ class TibetSwapViewModel @Inject constructor(
 			spentXCHCoinsJson,
 			spentCATCoinsJson,
 			fk_address = curWallet!!.address,
-			donationAmount
+			donationAmount,
+			devFee,
+			walletFee
 		)
 
 	suspend fun pushingOfferXCHCATToTibet(
@@ -192,7 +196,9 @@ class TibetSwapViewModel @Inject constructor(
 		isInputXCH: Boolean,
 		fee: Double,
 		spentXCHCoinsJson: String,
-		donationAmount: Double
+		donationAmount: Double,
+		devFee: Int,
+		walletFee: Int
 	) =
 		tibetSwapUseCases.pushOfferXCHCATToTibet(
 			pairID,
@@ -204,7 +210,9 @@ class TibetSwapViewModel @Inject constructor(
 			fee,
 			spentXCHCoinsJson,
 			curWallet!!.address,
-			donationAmount
+			donationAmount,
+			devFee,
+			walletFee
 		)
 
 	suspend fun addLiquidity(

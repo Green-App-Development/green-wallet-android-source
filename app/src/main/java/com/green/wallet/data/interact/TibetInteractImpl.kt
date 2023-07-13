@@ -57,7 +57,7 @@ class TibetInteractImpl
 		}
 	}
 
-	override suspend fun pushOfferToTibet(
+	override suspend fun pushOfferToTibetLiquidity(
 		pair: String,
 		offer: String,
 		action: String,
@@ -73,6 +73,42 @@ class TibetInteractImpl
 				WALLET_FEE_ADDRESS
 			)
 			body["donation_weights"] = listOf(3, 5)
+			VLog.d("Making request to Tibet body : $body pair : $pair")
+			val res = tibetService.pushingOfferToTibet(pair_id = pair, body = body)
+			if (res.isSuccessful) {
+				val success = res.body()!!.asJsonObject.get("success").asBoolean
+				VLog.d("Result from pushing offer : $res and success : $success")
+				if (success) {
+					val offerId = res.body()!!.asJsonObject.get("offer_id").asString
+					return Resource.success(offerId)
+				}
+				return Resource.error(Exception(res.message()))
+			} else
+				throw Exception(res.message())
+		} catch (ex: Exception) {
+			VLog.d("Pushing  offer to tibet exception : ${ex.message}")
+			return Resource.error(ex)
+		}
+	}
+
+	override suspend fun pushOfferToTibetCAT(
+		pair: String,
+		offer: String,
+		action: String,
+		donationAmount: Double,
+		devFee: Int,
+		walletFee: Int
+	): Resource<String> {
+		try {
+			val body = hashMapOf<String, Any>()
+			body["offer"] = offer
+			body["action"] = action
+			body["total_donation_amount"] = donationAmount
+			body["donation_addresses"] = listOf(
+				DEV_FEE_ADDRESS,
+				WALLET_FEE_ADDRESS
+			)
+			body["donation_weights"] = listOf(devFee, walletFee)
 			VLog.d("Making request to Tibet body : $body pair : $pair")
 			val res = tibetService.pushingOfferToTibet(pair_id = pair, body = body)
 			if (res.isSuccessful) {

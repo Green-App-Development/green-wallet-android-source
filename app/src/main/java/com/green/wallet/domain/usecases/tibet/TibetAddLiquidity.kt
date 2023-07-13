@@ -22,7 +22,7 @@ class TibetAddLiquidity @Inject constructor(
 		address: String,
 		tibetLiquidity: TibetLiquidity
 	): Resource<String> {
-		val res = tibetInteract.pushOfferToTibet(pairId, offer, ACTION_ADD_LIQUIDITY)
+		val res = tibetInteract.pushOfferToTibetLiquidity(pairId, offer, ACTION_ADD_LIQUIDITY)
 		if (res.state == Resource.State.SUCCESS) {
 			val offerId = res.data!!
 			val timeCreated = System.currentTimeMillis()
