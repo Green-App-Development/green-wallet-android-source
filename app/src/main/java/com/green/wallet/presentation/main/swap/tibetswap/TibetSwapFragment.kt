@@ -640,7 +640,7 @@ class TibetSwapFragment : DaggerFragment() {
 
 		binding.apply {
 			checkboxText.text =
-				Html.fromHtml("The <u><font color='#FF0000'><a href=\"https://coinmarketcap.com/alexandria/glossary/price-impact\">price impact</a></font></u> for this trade is very high. Tick the box on the left to continue")
+				Html.fromHtml(requireActivity().getStringResource(R.string.price_impact))
 			checkboxText.setMovementMethod(LinkMovementMethod.getInstance())
 		}
 
