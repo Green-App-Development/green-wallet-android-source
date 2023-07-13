@@ -173,6 +173,10 @@ class TibetSwapFragment : DaggerFragment() {
 											)
 										}%"
 									)
+									if (priceWarning) {
+										checkboxAgree.isChecked = false
+										btnGenerateOffer.isEnabled = false
+									}
 								}
 								vm.isPriceImpacted = priceWarning
 								initNoAnimationCollapsingDetailTransaction(containerSwap)
@@ -642,6 +646,10 @@ class TibetSwapFragment : DaggerFragment() {
 			checkboxText.text =
 				Html.fromHtml(requireActivity().getStringResource(R.string.price_impact))
 			checkboxText.setMovementMethod(LinkMovementMethod.getInstance())
+		}
+
+		checkboxAgree.setOnCheckedChangeListener { compoundButton, checked ->
+			btnGenerateOffer.isEnabled = checked
 		}
 
 	}
