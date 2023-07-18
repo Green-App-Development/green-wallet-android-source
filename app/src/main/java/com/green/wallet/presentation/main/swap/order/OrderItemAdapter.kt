@@ -108,7 +108,7 @@ class OrderItemAdapter(
 		val txtDate = v.findViewById<TextView>(R.id.txtDate)
 
 		fun onBindOrderItem(item: OrderItem) {
-			hashId.text = "${activity.getStringResource(R.string.order_title)} #${item.hash}"
+			hashId.text = "${activity.`getStringResource`(R.string.order_title)} #${item.hash}"
 			val amountToReceive = formattedDollarWithPrecision(item.amountToSend * item.rate, 4)
 			when (item.status) {
 				OrderStatus.Waiting -> {
@@ -223,9 +223,11 @@ class OrderItemAdapter(
 				if (item.status == OrderStatus.InProgress) {
 					imgDot.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_orange))
 					txtStatusRequest.setTextColor(activity.getColorResource(R.color.orange))
+					txtStatusRequest.text = activity.getStringResource(R.string.status_in_process)
 				} else {
 					imgDot.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_green))
 					txtStatusRequest.setTextColor(activity.getColorResource(R.color.green))
+					txtStatusRequest.text = activity.getStringResource(R.string.status_completed)
 				}
 				if (item.addLiquidity) {
 					txtSendAmountValue.apply {
@@ -258,6 +260,9 @@ class OrderItemAdapter(
 						setTextColor(activity.getColorResource(R.color.red_mnemonic))
 					}
 				}
+
+
+
 				txtDetailRequest.setOnClickListener {
 					listener.onClickDetailItem(item)
 				}
