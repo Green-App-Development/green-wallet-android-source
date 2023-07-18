@@ -133,6 +133,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 			if (vm.toTibet) {
 				initMethodChannelHandler(tibetLiquidity, pairId = token.pairID)
 				lifecycleScope.launch {
+					vm.checkingCATHome(address = wallet.address, tibetToken.hash)
 					generateOfferAddLiquidity(
 						xchAmount,
 						catAmount,
@@ -145,6 +146,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 			} else {
 				initMethodChannelHandler(tibetLiquidity, pairId = token.pairID)
 				lifecycleScope.launch {
+					vm.checkingCATHome(address = wallet.address, token.hash)
 					generateOfferRemoveLiquidity(
 						xchAmount,
 						catAmount,

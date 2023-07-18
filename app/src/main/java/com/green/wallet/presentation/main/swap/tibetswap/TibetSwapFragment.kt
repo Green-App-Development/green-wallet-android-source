@@ -116,6 +116,8 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 			binding.apply {
 				edtAmountFrom.setText("")
 				edtAmountTo.text = ""
+				vm.swapInputState = ""
+				vm.tibetSwapReInitToNullValue()
 			}
 		}
 	}

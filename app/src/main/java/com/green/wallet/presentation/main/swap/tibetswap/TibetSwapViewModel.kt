@@ -138,6 +138,10 @@ class TibetSwapViewModel @Inject constructor(
 		}
 	}
 
+	fun tibetSwapReInitToNullValue() {
+		_tibetSwap.value = null
+	}
+
 	suspend fun calculateAmountOut(amountIn: Double, pairID: String, isXCH: Boolean) {
 		val res = tibetSwapUseCases.calculateAmountOut(amountIn, isXCH, pairID)
 		VLog.d("Making API request : $amountIn PairID : $pairID  isXCH : $isXCH with Request : ${res.state}")
