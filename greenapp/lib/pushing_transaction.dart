@@ -12,6 +12,9 @@ class PushingTransaction {
   static const MethodChannel _channel =
       MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
 
+  static const MethodChannel _channel2 =
+      MethodChannel('METHOD_CHANNEL_GENERATE_ADDRESSES');
+
   final cachedWalletChains = Map<String, WalletKeychain>();
 
   init() {
@@ -350,6 +353,9 @@ class PushingTransaction {
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
+    _channel2.setMethodCallHandler((call) async {
+
+    });
   }
 
   Future<void> offerRemoveLiquidity(

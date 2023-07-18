@@ -5,7 +5,6 @@ import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
-import com.green.wallet.presentation.tools.VLog
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

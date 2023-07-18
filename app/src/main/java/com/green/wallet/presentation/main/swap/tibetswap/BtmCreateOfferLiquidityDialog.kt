@@ -131,9 +131,12 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 				addLiquidity = vm.toTibet
 			)
 			if (vm.toTibet) {
-				initMethodChannelHandler(tibetLiquidity, pairId = token.pairID)
+				initMethodChannelHandler(
+					tibetLiquidity,
+					pairId = token.pairID,
+					assetId = tibetToken.hash
+				)
 				lifecycleScope.launch {
-					vm.checkingCATHome(address = wallet.address, tibetToken.hash)
 					generateOfferAddLiquidity(
 						xchAmount,
 						catAmount,
@@ -144,9 +147,12 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					)
 				}
 			} else {
-				initMethodChannelHandler(tibetLiquidity, pairId = token.pairID)
+				initMethodChannelHandler(
+					tibetLiquidity,
+					pairId = token.pairID,
+					assetId = token.hash
+				)
 				lifecycleScope.launch {
-					vm.checkingCATHome(address = wallet.address, token.hash)
 					generateOfferRemoveLiquidity(
 						xchAmount,
 						catAmount,
@@ -312,7 +318,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 
 	private fun initMethodChannelHandler(
 		tibetLiquidity: TibetLiquidity,
-		pairId: String
+		pairId: String,
+		assetId: String
 	) {
 		methodChannel.setMethodCallHandler { call, result ->
 			if (call.method == "CATToAddLiquidity") {
@@ -326,7 +333,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					xchCoins = xchCoins,
 					catCoins = catCoins,
 					tibetLiquidity = tibetLiquidity,
-					pairID = pairId
+					pairID = pairId,
+					assetID = assetId
 				)
 			} else if (call.method == "CATToRemoveLiquidity") {
 				val resultArgs = call.arguments as HashMap<*, *>
@@ -338,7 +346,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					xchCoins = spentXCHCoins,
 					tibetLiquidity = tibetLiquidity,
 					pairID = pairId,
-					liquidityCoins = spentLiquidityCoins
+					liquidityCoins = spentLiquidityCoins,
+					assetID = assetId
 				)
 			}
 		}
@@ -349,9 +358,11 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		xchCoins: String,
 		liquidityCoins: String,
 		tibetLiquidity: TibetLiquidity,
-		pairID: String
+		pairID: String,
+		assetID: String
 	) {
 		lifecycleScope.launch {
+			vm.checkingCATHome(vm.curWallet?.address ?: "", assetID)
 			val res = vm.removeLiquidity(
 				offer = offer,
 				pairId = pairID,
@@ -383,9 +394,11 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		xchCoins: String,
 		catCoins: String,
 		tibetLiquidity: TibetLiquidity,
-		pairID: String
+		pairID: String,
+		assetID: String
 	) {
 		lifecycleScope.launch {
+			vm.checkingCATHome(address = vm.curWallet?.address ?: "", assetID)
 			val res = vm.addLiquidity(
 				offer = offer,
 				pairId = pairID,
