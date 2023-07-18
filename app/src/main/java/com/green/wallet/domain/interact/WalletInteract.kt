@@ -61,6 +61,11 @@ interface WalletInteract {
 		outer_puzzle_hashes: List<String>
 	)
 
+	suspend fun checkingTokenOnHome(
+		address: String,
+		asset_id: String
+	): Boolean
+
 	suspend fun getWalletByAddress(address: String): Wallet
 
 	suspend fun updateHashListImported(
@@ -72,6 +77,7 @@ interface WalletInteract {
 	)
 
 	suspend fun getChiaWalletListForExchange(): List<ChiaWallet>
+	suspend fun getMainPuzzleHashes(address: String): List<String>
 
 
 }

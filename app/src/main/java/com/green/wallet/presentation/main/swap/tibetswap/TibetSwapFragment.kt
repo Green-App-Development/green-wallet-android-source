@@ -51,7 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TibetSwapFragment : DaggerFragment() {
+class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
 
 	private lateinit var binding: FragmentTibetswapBinding
 
@@ -108,6 +108,16 @@ class TibetSwapFragment : DaggerFragment() {
 		initTokenSwapAdapters()
 		initTokenTibetAdapter()
 		initCalculateOutput()
+		initSuccessClearingFields()
+	}
+
+	private fun initSuccessClearingFields() {
+		vm.onSuccessTibetSwapClearingFields = {
+			binding.apply {
+				edtAmountFrom.setText("")
+				edtAmountTo.text = ""
+			}
+		}
 	}
 
 	private fun FragmentTibetswapBinding.commonListeners() {
@@ -692,6 +702,10 @@ class TibetSwapFragment : DaggerFragment() {
 		super.onDestroyView()
 		VLog.d("On Destroy view for Tibet swap fragment")
 		vm.swapMainScope?.cancel()
+	}
+
+	override fun onSuccessClearFields() {
+
 	}
 
 

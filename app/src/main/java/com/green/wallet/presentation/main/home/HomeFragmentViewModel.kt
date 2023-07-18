@@ -7,18 +7,19 @@ import com.green.wallet.domain.domainmodel.CurrencyItem
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
 class HomeFragmentViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
-	private val walletInteract: WalletInteract,
-	private val cryptocurrencyInteract: CryptocurrencyInteract,
+	private val walletInteract: WalletInteract, private val cryptocurrencyInteract: CryptocurrencyInteract,
 	private val blockChainInteract: BlockChainInteract,
 	private val greenAppInteract: GreenAppInteract
 ) : ViewModel() {
@@ -87,10 +88,12 @@ class HomeFragmentViewModel @Inject constructor(
 	}
 
 	fun swipedRefreshClicked(onFinished: () -> Unit) {
-		viewModelScope.launch {
+		viewModelScope.launch(Dispatchers.IO) {
 			blockChainInteract.updateBalanceAndTransactionsPeriodically()
 			greenAppInteract.requestOtherNotifItems()
-			onFinished()
+			withContext(Dispatchers.Main) {
+				onFinished()
+			}
 		}
 	}
 

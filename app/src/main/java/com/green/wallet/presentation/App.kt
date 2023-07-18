@@ -254,5 +254,4 @@ class App : DaggerApplication() {
 
 	fun isFlutterEngineInitialized() = this::flutterEngine.isInitialized
 
-
 }

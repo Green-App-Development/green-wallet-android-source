@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.main.swap.tibetswap
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -66,6 +67,11 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		)
 	}
 
+	override fun onAttach(context: Context) {
+		super.onAttach(context)
+
+	}
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		(requireActivity().application as App).appComponent.inject(this)
@@ -124,6 +130,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 						val diff = spendable - amountIn
 						spendableBalanceTxt(balance = spendable, diff >= 0.0, tokenCode)
 						binding.btnSign.isEnabled = diff >= 0.0
+						vm.catEnough = diff >= 0.0
 					}
 				}
 			}
@@ -200,7 +207,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					tokenCode,
 					donationAmount,
 					devFee = (devFee * 10).toInt(),
-					walletFee = (walletFee * 10).toInt()
+					walletFee = (walletFee * 10).toInt(),
+					assetId = assetID
 				)
 				lifecycleScope.launch {
 					generateOfferXCHToCAT(
@@ -241,7 +249,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		tokenCode: String,
 		donationAmount: Double,
 		devFee: Int = 3,
-		walletFee: Int = 5
+		walletFee: Int = 5,
+		assetId: String = ""
 	) {
 		methodChannel.setMethodCallHandler { call, result ->
 			if (call.method == "XCHToCAT") {
@@ -260,7 +269,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 					spentXCHCoins = spentXCHCoins,
 					donationAmount = donationAmount,
 					devFee = devFee,
-					walletFee = walletFee
+					walletFee = walletFee,
+					assetId = assetId
 				)
 			} else if (call.method == "offerCATToXCH") {
 				val resultArgs = call.arguments as HashMap<String, String>
@@ -324,9 +334,11 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 		spentXCHCoins: String,
 		donationAmount: Double,
 		devFee: Int,
-		walletFee: Int
+		walletFee: Int,
+		assetId: String
 	) {
 		lifecycleScope.launch(offerXCHCATHandler) {
+			vm.checkingCATHome(vm.curWallet?.address ?: "", assetId)
 			val res =
 				vm.pushingOfferXCHCATToTibet(
 					pairId,
@@ -423,6 +435,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 	}
 
 	private fun showSuccessSendMoneyDialog() {
+		vm.onSuccessTibetSwapClearingFields()
 		dialogManager.hidePrevDialogs()
 		getMainActivity().apply {
 			if (!this.isDestroyed) {
@@ -557,6 +570,11 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 
 	override fun getTheme(): Int {
 		return R.style.AppBottomSheetDialogTheme
+	}
+
+
+	interface OnXCHCATListener {
+		fun onSuccessClearFields()
 	}
 
 

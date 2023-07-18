@@ -12,6 +12,7 @@ import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.domain.usecases.tibet.CheckingCATOnHome
 import com.green.wallet.domain.usecases.tibet.TibetAddLiquidity
 import com.green.wallet.domain.usecases.tibet.TibetSwapUseCases
 import com.green.wallet.presentation.tools.INPUT_DEBOUNCE_VALUE
@@ -36,6 +37,7 @@ class TibetSwapViewModel @Inject constructor(
 	private val walletInteract: WalletInteract,
 	val prefsManager: PrefsManager,
 	private val spentCoinsInteract: SpentCoinsInteract,
+	val checkingCATHome: CheckingCATOnHome,
 	private val tibetInteract: TibetInteract
 ) : ViewModel() {
 
@@ -85,6 +87,9 @@ class TibetSwapViewModel @Inject constructor(
 	private val handler = CoroutineExceptionHandler { context, throwable ->
 		VLog.d("Exception in tibet swap view model : $throwable")
 	}
+
+	var onSuccessTibetSwapClearingFields: () -> Unit = {}
+
 
 	init {
 		VLog.d("On create tibet vm swap : $this")
@@ -255,7 +260,9 @@ class TibetSwapViewModel @Inject constructor(
 		VLog.d("On cleared tibet vm and cancelled scope : $this")
 	}
 
+
 	suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
 		spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
+
 
 }
