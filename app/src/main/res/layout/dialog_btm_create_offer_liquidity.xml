@@ -9,7 +9,7 @@
 	<LinearLayout
 			android:id="@+id/containerWallet"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="565dp"
 			android:background="@drawable/dialog_bg"
 			android:orientation="vertical">
 
@@ -379,10 +379,10 @@
 						app:layout_constraintTop_toTopOf="parent" />
 
 				<TextView
+						android:id="@+id/txtShortValue"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="0.0005 XCH"
-						android:id="@+id/txtShortValue"
 						android:textColor="@color/greey"
 						android:textFontWeight="500"
 						app:layout_constraintEnd_toEndOf="@+id/txtShort"
