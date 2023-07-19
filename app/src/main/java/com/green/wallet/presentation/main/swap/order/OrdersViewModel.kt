@@ -3,6 +3,8 @@ package com.green.wallet.presentation.main.swap.order
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.domain.domainmodel.TibetLiquidity
+import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,9 +26,25 @@ class OrdersViewModel @Inject constructor(
 
 	private fun retrievingAllOrderList() {
 		viewModelScope.launch {
-			exchangeInteract.getAllOrderListFlow().collect {
-				_exchangeList.emit(it)
+			exchangeInteract.getAllOrderListFlow().collect { list ->
+				val sorted = list.sortedWith(object : Comparator<Any> {
+					override fun compare(p0: Any, p1: Any): Int {
+						val t1 = getTimeCreated(p0)
+						val t2 = getTimeCreated(p1)
+						return t2.compareTo(t1)
+					}
+				})
+				_exchangeList.emit(sorted)
 			}
+		}
+	}
+
+	private fun getTimeCreated(p0: Any): Long {
+		return when (p0) {
+			is OrderItem -> p0.timeCreated
+			is TibetLiquidity -> p0.time_created
+			is TibetSwapExchange -> p0.time_created
+			else -> 0
 		}
 	}
 

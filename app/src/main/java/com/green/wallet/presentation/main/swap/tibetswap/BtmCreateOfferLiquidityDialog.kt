@@ -445,6 +445,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 
 	private fun showSuccessSendMoneyDialog() {
 		dialogManager.hidePrevDialogs()
+		vm.onSuccessTibetLiquidityClearingFields()
 		getMainActivity().apply {
 			if (!this.isDestroyed) {
 				dialogManager.showSuccessDialog(

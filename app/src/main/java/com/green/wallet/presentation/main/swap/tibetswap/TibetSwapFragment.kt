@@ -4,6 +4,8 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Html
+import android.text.InputFilter
+import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -41,9 +43,7 @@ import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_tibetswap.containerSwap
-import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountLiquidity
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
-import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountXCH
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -118,6 +118,13 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 				edtAmountTo.text = ""
 				vm.swapInputState = ""
 				vm.tibetSwapReInitToNullValue()
+			}
+		}
+		vm.onSuccessTibetLiquidityClearingFields = {
+			binding.apply {
+				edtAmountCatTibet.setText("")
+				edtAmountLiquidity.setText("")
+				edtAmountXCH.setText("")
 			}
 		}
 	}
@@ -225,6 +232,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
 				vm.tokenList.collectLatest {
 					if (it.isNotEmpty()) {
+						VLog.d("On collection based on code : ${it.map { it.code }}")
 						ad2Swap.updateData(it.map { it.code })
 						if (vm.xchToCAT) {
 							binding.changeSwapAdapter(ad1Swap, ad2Swap)
@@ -377,6 +385,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
 		edtAmountFrom.setText(vm.swapInputState)
 
+
 	}
 
 	private fun choosingXCHToCAT(xchToCat: Boolean) {
@@ -395,6 +404,42 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 				edtToNetwork.text = "Chia Network"
 			}
 		}
+		constraintAfterCommaXCHCAT(xchToCat)
+	}
+
+	private fun constraintAfterCommaXCHCAT(xchToCat: Boolean) {
+		if (!xchToCat) {
+			binding.apply {
+				val formatted = formattedDollarWithPrecision(
+					edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0, 3
+				)
+				edtAmountFrom.setText(formatted)
+			}
+		}
+		val constraint = if (xchToCat) 12 else 3
+		val filter = object : InputFilter {
+			override fun filter(
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Spanned?,
+				p4: Int,
+				p5: Int
+			): CharSequence {
+				if (p0 == null) return ""
+				val curText = binding.edtAmountFrom.text.toString()
+				val locComo = curText.indexOf('.')
+				val cursor = binding.edtAmountFrom.selectionStart
+				if (locComo == -1 || locComo == 0 || cursor <= locComo)
+					return p0
+				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
+				if (digitsAfterComo >= constraint) {
+					return ""
+				}
+				return p0
+			}
+		}
+		binding.edtAmountFrom.filters = arrayOf(filter)
 	}
 
 	private fun FragmentTibetswapBinding.changeSwapAdapter(
@@ -513,7 +558,62 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 			btnGenerateOffer.isEnabled = calculateTibetCATXCH(it.toString())
 		}
 
+		initConstraintsLiquidityEnterAmount()
+
 	}
+
+	private fun initConstraintsLiquidityEnterAmount() {
+
+		val catFilter = object : InputFilter {
+			override fun filter(
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Spanned?,
+				p4: Int,
+				p5: Int
+			): CharSequence {
+				if (p0 == null) return ""
+				val curText = binding.edtAmountCatTibet.text.toString()
+				val locComo = curText.indexOf('.')
+				val cursor = binding.edtAmountCatTibet.selectionStart
+				if (locComo == -1 || locComo == 0 || cursor <= locComo)
+					return p0
+				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
+				if (digitsAfterComo >= 3) {
+					return ""
+				}
+				return p0
+			}
+		}
+
+		binding.edtAmountCatTibet.filters = arrayOf(catFilter)
+		val tibetFilter = object : InputFilter {
+			override fun filter(
+				p0: CharSequence?,
+				p1: Int,
+				p2: Int,
+				p3: Spanned?,
+				p4: Int,
+				p5: Int
+			): CharSequence {
+				if (p0 == null) return ""
+				val curText = binding.edtAmountLiquidity.text.toString()
+				val locComo = curText.indexOf('.')
+				val cursor = binding.edtAmountLiquidity.selectionStart
+				if (locComo == -1 || locComo == 0 || cursor <= locComo)
+					return p0
+				val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
+				if (digitsAfterComo >= 3) {
+					return ""
+				}
+				return p0
+			}
+		}
+		binding.edtAmountLiquidity.filters = arrayOf(tibetFilter)
+
+	}
+
 
 	private var tibetLiquidityJob: Job? = null
 	private fun initTibetLiquidity() {

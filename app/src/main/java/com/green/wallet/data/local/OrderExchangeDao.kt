@@ -32,7 +32,7 @@ interface OrderExchangeDao {
 	@Query("UPDATE OrderEntity SET tx_ID=:txID WHERE order_hash=:hash")
 	suspend fun updateOrderTxIDByHash(txID: String, hash: String)
 
-	@Query("SELECT * FROM OrderEntity ORDER BY time_created ASC")
+	@Query("SELECT * FROM OrderEntity ORDER BY time_created DESC")
 	fun getAllOrderEntityList(): Flow<List<OrderEntity>>
 
 }

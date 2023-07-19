@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import java.util.Comparator
 import javax.inject.Inject
 
 class ExchangeInteractImpl @Inject constructor(
@@ -205,14 +206,7 @@ class ExchangeInteractImpl @Inject constructor(
 			tibetSwapFlow,
 			tibetLiquidityOrder
 		) { orders, tibetSwap, liquidityList ->
-			(orders + tibetSwap + liquidityList).sortedBy { item ->
-				when (item) {
-					is OrderEntity -> item.time_created
-					is TibetSwapEntity -> item.time_created
-					is TibetLiquidity -> item.time_created
-					else -> 0L
-				}
-			}
+			(orders + tibetSwap + liquidityList)
 		}
 
 	}

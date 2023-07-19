@@ -90,6 +90,7 @@ class TibetSwapViewModel @Inject constructor(
 
 	var onSuccessTibetSwapClearingFields: () -> Unit = {}
 
+	var onSuccessTibetLiquidityClearingFields: () -> Unit = {}
 
 	init {
 		VLog.d("On create tibet vm swap : $this")
@@ -113,7 +114,17 @@ class TibetSwapViewModel @Inject constructor(
 	private fun retrieveTibetTokenList() {
 		viewModelScope.launch {
 			val res = tokenInteract.getTibetTokenList()
-			_tokenTibetList.emit(res)
+			val newList = mutableListOf<Token>()
+			var gwtToken: Token? = null
+			for (token in res) {
+				if (token.code == "GWT-XCH") {
+					gwtToken = token
+				} else
+					newList.add(token)
+			}
+			if (gwtToken != null)
+				newList.add(0, gwtToken)
+			_tokenTibetList.emit(newList)
 		}
 	}
 
@@ -162,7 +173,18 @@ class TibetSwapViewModel @Inject constructor(
 	private fun retrieveTokenList() {
 		viewModelScope.launch {
 			val res = tokenInteract.getTokenListPairIDExist()
-			_tokenList.emit(res)
+			val newList = mutableListOf<Token>()
+			var gwtToken: Token? = null
+			for (token in res) {
+				if (token.code == "GWT") {
+					gwtToken = token
+				} else
+					newList.add(token)
+			}
+			if (gwtToken != null)
+				newList.add(0, gwtToken)
+			VLog.d("New List Token To Retrieve : $newList")
+			_tokenList.emit(newList)
 		}
 	}
 
