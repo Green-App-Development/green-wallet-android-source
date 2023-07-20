@@ -269,6 +269,8 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
 	private fun resetTextAmountFrom() {
 		VLog.d("Resetting text amount from : ${binding.edtAmountFrom.text}")
+		if (binding.edtAmountFrom.text.toString().isEmpty())
+			return
 		binding.edtAmountFrom.setText(binding.edtAmountFrom.text.toString())
 	}
 
@@ -383,7 +385,8 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 			}
 		}
 
-		edtAmountFrom.setText(vm.swapInputState)
+		if (vm.swapInputState.isNotEmpty())
+			edtAmountFrom.setText(vm.swapInputState)
 
 
 	}
@@ -410,6 +413,8 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 	private fun constraintAfterCommaXCHCAT(xchToCat: Boolean) {
 		if (!xchToCat) {
 			binding.apply {
+				if (edtAmountFrom.text.toString().isEmpty())
+					return
 				val formatted = formattedDollarWithPrecision(
 					edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0, 3
 				)

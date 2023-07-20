@@ -12,7 +12,7 @@ class SwapMainViewModel @Inject constructor() : ViewModel() {
 	var showingExchange = false
 	var prevDestID: Int = -1
 
-	private val visitedDest = mutableSetOf<Int>()
+	val visitedDest = mutableSetOf<Int>()
 	fun initSwapNavController(navController: NavController) {
 		this.swapNavController = navController
 	}

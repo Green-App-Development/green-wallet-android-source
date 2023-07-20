@@ -130,6 +130,10 @@ class SwapMainFragment : DaggerFragment() {
 		VLog.d("On Pause SwapMainFragment")
 	}
 
+	override fun onDestroyView() {
+		super.onDestroyView()
+		vm.visitedDest.clear()
+	}
 
 	override fun onDestroy() {
 		super.onDestroy()
