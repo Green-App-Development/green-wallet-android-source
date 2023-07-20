@@ -58,7 +58,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_centerVertical="true"
-				android:text="Create Offer"
+				android:text="@string/create_offer"
 				android:textColor="@color/green"
 				android:textFontWeight="600"
 				android:textSize="23sp"
@@ -239,7 +239,8 @@
 						android:layout_centerVertical="true"
 						android:layout_marginEnd="8dp"
 						android:layout_toStartOf="@+id/edtHashTransaction"
-						android:src="@drawable/ic_copy_green" />
+						android:src="@drawable/ic_copy_green"
+						android:visibility="gone" />
 
 			</RelativeLayout>
 
@@ -285,7 +286,7 @@
 						android:layout_marginStart="@dimen/request_property_start"
 						android:layout_marginTop="@dimen/request_property_top"
 						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Высота"
+						android:text="@string/transactions_height"
 						android:textColor="@color/secondary_text_color" />
 
 				<View

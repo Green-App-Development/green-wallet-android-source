@@ -395,7 +395,7 @@
 	<string name="fixed_rate_txt" />
 	<string name="no_order_history" />
 	<string name="notif_status_updated" />
-	<string name="impact"/>
+	<string name="impact" />
 	<string name="liquidity_fee" />
 	<string name="liquidity_fee_" />
 	<string name="remove_liquidity" />
@@ -408,10 +408,15 @@
 	<string name="dev_fee" />
 	<string name="add_liquidity" />
 	<string name="price_impact" />
-	<string name="risk_warning"/>
-	<string name="risk_warning_text"/>
-	<string name="price_update"/>
-	<string name="price_update_text"/>
+	<string name="risk_warning" />
+	<string name="risk_warning_text" />
+	<string name="price_update" />
+	<string name="price_update_text" />
+	<string name="create_offer" />
+	<string name="estimated_balance" />
+	<string name="fee" />
+	<string name="custom" />
+	<string name="sign" />
 
 
 </resources>
