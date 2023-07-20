@@ -16,7 +16,8 @@ data class TibetSwapExchange(
 	val fee: Double,
 	val time_created: Long,
 	val status: OrderStatus,
-	val height: Int
+	val height: Int,
+	val fk_address: String
 ) : Parcelable {
 
 	fun toTibetSwapEntity() = TibetSwapEntity(
@@ -27,6 +28,7 @@ data class TibetSwapExchange(
 		receive_coin,
 		fee,
 		time_created,
+		fk_address,
 		status,
 		height
 	)

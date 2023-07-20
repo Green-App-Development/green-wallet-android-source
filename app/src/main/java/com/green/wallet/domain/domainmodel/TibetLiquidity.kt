@@ -14,7 +14,8 @@ data class TibetLiquidity(
     var time_created: Long,
     val status: OrderStatus = OrderStatus.InProgress,
     val height: Int = 0,
-    val addLiquidity: Boolean
+    val addLiquidity: Boolean,
+	val fk_address:String
 ) {
 
     fun toTibetLiquidityEntity() = TibetLiquidityEntity(
@@ -28,7 +29,8 @@ data class TibetLiquidity(
         time_created,
         status,
         height,
-        addLiquidity
+        addLiquidity,
+		fk_address
     )
 
 

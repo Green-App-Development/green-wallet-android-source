@@ -16,6 +16,7 @@ data class TibetSwapEntity(
 	val receive_coin: String,
 	val fee: Double,
 	val time_created: Long,
+	val fk_address: String,
 	val status: OrderStatus = OrderStatus.InProgress,
 	val height: Int = 0
 ) {
@@ -29,7 +30,8 @@ data class TibetSwapEntity(
 		fee,
 		time_created,
 		status,
-		height
+		height,
+		fk_address
 	)
 
 }

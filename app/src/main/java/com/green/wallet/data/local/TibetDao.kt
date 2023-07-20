@@ -32,6 +32,13 @@ interface TibetDao {
 	@Query("UPDATE TibetSwapEntity SET height=:height WHERE offer_id=:offer_id")
 	suspend fun updateTibetSwapEntityHeightToCompleted(height: Int, offer_id: String)
 
+	@Query("UPDATE TibetSwapEntity SET status=:status,height=:height WHERE offer_id=:offer_id")
+	suspend fun updateTibetSwapEntityStatusHeight(
+		status: OrderStatus,
+		height: Int,
+		offer_id: String
+	)
+
 	@Query("SELECT * FROM TibetSwapEntity ORDER BY time_created DESC")
 	fun getTibetSwapEntitiesListFlow(): Flow<List<TibetSwapEntity>>
 

@@ -48,7 +48,8 @@ class PushingOfferCATXCHToTibet @Inject constructor(
 				fee = fee,
 				time_created = timeCreated,
 				status = OrderStatus.InProgress,
-				height = 0
+				height = 0,
+				fk_address = fk_address
 			)
 			spentCoinsInteract.insertSpentCoinsJson(spentXCHCoins, timeCreated, "XCH", fk_address)
 			spentCoinsInteract.insertSpentCoinsJson(spentCATCoins, timeCreated, catCode, fk_address)

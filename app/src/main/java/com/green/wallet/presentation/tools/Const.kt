@@ -4,6 +4,7 @@ package com.green.wallet.presentation.tools
 const val GENERAL_TAG = "`GENERAL_TAG_G"
 const val CHIA = "Chia"
 const val CHIVES = "Chives"
+const val CHIA_NETWORK = "Chia Network"
 
 const val NIGHT_STARTS_MINUTE = 22 * 60
 const val MORNING_STARTS_MINUTE = 6 * 60

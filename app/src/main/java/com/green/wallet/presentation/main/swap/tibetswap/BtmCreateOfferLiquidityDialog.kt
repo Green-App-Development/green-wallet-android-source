@@ -128,7 +128,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 				liquidityToken = tibetToken.code,
 				fee = getFeeBasedOnPosition(),
 				time_created = 0L,
-				addLiquidity = vm.toTibet
+				addLiquidity = vm.toTibet,
+				fk_address = vm.curWallet?.address ?: ""
 			)
 			if (vm.toTibet) {
 				initMethodChannelHandler(

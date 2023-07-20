@@ -5,8 +5,9 @@ import com.green.wallet.data.local.Converters
 import com.green.wallet.data.local.OrderExchangeDao
 import com.green.wallet.data.local.SpentCoinsDao
 import com.green.wallet.data.local.TibetDao
+import com.green.wallet.data.local.TransactionDao
 import com.green.wallet.data.local.entity.OrderEntity
-import com.green.wallet.data.local.entity.TibetSwapEntity
+import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.data.network.DexieService
 import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.dto.exchangestatus.ExchangeStatus
@@ -15,18 +16,22 @@ import com.green.wallet.domain.domainmodel.ExchangeRate
 import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
+import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.custom.NotificationHelper
+import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.parseException
+import com.green.wallet.presentation.tools.CHIA
+import com.green.wallet.presentation.tools.CHIA_NETWORK
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
+import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import java.util.Comparator
+import java.util.UUID
 import javax.inject.Inject
 
 class ExchangeInteractImpl @Inject constructor(
@@ -36,7 +41,8 @@ class ExchangeInteractImpl @Inject constructor(
 	private val notifHelper: NotificationHelper,
 	private val tibetDao: TibetDao,
 	private val dexieService: DexieService,
-	private val spentCoinsDao: SpentCoinsDao
+	private val spentCoinsDao: SpentCoinsDao,
+	private val transactionDao: TransactionDao
 ) : ExchangeInteract {
 
 
@@ -233,13 +239,32 @@ class ExchangeInteractImpl @Inject constructor(
 					tibetStatusUpdate,
 					System.currentTimeMillis()
 				)
-				tibetDao.updateTibetSwapEntityStatusToCompleted(
+				tibetDao.updateTibetLiquidityHeightStatus(
+					height = spentHeight,
 					status = OrderStatus.Success,
 					offer_id = tibetSwap.offer_id
 				)
-				tibetDao.updateTibetSwapEntityHeightToCompleted(
-					height = spentHeight,
-					offer_id = tibetSwap.offer_id
+				val trans = TransactionEntity(
+					transaction_id = UUID.randomUUID().toString(),
+					amount = tibetSwap.send_amount,
+					created_at_time = System.currentTimeMillis(),
+					height = spentHeight.toLong(),
+					status = Status.Outgoing,
+					networkType = CHIA_NETWORK,
+					to_dest_hash = "",
+					fkAddress = tibetSwap.fk_address,
+					fee_amount = 0.0,
+					code = tibetSwap.send_coin,
+					confirm_height = 0,
+					nft_coin_hash = ""
+				)
+				transactionDao.insertTransaction(trans)
+				val incoming_transaction =
+					resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
+				val formatted = formattedDoubleAmountWithPrecision(tibetSwap.send_amount)
+				notifHelper.callGreenAppNotificationMessages(
+					"$incoming_transaction : $formatted ${tibetSwap.send_coin}",
+					System.currentTimeMillis()
 				)
 				val rows = spentCoinsDao.deleteSpentConsByTimeCreated(tibetSwap.time_created)
 				VLog.d("Deleted spent coins row affected : $rows")
@@ -275,6 +300,73 @@ class ExchangeInteractImpl @Inject constructor(
 					status = OrderStatus.Success,
 					offer_id = liquid.offer_id
 				)
+				if (liquid.addLiquidity) {
+					val tranXCH = TransactionEntity(
+						transaction_id = UUID.randomUUID().toString(),
+						amount = liquid.xchAmount,
+						created_at_time = System.currentTimeMillis(),
+						height = spentHeight.toLong(),
+						status = Status.Outgoing,
+						networkType = CHIA_NETWORK,
+						to_dest_hash = "",
+						fkAddress = liquid.fk_address,
+						fee_amount = 0.0,
+						code = "XCH",
+						0,
+						""
+					)
+					val tranCAT = TransactionEntity(
+						transaction_id = UUID.randomUUID().toString(),
+						amount = liquid.catAmount,
+						created_at_time = System.currentTimeMillis(),
+						height = spentHeight.toLong(),
+						status = Status.Outgoing,
+						networkType = CHIA_NETWORK,
+						to_dest_hash = "",
+						fkAddress = liquid.fk_address,
+						fee_amount = 0.0,
+						code = liquid.catToken,
+						0,
+						""
+					)
+					transactionDao.insertTransaction(tranXCH)
+					transactionDao.insertTransaction(tranCAT)
+					val outgoing_transaction =
+						resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
+					val formatXCH = formattedDoubleAmountWithPrecision(liquid.xchAmount)
+					notifHelper.callGreenAppNotificationMessages(
+						"$outgoing_transaction : $formatXCH XCH",
+						System.currentTimeMillis()
+					)
+					val formatCAT = formattedDoubleAmountWithPrecision(liquid.xchAmount)
+					notifHelper.callGreenAppNotificationMessages(
+						"$outgoing_transaction : $formatCAT ${liquid.liquidityToken}",
+						System.currentTimeMillis()
+					)
+				} else {
+					val tranLiquid = TransactionEntity(
+						transaction_id = UUID.randomUUID().toString(),
+						amount = liquid.liquidityAmount,
+						created_at_time = System.currentTimeMillis(),
+						height = spentHeight.toLong(),
+						status = Status.Outgoing,
+						networkType = CHIA_NETWORK,
+						to_dest_hash = "",
+						fkAddress = liquid.fk_address,
+						fee_amount = 0.0,
+						code = liquid.liquidityToken,
+						0,
+						""
+					)
+					transactionDao.insertTransaction(tranLiquid)
+					val outgoing_transaction =
+						resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
+					val formatCAT = formattedDoubleAmountWithPrecision(liquid.liquidityAmount)
+					notifHelper.callGreenAppNotificationMessages(
+						"$outgoing_transaction : $formatCAT ${liquid.liquidityToken}",
+						System.currentTimeMillis()
+					)
+				}
 				val rows = spentCoinsDao.deleteSpentConsByTimeCreated(liquid.time_created)
 				VLog.d("Deleted spent coins row affected tibet liquidity : $rows  LiquidRows : $liquidRows")
 			}

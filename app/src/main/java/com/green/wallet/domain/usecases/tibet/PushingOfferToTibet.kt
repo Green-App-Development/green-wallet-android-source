@@ -9,8 +9,7 @@ import com.green.wallet.presentation.tools.Resource
 import javax.inject.Inject
 
 class PushingOfferToTibet @Inject constructor(
-	private val tibetInteract: TibetInteract,
-	private val exchangeInteract: ExchangeInteract
+	private val tibetInteract: TibetInteract, private val exchangeInteract: ExchangeInteract
 ) {
 
 	suspend operator fun invoke(
@@ -36,7 +35,8 @@ class PushingOfferToTibet @Inject constructor(
 				fee = fee,
 				time_created = System.currentTimeMillis(),
 				status = OrderStatus.InProgress,
-				height = 0
+				height = 0,
+				fk_address = ""
 			)
 			exchangeInteract.insertTibetSwap(tibetSwapExchange)
 		}

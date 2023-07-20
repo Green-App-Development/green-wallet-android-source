@@ -137,7 +137,8 @@ abstract class AppDatabase : RoomDatabase() {
                 fee REAL NOT NULL,
                 time_created INTEGER NOT NULL,
                 status TEXT NOT NULL,
-				height INTEGER NOT NULL|
+				height INTEGER NOT NULL,
+				fk_address TEXT NOT NULL
             )
         """.trimIndent()
 				database.execSQL(createTableTibetSwap)
@@ -155,7 +156,8 @@ abstract class AppDatabase : RoomDatabase() {
                 time_created INTEGER NOT NULL,
                 status TEXT NOT NULL,
 				height INTEGER NOT NULL,
-				addLiquidity INTEGER NOT NULL
+				addLiquidity INTEGER NOT NULL,
+				fk_address TEXT NOT NULL
             )
         """.trimIndent()
 				database.execSQL(createTableTibetLiquidity)
