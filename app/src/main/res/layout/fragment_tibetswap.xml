@@ -416,7 +416,6 @@
 							android:layout_height="15dp"
 							android:layout_centerVertical="true"
 							android:layout_marginStart="10dp"
-							android:rotation="180"
 							android:src="@drawable/ic_arrow_downword"
 							app:layout_constraintBottom_toBottomOf="@+id/txtDetailTransactions"
 							app:layout_constraintStart_toEndOf="@+id/txtDetailTransactions"
