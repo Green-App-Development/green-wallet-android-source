@@ -417,6 +417,9 @@
 	<string name="fee" />
 	<string name="custom" />
 	<string name="sign" />
-
+	<string name="ex_operation" />
+	<string name="liq_operation" />
+	<string name="current_account" />
+	<string name="tibet_push" />
 
 </resources>

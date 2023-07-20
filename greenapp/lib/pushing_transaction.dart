@@ -12,8 +12,6 @@ class PushingTransaction {
   static const MethodChannel _channel =
       MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
 
-  static const MethodChannel _channel2 =
-      MethodChannel('METHOD_CHANNEL_GENERATE_ADDRESSES');
 
   final cachedWalletChains = Map<String, WalletKeychain>();
 
@@ -353,9 +351,6 @@ class PushingTransaction {
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
-    _channel2.setMethodCallHandler((call) async {
-
-    });
   }
 
   Future<void> offerRemoveLiquidity(
@@ -561,7 +556,7 @@ class PushingTransaction {
     // hydrate cat coins
     var curCATAmount = 0;
     var neededCatCoins = [];
-    for (final coin in basicCatCoins) {
+    for (final coin in basicCatCoins.toSet()) {
       var isCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
       if (!isCoinSpent) {

@@ -136,7 +136,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					pairId = token.pairID,
 					assetId = tibetToken.hash
 				)
-				lifecycleScope.launch {
+				lifecycleScope.launch(offerXCHCATHandler) {
 					generateOfferAddLiquidity(
 						xchAmount,
 						catAmount,
@@ -152,7 +152,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					pairId = token.pairID,
 					assetId = token.hash
 				)
-				lifecycleScope.launch {
+				lifecycleScope.launch(offerXCHCATHandler) {
 					generateOfferRemoveLiquidity(
 						xchAmount,
 						catAmount,
@@ -349,9 +349,12 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 					liquidityCoins = spentLiquidityCoins,
 					assetID = assetId
 				)
+			} else if (call.method == "exception") {
+				showFailedTibetSwap()
 			}
 		}
 	}
+
 
 	private fun removeLiquidity(
 		offer: String,

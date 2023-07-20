@@ -222,8 +222,15 @@ class ExchangeInteractImpl @Inject constructor(
 		for (tibetSwap in tibetSwapList) {
 			val spentHeight = getTibetSwapSpentHeight(tibetSwap.offer_id)
 			if (spentHeight != null) {
+
+				val resLanguageResource =
+					prefsInteract.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+				val resMap = Converters.stringToHashMap(resLanguageResource)
+				val tibetStatusUpdate =
+					resMap["tibet_push"] ?: "TibetSwap: trade offer completed"
+
 				notifHelper.callGreenAppNotificationMessages(
-					"Tibet Swap XCH CAT : ${tibetSwap.offer_id} success ",
+					tibetStatusUpdate,
 					System.currentTimeMillis()
 				)
 				tibetDao.updateTibetSwapEntityStatusToCompleted(
@@ -253,8 +260,14 @@ class ExchangeInteractImpl @Inject constructor(
 		for (liquid in liquidList) {
 			val spentHeight = getTibetSwapSpentHeight(liquid.offer_id)
 			if (spentHeight != null) {
+
+				val resLanguageResource =
+					prefsInteract.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
+				val resMap = Converters.stringToHashMap(resLanguageResource)
+				val tibetStatusUpdate =
+					resMap["tibet_push"] ?: "TibetSwap: trade offer completed"
 				notifHelper.callGreenAppNotificationMessages(
-					"Tibet Liquidity : ${liquid.offer_id} success ",
+					tibetStatusUpdate,
 					System.currentTimeMillis()
 				)
 				val liquidRows = tibetDao.updateTibetLiquidityHeightStatus(

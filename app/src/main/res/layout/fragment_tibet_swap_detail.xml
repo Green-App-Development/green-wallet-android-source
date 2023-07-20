@@ -58,7 +58,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_centerVertical="true"
-				android:text="@string/create_offer"
+				android:text="@string/ex_operation"
 				android:textColor="@color/green"
 				android:textFontWeight="600"
 				android:textSize="23sp"
@@ -70,6 +70,7 @@
 				android:layout_height="wrap_content"
 				android:layout_centerVertical="true"
 				android:layout_marginStart="10dp"
+				android:visibility="gone"
 				android:layout_toRightOf="@+id/txtRequestHash"
 				android:src="@drawable/ic_copy_green" />
 
