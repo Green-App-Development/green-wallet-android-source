@@ -323,7 +323,7 @@ class GreenAppInteractImpl @Inject constructor(
 		} catch (ex: java.lang.Exception) {
 			VLog.d("Exception getting  server time : ${ex.message}")
 		}
-		return -1
+		return -1L
 	}
 
 	override suspend fun getVerifiedDidList() {

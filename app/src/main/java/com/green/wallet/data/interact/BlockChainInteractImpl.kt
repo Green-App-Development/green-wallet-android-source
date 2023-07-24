@@ -516,7 +516,8 @@ class BlockChainInteractImpl @Inject constructor(
 	): Resource<String> {
 		try {
 			val serverTime = greenAppInteract.getServerTime()
-			if (serverTime == -1L) throw ServerMaintenanceExceptions()
+			if (serverTime == -1L)
+				throw ServerMaintenanceExceptions()
 			val timeBeforePushingTrans = serverTime - 60 * 1000
 			VLog.d("Push method got called in data layer code : $networkType")
 			val curBlockChainService =
@@ -601,7 +602,7 @@ class BlockChainInteractImpl @Inject constructor(
 			val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
 				.create(BlockChainService::class.java)
 			val hashWithAmount = hashMapOf<String, Double>()
-			val job = CoroutineScope(Dispatchers.IO+handler).launch {
+			val job = CoroutineScope(Dispatchers.IO + handler).launch {
 				for ((asset_id, puzzle_hashes) in wallet.hashListImported) {
 					launch {
 						VLog.d("Launched job to get balance for $asset_id and Puzzle Hash : $puzzle_hashes")
@@ -641,7 +642,7 @@ class BlockChainInteractImpl @Inject constructor(
 			}
 			val newAmount = balance / division
 			hashWithAmount[assetId] = newAmount
-		}catch (ex:Exception){
+		} catch (ex: Exception) {
 			VLog.d("Exception caught in update token balance individually : ${ex.message}")
 		}
 	}

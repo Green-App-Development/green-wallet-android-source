@@ -124,13 +124,13 @@ class App : DaggerApplication() {
 				getAgreementsText()
 				updateCoinDetails()
 			}
-			with(tibetInteract) {
-				saveTokensPairID()
-			}
 			supportInteract.getFAQQuestionAnswers()
 			with(cryptocurrencyInteract) {
 				getAllTails()
 				checkingDefaultWalletTails()
+			}
+			with(tibetInteract) {
+				saveTokensPairID()
 			}
 		}
 	}

@@ -98,7 +98,7 @@ class NetworkModule {
 	@AppScope
 	fun provideRetrofitBuilder(): Retrofit.Builder {
 		val interceptor = HttpLoggingInterceptor().apply {
-			level = HttpLoggingInterceptor.Level.NONE
+			level = HttpLoggingInterceptor.Level.BODY
 		}
 		return Retrofit.Builder()
 			.client(getUnsafeOkHttpClient(interceptor))

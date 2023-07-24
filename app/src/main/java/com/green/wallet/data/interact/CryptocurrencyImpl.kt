@@ -226,6 +226,7 @@ class CryptocurrencyImpl @Inject constructor(
 					val tokenListRes = res.body()!!.result.list.map { it.toTokenEntity() }
 //					VLog.d("TokenList on  : $tokenListRes")
 					for (tokenEntity in tokenListRes) {
+						VLog.d("Inserting tokens to db : $tokenEntity")
 						tokenDao.insertToken(tokenEntity)
 						val tokenDto = TokenDto(
 							tokenEntity.name,
