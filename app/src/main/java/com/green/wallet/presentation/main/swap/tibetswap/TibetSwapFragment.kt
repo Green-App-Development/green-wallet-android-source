@@ -162,6 +162,18 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 						} else {
 							getMainActivity().move2BtmChooseWalletDialog()
 						}
+					} else {
+						getMainActivity().apply {
+							dialogManager.showFailureDialog(
+								this,
+								status = getStringResource(R.string.pop_up_failed_create_a_mnemonic_phrase_title),
+								description = getStringResource(R.string.exchange_fail),
+								action = getStringResource(R.string.network_description_btn),
+								false
+							) {
+								getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
+							}
+						}
 					}
 				}
 			}

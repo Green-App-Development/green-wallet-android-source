@@ -29,7 +29,7 @@ class TibetInteractImpl
 					val tokenJson = tokenList[i]
 					val assetId = tokenJson.asJsonObject.get("asset_id").asString
 					val pairId = tokenJson.asJsonObject.get("pair_id").asString
-					VLog.d("Asset ID : $assetId  PairID : $pairId")
+//					VLog.d("Asset ID : $assetId  PairID : $pairId")
 					tokenDao.updateTokenEntityPairIDByHash(pair_id = pairId, hash = assetId)
 				}
 			} else {
