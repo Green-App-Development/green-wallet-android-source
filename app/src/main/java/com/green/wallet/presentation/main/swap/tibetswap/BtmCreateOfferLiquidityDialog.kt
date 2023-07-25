@@ -1,6 +1,7 @@
 package com.green.wallet.presentation.main.swap.tibetswap
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.green.wallet.R
@@ -76,7 +79,15 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = DialogBtmCreateOfferLiquidityBinding.inflate(layoutInflater)
+
 		return binding.root
+	}
+
+	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+		return BottomSheetDialog(requireContext(), theme).apply {
+			behavior.state = BottomSheetBehavior.STATE_EXPANDED
+			behavior.peekHeight = 565
+		}
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
