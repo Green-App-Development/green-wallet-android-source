@@ -239,7 +239,7 @@ class ExchangeInteractImpl @Inject constructor(
 					tibetStatusUpdate,
 					System.currentTimeMillis()
 				)
-				tibetDao.updateTibetLiquidityHeightStatus(
+				tibetDao.updateTibetSwapEntityStatusHeight(
 					height = spentHeight,
 					status = OrderStatus.Success,
 					offer_id = tibetSwap.offer_id

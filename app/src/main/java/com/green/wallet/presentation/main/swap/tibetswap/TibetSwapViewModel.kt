@@ -74,7 +74,7 @@ class TibetSwapViewModel @Inject constructor(
 	private val _tibetSwap = MutableStateFlow<Resource<TibetSwapResponse>?>(null)
 	val tibetSwap = _tibetSwap.asStateFlow()
 
-	private val _walletList = MutableStateFlow<List<Wallet>>(emptyList())
+	private val _walletList = MutableStateFlow<List<Wallet>?>(null)
 	val walletList = _walletList.asStateFlow()
 
 	private val _pushingOfferTibet = MutableStateFlow<Resource<String>?>(null)
