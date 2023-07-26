@@ -109,6 +109,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         initTokenTibetAdapter()
         initCalculateOutput()
         initSuccessClearingFields()
+        vm.initWalletList()
     }
 
     private fun initSuccessClearingFields() {
