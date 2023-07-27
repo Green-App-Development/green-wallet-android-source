@@ -198,6 +198,19 @@ fun Activity.copyToClipBoard(data: String) {
 }
 
 
+fun Context.copyToClipBoard(data: String) {
+	val clipBoard =
+		getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+	val clip = ClipData.newPlainText(
+		"label",
+		data
+	)
+	clipBoard.setPrimaryClip(clip)
+}
+
+
+
+
 
 
 

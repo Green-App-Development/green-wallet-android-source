@@ -175,7 +175,9 @@ class MainActivity : BaseActivity() {
 				sendFragment, impMnemonicFragment,
 				verificationFragment,
 				entPasscodeFrMain,
-				fragmentSendNFT
+				fragmentSendNFT,
+				fragmentSwapSend,
+				fragmentSwapMain
 			)
 			if (shouldStopUpdateBalance.contains(dest.id)) {
 				VLog.d("ShouldStopUpdateBalance destination on MainActivity")
