@@ -111,7 +111,8 @@ abstract class AppDatabase : RoomDatabase() {
                 get_coin TEXT NOT NULL,
                 get_address TEXT NOT NULL,
                 tx_ID TEXT NOT NULL,
-                fee REAL NOT NULL
+                fee REAL NOT NULL, 
+				amount_to_receive REAL NOT NULL
             )
         """.trimIndent()
 				database.execSQL(createTableQuery)

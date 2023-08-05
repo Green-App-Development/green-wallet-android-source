@@ -9,30 +9,40 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExchangeInteract {
 
-	suspend fun createExchangeRequest(
-		give_address: String,
-		give_amount: Double,
-		get_address: String,
-		get_coin: String,
-		rate: Double,
-	): Resource<String>
+    suspend fun createExchangeRequest(
+        give_address: String,
+        give_amount: Double,
+        get_address: String,
+        get_coin: String,
+        rate: Double,
+        getAmount: Double,
+        feeNetwork: Double
+    ): Resource<String>
 
-	suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate>
+    suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate>
 
-	suspend fun getOrderByHash(hash: String): OrderItem
+    suspend fun getOrderByHash(hash: String): OrderItem
 
-	suspend fun updateOrderStatusPeriodically()
+    suspend fun updateOrderStatusPeriodically()
 
-	suspend fun updateOrderStatusByHash(hash: String)
-	fun getAllOrderListFlow(): Flow<List<Any>>
+    suspend fun updateOrderStatusByHash(hash: String)
+    fun getAllOrderListFlow(): Flow<List<Any>>
 
-	suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange)
+    suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange)
 
-	suspend fun updateTibetSwapExchangeStatus()
+    suspend fun updateTibetSwapExchangeStatus()
 
-	fun getTibetSwapDetailByOfferId(offerId: String): Flow<TibetSwapExchange>
+    fun getTibetSwapDetailByOfferId(offerId: String): Flow<TibetSwapExchange>
 
-	fun getTibetLiquidityDetailByOfferId(offerId: String): Flow<TibetLiquidity>
-	suspend fun updateTibetLiquidityStatus()
+    fun getTibetLiquidityDetailByOfferId(offerId: String): Flow<TibetLiquidity>
+    suspend fun updateTibetLiquidityStatus()
+
+    suspend fun getOutputPrice(
+        giveCoin: String,
+        getCoin: String,
+        giveAmount: String,
+        rate: String
+    ): Resource<Double>
+
 
 }

@@ -28,6 +28,7 @@ import com.green.wallet.R.id.*
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
@@ -687,9 +688,9 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentSwapMain)
 	}
 
-	fun move2QRSendFragment(address: String) {
+	fun move2QRSendFragment(orderItem: OrderItem) {
 		val bundle = bundleOf()
-		bundle.putString(FragmentQRSend.SEND_ADDRESS_KEY, address)
+		bundle.putParcelable(FragmentQRSend.ORDER_ITEM_KEY, orderItem)
 		navController.navigate(fragmentQrCodeSend, bundle)
 	}
 
@@ -931,11 +932,12 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
-	fun move2BtmDialogPayment(address: String, amount: Double) {
+	fun move2BtmDialogPayment(address: String, amount: Double,orderItem:OrderItem) {
 		val bundle = bundleOf(
 			BtmChooseDAppsPayment.ADDRESS_KEY to address,
 			BtmChooseDAppsPayment.AMOUNT_KEY to amount
 		)
+		bundle.putParcelable(BtmChooseDAppsPayment.ORDER_ITEM_KEY,orderItem)
 		navController.navigate(btmChooseDApps, bundle)
 	}
 
