@@ -7,7 +7,5 @@ data class ExchangeRate(
 	val rateXCH: Double,
 	val rateUSDT: Double,
 	val commissionInPercent: String,
-	val commission: Double,
-	val xchFee:Double,
-	val usdtFee:Double
+	val commission: String
 )
