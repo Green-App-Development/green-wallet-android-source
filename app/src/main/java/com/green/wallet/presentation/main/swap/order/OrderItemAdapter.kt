@@ -109,7 +109,7 @@ class OrderItemAdapter(
 
 		fun onBindOrderItem(item: OrderItem) {
 			hashId.text = "${activity.`getStringResource`(R.string.order_title)} #${item.hash}"
-			val amountToReceive = formattedDollarWithPrecision(item.amountToSend * item.rate, 4)
+			val amountToReceive = item.amountToReceive
 			when (item.status) {
 				OrderStatus.Waiting -> {
 					txtSend.text =

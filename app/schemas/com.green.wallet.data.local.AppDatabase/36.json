@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "66bf901d5cfc32ec284a480fef8c9663",
+    "identityHash": "11cdaa3f644395ffe58ad72e6d1581ab",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -621,7 +621,7 @@
       },
       {
         "tableName": "OrderEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `fee` REAL NOT NULL, `amount_to_receive` REAL NOT NULL, PRIMARY KEY(`order_hash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `commission_fee` REAL NOT NULL, `amount_to_receive` REAL NOT NULL, `commission_tron` REAL NOT NULL, `commission_percent` REAL NOT NULL, PRIMARY KEY(`order_hash`))",
         "fields": [
           {
             "fieldPath": "order_hash",
@@ -684,14 +684,26 @@
             "notNull": true
           },
           {
-            "fieldPath": "fee",
-            "columnName": "fee",
+            "fieldPath": "commission_fee",
+            "columnName": "commission_fee",
             "affinity": "REAL",
             "notNull": true
           },
           {
             "fieldPath": "amount_to_receive",
             "columnName": "amount_to_receive",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commission_tron",
+            "columnName": "commission_tron",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commission_percent",
+            "columnName": "commission_percent",
             "affinity": "REAL",
             "notNull": true
           }
@@ -869,7 +881,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '66bf901d5cfc32ec284a480fef8c9663')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '11cdaa3f644395ffe58ad72e6d1581ab')"
     ]
   }
 }

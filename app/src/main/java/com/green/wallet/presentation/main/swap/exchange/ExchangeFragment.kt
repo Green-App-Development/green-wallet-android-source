@@ -293,9 +293,11 @@ class ExchangeFragment : DaggerFragment() {
         edtGetAddressUSDT.addTextChangedListener {
             if (it?.isNotEmpty() == true) {
                 btnExchangeEnabled.add(2)
+                imgIcScanUsdt.visibility = View.GONE
+            } else {
                 imgIcScanUsdt.visibility = View.VISIBLE
-            } else
                 btnExchangeEnabled.remove(2)
+            }
             updateEnabledBtnExchangeNow()
         }
 
@@ -327,7 +329,9 @@ class ExchangeFragment : DaggerFragment() {
                 getCoin,
                 amountToReceive,
                 feeNetwork = resRate?.data?.commissionXCH?.toDoubleOrNull() ?: 0.0,
-                rate = vm.rateConversion
+                rate = vm.rateConversion,
+                feeTron = resRate?.data?.commissionTron?.toDoubleOrNull() ?: 0.0,
+                feePercent = resRate?.data?.commissionInPercent?.toDoubleOrNull() ?: 0.0
             )
             when (res.state) {
                 Resource.State.SUCCESS -> {
@@ -649,7 +653,7 @@ class ExchangeFragment : DaggerFragment() {
                 constraintCommentLimitAmount.visibility = View.GONE
                 btnExchangeEnabled.add(1)
                 updateEnabledBtnExchangeNow()
-               var getCoin = "USDT"
+                var getCoin = "USDT"
                 var giveCoin = "XCH"
                 if (vm.tokenToSpinner == 0) {
                     getCoin = "XCH"

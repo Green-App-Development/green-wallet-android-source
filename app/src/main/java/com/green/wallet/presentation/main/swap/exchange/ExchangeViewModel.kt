@@ -65,13 +65,16 @@ class ExchangeViewModel @Inject constructor(
         get_coin: String,
         getAmount: Double,
         feeNetwork: Double,
-        rate: Double
+        rate: Double,
+        feeTron: Double,
+        feePercent: Double
     ): Resource<String> {
         val giveAddress = exchangeRequest.value?.data?.give_address ?: return Resource.error(
             Exception(
                 "No Give Address present"
             )
         )
+        VLog.d("Fee Tron of requesting Order : $feeTron")
         return exchangeInteract.createExchangeRequest(
             giveAddress,
             amount,
@@ -79,7 +82,9 @@ class ExchangeViewModel @Inject constructor(
             get_coin,
             rate,
             getAmount,
-            feeNetwork
+            feeNetwork,
+            feeTron,
+            feePercent
         )
     }
 
@@ -102,7 +107,7 @@ class ExchangeViewModel @Inject constructor(
             while (true) {
                 val res = exchangeInteract.getExchangeRequest(fromToken)
                 if (isActive) {
-                    _exchangeRequest.emit(res)
+                    _exchangeRequest.tryEmit(res)
                 }
                 delay(30 * 1000L)
             }

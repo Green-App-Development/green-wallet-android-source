@@ -19,12 +19,14 @@ import com.example.common.tools.getRequestStatusTranslation
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentRequestDetailsBinding
 import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.presentation.custom.ConnectionLiveData
+import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.*
+import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_exchange.edtFingerPrint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,11 +39,18 @@ class OrderDetailFragment : DaggerFragment() {
         const val ORDER_HASH = "order_hash"
     }
 
-    private lateinit var binding: FragmentRequestDetailsBinding
+    private val binding by viewBinding(FragmentRequestDetailsBinding::bind)
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val vm: OrderDetailViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var connectionLiveData: ConnectionLiveData
+
+    @Inject
+    lateinit var dialogMan: DialogManager
+
 
     private var orderHash = ""
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,8 +66,7 @@ class OrderDetailFragment : DaggerFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentRequestDetailsBinding.inflate(layoutInflater)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_request_details, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,15 +117,16 @@ class OrderDetailFragment : DaggerFragment() {
                     formattedDollarWithPrecision(
                         orderItem.rate
                     )
-                } "
+                }"
             if (orderItem.txID.isNotEmpty())
                 edtHashTransaction.text = formatString(9, orderItem.txID, 6)
             else {
                 imgCpyHashTransaction.visibility = View.GONE
             }
-            edtCommissionNetwork.text = formattedDoubleAmountWithPrecision(orderItem.fee) +" XCH"
-            edtCommissionTron.setText("1$")
-            edtCommissionExchange.setText("1%")
+            edtCommissionNetwork.text =
+                formattedDoubleAmountWithPrecision(orderItem.commission_fee) + "XCH"
+            edtCommissionTron.setText("${orderItem.commission_tron}$")
+            edtCommissionExchange.setText("${orderItem.commission_percent}%")
             changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
             val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
             when (status) {
@@ -161,6 +170,22 @@ class OrderDetailFragment : DaggerFragment() {
 
             initClickListeners(orderItem)
 
+            refresh.apply {
+                setOnRefreshListener {
+                    VLog.d("Is Online ${connectionLiveData.isOnline}")
+                    if (connectionLiveData.isOnline) {
+                        vm.updateOrdersStatus {
+                            isRefreshing = false
+                        }
+                    } else {
+                        isRefreshing = false
+                        dialogMan.showNoInternetTimeOutExceptionDialog(requireActivity()) {
+
+                        }
+                    }
+                }
+                setColorSchemeResources(R.color.green)
+            }
 
         }
     }
@@ -193,7 +218,10 @@ class OrderDetailFragment : DaggerFragment() {
                 totalSeconds--
                 delay(1000)
             }
-            txt.text="00:00"
+            txt.text = "00:00"
+            vm.updateOrdersStatus {
+
+            }
         }
     }
 

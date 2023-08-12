@@ -51,7 +51,9 @@ class ExchangeInteractImpl @Inject constructor(
         get_coin: String,
         rate: Double,
         getAmount: Double,
-        feeNetwork: Double
+        feeNetwork: Double,
+        feeTron:Double,
+        feePercent:Double
     ): Resource<String> {
         try {
             val guid = prefsInteract.getSettingString(PrefsManager.USER_GUID, "")
@@ -80,8 +82,10 @@ class ExchangeInteractImpl @Inject constructor(
                         send_coin = if (get_coin == "XCH") "USDT" else "XCH",
                         get_address = get_address,
                         tx_ID = "",
-                        fee = feeNetwork,
-                        amount_to_receive = getAmount
+                        commission_fee = feeNetwork,
+                        amount_to_receive = getAmount,
+                        commission_tron = feeTron,
+                        commission_percent = 1.0
                     )
                     VLog.d("Inserting Order Exchange : $orderExchange")
                     orderExchangeDao.insertOrderExchange(orderExchange)

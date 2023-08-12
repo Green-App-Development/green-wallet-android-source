@@ -16,7 +16,9 @@ interface ExchangeInteract {
         get_coin: String,
         rate: Double,
         getAmount: Double,
-        feeNetwork: Double
+        feeNetwork: Double,
+        feeTron:Double,
+        feePercent:Double
     ): Resource<String>
 
     suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate>
