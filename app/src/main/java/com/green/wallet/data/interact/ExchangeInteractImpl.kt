@@ -112,10 +112,10 @@ class ExchangeInteractImpl @Inject constructor(
                                     min = res.fromUSDT.toXCH.min.toDoubleOrNull() ?: 0.0,
                                     max = res.fromUSDT.toXCH.max.toDoubleOrNull() ?: 0.0,
                                     give_address = res.fromUSDT.address,
-                                    rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
-                                    rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0,
-                                    res.fromUSDT.toXCH.usdtFee.xch,
-                                    res.fromUSDT.toXCH.usdtFee.xch,
+                                    rate = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
+                                    commissionInPercent = res.fromUSDT.toXCH.usdtFee.exchange,
+                                    commissionXCH = res.fromUSDT.toXCH.usdtFee.xch,
+                                    commissionTron = res.fromUSDT.toXCH.usdtFee.usdt
                                 )
                             }
 
@@ -124,16 +124,16 @@ class ExchangeInteractImpl @Inject constructor(
                                     min = res.fromXCH.toUSDT.min.toDoubleOrNull() ?: 0.0,
                                     max = res.fromXCH.toUSDT.max.toDoubleOrNull() ?: 0.0,
                                     give_address = res.fromXCH.address,
-                                    rateXCH = res.fromUSDT.toXCH.rate.toDoubleOrNull() ?: 0.0,
-                                    rateUSDT = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0,
-                                    res.fromXCH.toUSDT.xchFee.xch,
-                                    res.fromXCH.toUSDT.xchFee.xch,
+                                    rate = res.fromXCH.toUSDT.rate.toDoubleOrNull() ?: 0.0,
+                                    commissionInPercent = res.fromXCH.toUSDT.xchFee.exchange,
+                                    commissionXCH = res.fromXCH.toUSDT.xchFee.xch,
+                                    commissionTron = res.fromXCH.toUSDT.xchFee.usdt
                                 )
                             }
                         }
                         return Resource.success(resExchange)
                     }
-                    return Resource.success(ExchangeRate(0.0, 0.0, "", 0.0, 0.0, "", ""))
+                    return Resource.success(ExchangeRate(0.0, 0.0, "", 0.0, "", "", ""))
                 }
             } else {
                 VLog.d("Request is not success for exchange rate : ${request.message()}")

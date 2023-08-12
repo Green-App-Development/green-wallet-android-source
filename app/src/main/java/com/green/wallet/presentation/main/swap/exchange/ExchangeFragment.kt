@@ -30,7 +30,6 @@ import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
-import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.custom.manageExceptionDialogsForRest
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -79,7 +78,7 @@ class ExchangeFragment : DaggerFragment() {
     }
 
     private var smallContainer = 300
-    private var bigContainer = 425
+    private var bigContainer = 460
     private var hasOneFocusLeast = false
     private var btnExchangeEnabled = mutableSetOf<Int>()
 
@@ -106,8 +105,8 @@ class ExchangeFragment : DaggerFragment() {
                     it?.let {
                         when (it.state) {
                             Resource.State.SUCCESS -> {
-                                val result = it.data
-                                edtAmountTo.text = result.toString()
+                                val result = it.data ?: 0.0
+                                edtAmountTo.text = if (result > 0) result.toString() else ""
                             }
 
                             Resource.State.ERROR -> {
@@ -193,7 +192,7 @@ class ExchangeFragment : DaggerFragment() {
             if (p1 && !hasOneFocusLeast) {
                 hasOneFocusLeast = true
                 smallContainer = 400
-                bigContainer = 520
+                bigContainer = 565
                 nextHeight = bigContainer
                 viewDividerGetAddress.visibility = View.VISIBLE
                 initGetAddressLayoutUpdate()
@@ -327,7 +326,7 @@ class ExchangeFragment : DaggerFragment() {
                 getAddress,
                 getCoin,
                 amountToReceive,
-                feeNetwork = resRate?.data?.commission?.toDoubleOrNull() ?: 0.0,
+                feeNetwork = resRate?.data?.commissionXCH?.toDoubleOrNull() ?: 0.0,
                 rate = vm.rateConversion
             )
             when (res.state) {
@@ -614,13 +613,11 @@ class ExchangeFragment : DaggerFragment() {
 
     private fun calculateOneUnitToken(res: ExchangeRate) {
         if (tokenFromSpinner.selectedItemPosition == 0) {
-            val xchInUSDT = res.rateXCH / res.rateUSDT
             binding.txtCoursePrice.text =
-                "1 XCH = ${formattedDollarWithPrecision(res.rateXCH)}"
+                "1 XCH = ${formattedDollarWithPrecision(res.rate)}"
         } else {
-            val usdtInXCH = res.rateUSDT / res.rateXCH
             binding.txtCoursePrice.text =
-                "1 USDT = ${formattedDollarWithPrecision(res.rateUSDT)}"
+                "1 USDT = ${formattedDollarWithPrecision(res.rate)}"
         }
 
     }
@@ -638,7 +635,7 @@ class ExchangeFragment : DaggerFragment() {
                         if (tokenFromSpinner.selectedItemPosition == 0) "XCH" else "USDT"
                     val network =
                         if (tokenFromSpinner.selectedItemPosition == 0) "Chia Network" else "TRC-20"
-                    var minSum = getMainActivity().getStringResource(R.string.min_sum)
+                    val minSum = getMainActivity().getStringResource(R.string.min_sum)
                     val maxSum = getMainActivity().getStringResource(R.string.max_sum)
                     textValidate = if (amount < res.min) {
                         "$minSum: ${res.min} $tokenCode $network"
@@ -652,9 +649,7 @@ class ExchangeFragment : DaggerFragment() {
                 constraintCommentLimitAmount.visibility = View.GONE
                 btnExchangeEnabled.add(1)
                 updateEnabledBtnExchangeNow()
-                val rate =
-                    if (tokenFromSpinner.selectedItemPosition == 0) res.rateXCH / res.rateUSDT else res.rateUSDT / res.rateXCH
-                var getCoin = "USDT"
+               var getCoin = "USDT"
                 var giveCoin = "XCH"
                 if (vm.tokenToSpinner == 0) {
                     getCoin = "XCH"
@@ -663,9 +658,9 @@ class ExchangeFragment : DaggerFragment() {
                 val input = ExchangeInput(
                     getCoin = getCoin,
                     giveCoin = giveCoin,
-                    rate = "${if (vm.tokenToSpinner == 1) res.rateXCH else res.rateUSDT}",
+                    rate = res.rate.toString(),
                     amount = amount.toString(),
-                    feeNetwork = res.commission.toDoubleOrNull() ?: 0.0
+                    feeNetwork = res.commissionXCH.toDoubleOrNull() ?: 0.0
                 )
                 vm.rateConversion = input.rate.toDoubleOrNull() ?: 0.0
                 vm.onInputSwapAmountChanged(input)
@@ -674,8 +669,8 @@ class ExchangeFragment : DaggerFragment() {
         edtAmountFrom.setText(edtAmountFrom.text.toString())
         edtCommissionExchange.text = res.commissionInPercent + "%"
         edtCommissionNetwork.text =
-            "${res.commission} XCH"
-
+            "${res.commissionXCH} XCH"
+        edtTronCommission.text = "${res.commissionTron} USDT"
     }
 
 

@@ -4,8 +4,8 @@ data class ExchangeRate(
 	val min: Double,
 	val max: Double,
 	val give_address: String,
-	val rateXCH: Double,
-	val rateUSDT: Double,
+	val rate: Double,
 	val commissionInPercent: String,
-	val commission: String
+	val commissionXCH: String,
+	val commissionTron:String
 )
