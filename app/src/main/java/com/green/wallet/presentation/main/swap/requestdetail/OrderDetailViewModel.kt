@@ -12,7 +12,7 @@ class OrderDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    suspend fun getOrderItemByHash(hash: String) = exchangeInteract.getOrderByHash(hash)
+    fun getOrderItemByHash(hash: String) = exchangeInteract.getOrderByHash(hash)
     fun updateOrderStatus(hash: String) {
 
     }

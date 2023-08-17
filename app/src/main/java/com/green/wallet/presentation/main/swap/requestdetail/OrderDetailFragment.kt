@@ -11,7 +11,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.common.tools.formatString
 import com.example.common.tools.formattedTimeForOrderItem
 import com.example.common.tools.getRequestStatusColor
@@ -29,6 +31,7 @@ import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -85,108 +88,114 @@ class OrderDetailFragment : DaggerFragment() {
 
     }
 
-    private var orderDetailsJob: Job? = null
 
     @SuppressLint("SetTextI18n")
     private fun FragmentRequestDetailsBinding.initUpdateOrderDetails() {
-        orderDetailsJob?.cancel()
-        orderDetailsJob = lifecycleScope.launch {
-            val orderItem = vm.getOrderItemByHash(orderHash)
-            VLog.d("OrderItem from vm : $orderItem")
-            val status = orderItem.status
-            txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
-                getRequestStatusTranslation(
-                    getMainActivity(),
-                    status
-                )
-            }"
-            txtRequestHash.text =
-                getMainActivity().getStringResource(R.string.order_title) + " #${orderItem.hash}"
-            edtData.text = formattedTimeForOrderItem(orderItem.timeCreated)
-            if (status == OrderStatus.Cancelled) {
-                statusCancelled()
-                return@launch
-            }
-            edtAddressEksCrou.text = formatString(9, orderItem.giveAddress, 6)
-            edtSendAmount.text = "${orderItem.amountToSend} " + orderItem.sendCoin
-            val amountToReceive = orderItem.amountToReceive
-            edtReceiveAmount.text = "$amountToReceive " + orderItem.getCoin
-            edtAddressReceive.text = formatString(9, orderItem.getAddress, 6)
-            edtCourseExchange.text =
-                "1 ${orderItem.sendCoin} = ${
-                    formattedDollarWithPrecision(
-                        orderItem.rate
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.getOrderItemByHash(orderHash).collectLatest { orderItem ->
+                    VLog.d("OrderItem from vm : $orderItem")
+                    val status = orderItem.status
+                    txtStatus.text =
+                        "${getMainActivity().getStringResource(R.string.status_title)}: ${
+                            getRequestStatusTranslation(
+                                getMainActivity(),
+                                status
+                            )
+                        }"
+                    txtRequestHash.text =
+                        getMainActivity().getStringResource(R.string.order_title) + " #${orderItem.hash}"
+                    edtData.text = formattedTimeForOrderItem(orderItem.timeCreated)
+                    if (status == OrderStatus.Cancelled) {
+                        statusCancelled()
+                        return@collectLatest
+                    }
+                    edtAddressEksCrou.text = formatString(9, orderItem.giveAddress, 6)
+                    edtSendAmount.text = "${orderItem.amountToSend} " + orderItem.sendCoin
+                    val amountToReceive = orderItem.amountToReceive
+                    edtReceiveAmount.text = "$amountToReceive " + orderItem.getCoin
+                    edtAddressReceive.text = formatString(9, orderItem.getAddress, 6)
+                    edtCourseExchange.text =
+                        "1 ${orderItem.sendCoin} = ${
+                            formattedDollarWithPrecision(
+                                orderItem.rate
+                            )
+                        }"
+                    if (orderItem.txID.isNotEmpty())
+                        edtHashTransaction.text = formatString(9, orderItem.txID, 6)
+                    else {
+                        imgCpyHashTransaction.visibility = View.GONE
+                    }
+                    edtCommissionNetwork.text =
+                        formattedDoubleAmountWithPrecision(orderItem.commission_fee) + "XCH"
+                    edtCommissionTron.setText("${orderItem.commission_tron}$")
+                    edtCommissionExchange.setText("${orderItem.commission_percent}%")
+                    changeColorTxtStatusRequest(
+                        txtStatus,
+                        getRequestStatusColor(status, getMainActivity())
                     )
-                }"
-            if (orderItem.txID.isNotEmpty())
-                edtHashTransaction.text = formatString(9, orderItem.txID, 6)
-            else {
-                imgCpyHashTransaction.visibility = View.GONE
-            }
-            edtCommissionNetwork.text =
-                formattedDoubleAmountWithPrecision(orderItem.commission_fee) + "XCH"
-            edtCommissionTron.setText("${orderItem.commission_tron}$")
-            edtCommissionExchange.setText("${orderItem.commission_percent}%")
-            changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
-            val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
-            when (status) {
-                OrderStatus.Waiting -> {
-                    layoutWaiting.visibility = View.VISIBLE
-                    params.bottomToTop = R.id.layout_waiting
-                    val timeDiff =
-                        ((orderItem.timeCreated + FIFTEEN_MINUTES_IN_MILLIS_SECONDS) - System.currentTimeMillis()) / 1000
-                    startTimerAwaitingPayment(edtAutoCancelTime, timeDiff)
-                }
-
-                else -> {
-                    params.bottomToBottom = R.id.root
-                }
-            }
-            scrollViewProperties.layoutParams = params
-            txtAutoCancel.text = "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
-            if (status == OrderStatus.Waiting)
-                txtSent.text = getMainActivity().getStringResource(R.string.need_to_send)
-            if (status == OrderStatus.InProgress || status == OrderStatus.Waiting) {
-                txtReceive.text = getMainActivity().getStringResource(R.string.you_will_receive)
-            }
-            txtFinishTran.text =
-                getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
-
-            imgCpyAddress.setOnClickListener {
-                getMainActivity().copyToClipBoard(orderItem.giveAddress)
-            }
-
-            imgCpyReceiveAddress.setOnClickListener {
-                getMainActivity().copyToClipBoard(orderItem.getAddress)
-            }
-
-            imgCpyHashTransaction.setOnClickListener {
-                getMainActivity().copyToClipBoard(orderItem.txID)
-            }
-
-            imgCpyRequestHash.setOnClickListener {
-                getMainActivity().copyToClipBoard(orderItem.hash)
-            }
-
-            initClickListeners(orderItem)
-
-            refresh.apply {
-                setOnRefreshListener {
-                    VLog.d("Is Online ${connectionLiveData.isOnline}")
-                    if (connectionLiveData.isOnline) {
-                        vm.updateOrdersStatus {
-                            isRefreshing = false
+                    val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
+                    when (status) {
+                        OrderStatus.Waiting -> {
+                            layoutWaiting.visibility = View.VISIBLE
+                            params.bottomToTop = R.id.layout_waiting
+                            val timeDiff =
+                                ((orderItem.timeCreated + FIFTEEN_MINUTES_IN_MILLIS_SECONDS) - System.currentTimeMillis()) / 1000
+                            startTimerAwaitingPayment(edtAutoCancelTime, timeDiff)
                         }
-                    } else {
-                        isRefreshing = false
-                        dialogMan.showNoInternetTimeOutExceptionDialog(requireActivity()) {
 
+                        else -> {
+                            params.bottomToBottom = R.id.root
                         }
                     }
-                }
-                setColorSchemeResources(R.color.green)
-            }
+                    scrollViewProperties.layoutParams = params
+                    txtAutoCancel.text =
+                        "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
+                    if (status == OrderStatus.Waiting)
+                        txtSent.text = getMainActivity().getStringResource(R.string.need_to_send)
+                    if (status == OrderStatus.InProgress || status == OrderStatus.Waiting) {
+                        txtReceive.text =
+                            getMainActivity().getStringResource(R.string.you_will_receive)
+                    }
+                    txtFinishTran.text =
+                        getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
 
+                    imgCpyAddress.setOnClickListener {
+                        getMainActivity().copyToClipBoard(orderItem.giveAddress)
+                    }
+
+                    imgCpyReceiveAddress.setOnClickListener {
+                        getMainActivity().copyToClipBoard(orderItem.getAddress)
+                    }
+
+                    imgCpyHashTransaction.setOnClickListener {
+                        getMainActivity().copyToClipBoard(orderItem.txID)
+                    }
+
+                    imgCpyRequestHash.setOnClickListener {
+                        getMainActivity().copyToClipBoard(orderItem.hash)
+                    }
+
+                    initClickListeners(orderItem)
+
+                    refresh.apply {
+                        setOnRefreshListener {
+                            VLog.d("Is Online ${connectionLiveData.isOnline}")
+                            if (connectionLiveData.isOnline) {
+                                vm.updateOrdersStatus {
+                                    isRefreshing = false
+                                }
+                            } else {
+                                isRefreshing = false
+                                dialogMan.showNoInternetTimeOutExceptionDialog(requireActivity()) {
+
+                                }
+                            }
+                        }
+                        setColorSchemeResources(R.color.green)
+                    }
+                }
+            }
         }
     }
 

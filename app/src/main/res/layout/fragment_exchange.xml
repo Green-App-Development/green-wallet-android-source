@@ -628,7 +628,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="15dp"
-                        android:text="30 сек"
+                        android:text="@string/timing"
                         android:textColor="@color/setting_text_color"
                         android:textFontWeight="550"
                         android:textSize="14sp"

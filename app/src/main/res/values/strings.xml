@@ -421,5 +421,6 @@
 	<string name="liq_operation" />
 	<string name="current_account" />
 	<string name="tibet_push" />
+	<string name="timing"/>
 
 </resources>

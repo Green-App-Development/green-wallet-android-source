@@ -17,13 +17,13 @@ interface ExchangeInteract {
         rate: Double,
         getAmount: Double,
         feeNetwork: Double,
-        feeTron:Double,
-        feePercent:Double
+        feeTron: Double,
+        feePercent: Double
     ): Resource<String>
 
     suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate>
 
-    suspend fun getOrderByHash(hash: String): OrderItem
+    fun getOrderByHash(hash: String): Flow<OrderItem>
 
     suspend fun updateOrderStatusPeriodically()
 

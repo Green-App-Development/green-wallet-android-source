@@ -52,8 +52,8 @@ class ExchangeInteractImpl @Inject constructor(
         rate: Double,
         getAmount: Double,
         feeNetwork: Double,
-        feeTron:Double,
-        feePercent:Double
+        feeTron: Double,
+        feePercent: Double
     ): Resource<String> {
         try {
             val guid = prefsInteract.getSettingString(PrefsManager.USER_GUID, "")
@@ -149,9 +149,8 @@ class ExchangeInteractImpl @Inject constructor(
         return Resource.error(Exception("Unknown error"))
     }
 
-    override suspend fun getOrderByHash(hash: String): OrderItem {
-        val res = orderExchangeDao.getOrderExchangeByOrderHash(order_hash = hash)
-        return res.get().toOrderItem()
+    override fun getOrderByHash(hash: String): Flow<OrderItem> {
+        return orderExchangeDao.getOrderExchangeByOrderHash(order_hash = hash).map { it.toOrderItem() }
     }
 
     override suspend fun updateOrderStatusPeriodically() {
