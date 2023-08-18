@@ -29,6 +29,7 @@ import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_request_details.btnPay
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -146,6 +147,7 @@ class OrderDetailFragment : DaggerFragment() {
 
                         else -> {
                             params.bottomToBottom = R.id.root
+                            layoutWaiting.visibility = View.GONE
                         }
                     }
                     scrollViewProperties.layoutParams = params
@@ -229,8 +231,9 @@ class OrderDetailFragment : DaggerFragment() {
             }
             txt.text = "00:00"
             vm.updateOrdersStatus {
-
+                btnPay.isEnabled = false
             }
+
         }
     }
 

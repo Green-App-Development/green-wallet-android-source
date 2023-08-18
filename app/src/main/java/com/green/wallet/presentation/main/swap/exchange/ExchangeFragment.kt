@@ -231,9 +231,6 @@ class ExchangeFragment : DaggerFragment() {
 
         txtMinSumRequired.text =
             "${getMainActivity().getStringResource(R.string.min_sum)}: 36.70 USDT TRC-20"
-        val second = getMainActivity().getStringResource(R.string.sec_rate_update)
-        val threeLetter = second.substring(0, Math.min(second.length, 3))
-        edtUpdateCourse.text = "3 $threeLetter"
 
         tokenFromSpinner.setSpinnerEventsListener(object : CustomSpinner.OnSpinnerEventsListener {
             override fun onSpinnerOpened(spin: Spinner?) {
@@ -621,7 +618,7 @@ class ExchangeFragment : DaggerFragment() {
                 "1 XCH = ${formattedDollarWithPrecision(res.rate)}"
         } else {
             binding.txtCoursePrice.text =
-                "1 USDT = ${formattedDollarWithPrecision(res.rate)}"
+                "1 XCH = ${formattedDollarWithPrecision(res.rate)}"
         }
 
     }

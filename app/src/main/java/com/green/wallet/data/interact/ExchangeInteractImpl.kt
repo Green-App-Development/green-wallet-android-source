@@ -150,7 +150,8 @@ class ExchangeInteractImpl @Inject constructor(
     }
 
     override fun getOrderByHash(hash: String): Flow<OrderItem> {
-        return orderExchangeDao.getOrderExchangeByOrderHash(order_hash = hash).map { it.toOrderItem() }
+        return orderExchangeDao.getOrderExchangeByOrderHash(order_hash = hash)
+            .map { it.toOrderItem() }
     }
 
     override suspend fun updateOrderStatusPeriodically() {
@@ -230,10 +231,10 @@ class ExchangeInteractImpl @Inject constructor(
 
     override suspend fun updateTibetSwapExchangeStatus() {
         val tibetSwapList = tibetDao.getTibetSwapListInProgressStatus(OrderStatus.InProgress)
+        VLog.d("Tibet Swap List Items of status in progress : $tibetSwapList")
         for (tibetSwap in tibetSwapList) {
             val spentHeight = getTibetSwapSpentHeight(tibetSwap.offer_id)
             if (spentHeight != null) {
-
                 val resLanguageResource =
                     prefsInteract.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
                 val resMap = Converters.stringToHashMap(resLanguageResource)
