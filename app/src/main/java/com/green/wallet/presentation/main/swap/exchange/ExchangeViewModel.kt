@@ -74,7 +74,7 @@ class ExchangeViewModel @Inject constructor(
                 "No Give Address present"
             )
         )
-        VLog.d("Fee Tron of requesting Order : $feeTron")
+//        VLog.d("Fee Tron of requesting Order : $feeTron : $feePercent")
         return exchangeInteract.createExchangeRequest(
             giveAddress,
             amount,

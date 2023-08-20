@@ -35,4 +35,7 @@ interface OrderExchangeDao {
     @Query("SELECT * FROM OrderEntity ORDER BY time_created DESC")
     fun getAllOrderEntityList(): Flow<List<OrderEntity>>
 
+    @Query("UPDATE OrderEntity SET expired_cancelled_time=:cancelledTime WHERE order_hash=:hash")
+    suspend fun updateOrderEntitySetCancelledTimeByHash(hash: String, cancelledTime: Long): Int
+
 }

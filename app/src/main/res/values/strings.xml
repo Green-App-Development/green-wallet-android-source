@@ -422,5 +422,7 @@
 	<string name="current_account" />
 	<string name="tibet_push" />
 	<string name="timing"/>
+	<string name="ending_operation" />
+	<string name="address_paying_swap"/>
 
 </resources>

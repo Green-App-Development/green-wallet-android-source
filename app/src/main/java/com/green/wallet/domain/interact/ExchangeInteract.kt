@@ -4,6 +4,7 @@ import com.green.wallet.domain.domainmodel.ExchangeRate
 import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
+import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -27,7 +28,8 @@ interface ExchangeInteract {
 
     suspend fun updateOrderStatusPeriodically()
 
-    suspend fun updateOrderStatusByHash(hash: String)
+    suspend fun updateOrderStatusByHash(hash: String, status: OrderStatus)
+
     fun getAllOrderListFlow(): Flow<List<Any>>
 
     suspend fun insertTibetSwap(tibetSwapExchange: TibetSwapExchange)

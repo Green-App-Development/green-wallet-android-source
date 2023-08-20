@@ -99,6 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/barrier_end"
             app:layout_constraintTop_toBottomOf="@+id/txtStatus">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -466,7 +467,7 @@
             android:id="@+id/layout_in_progress"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent">
@@ -563,6 +564,14 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="layout_waiting,layout_in_progress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.green.wallet.presentation.custom.OnlyVerticalSwipeRefreshLayout>

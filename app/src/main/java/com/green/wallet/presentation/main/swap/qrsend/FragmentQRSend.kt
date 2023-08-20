@@ -9,23 +9,31 @@ import android.widget.TextView
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentQrcodeSendBinding
 import com.green.wallet.domain.domainmodel.OrderItem
-import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
+import com.green.wallet.presentation.di.factory.ViewModelFactory
+import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailViewModel
 import com.green.wallet.presentation.tools.FIFTEEN_MINUTES_IN_MILLIS_SECONDS
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.getStringResource
+import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FragmentQRSend : Fragment() {
+class FragmentQRSend : DaggerFragment() {
 
     private lateinit var binding: FragmentQrcodeSendBinding
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val vm: OrderDetailViewModel by viewModels { viewModelFactory }
 
 
     companion object {
@@ -105,6 +113,14 @@ class FragmentQRSend : Fragment() {
 
         startTimerAwaitingPayment(edtAutoCancelTime, timeDiff)
 
+        initUpdateOrderDetail()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun initUpdateOrderDetail() = with(binding) {
+        txtHashSwap.setText(requireActivity().getStringResource(R.string.address_paying_swap) + " ${orderItem.hash}")
+        edtNeedToSendAmount.setText("${orderItem.amountToSend} ${orderItem.sendCoin}")
+        edtReceiveAmount.setText("${orderItem.amountToReceive} ${orderItem.getCoin}")
     }
 
     private var job: Job? = null
@@ -131,7 +147,10 @@ class FragmentQRSend : Fragment() {
                 totalSeconds--
                 delay(1000)
             }
-            txt.text="00:00"
+            txt.text = "00:00"
+            vm.updateOrdersStatus {
+                getMainActivity().popBackStackOnce()
+            }
         }
     }
 

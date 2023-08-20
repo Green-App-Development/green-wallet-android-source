@@ -114,7 +114,8 @@ abstract class AppDatabase : RoomDatabase() {
                 commission_fee REAL NOT NULL, 
 				amount_to_receive REAL NOT NULL,
 				commission_tron REAL NOT NULL,
-				commission_percent REAL NOT NULL
+				commission_percent REAL NOT NULL,
+				expired_cancelled_time REAL NOT NULL
             )
         """.trimIndent()
 				database.execSQL(createTableQuery)

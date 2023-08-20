@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Адрес эскроу:"
+        android:text="@string/escrow_address"
         android:textColor="#C9C9C9"
         android:textFontWeight="500"
         android:textSize="16sp"
@@ -130,7 +130,7 @@
 
 
     <TextView
-        android:id="@+id/edtToken"
+        android:id="@+id/txtHashSwap"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -185,7 +185,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="Вы получите"
+        android:text="@string/you_will_receive"
         android:textColor="@color/secondary_text_color"
         app:layout_constraintBottom_toTopOf="@+id/view9"
         app:layout_constraintStart_toStartOf="@+id/guideline49" />
@@ -195,7 +195,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="0.45 XCH"
+        android:text=""
         android:textColor="@color/secondary_text_color"
         app:layout_constraintBottom_toTopOf="@+id/view9"
         app:layout_constraintEnd_toStartOf="@+id/guideline51" />
@@ -229,7 +229,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:text="Нужно отправить"
+        android:text="@string/need_to_send"
         android:textColor="@color/secondary_text_color"
         app:layout_constraintBottom_toTopOf="@+id/view10"
         app:layout_constraintStart_toStartOf="@+id/guideline49" />
@@ -251,7 +251,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="17.50 USDT"
+        android:text=""
         android:textColor="@color/secondary_text_color"
         app:layout_constraintBottom_toTopOf="@+id/view10"
         app:layout_constraintEnd_toStartOf="@+id/guideline51" />

@@ -25,6 +25,7 @@ import com.green.wallet.presentation.tools.CHIA_NETWORK
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.TWENTY_MINUTES_MILLIS_SECONDS
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -85,7 +86,7 @@ class ExchangeInteractImpl @Inject constructor(
                         commission_fee = feeNetwork,
                         amount_to_receive = getAmount,
                         commission_tron = feeTron,
-                        commission_percent = 1.0
+                        commission_percent = feePercent
                     )
                     VLog.d("Inserting Order Exchange : $orderExchange")
                     orderExchangeDao.insertOrderExchange(orderExchange)
@@ -159,7 +160,8 @@ class ExchangeInteractImpl @Inject constructor(
         for (order in ordersList) {
             val exchangeStatus = getOrderStatus(order.order_hash)
             if (exchangeStatus != null) {
-                val status = mapNetworkOrderStatusToLocal(exchangeStatus.result.status)
+//                val status = mapNetworkOrderStatusToLocal(exchangeStatus.result.status)
+                val status = OrderStatus.InProgress
                 VLog.d("ExchangeStatus : $exchangeStatus of orderItem : $order")
                 if (status != order.status) {
                     orderExchangeDao.updateOrderStatusByHash(status, order.order_hash)
@@ -169,26 +171,37 @@ class ExchangeInteractImpl @Inject constructor(
                     val messageOrderStatusUpdate =
                         resMap["notif_status_updated"] ?: "New exchange request status"
 
-                    if (status == OrderStatus.Success) {
-                        orderExchangeDao.updateOrderTxIDByHash(
-                            exchangeStatus.result.get.txID ?: "",
-                            order.order_hash
-                        )
-                        val statusCompleted = resMap["status_completed"] ?: "Completed"
-                        val message =
-                            messageOrderStatusUpdate + " ${order.order_hash} $statusCompleted"
-                        notifHelper.callGreenAppNotificationMessages(
-                            message,
-                            System.currentTimeMillis()
-                        )
-                    } else if (status == OrderStatus.Cancelled) {
-                        val statusCancelled = resMap["status_canceled"] ?: "Cancelled"
-                        val message =
-                            messageOrderStatusUpdate + " ${order.order_hash} $statusCancelled"
-                        notifHelper.callGreenAppNotificationMessages(
-                            message,
-                            System.currentTimeMillis()
-                        )
+                    when (status) {
+                        OrderStatus.Success -> {
+                            orderExchangeDao.updateOrderTxIDByHash(
+                                exchangeStatus.result.get.txID ?: "",
+                                order.order_hash
+                            )
+                            val statusCompleted = resMap["status_completed"] ?: "Completed"
+                            val message =
+                                messageOrderStatusUpdate + " ${order.order_hash} $statusCompleted"
+                            notifHelper.callGreenAppNotificationMessages(
+                                message,
+                                System.currentTimeMillis()
+                            )
+                        }
+
+                        OrderStatus.Cancelled -> {
+                            val statusCancelled = resMap["status_canceled"] ?: "Cancelled"
+                            val message =
+                                messageOrderStatusUpdate + " ${order.order_hash} $statusCancelled"
+                            notifHelper.callGreenAppNotificationMessages(
+                                message,
+                                System.currentTimeMillis()
+                            )
+                        }
+
+                        OrderStatus.InProgress -> {
+                            orderExchangeDao.updateOrderEntitySetCancelledTimeByHash(
+                                order.order_hash,
+                                System.currentTimeMillis() + TWENTY_MINUTES_MILLIS_SECONDS
+                            )
+                        }
                     }
                 }
             } else
@@ -196,8 +209,8 @@ class ExchangeInteractImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateOrderStatusByHash(hash: String) {
-
+    override suspend fun updateOrderStatusByHash(hash: String, status: OrderStatus) {
+        orderExchangeDao.updateOrderStatusByHash(status, hash)
     }
 
     override fun getAllOrderListFlow(): Flow<List<Any>> {

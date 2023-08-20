@@ -24,7 +24,8 @@ data class OrderEntity(
     val commission_fee: Double,
     val amount_to_receive: Double,
     val commission_tron: Double,
-    val commission_percent: Double
+    val commission_percent: Double,
+    val expired_cancelled_time: Long = 0L
 ) {
 
     fun toOrderItem() =
@@ -42,7 +43,8 @@ data class OrderEntity(
             commission_fee = commission_fee,
             amountToReceive = amount_to_receive,
             commission_tron = commission_tron,
-            commission_percent = commission_percent
+            commission_percent = commission_percent,
+            expiredCancelledTime = expired_cancelled_time
         )
 
 }

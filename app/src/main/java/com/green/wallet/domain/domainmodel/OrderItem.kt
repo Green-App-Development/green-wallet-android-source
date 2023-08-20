@@ -20,5 +20,6 @@ data class OrderItem(
     val commission_fee: Double,
     val amountToReceive: Double,
     val commission_tron: Double,
-    val commission_percent: Double
+    val commission_percent: Double,
+    val expiredCancelledTime: Long
 ) : Parcelable

@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +29,6 @@ import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_request_details.btnPay
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -106,6 +104,8 @@ class OrderDetailFragment : DaggerFragment() {
                         }"
                     txtRequestHash.text =
                         getMainActivity().getStringResource(R.string.order_title) + " #${orderItem.hash}"
+                    layoutInProgress.visibility = View.GONE
+                    layoutWaiting.visibility = View.GONE
                     edtData.text = formattedTimeForOrderItem(orderItem.timeCreated)
                     if (status == OrderStatus.Cancelled) {
                         statusCancelled()
@@ -135,22 +135,28 @@ class OrderDetailFragment : DaggerFragment() {
                         txtStatus,
                         getRequestStatusColor(status, getMainActivity())
                     )
-                    val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
+//                    val params = scrollViewProperties.layoutParams as ConstraintLayout.LayoutParams
                     when (status) {
                         OrderStatus.Waiting -> {
                             layoutWaiting.visibility = View.VISIBLE
-                            params.bottomToTop = R.id.layout_waiting
+//                            params.bottomToTop = R.id.layout_waiting
                             val timeDiff =
                                 ((orderItem.timeCreated + FIFTEEN_MINUTES_IN_MILLIS_SECONDS) - System.currentTimeMillis()) / 1000
                             startTimerAwaitingPayment(edtAutoCancelTime, timeDiff)
                         }
 
+                        OrderStatus.InProgress -> {
+                            layoutInProgress.visibility = View.VISIBLE
+                            val timeDiff =
+                                orderItem.expiredCancelledTime - System.currentTimeMillis()
+                            startTimeExpiresStatusInProgress(timeDiff/1000L)
+                        }
+
                         else -> {
-                            params.bottomToBottom = R.id.root
-                            layoutWaiting.visibility = View.GONE
+//                            params.bottomToBottom = R.id.root
                         }
                     }
-                    scrollViewProperties.layoutParams = params
+//                    scrollViewProperties.layoutParams = params
                     txtAutoCancel.text =
                         "${getMainActivity().getStringResource(R.string.auto_cancel)}:"
                     if (status == OrderStatus.Waiting)
@@ -198,6 +204,26 @@ class OrderDetailFragment : DaggerFragment() {
                     }
                 }
             }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun startTimeExpiresStatusInProgress(timeDiff: Long) {
+        val txtFinishTran = binding.txtFinishTran
+        val edtFinishTime = binding.edtFinishTranTime
+        txtFinishTran.text = requireActivity().getStringResource(R.string.ending_operation) + ":"
+        lifecycleScope.launch {
+            var totalSeconds = timeDiff
+            while (totalSeconds >= 0) {
+                val minutes = totalSeconds / 60
+                val seconds = totalSeconds % 60
+                edtFinishTime.text =
+                    "${addZeroToFrontIfNeeded(minutes)}:${addZeroToFrontIfNeeded(seconds)}"
+                totalSeconds--
+                delay(1000)
+            }
+            edtFinishTime.text = "00:00"
+            vm.updateOrderStatus(orderHash, OrderStatus.Cancelled)
         }
     }
 
