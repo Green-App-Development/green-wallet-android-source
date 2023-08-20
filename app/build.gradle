@@ -1,246 +1,245 @@
 plugins {
-	id 'com.android.application'
-	id 'kotlin-android'
-	id 'kotlin-kapt'
-	id 'org.jetbrains.kotlin.android.extensions'
-	// Make sure that you have the Google services Gradle plugin
-	id 'com.google.gms.google-services'
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.android.extensions'
+    // Make sure that you have the Google services Gradle plugin
+    id 'com.google.gms.google-services'
 
-	// Add the Crashlytics Gradle plugin
-	id 'com.google.firebase.crashlytics'
-	id 'com.github.triplet.play'
+    // Add the Crashlytics Gradle plugin
+    id 'com.google.firebase.crashlytics'
+    id 'com.github.triplet.play'
 }
 
 
 repositories {
-	google()
-	mavenCentral()
-
+    google()
+    mavenCentral()
 }
 
 android {
 
-	compileSdk 32
+    compileSdk 32
 
-	Properties properties = new Properties()
-	properties.load(project.rootProject.file("local.properties").newDataInputStream())
-
-
-	defaultConfig {
-		applicationId "com.green.wallet"
-		minSdk 26
-		targetSdk 32
-		versionCode 17 //for Google Play
-		versionName "0.0.87.14"
-
-		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
 
-		buildConfigField "String", "CHIA_CHIVES_CHANGE_24", "\"${properties.getProperty("CHIA_CHIVES_CHANGE_24")}\""
-		buildConfigField "String", "BASE_URL_GREEN_APP", "\"${properties.getProperty("BASE_URL_GREEN_APP")}\""
-		buildConfigField "String", "TIBET_API", "\"${properties.getProperty("TIBET_API")}\""
-		buildConfigField "String", "DEXIE_API", "\"${properties.getProperty("DEXIE_API")}\""
+    defaultConfig {
+        applicationId "com.green.wallet"
+        minSdk 26
+        targetSdk 32
+        versionCode 17 //for Google Play
+        versionName "0.0.86"
 
-		javaCompileOptions {
-			annotationProcessorOptions {
-				arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
-			}
-		}
-	}
-
-	signingConfigs {
-
-		release {
-			// Configuration details for release signing
-			storeFile file("$rootDir/app/cert.final")
-			storePassword properties.getProperty("SIGN_IN_PASSWORD")
-			keyAlias properties.getProperty("KEY_ALIAS")
-			keyPassword properties.getProperty("SIGN_IN_PASSWORD")
-		}
-		// Other signing configurations
-	}
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
 
-	buildTypes {
+        buildConfigField "String", "CHIA_CHIVES_CHANGE_24", "\"${properties.getProperty("CHIA_CHIVES_CHANGE_24")}\""
+        buildConfigField "String", "BASE_URL_GREEN_APP", "\"${properties.getProperty("BASE_URL_GREEN_APP")}\""
+        buildConfigField "String", "TIBET_API", "\"${properties.getProperty("TIBET_API")}\""
+        buildConfigField "String", "DEXIE_API", "\"${properties.getProperty("DEXIE_API")}\""
 
-		release {
-			applicationIdSuffix ''
-			versionNameSuffix ''
-			minifyEnabled false
-			shrinkResources false
-			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-			signingConfig signingConfigs.release
-		}
-		debug {
-			minifyEnabled false
-			shrinkResources false
-			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-		}
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
 
-	}
+    signingConfigs {
+
+        release {
+            // Configuration details for release signing
+            storeFile file("$rootDir/app/cert.final")
+            storePassword properties.getProperty("SIGN_IN_PASSWORD")
+            keyAlias properties.getProperty("KEY_ALIAS")
+            keyPassword properties.getProperty("SIGN_IN_PASSWORD")
+        }
+        // Other signing configurations
+    }
 
 
-	playConfigs {
-		googleRelease {
-			enabled.set(true)
-		}
-	} // playConfigs
+    buildTypes {
 
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
-	kotlinOptions {
-		jvmTarget = '1.8'
-	}
-	testOptions {
-		unitTests.returnDefaultValues = true
-	}
+        release {
+            applicationIdSuffix ''
+            versionNameSuffix ''
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
 
-	buildFeatures {
-		viewBinding true
-	}
+    }
 
-	lintOptions {
-		checkReleaseBuilds false
-	}
+
+    playConfigs {
+        googleRelease {
+            enabled.set(true)
+        }
+    } // playConfigs
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
 
 
 }
 
 play {
-	enabled.set(true)
-	track.set("internal")
-	defaultToAppBundles.set(true)
-	serviceAccountCredentials.set(file("${rootDir}/app/private_wallet.json"))
+    enabled.set(true)
+    track.set("internal")
+    defaultToAppBundles.set(true)
+    serviceAccountCredentials.set(file("${rootDir}/app/private_wallet.json"))
 }
 
 
 dependencies {
 
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-	implementation 'androidx.core:core-ktx:1.7.0'
-	implementation 'androidx.appcompat:appcompat:1.4.1'
-	implementation 'com.google.android.material:material:1.5.0'
-	implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-	implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
-	implementation 'org.chromium.net:cronet-api:76.3809.111'
-	implementation 'com.google.firebase:firebase-messaging:23.1.1'
-	testImplementation 'junit:junit:4.+'
-	implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
+    implementation 'org.chromium.net:cronet-api:76.3809.111'
+    implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    testImplementation 'junit:junit:4.+'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
 
-	def dag_version = "2.22"
-	//Dagger Core
-	implementation "com.google.dagger:dagger:$dag_version"
-	kapt "com.google.dagger:dagger-compiler:$dag_version"
+    def dag_version = "2.22"
+    //Dagger Core
+    implementation "com.google.dagger:dagger:$dag_version"
+    kapt "com.google.dagger:dagger-compiler:$dag_version"
 
-	//Dagger Android
-	implementation "com.google.dagger:dagger-android:$dag_version"
-	implementation "com.google.dagger:dagger-android-support:$dag_version"
-	// if you use the support libraries
-	annotationProcessor "com.google.dagger:dagger-android-processor:$dag_version"
-	kapt "com.google.dagger:dagger-android-processor:$dag_version"
+    //Dagger Android
+    implementation "com.google.dagger:dagger-android:$dag_version"
+    implementation "com.google.dagger:dagger-android-support:$dag_version"
+    // if you use the support libraries
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dag_version"
+    kapt "com.google.dagger:dagger-android-processor:$dag_version"
 
-	implementation 'com.jakewharton.timber:timber:5.0.1'
-	implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
 
 //    api project(':commontools')
-	implementation 'com.jakewharton:process-phoenix:2.1.2'
+    implementation 'com.jakewharton:process-phoenix:2.1.2'
 
-	implementation "androidx.viewpager2:viewpager2:1.0.0"
-	implementation 'me.relex:circleindicator:2.1.6'
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation 'me.relex:circleindicator:2.1.6'
 
-	implementation "androidx.biometric:biometric:1.1.0"
+    implementation "androidx.biometric:biometric:1.1.0"
 
-	// Replace bundled strings dynamically
-	implementation 'dev.b3nedikt.restring:restring:5.1.4'
+    // Replace bundled strings dynamically
+    implementation 'dev.b3nedikt.restring:restring:5.1.4'
 
-	// Intercept view inflation
-	implementation 'dev.b3nedikt.viewpump:viewpump:4.0.7'
+    // Intercept view inflation
+    implementation 'dev.b3nedikt.viewpump:viewpump:4.0.7'
 
-	// Allows to update the text of views at runtime without recreating the activity
-	implementation 'dev.b3nedikt.reword:reword:4.0.1'
+    // Allows to update the text of views at runtime without recreating the activity
+    implementation 'dev.b3nedikt.reword:reword:4.0.1'
 
-	//Remote
-	implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-	implementation 'com.google.code.gson:gson:2.8.6'
-	implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-	implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
-
-
-	//Temporary Jackson
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
-	implementation 'com.fasterxml.jackson.core:jackson-core:2.11.1'
-	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.1'
+    //Remote
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 
 
-	def lifecycle_version = "2.2.0"
+    //Temporary Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.1'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.1'
 
-	// LiveData
-	implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
-	//Room dataBase
-	def room_version = "2.4.0"
+    def lifecycle_version = "2.2.0"
 
-	implementation "androidx.room:room-runtime:$room_version"
-	kapt "androidx.room:room-compiler:$room_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
-	// optional - Kotlin Extensions and Coroutines support for Room
-	implementation "androidx.room:room-ktx:$room_version"
+    //Room dataBase
+    def room_version = "2.4.0"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
 
 //    qrcode
-	implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'
-	implementation 'com.google.zxing:core:3.3.2'
-	implementation 'com.budiyev.android:code-scanner:2.1.0'
+    implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'
+    implementation 'com.google.zxing:core:3.3.2'
+    implementation 'com.budiyev.android:code-scanner:2.1.0'
 
-	//BIP 39
-	implementation "cash.z.ecc.android:kotlin-bip39:1.0.2"
+    //BIP 39
+    implementation "cash.z.ecc.android:kotlin-bip39:1.0.2"
 
-	//Circle ImageView
+    //Circle ImageView
 
-	implementation 'de.hdodenhof:circleimageview:3.1.0'
-	implementation 'com.github.bumptech.glide:glide:4.13.2'
-	implementation 'com.romandanylyk:pageindicatorview:1.0.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    implementation 'com.romandanylyk:pageindicatorview:1.0.0'
 //    implementation 'io.github.novacrypto:BIP39:2019.01.27'
 
 //	implementation 'com.google.firebase:firebase-core:15.0.2'
 
 
-	implementation 'androidx.test.espresso:espresso-core:3.4.0'
-	implementation 'androidx.test:runner:1.4.0'
-	implementation 'androidx.test:rules:1.4.0'
-	implementation 'androidx.test.espresso:espresso-contrib:3.4.0'
-	debugImplementation 'androidx.test.ext:junit:1.1.3'
-	implementation "androidx.core:core-ktx:1.7.0"
+    implementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.test:runner:1.4.0'
+    implementation 'androidx.test:rules:1.4.0'
+    implementation 'androidx.test.espresso:espresso-contrib:3.4.0'
+    debugImplementation 'androidx.test.ext:junit:1.1.3'
+    implementation "androidx.core:core-ktx:1.7.0"
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.20-M1"
-	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
 
-	implementation project(':flutter')
+    implementation project(':flutter')
 
-	implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+    implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
-	implementation "androidx.paging:paging-runtime-ktx:3.1.0"
+    implementation "androidx.paging:paging-runtime-ktx:3.1.0"
 
-	implementation platform('com.google.firebase:firebase-bom:29.0.0')
-	// Add the dependencies for the Crashlytics and Analytics libraries
-	// When using the BoM, you don't specify versions in Firebase library dependencies
-	implementation 'com.google.firebase:firebase-crashlytics'
-	implementation 'com.google.firebase:firebase-analytics'
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
+    // Add the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
 
-	//Work Manager
-	def work_version = "2.7.1"
-	// Kotlin + coroutines
-	implementation "androidx.work:work-runtime-ktx:$work_version"
+    //Work Manager
+    def work_version = "2.7.1"
+    // Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 
-	implementation 'com.reginald.swiperefresh:library:1.1.2'
+    implementation 'com.reginald.swiperefresh:library:1.1.2'
 
-	implementation("io.coil-kt:coil:1.3.2")
-	implementation("io.coil-kt:coil-svg:0.12.0")
+    implementation("io.coil-kt:coil:1.3.2")
+    implementation("io.coil-kt:coil-svg:0.12.0")
 
-	implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
-	implementation "androidx.room:room-paging:$room_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    implementation "androidx.room:room-paging:$room_version"
 
 
 }
