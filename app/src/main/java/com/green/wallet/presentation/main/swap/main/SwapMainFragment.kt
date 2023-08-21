@@ -8,16 +8,13 @@ import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSwapMainBinding
-import com.green.wallet.presentation.App
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_swap_main.*
 import javax.inject.Inject
 
 class SwapMainFragment : DaggerFragment() {
@@ -27,7 +24,6 @@ class SwapMainFragment : DaggerFragment() {
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
 	private val vm: SwapMainViewModel by viewModels { viewModelFactory }
-
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -42,43 +38,61 @@ class SwapMainFragment : DaggerFragment() {
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentSwapMainBinding.inflate(layoutInflater)
-		binding.registerClicks()
 		VLog.d("On CreateView SwapMainFragment")
 		return binding.root
 	}
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
-		VLog.d("On ViewCreated SwapMainFragment")
+		VLog.d("On ViewCreated SwapMainFragment : $vm and PrevDest : ${vm.prevDestID}")
 		navController =
 			(childFragmentManager.findFragmentById(R.id.my_nav_swap) as NavHostFragment).navController
 		vm.initSwapNavController(navController)
-		registerNavListener()
+		binding.registerClicks()
 	}
 
-	private fun registerNavListener() {
-		navController.addOnDestinationChangedListener { controller, destination, arguments ->
-			if (destination.id == R.id.fragment_exchange) {
-				txtClicked(txtExchange)
-				txtUnClicked(txtMyRequests)
-			} else {
-				txtClicked(txtMyRequests)
-				txtUnClicked(txtExchange)
-			}
-		}
-	}
 
 	private fun FragmentSwapMainBinding.registerClicks() {
+
+		//0
 		txtExchange.setOnClickListener {
-			if (vm.showingExchange) return@setOnClickListener
-			vm.showingExchange = true
-			navController.popBackStack()
+			vm.navigateTo(vm.destList[0])
 		}
+
+		//1
+		txtTibetSwap.setOnClickListener {
+			vm.navigateTo(vm.destList[1])
+		}
+
+		//2
 		txtMyRequests.setOnClickListener {
-			if (!vm.showingExchange) return@setOnClickListener
-			vm.showingExchange = false
-			navController.navigate(R.id.fragment_request)
+			vm.navigateTo(vm.destList[2])
 		}
+
+		vm.addDestId(R.id.fragment_exchange)
+		if (vm.prevDestID != -1)
+			vm.navigateTo(vm.prevDestID)
+
+		navController.addOnDestinationChangedListener { controller, destination, arguments ->
+			clickedChosenDestinations(
+				destination.id
+			)
+		}
+
+	}
+
+	private fun FragmentSwapMainBinding.clickedChosenDestinations(
+		dest: Int
+	): Boolean {
+		val txtClicks = listOf(txtExchange, txtTibetSwap, txtMyRequests)
+		for (i in 0 until vm.destList.size) {
+			if (vm.destList[i] == dest) {
+				txtClicked(txtClicks[i])
+			} else {
+				txtUnClicked(txtClicks[i])
+			}
+		}
+		return true
 	}
 
 	private fun txtClicked(txt: TextView?) {
@@ -116,6 +130,10 @@ class SwapMainFragment : DaggerFragment() {
 		VLog.d("On Pause SwapMainFragment")
 	}
 
+	override fun onDestroyView() {
+		super.onDestroyView()
+		vm.visitedDest.clear()
+	}
 
 	override fun onDestroy() {
 		super.onDestroy()

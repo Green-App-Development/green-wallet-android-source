@@ -1,4 +1,4 @@
-package com.green.wallet.presentation.main.swap.request
+package com.green.wallet.presentation.main.swap.order
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.green.wallet.databinding.FragmentRequestBinding
-import com.green.wallet.domain.domainmodel.RequestItem
+import com.green.wallet.domain.domainmodel.Address
+import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.domain.domainmodel.TibetLiquidity
+import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
 import com.green.wallet.presentation.tools.VLog
@@ -40,7 +44,6 @@ class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemList
 		savedInstanceState: Bundle?
 	): View {
 		binding = FragmentRequestBinding.inflate(layoutInflater)
-		binding.registerClicks()
 		return binding.root
 	}
 
@@ -60,20 +63,39 @@ class OrdersFragment : DaggerFragment(), OrderItemAdapter.OnClickRequestItemList
 		}
 		prevOrderListJob = lifecycleScope.launchWhenCreated {
 			repeatOnLifecycle(Lifecycle.State.STARTED) {
-				vm.orderList.collectLatest {
+				vm.exchangeList.collectLatest {
+//					VLog.d("Updating order items list : $it")
+					binding.hasSomeOrders(it.isNotEmpty())
 					orderAdapter.updateRequestList(it)
 				}
 			}
 		}
 	}
 
-	private fun FragmentRequestBinding.registerClicks() {
-
+	private fun FragmentRequestBinding.hasSomeOrders(hasOrders: Boolean) {
+		if (hasOrders) {
+			recViewRequests.visibility = View.VISIBLE
+			txtNoOrderHistory.visibility = View.GONE
+		} else {
+			recViewRequests.visibility = View.GONE
+			txtNoOrderHistory.visibility = View.VISIBLE
+		}
 	}
 
-	override fun onClickDetailItem(hash: String) {
-		VLog.d("Request Item Detail : $hash clicked")
-		getMainActivity().move2OrderDetailsFragment(hash)
+	override fun onClickDetailItem(item: Any) {
+		when (item) {
+			is OrderItem -> {
+				getMainActivity().move2OrderDetailsFragment(item.hash)
+			}
+
+			is TibetSwapExchange -> {
+				getMainActivity().move2TibetSwapExchangeDetail(item)
+			}
+
+			is TibetLiquidity -> {
+				getMainActivity().move2TibetLiquidityDetail(item.offer_id)
+			}
+		}
 	}
 
 

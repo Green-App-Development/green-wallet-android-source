@@ -24,10 +24,12 @@ import com.green.wallet.presentation.main.send.SendFragmentViewModel
 import com.green.wallet.presentation.main.support.SupportViewModel
 import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
-import com.green.wallet.presentation.main.swap.request.OrdersViewModel
+import com.green.wallet.presentation.main.swap.order.OrdersViewModel
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailViewModel
 import com.green.wallet.presentation.main.swap.send.SwapSendViewModel
+import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidityDetailViewModel
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel
+import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsViewModel
@@ -195,10 +197,19 @@ abstract class ViewModelsModule {
 	@IntoMap
 	@Binds
 	@ViewModelKey(TibetSwapViewModel::class)
+	@AppScope
 	abstract fun bindingTibetSwapViewModel(viewModel: TibetSwapViewModel): ViewModel
 
+	@IntoMap
+	@Binds
+	@ViewModelKey(TibetSwapDetailViewModel::class)
+	abstract fun bindingTibetSwapDetailViewModel(viewModel: TibetSwapDetailViewModel): ViewModel
 
 
+	@IntoMap
+	@Binds
+	@ViewModelKey(TibetLiquidityDetailViewModel::class)
+	abstract fun bindingTibetLiquidityDetailViewModel(viewModel: TibetLiquidityDetailViewModel): ViewModel
 
 
 }

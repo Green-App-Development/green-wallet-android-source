@@ -27,7 +27,6 @@ import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.lang.IllegalStateException
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -63,6 +62,9 @@ class App : DaggerApplication() {
 	@Inject
 	lateinit var notificationHelper: NotificationHelper
 
+	@Inject
+	lateinit var tibetInteract: TibetInteract
+
 	lateinit var appComponent: AppComponent
 	lateinit var swapNavController: NavController
 
@@ -97,14 +99,9 @@ class App : DaggerApplication() {
 		)
 		initWorkManager()
 		subscribingToTopic()
-		testingMethod()
+
 	}
 
-	private fun testingMethod() {
-		CoroutineScope(Dispatchers.Main).launch {
-
-		}
-	}
 
 	private fun subscribingToTopic() {
 		FirebaseMessaging.getInstance().subscribeToTopic("news")
@@ -132,6 +129,9 @@ class App : DaggerApplication() {
 				getAllTails()
 				checkingDefaultWalletTails()
 			}
+			with(tibetInteract) {
+				saveTokensPairID()
+			}
 		}
 	}
 
@@ -139,7 +139,10 @@ class App : DaggerApplication() {
 		val constraints =
 			Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 		val periodicWorkRequest =
-			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(15000, TimeUnit.MILLISECONDS)
+			PeriodicWorkRequestBuilder<WorkManagerSyncTransactions>(
+				15000,
+				TimeUnit.MILLISECONDS
+			)
 				.setConstraints(constraints)
 		WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
 			SYNC_WORK_TAG,
@@ -159,6 +162,7 @@ class App : DaggerApplication() {
 		}
 	}
 
+	lateinit var methodChannel: MethodChannel
 	private fun warmupFlutterEngine() {
 		flutterEngine = FlutterEngine(this)
 
@@ -171,11 +175,12 @@ class App : DaggerApplication() {
 		FlutterEngineCache
 			.getInstance()
 			.put(FLUTTER_ENGINE, flutterEngine)
-		VLog.d("LOG_TAG", "warmupFlutterEngine: got initialized  $flutterEngine")
-		val methodChannel = MethodChannel(
+		VLog.d("LOG_TAG warmupFlutterEngine: got initialized  $flutterEngine")
+		methodChannel = MethodChannel(
 			flutterEngine.dartExecutor.binaryMessenger,
 			METHOD_CHANNEL_GENERATE_HASH
 		)
+
 		CoroutineScope(Dispatchers.IO + handler).launch {
 			//wait for flutter engine to warm up
 			delay(500L)
@@ -190,13 +195,6 @@ class App : DaggerApplication() {
 			}
 		}
 
-		methodChannel.setMethodCallHandler { call, result ->
-			if (call.method == "nftSpendBundle") {
-				val bundleNFT = call.arguments.toString()
-				VLog.d("BundleNFT on Android : $bundleNFT")
-			}
-		}
-
 	}
 
 	fun updateBalanceEachPeriodically() {
@@ -207,6 +205,8 @@ class App : DaggerApplication() {
 				VLog.d("Start requesting Balance Each Wallets Periodically:")
 				blockChainInteract.updateBalanceAndTransactionsPeriodically()
 				exchangeInteract.updateOrderStatusPeriodically()
+				exchangeInteract.updateTibetSwapExchangeStatus()
+				exchangeInteract.updateTibetLiquidityStatus()
 			}
 		}
 		updateCryptoJob?.cancel()
@@ -253,6 +253,5 @@ class App : DaggerApplication() {
 	}
 
 	fun isFlutterEngineInitialized() = this::flutterEngine.isInitialized
-
 
 }

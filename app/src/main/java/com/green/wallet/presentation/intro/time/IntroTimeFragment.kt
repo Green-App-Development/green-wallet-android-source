@@ -22,91 +22,93 @@ import java.util.*
 
 class IntroTimeFragment : Fragment(R.layout.fragment_time) {
 
-    private val handler = CoroutineExceptionHandler { con, thro ->
-        VLog.d("TImeFragment Exception Handled : ${thro.message}")
-    }
+	private val handler = CoroutineExceptionHandler { con, thro ->
+		VLog.d("TImeFragment Exception Handled : ${thro.message}")
+	}
 
-    lateinit var binding: FragmentTimeBinding
+	lateinit var binding: FragmentTimeBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+	}
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentTimeBinding.inflate(inflater)
-        return binding.root
-    }
+	override fun onCreateView(
+		inflater: LayoutInflater,
+		container: ViewGroup?,
+		savedInstanceState: Bundle?
+	): View {
+		binding = FragmentTimeBinding.inflate(inflater)
+		return binding.root
+	}
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        settingBcgImageResource()
-        changeGreetingTime()
-        applyExtraBoldTypeFace()
-        lifecycleScope.launch(handler) {
-            delay(3000)
-            curActivity().introViewModel.saveLastVisitedLongValue(System.currentTimeMillis())
-            curActivity().move2MainActivity()
-        }
-    }
+	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+		super.onViewCreated(view, savedInstanceState)
+		settingBcgImageResource()
+		changeGreetingTime()
+		applyExtraBoldTypeFace()
+		lifecycleScope.launch(handler) {
+			delay(500)
+			curActivity().introViewModel.saveLastVisitedLongValue(System.currentTimeMillis())
+			curActivity().move2MainActivity()
+		}
+	}
 
-    private fun changeGreetingTime() {
-        val curMinutes = getCurrentTimeInMinutes()
-        val greetingTime = when {
-            curMinutes in 0..MORNING_STARTS_MINUTE -> curActivity().getStringResource(R.string.welcome_screen_titel_night)
-            curMinutes in MORNING_STARTS_MINUTE..NOON_STARTS_MINUTE -> curActivity().getStringResource(
-                R.string.welcome_screen_titel_morning
-            )
-            curMinutes in NOON_STARTS_MINUTE..EVENING_STARTS_MINUTE -> curActivity().getStringResource(
-                R.string.welcome_screen_titel_afternoon
-            )
-            else -> curActivity().getStringResource(R.string.welcome_screen_titel_evening)
-        }
-        binding.txtGreeting.text = greetingTime
-    }
+	private fun changeGreetingTime() {
+		val curMinutes = getCurrentTimeInMinutes()
+		val greetingTime = when {
+			curMinutes in 0..MORNING_STARTS_MINUTE -> curActivity().getStringResource(R.string.welcome_screen_titel_night)
+			curMinutes in MORNING_STARTS_MINUTE..NOON_STARTS_MINUTE -> curActivity().getStringResource(
+				R.string.welcome_screen_titel_morning
+			)
 
-    private fun applyExtraBoldTypeFace() {
-        binding.txtGreeting.apply {
-            typeface = ResourcesCompat.getFont(curActivity(), R.font.inter_exra_bold)
-        }
-        val curMinutes = getCurrentTimeInMinutes()
-        if (curMinutes in NOON_STARTS_MINUTE..EVENING_STARTS_MINUTE)
-            binding.txtGreeting.setTextColor(curActivity().getColorResource(R.color.lighter_black))
-    }
+			curMinutes in NOON_STARTS_MINUTE..EVENING_STARTS_MINUTE -> curActivity().getStringResource(
+				R.string.welcome_screen_titel_afternoon
+			)
 
-    private fun settingBcgImageResource() {
-        binding.rootConstraint.background =
-            curActivity().getDrawableResource(getMatchedImageResource())
-    }
+			else -> curActivity().getStringResource(R.string.welcome_screen_titel_evening)
+		}
+		binding.txtGreeting.text = greetingTime
+	}
 
-    private fun getMatchedImageResource(): Int {
-        val curMinutes = getCurrentTimeInMinutes()
-        VLog.d("CurMinutes : $curMinutes")
-        var res = when {
-            curMinutes in 0..MORNING_STARTS_MINUTE -> R.drawable.good_night
-            curMinutes in MORNING_STARTS_MINUTE..NOON_STARTS_MINUTE -> R.drawable.good_morning
-            curMinutes in NOON_STARTS_MINUTE..EVENING_STARTS_MINUTE -> R.drawable.good_day
-            else -> R.drawable.good_evening
-        }
-        return res
-    }
+	private fun applyExtraBoldTypeFace() {
+		binding.txtGreeting.apply {
+			typeface = ResourcesCompat.getFont(curActivity(), R.font.inter_exra_bold)
+		}
+		val curMinutes = getCurrentTimeInMinutes()
+		if (curMinutes in NOON_STARTS_MINUTE..EVENING_STARTS_MINUTE)
+			binding.txtGreeting.setTextColor(curActivity().getColorResource(R.color.lighter_black))
+	}
 
-    private val NIGHT_STARTS_MINUTE = 22 * 60
-    private val MORNING_STARTS_MINUTE = 6 * 60
-    private val NOON_STARTS_MINUTE = 12 * 60
-    private val EVENING_STARTS_MINUTE = 18 * 60
+	private fun settingBcgImageResource() {
+		binding.rootConstraint.background =
+			curActivity().getDrawableResource(getMatchedImageResource())
+	}
 
-    fun getCurrentTimeInMinutes(): Int {
-        val dateFormat = SimpleDateFormat("HH:mm")
-        val time = dateFormat.format(Date(System.currentTimeMillis()))
-        val split = time.split(":")
-        val minute = Integer.valueOf(split[1])
-        return Integer.valueOf(split[0]) * 60 + minute
-    }
+	private fun getMatchedImageResource(): Int {
+		val curMinutes = getCurrentTimeInMinutes()
+		VLog.d("CurMinutes : $curMinutes")
+		var res = when {
+			curMinutes in 0..MORNING_STARTS_MINUTE -> R.drawable.good_night
+			curMinutes in MORNING_STARTS_MINUTE..NOON_STARTS_MINUTE -> R.drawable.good_morning
+			curMinutes in NOON_STARTS_MINUTE..EVENING_STARTS_MINUTE -> R.drawable.good_day
+			else -> R.drawable.good_evening
+		}
+		return res
+	}
 
-    private fun curActivity() = requireActivity() as IntroActivity
+	private val NIGHT_STARTS_MINUTE = 22 * 60
+	private val MORNING_STARTS_MINUTE = 6 * 60
+	private val NOON_STARTS_MINUTE = 12 * 60
+	private val EVENING_STARTS_MINUTE = 18 * 60
+
+	fun getCurrentTimeInMinutes(): Int {
+		val dateFormat = SimpleDateFormat("HH:mm")
+		val time = dateFormat.format(Date(System.currentTimeMillis()))
+		val split = time.split(":")
+		val minute = Integer.valueOf(split[1])
+		return Integer.valueOf(split[0]) * 60 + minute
+	}
+
+	private fun curActivity() = requireActivity() as IntroActivity
 
 }

@@ -395,4 +395,34 @@
 	<string name="fixed_rate_txt" />
 	<string name="no_order_history" />
 	<string name="notif_status_updated" />
+	<string name="impact" />
+	<string name="liquidity_fee" />
+	<string name="liquidity_fee_" />
+	<string name="remove_liquidity" />
+	<string name="fee_dev" />
+	<string name="fee_wallet" />
+	<string name="wallet_fee" />
+	<string name="liquidity" />
+	<string name="swap" />
+	<string name="generate_offer" />
+	<string name="dev_fee" />
+	<string name="add_liquidity" />
+	<string name="price_impact" />
+	<string name="risk_warning" />
+	<string name="risk_warning_text" />
+	<string name="price_update" />
+	<string name="price_update_text" />
+	<string name="create_offer" />
+	<string name="estimated_balance" />
+	<string name="fee" />
+	<string name="custom" />
+	<string name="sign" />
+	<string name="ex_operation" />
+	<string name="liq_operation" />
+	<string name="current_account" />
+	<string name="tibet_push" />
+	<string name="timing"/>
+	<string name="ending_operation" />
+	<string name="address_paying_swap"/>
+
 </resources>

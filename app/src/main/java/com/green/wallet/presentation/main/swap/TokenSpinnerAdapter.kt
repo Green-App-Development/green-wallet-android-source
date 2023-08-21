@@ -12,9 +12,15 @@ import androidx.core.content.ContextCompat
 import com.green.wallet.R
 
 
-class TokenSpinnerAdapter(private val context: Context, val dataOptions: List<String>) : BaseAdapter() {
+class TokenSpinnerAdapter(private val context: Context, var dataOptions: List<String>) :
+	BaseAdapter() {
 
 	var selectedPosition: Int = 0
+
+	fun updateData(newData: List<String>) {
+		dataOptions = newData
+		notifyDataSetChanged()
+	}
 
 	override fun getCount(): Int {
 		return dataOptions.size

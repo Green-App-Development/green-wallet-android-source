@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.room.Index.Order
 import com.green.wallet.R
 import com.green.wallet.presentation.tools.OrderStatus
 import com.green.wallet.presentation.tools.VLog
@@ -41,7 +40,8 @@ fun Dialog.setDefaultParams(dialogAnim: Int) {
 }
 
 fun formattedTime(value: Long) = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Date(value))
-fun formattedTimeForOrderItem(value: Long) = SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
+fun formattedTimeForOrderItem(value: Long) =
+	SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
 
 fun formattedDay(value: Long) = SimpleDateFormat("dd.MM.yyyy").format(Date(value))
 
@@ -228,5 +228,43 @@ fun mapNetworkOrderStatusToLocal(status: String): OrderStatus {
 	}
 }
 
+fun convertNetworkTypeForFlutter(networkType: String): String {
+	val lowercaseNetwork = networkType.lowercase()
+	if (lowercaseNetwork.contains("chia")) {
+		if (lowercaseNetwork.contains("testnet"))
+			return "Chia TestNet"
+		return "Chia"
+	}
+	if (lowercaseNetwork.contains("testnet"))
+		return "Chives TestNet"
+	return "Chives"
+}
+
+fun getLiquidityQuote(
+	knownIn: Double,
+	knownReserve: Long,
+	unknownReserve: Long
+): Long {
+	if (knownReserve == 0L || unknownReserve == 0L || knownIn == 0.0) return 0
+	val output = (unknownReserve * knownIn / knownReserve)
+
+	return output.toLong()
+}
+
+fun getPercentOfValue(
+	value: Long,
+	percent: Double = 0.8
+): Double {
+	return (value * percent) / 100.0
+}
+
+fun hideFingerPrint(fingerPrint: Long): String {
+	runCatching {
+		val str = "$fingerPrint"
+		val stars = str.length - 4
+		return "*".repeat(stars) + str.substring(str.length - 4)
+	}
+	return "$fingerPrint"
+}
 
 

@@ -116,11 +116,12 @@ class WalletInteractImpl @Inject constructor(
 //		VLog.d("Converting walletEntity to walletWithTokens  -> $walletEntity")
 		val hashWithAmount = walletEntity.hashWithAmount
 		val hashListMutList = walletEntity.hashListImported.keys.toMutableList()
+		VLog.d("Hash List Mut List On Home : $hashListMutList")
 		val tokensDefault = tokenDao.getTokensDefaultOnScreen().map { it.hash }
 		val assetIds = mutableListOf<AssetIDWithPriority>()
 		for (hash in hashListMutList) {
 			val priority = if (tokensDefault.contains(hash)) {
-				if (hash == "GAD") 2
+				if (hash == "GWT") 2
 				else 1
 			} else
 				0
@@ -157,7 +158,7 @@ class WalletInteractImpl @Inject constructor(
 				val amount = hashWithAmount[hash] ?: 0.0
 				val tokenPrice = token.price
 				val curTotalAmountInUSD = tokenPrice * amount
-				VLog.d("TokenPrice for $token is $tokenPrice in walletInteractImpl")
+//				VLog.d("TokenPrice for $token is $tokenPrice in walletInteractImpl")
 				val tokenWallet = TokenWallet(
 					token.name,
 					token.code,
@@ -167,8 +168,10 @@ class WalletInteractImpl @Inject constructor(
 					token.hash
 				)
 				totalAmountInUSD += curTotalAmountInUSD
-				if (amount == 0.0 && !token.enabled)
+				if (amount == 0.0 && !token.enabled) {
+					VLog.d("Token with hash : $hash is not enabled and amount 0.0")
 					continue
+				}
 				tokenList.add(tokenWallet)
 			} else {
 				VLog.d("Given hash doesn't exist in tokens db : $hash")
@@ -322,6 +325,15 @@ class WalletInteractImpl @Inject constructor(
 		walletDao.updateChiaNetworkHashListImportedByAddress(address, hashListImported)
 	}
 
+	override suspend fun checkingTokenOnHome(address: String, asset_id: String): Boolean {
+		val list = walletDao.getWalletByAddress(address)
+		if (list.isEmpty())
+			return false
+		val walletEntity = list[0]
+		val hashListImported = walletEntity.hashListImported
+		return hashListImported.containsKey(asset_id)
+	}
+
 	override suspend fun getWalletByAddress(address: String): Wallet {
 		val walletEntity = walletDao.getWalletByAddress(address = address).get(0)
 		val wallet = walletEntity.toWallet(getDecryptedMnemonicsList(walletEntity.encMnemonics))
@@ -349,6 +361,9 @@ class WalletInteractImpl @Inject constructor(
 	override suspend fun getChiaWalletListForExchange(): List<ChiaWallet> {
 		return walletDao.getChiaWalletList().map { it.toChiaWallet() }
 	}
+
+	override suspend fun getMainPuzzleHashes(address: String): List<String> =
+		walletDao.getWalletByAddress(address)[0].puzzle_hashes
 
 	data class AssetIDWithPriority(val asset_id: String, val priority: Int)
 

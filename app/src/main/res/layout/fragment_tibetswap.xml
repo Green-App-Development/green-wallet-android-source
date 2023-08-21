@@ -40,7 +40,7 @@
 				android:layout_width="0dp"
 				android:layout_height="0dp"
 				android:gravity="center"
-				android:text="Swap"
+				android:text="@string/swap"
 				android:textColor="@color/green"
 				android:textSize="14sp"
 				app:layout_constraintBottom_toBottomOf="parent"
@@ -54,7 +54,7 @@
 				android:layout_width="0dp"
 				android:layout_height="0dp"
 				android:gravity="center"
-				android:text="Liquidity"
+				android:text="@string/liquidity"
 				android:textColor="@color/greey"
 				android:textSize="14sp"
 				app:layout_constraintBottom_toBottomOf="parent"
@@ -77,7 +77,7 @@
 				android:id="@+id/scroll_swap"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:visibility="gone"
+				android:visibility="visible"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toTopOf="parent">
@@ -87,8 +87,9 @@
 					android:layout_height="wrap_content">
 
 				<androidx.constraintlayout.widget.ConstraintLayout
+						android:id="@+id/containerSwap"
 						android:layout_width="match_parent"
-						android:layout_height="340dp"
+						android:layout_height="480dp"
 						android:background="@drawable/card_view_bcg_shape_bottom"
 						app:layout_constraintEnd_toEndOf="parent"
 						app:layout_constraintStart_toStartOf="parent"
@@ -191,7 +192,7 @@
 						</RelativeLayout>
 
 						<ImageView
-								android:id="@+id/imgArrowFrom"
+								android:id="@+id/imgArrowFromSwap"
 								android:layout_width="15dp"
 								android:layout_height="15dp"
 								android:layout_centerVertical="true"
@@ -227,7 +228,7 @@
 							android:layout_height="wrap_content"
 							android:layout_marginStart="7dp"
 							android:layout_marginTop="14dp"
-							android:text="1 XCH = 37.21 USDT"
+							android:text=""
 							android:textColor="@color/setting_text_color"
 							android:textFontWeight="550"
 							android:textSize="16sp"
@@ -333,7 +334,7 @@
 						</RelativeLayout>
 
 						<ImageView
-								android:id="@+id/imgArrowTo"
+								android:id="@+id/imgArrowToSwap"
 								android:layout_width="15dp"
 								android:layout_height="15dp"
 								android:layout_centerVertical="true"
@@ -358,9 +359,41 @@
 								android:layout_width="wrap_content"
 								android:layout_height="wrap_content"
 								android:orientation="vertical"
-								app:layout_constraintGuide_begin="245dp" />
+								app:layout_constraintGuide_percent="0.65" />
 
 					</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+					<LinearLayout
+							android:id="@+id/linearAgree"
+							android:layout_width="0dp"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="5dp"
+							android:layout_marginTop="10dp"
+							android:layout_marginEnd="5dp"
+							android:autoSizeTextType="uniform"
+							android:orientation="horizontal"
+							android:visibility="gone"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/layout_exchange_to"
+							app:layout_goneMarginBottom="5dp">
+
+						<CheckBox
+								android:id="@+id/checkboxAgree"
+								android:layout_width="30dp"
+								android:layout_height="26dp"
+								android:buttonTint="@color/red_mnemonic" />
+
+						<TextView
+								android:id="@+id/checkboxText"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:autoSizeTextType="uniform"
+								android:clickable="false"
+								android:text=""
+								android:textColor="@color/red_mnemonic" />
+					</LinearLayout>
 
 
 					<TextView
@@ -375,7 +408,7 @@
 							android:textStyle="normal"
 							app:layout_constraintEnd_toEndOf="parent"
 							app:layout_constraintStart_toStartOf="parent"
-							app:layout_constraintTop_toBottomOf="@+id/layout_exchange_to" />
+							app:layout_constraintTop_toBottomOf="@+id/linearAgree" />
 
 					<ImageView
 							android:id="@+id/imgArrowDownDetailTrans"
@@ -388,6 +421,183 @@
 							app:layout_constraintStart_toEndOf="@+id/txtDetailTransactions"
 							app:layout_constraintTop_toTopOf="@+id/txtDetailTransactions" />
 
+
+					<RelativeLayout
+							android:id="@+id/layoutUpdateCourse"
+							android:layout_width="match_parent"
+							android:layout_height="40dp"
+							android:layout_marginStart="2dp"
+							android:layout_marginTop="15dp"
+							android:layout_marginEnd="2dp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/txtDetailTransactions">
+
+						<TextView
+								android:id="@+id/txtUpdateCourse"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentStart="true"
+								android:layout_centerVertical="true"
+								android:layout_marginStart="15dp"
+								android:text="@string/impact"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<TextView
+								android:id="@+id/edtUpdateCourse"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentEnd="true"
+								android:layout_centerVertical="true"
+								android:layout_marginEnd="15dp"
+								android:text="5.4%"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<View
+								android:layout_width="match_parent"
+								android:layout_height="1dp"
+								android:layout_alignBottom="@+id/txtUpdateCourse"
+								android:layout_alignParentBottom="true"
+								android:background="@color/line_divider" />
+
+					</RelativeLayout>
+
+					<RelativeLayout
+							android:id="@+id/layoutCommissionExchange"
+							android:layout_width="match_parent"
+							android:layout_height="40dp"
+							android:layout_marginStart="2dp"
+							android:layout_marginEnd="2dp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/layoutUpdateCourse">
+
+						<TextView
+								android:id="@+id/txtCommissionExchange"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentStart="true"
+								android:layout_centerVertical="true"
+								android:layout_marginStart="15dp"
+								android:text="@string/liquidity_fee"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<TextView
+								android:id="@+id/edtCommissionExchange"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentEnd="true"
+								android:layout_centerVertical="true"
+								android:layout_marginEnd="15dp"
+								android:text="@string/liquidity_fee_"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<View
+								android:layout_width="match_parent"
+								android:layout_height="1dp"
+								android:layout_alignBottom="@+id/txtCommissionExchange"
+								android:layout_alignParentBottom="true"
+								android:background="@color/line_divider" />
+
+					</RelativeLayout>
+
+					<RelativeLayout
+							android:id="@+id/layoutCommissionNetwork"
+							android:layout_width="match_parent"
+							android:layout_height="40dp"
+							android:layout_marginStart="2dp"
+							android:layout_marginEnd="2dp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/layoutCommissionExchange">
+
+						<TextView
+								android:id="@+id/txtCommissionNetwork"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentStart="true"
+								android:layout_centerVertical="true"
+								android:layout_marginStart="15dp"
+								android:text="@string/dev_fee"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<TextView
+								android:id="@+id/edtCommissionNetwork"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentEnd="true"
+								android:layout_centerVertical="true"
+								android:layout_marginEnd="15dp"
+								android:text="@string/fee_dev"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<View
+								android:layout_width="match_parent"
+								android:layout_height="1dp"
+								android:layout_alignBottom="@+id/txtCommissionNetwork"
+								android:layout_alignParentBottom="true"
+								android:background="@color/line_divider" />
+
+
+					</RelativeLayout>
+
+					<RelativeLayout
+							android:id="@+id/layoutCommissionWallet"
+							android:layout_width="match_parent"
+							android:layout_height="40dp"
+							android:layout_marginStart="2dp"
+							android:layout_marginEnd="2dp"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toBottomOf="@+id/layoutCommissionNetwork">
+
+						<TextView
+								android:id="@+id/txtCommissionWalletFee"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentStart="true"
+								android:layout_centerVertical="true"
+								android:layout_marginStart="15dp"
+								android:text="@string/wallet_fee"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+						<TextView
+								android:id="@+id/edtCommissionWallet"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_alignParentEnd="true"
+								android:layout_centerVertical="true"
+								android:layout_marginEnd="15dp"
+								android:text="@string/fee_wallet"
+								android:textColor="@color/setting_text_color"
+								android:textFontWeight="550"
+								android:textSize="14sp"
+								android:textStyle="normal" />
+
+					</RelativeLayout>
+
+
 				</androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -395,172 +605,435 @@
 
 		</ScrollView>
 
-<!--		<ScrollView-->
-<!--				android:id="@+id/scroll_liquidity"-->
-<!--				android:layout_width="match_parent"-->
-<!--				android:layout_height="wrap_content"-->
-<!--				app:layout_constraintEnd_toEndOf="parent"-->
-<!--				app:layout_constraintStart_toStartOf="parent"-->
-<!--				app:layout_constraintTop_toTopOf="parent">-->
+		<ScrollView
+				android:id="@+id/scroll_liquidity"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:visibility="gone"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent">
 
-<!--			<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--					android:layout_width="match_parent"-->
-<!--					android:layout_height="wrap_content">-->
+			<androidx.constraintlayout.widget.ConstraintLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
 
-<!--				<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--						android:layout_width="match_parent"-->
-<!--						android:layout_height="267dp"-->
-<!--						android:background="@drawable/card_view_bcg_shape_bottom"-->
-<!--						app:layout_constraintEnd_toEndOf="parent"-->
-<!--						app:layout_constraintStart_toStartOf="parent"-->
-<!--						app:layout_constraintTop_toTopOf="parent">-->
+				<androidx.constraintlayout.widget.ConstraintLayout
+						android:layout_width="match_parent"
+						android:layout_height="340dp"
+						android:background="@drawable/card_view_bcg_shape_bottom"
+						app:layout_constraintEnd_toEndOf="parent"
+						app:layout_constraintStart_toStartOf="parent"
+						app:layout_constraintTop_toTopOf="parent">
 
+					<TextView
+							android:id="@+id/txtLiquidityState"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_marginStart="7dp"
+							android:layout_marginTop="7dp"
+							android:text="@string/add_liquidity"
+							android:textColor="@color/green"
+							app:layout_constraintStart_toStartOf="parent"
+							app:layout_constraintTop_toTopOf="parent" />
 
-<!--					<androidx.constraintlayout.widget.ConstraintLayout-->
-<!--							android:id="@+id/layout_exchange_tibet"-->
-<!--							android:layout_width="match_parent"-->
-<!--							android:layout_height="75dp"-->
-<!--							android:layout_marginStart="7dp"-->
-<!--							android:layout_marginTop="15dp"-->
-<!--							android:layout_marginEnd="7dp"-->
-<!--							android:background="@drawable/bcg_edt_course_exchange"-->
-<!--							app:layout_constraintTop_toTopOf="parent">-->
+					<androidx.constraintlayout.widget.ConstraintLayout
+							android:id="@+id/top_container"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							app:layout_constraintTop_toBottomOf="@id/txtLiquidityState">
 
-<!--						<TextView-->
-<!--								android:id="@+id/txtYouSendingTibet"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:layout_marginStart="10dp"-->
-<!--								android:layout_marginTop="10dp"-->
-<!--								android:text="@string/you_send"-->
-<!--								android:textColor="@color/grey_txt_color"-->
-<!--								android:textFontWeight="400"-->
-<!--								android:textSize="12sp"-->
-<!--								android:visibility="visible"-->
-<!--								app:layout_constraintStart_toStartOf="parent"-->
-<!--								app:layout_constraintTop_toTopOf="parent" />-->
+						<androidx.constraintlayout.widget.ConstraintLayout
+								android:id="@+id/layoutXCHCAT"
+								android:layout_width="match_parent"
+								android:layout_height="match_parent">
 
-<!--						<EditText-->
-<!--								android:id="@+id/edtAmountTibet"-->
-<!--								android:layout_width="0dp"-->
-<!--								android:layout_height="35dp"-->
-<!--								android:layout_marginStart="10dp"-->
-<!--								android:background="@android:color/transparent"-->
-<!--								android:imeOptions="actionDone"-->
-<!--								android:inputType="numberDecimal"-->
-<!--								android:maxLines="1"-->
-<!--								android:singleLine="true"-->
-<!--								android:text=""-->
-<!--								android:textColor="@color/secondary_text_color"-->
-<!--								android:textSize="18sp"-->
-<!--								app:layout_constraintEnd_toStartOf="@+id/view8"-->
-<!--								app:layout_constraintStart_toStartOf="parent"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/txtYouSendingTibet" />-->
+							<androidx.constraintlayout.widget.ConstraintLayout
+									android:id="@+id/layout_exchange_xch"
+									android:layout_width="match_parent"
+									android:layout_height="75dp"
+									android:layout_marginStart="7dp"
+									android:layout_marginTop="10dp"
+									android:layout_marginEnd="7dp"
+									android:background="@drawable/bcg_edt_course_exchange"
+									app:layout_constraintTop_toTopOf="parent">
 
-<!--						<View-->
-<!--								android:id="@+id/green_line_edt_tibet"-->
-<!--								android:layout_width="0dp"-->
-<!--								android:layout_height="1dp"-->
-<!--								android:layout_marginStart="10dp"-->
-<!--								android:background="@color/green"-->
-<!--								android:visibility="gone"-->
-<!--								app:layout_constraintEnd_toStartOf="@id/guideline61"-->
-<!--								app:layout_constraintStart_toStartOf="parent"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/edtAmountTibet" />-->
+								<TextView
+										android:id="@+id/txtYouSendingXCH"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_marginStart="10dp"
+										android:layout_marginTop="10dp"
+										android:text="@string/you_send"
+										android:textColor="@color/grey_txt_color"
+										android:textFontWeight="400"
+										android:textSize="12sp"
+										android:visibility="visible"
+										app:layout_constraintStart_toStartOf="parent"
+										app:layout_constraintTop_toTopOf="parent" />
 
-<!--						<TextView-->
-<!--								android:id="@+id/edtFromNetworkTibet"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:layout_marginStart="9dp"-->
-<!--								android:layout_marginTop="10dp"-->
-<!--								android:text="Chia Network"-->
-<!--								android:textColor="@color/grey_txt_color"-->
-<!--								android:textFontWeight="400"-->
-<!--								android:textSize="12sp"-->
-<!--								android:visibility="visible"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/guideline61"-->
-<!--								app:layout_constraintTop_toTopOf="parent" />-->
+								<EditText
+										android:id="@+id/edtAmountXCH"
+										android:layout_width="0dp"
+										android:layout_height="35dp"
+										android:layout_marginStart="10dp"
+										android:background="@android:color/transparent"
+										android:enabled="false"
+										android:imeOptions="actionDone"
+										android:inputType="numberDecimal"
+										android:maxLines="1"
+										android:singleLine="true"
+										android:text=""
+										android:textColor="@color/secondary_text_color"
+										android:textSize="18sp"
+										app:layout_constraintEnd_toStartOf="@+id/view10"
+										app:layout_constraintStart_toStartOf="parent"
+										app:layout_constraintTop_toBottomOf="@+id/txtYouSendingXCH" />
 
-<!--						<TextView-->
-<!--								android:id="@+id/edtTokenTibet"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:layout_marginStart="9dp"-->
-<!--								android:layout_marginTop="5dp"-->
-<!--								android:text="XCH"-->
-<!--								android:textColor="@color/secondary_text_color"-->
-<!--								android:textSize="18sp"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/guideline61"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkTibet" />-->
+								<View
+										android:id="@+id/green_line_edt_cat"
+										android:layout_width="0dp"
+										android:layout_height="1dp"
+										android:layout_marginStart="10dp"
+										android:background="@color/green"
+										android:visibility="gone"
+										app:layout_constraintEnd_toStartOf="@id/guideline66"
+										app:layout_constraintStart_toStartOf="parent"
+										app:layout_constraintTop_toBottomOf="@+id/edtAmountXCH" />
 
+								<TextView
+										android:id="@+id/edtFromNetworkCAT"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_marginStart="9dp"
+										android:layout_marginTop="10dp"
+										android:text="Chia Network"
+										android:textColor="@color/grey_txt_color"
+										android:textFontWeight="400"
+										android:textSize="12sp"
+										android:visibility="visible"
+										app:layout_constraintStart_toStartOf="@+id/guideline66"
+										app:layout_constraintTop_toTopOf="parent" />
 
-<!--						<RelativeLayout-->
-<!--								android:layout_width="0dp"-->
-<!--								android:layout_height="0dp"-->
-<!--								android:layout_alignParentBottom="true"-->
-<!--								app:layout_constraintEnd_toEndOf="@+id/edtTokenTibet"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/edtTokenTibet"-->
-<!--								app:layout_constraintTop_toBottomOf="@+id/edtTokenTibet">-->
+								<TextView
+										android:id="@+id/edtTokenXCH"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_marginStart="9dp"
+										android:layout_marginTop="5dp"
+										android:text="XCH"
+										android:textColor="@color/hint_color"
+										android:textSize="18sp"
+										app:layout_constraintStart_toStartOf="@+id/guideline66"
+										app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkCAT" />
 
-<!--							<com.green.wallet.presentation.custom.CustomSpinner-->
-<!--									android:id="@+id/tokenTibetSpinner"-->
-<!--									android:layout_width="match_parent"-->
-<!--									android:layout_height="0dp"-->
-<!--									android:background="@drawable/selector_spinner_bcg_color" />-->
+								<View
+										android:id="@+id/view10"
+										android:layout_width="1dp"
+										android:layout_height="0dp"
+										android:layout_marginTop="7dp"
+										android:layout_marginBottom="7dp"
+										android:background="@color/line_divider"
+										app:layout_constraintBottom_toBottomOf="parent"
+										app:layout_constraintStart_toStartOf="@+id/guideline66"
+										app:layout_constraintTop_toTopOf="parent" />
 
-<!--						</RelativeLayout>-->
-
-<!--						<ImageView-->
-<!--								android:id="@+id/imgArrowTibet"-->
-<!--								android:layout_width="15dp"-->
-<!--								android:layout_height="15dp"-->
-<!--								android:layout_centerVertical="true"-->
-<!--								android:layout_marginEnd="20dp"-->
-<!--								android:src="@drawable/ic_arrow_downword"-->
-<!--								app:layout_constraintBottom_toBottomOf="@+id/edtTokenTibet"-->
-<!--								app:layout_constraintEnd_toEndOf="parent"-->
-<!--								app:layout_constraintTop_toTopOf="@+id/edtTokenTibet" />-->
-
-<!--						<View-->
-<!--								android:id="@+id/view9"-->
-<!--								android:layout_width="1dp"-->
-<!--								android:layout_height="0dp"-->
-<!--								android:layout_marginTop="7dp"-->
-<!--								android:layout_marginBottom="7dp"-->
-<!--								android:background="@color/line_divider"-->
-<!--								app:layout_constraintBottom_toBottomOf="parent"-->
-<!--								app:layout_constraintStart_toStartOf="@+id/guideline64"-->
-<!--								app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--						<androidx.constraintlayout.widget.Guideline-->
-<!--								android:id="@+id/guideline64"-->
-<!--								android:layout_width="wrap_content"-->
-<!--								android:layout_height="wrap_content"-->
-<!--								android:orientation="vertical"-->
-<!--								app:layout_constraintGuide_percent="0.65" />-->
-
-<!--					</androidx.constraintlayout.widget.ConstraintLayout>-->
+								<androidx.constraintlayout.widget.Guideline
+										android:id="@+id/guideline66"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:orientation="vertical"
+										app:layout_constraintGuide_percent="0.65" />
 
 
-<!--					<ImageView-->
-<!--							android:id="@+id/img_swap"-->
-<!--							android:layout_width="30dp"-->
-<!--							android:layout_height="30dp"-->
-<!--							android:layout_marginEnd="8dp"-->
-<!--							android:rotation="90"-->
-<!--							android:src="@drawable/ic_swap_large"-->
-<!--							app:layout_constraintBottom_toBottomOf="@+id/txtCoursePrice"-->
-<!--							app:layout_constraintEnd_toEndOf="parent"-->
-<!--							app:layout_constraintTop_toTopOf="@+id/txtCoursePrice" />-->
+							</androidx.constraintlayout.widget.ConstraintLayout>
+
+							<androidx.constraintlayout.widget.ConstraintLayout
+									android:id="@+id/layout_exchange_cat"
+									android:layout_width="match_parent"
+									android:layout_height="75dp"
+									android:layout_marginStart="7dp"
+									android:layout_marginTop="10dp"
+									android:layout_marginEnd="7dp"
+									android:background="@drawable/bcg_edt_course_exchange"
+									app:layout_constraintTop_toBottomOf="@id/layout_exchange_xch">
+
+								<TextView
+										android:id="@+id/txtYouSendingCAT"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_marginStart="10dp"
+										android:layout_marginTop="10dp"
+										android:text="@string/you_send"
+										android:textColor="@color/grey_txt_color"
+										android:textFontWeight="400"
+										android:textSize="12sp"
+										android:visibility="visible"
+										app:layout_constraintStart_toStartOf="parent"
+										app:layout_constraintTop_toTopOf="parent" />
+
+								<EditText
+										android:id="@+id/edt_amount_cat_tibet"
+										android:layout_width="0dp"
+										android:layout_height="35dp"
+										android:layout_marginStart="10dp"
+										android:background="@android:color/transparent"
+										android:imeOptions="actionDone"
+										android:inputType="numberDecimal"
+										android:maxLines="1"
+										android:singleLine="true"
+										android:text=""
+										android:textColor="@color/secondary_text_color"
+										android:textSize="18sp"
+										app:layout_constraintEnd_toStartOf="@+id/view11"
+										app:layout_constraintStart_toStartOf="parent"
+										app:layout_constraintTop_toBottomOf="@+id/txtYouSendingCAT" />
+
+								<View
+										android:id="@+id/green_line_edt_xch"
+										android:layout_width="0dp"
+										android:layout_height="1dp"
+										android:layout_marginStart="10dp"
+										android:background="@color/green"
+										android:visibility="gone"
+										app:layout_constraintEnd_toStartOf="@id/guideline67"
+										app:layout_constraintStart_toStartOf="parent"
+										app:layout_constraintTop_toBottomOf="@+id/edt_amount_cat_tibet" />
+
+								<TextView
+										android:id="@+id/edtFromNetworkXCH"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_marginStart="9dp"
+										android:layout_marginTop="10dp"
+										android:text="CAT2"
+										android:textColor="@color/grey_txt_color"
+										android:textFontWeight="400"
+										android:textSize="12sp"
+										android:visibility="visible"
+										app:layout_constraintStart_toStartOf="@+id/guideline67"
+										app:layout_constraintTop_toTopOf="parent" />
+
+								<TextView
+										android:id="@+id/edtTokenCAT"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:layout_marginStart="9dp"
+										android:layout_marginTop="5dp"
+										android:text="GWT"
+										android:textColor="@color/secondary_text_color"
+										android:textSize="18sp"
+										app:layout_constraintStart_toStartOf="@+id/guideline67"
+										app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkXCH" />
+
+								<View
+										android:id="@+id/view11"
+										android:layout_width="1dp"
+										android:layout_height="0dp"
+										android:layout_marginTop="7dp"
+										android:layout_marginBottom="7dp"
+										android:background="@color/line_divider"
+										app:layout_constraintBottom_toBottomOf="parent"
+										app:layout_constraintStart_toStartOf="@+id/guideline67"
+										app:layout_constraintTop_toTopOf="parent" />
+
+								<ImageView
+										android:id="@+id/imgArrowCAT"
+										android:layout_width="15dp"
+										android:layout_height="15dp"
+										android:layout_centerVertical="true"
+										android:layout_marginEnd="20dp"
+										android:src="@drawable/ic_arrow_downword"
+										app:layout_constraintBottom_toBottomOf="@+id/edtTokenCAT"
+										app:layout_constraintEnd_toEndOf="parent"
+										app:layout_constraintTop_toTopOf="@+id/edtTokenCAT" />
+
+								<androidx.constraintlayout.widget.Guideline
+										android:id="@+id/guideline67"
+										android:layout_width="wrap_content"
+										android:layout_height="wrap_content"
+										android:orientation="vertical"
+										app:layout_constraintGuide_percent="0.65" />
+
+								<RelativeLayout
+										android:layout_width="0dp"
+										android:layout_height="0dp"
+										android:layout_alignParentBottom="true"
+										app:layout_constraintEnd_toEndOf="@+id/edtTokenCAT"
+										app:layout_constraintStart_toStartOf="@+id/edtTokenCAT"
+										app:layout_constraintTop_toBottomOf="@+id/edtTokenCAT">
+
+									<com.green.wallet.presentation.custom.CustomSpinner
+											android:id="@+id/token_tibet_cat_spinner"
+											android:layout_width="match_parent"
+											android:layout_height="0dp"
+											android:background="@drawable/selector_spinner_bcg_color" />
+
+								</RelativeLayout>
+
+							</androidx.constraintlayout.widget.ConstraintLayout>
+
+						</androidx.constraintlayout.widget.ConstraintLayout>
 
 
-<!--				</androidx.constraintlayout.widget.ConstraintLayout>-->
+					</androidx.constraintlayout.widget.ConstraintLayout>
 
 
-<!--			</androidx.constraintlayout.widget.ConstraintLayout>-->
+					<ImageView
+							android:id="@+id/img_swap_liquid"
+							android:layout_width="30dp"
+							android:layout_height="30dp"
+							android:layout_marginTop="10dp"
+							android:layout_marginEnd="8dp"
+							android:rotation="90"
+							android:src="@drawable/ic_swap_large"
+							app:layout_constraintEnd_toEndOf="parent"
+							app:layout_constraintTop_toBottomOf="@id/top_container" />
 
-<!--		</ScrollView>-->
+					<androidx.constraintlayout.widget.ConstraintLayout
+							android:id="@+id/bottom_container"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:paddingTop="5dp"
+							app:layout_constraintTop_toBottomOf="@+id/img_swap_liquid">
+
+
+						<androidx.constraintlayout.widget.ConstraintLayout
+								android:id="@+id/layout_exchange_tibet"
+								android:layout_width="match_parent"
+								android:layout_height="75dp"
+								android:layout_marginStart="7dp"
+								android:layout_marginTop="10dp"
+								android:layout_marginEnd="7dp"
+								android:background="@drawable/bcg_edt_course_exchange"
+								app:layout_constraintTop_toTopOf="parent">
+
+							<TextView
+									android:id="@+id/txtYouSendingTibet"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="10dp"
+									android:layout_marginTop="10dp"
+									android:text="@string/you_receive"
+									android:textColor="@color/grey_txt_color"
+									android:textFontWeight="400"
+									android:textSize="12sp"
+									android:visibility="visible"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toTopOf="parent" />
+
+							<EditText
+									android:id="@+id/edtAmountLiquidity"
+									android:layout_width="0dp"
+									android:layout_height="35dp"
+									android:layout_marginStart="10dp"
+									android:background="@android:color/transparent"
+									android:enabled="false"
+									android:imeOptions="actionDone"
+									android:inputType="numberDecimal"
+									android:maxLines="1"
+									android:singleLine="true"
+									android:text=""
+									android:textColor="@color/secondary_text_color"
+									android:textSize="18sp"
+									app:layout_constraintEnd_toStartOf="@+id/view9"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toBottomOf="@+id/txtYouSendingTibet" />
+
+							<View
+									android:id="@+id/green_line_edt_liquid"
+									android:layout_width="0dp"
+									android:layout_height="1dp"
+									android:layout_marginStart="10dp"
+									android:background="@color/green"
+									android:visibility="gone"
+									app:layout_constraintEnd_toStartOf="@id/guideline64"
+									app:layout_constraintStart_toStartOf="parent"
+									app:layout_constraintTop_toBottomOf="@+id/edtAmountLiquidity" />
+
+							<TextView
+									android:id="@+id/edtFromNetworkTibet"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="9dp"
+									android:layout_marginTop="10dp"
+									android:text="LP"
+									android:textColor="@color/grey_txt_color"
+									android:textFontWeight="400"
+									android:textSize="12sp"
+									android:visibility="visible"
+									app:layout_constraintStart_toStartOf="@+id/guideline64"
+									app:layout_constraintTop_toTopOf="parent" />
+
+							<TextView
+									android:id="@+id/edtTokenTibet"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:layout_marginStart="9dp"
+									android:layout_marginTop="5dp"
+									android:text="TIBET-..."
+									android:textColor="@color/secondary_text_color"
+									android:textSize="18sp"
+									app:layout_constraintStart_toStartOf="@+id/guideline64"
+									app:layout_constraintTop_toBottomOf="@+id/edtFromNetworkTibet" />
+
+
+							<RelativeLayout
+									android:layout_width="0dp"
+									android:layout_height="0dp"
+									android:layout_alignParentBottom="true"
+									app:layout_constraintEnd_toEndOf="@+id/edtTokenTibet"
+									app:layout_constraintStart_toStartOf="@+id/edtTokenTibet"
+									app:layout_constraintTop_toBottomOf="@+id/edtTokenTibet">
+
+								<com.green.wallet.presentation.custom.CustomSpinner
+										android:id="@+id/tokenTibetSpinner"
+										android:layout_width="match_parent"
+										android:layout_height="0dp"
+										android:background="@drawable/selector_spinner_bcg_color" />
+
+							</RelativeLayout>
+
+							<ImageView
+									android:id="@+id/imgArrowTibet"
+									android:layout_width="15dp"
+									android:layout_height="15dp"
+									android:layout_centerVertical="true"
+									android:layout_marginEnd="20dp"
+									android:src="@drawable/ic_arrow_downword"
+									android:visibility="invisible"
+									app:layout_constraintBottom_toBottomOf="@+id/edtTokenTibet"
+									app:layout_constraintEnd_toEndOf="parent"
+									app:layout_constraintTop_toTopOf="@+id/edtTokenTibet" />
+
+							<View
+									android:id="@+id/view9"
+									android:layout_width="1dp"
+									android:layout_height="0dp"
+									android:layout_marginTop="7dp"
+									android:layout_marginBottom="7dp"
+									android:background="@color/line_divider"
+									app:layout_constraintBottom_toBottomOf="parent"
+									app:layout_constraintStart_toStartOf="@+id/guideline64"
+									app:layout_constraintTop_toTopOf="parent" />
+
+							<androidx.constraintlayout.widget.Guideline
+									android:id="@+id/guideline64"
+									android:layout_width="wrap_content"
+									android:layout_height="wrap_content"
+									android:orientation="vertical"
+									app:layout_constraintGuide_percent="0.65" />
+
+						</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+					</androidx.constraintlayout.widget.ConstraintLayout>
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
+
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+		</ScrollView>
 
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
@@ -572,14 +1045,13 @@
 			android:layout_height="60dp"
 			android:layout_marginStart="32dp"
 			android:layout_marginEnd="32dp"
-			android:layout_marginBottom="10dp"
+			android:layout_marginBottom="16dp"
 			android:background="@drawable/btn_background_draw"
-			android:enabled="false"
-			android:text="@string/exchange_now_btn"
+			android:enabled="true"
+			android:text="@string/generate_offer"
 			android:textAllCaps="false"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintHorizontal_bias="0.0"
 			app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -38,7 +38,6 @@ import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.*
-import com.green.wallet.presentation.viewBinding
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.*
 import kotlinx.android.synthetic.main.dialog_notification_detail.*
@@ -400,7 +399,7 @@ class SendFragment : DaggerFragment() {
 	@SuppressLint("SetTextI18n")
 	private fun initCurWalletDetails(wallet: WalletWithTokens) {
 		txt_network_name.text = wallet.networkType.split(" ")[0]
-		txtHiddenPublicKey.text = hidePublicKey(wallet.fingerPrint)
+		txtHiddenPublicKey.text = hideFingerPrint(wallet.fingerPrint)
 
 		updateTokensSpinner(wallet.tokenWalletList)
 		verifySendingAddress(wallet.address)

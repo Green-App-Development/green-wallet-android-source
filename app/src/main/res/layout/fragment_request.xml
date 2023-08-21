@@ -15,7 +15,7 @@
 			app:layout_constraintStart_toStartOf="parent"
 			app:layout_constraintTop_toTopOf="parent"
 			tools:itemCount="10"
-			tools:listitem="@layout/item_request" />
+			tools:listitem="@layout/item_request_order" />
 
 	<TextView
 			android:id="@+id/txt_no_order_history"

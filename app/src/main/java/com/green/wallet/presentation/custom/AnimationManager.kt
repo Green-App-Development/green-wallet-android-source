@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
 import android.view.View
+import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.Spinner
@@ -53,25 +54,49 @@ class AnimationManager @Inject constructor(private var context: Context) {
 		})
 	}
 
-	fun moveViewToRightByWidth(view: View, width: Int) {
+	var prevAnimSet: AnimatorSet? = null
+		private set
+
+	fun moveViewToRightByWidth(view: View, width: Int): Boolean {
+		if (prevAnimSet?.isRunning == true)
+			return true
 		val centerX = view.x
 		val desiredX = centerX + width
 		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
 		translateX.duration = 300
 		val animSet = AnimatorSet()
 		animSet.playTogether(translateX)
+		prevAnimSet = animSet
 		animSet.start()
+		return false
 	}
 
-	fun moveViewToLeftByWidth(view: View, width: Int) {
+	fun moveViewToRightByWidthNoAnim(view: View, width: Int): Boolean {
+		if (prevAnimSet?.isRunning == true)
+			return true
+		val centerX = view.x
+		val desiredX = centerX + width
+		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
+		translateX.duration = 1
+		val animSet = AnimatorSet()
+		animSet.playTogether(translateX)
+		prevAnimSet = animSet
+		animSet.start()
+		return false
+	}
+
+	fun moveViewToLeftByWidth(view: View, width: Int): Boolean {
+		if (prevAnimSet?.isRunning == true)
+			return true
 		val centerX = view.x
 		val desiredX = centerX - width
 		val translateX = ObjectAnimator.ofFloat(view, "translationX", view.x, desiredX)
 		translateX.duration = 300
 		val animSet = AnimatorSet()
 		animSet.playTogether(translateX)
+		prevAnimSet = animSet
 		animSet.start()
+		return false
 	}
-
 
 }

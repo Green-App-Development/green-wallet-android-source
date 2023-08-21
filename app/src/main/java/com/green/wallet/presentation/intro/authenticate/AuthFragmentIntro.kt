@@ -77,6 +77,11 @@ class AuthFragmentIntro : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		registerBtnClicks()
 		fixTxtViewLateValue()
+//		//temp
+//		lifecycleScope.launch {
+//			delay(200)
+//			determineDestination()
+//		}
 	}
 
 	private fun fixTxtViewLateValue() {
@@ -89,6 +94,7 @@ class AuthFragmentIntro : DaggerFragment() {
 	@SuppressLint("WrongConstant")
 	private fun askingFaceIdPermission() {
 		VLog.d("Face Id Permission : clicked")
+
 		executor = ContextCompat.getMainExecutor(curActivity())
 		biometricPrompt = androidx.biometric.BiometricPrompt(
 			curActivity(),

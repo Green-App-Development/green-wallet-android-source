@@ -28,6 +28,8 @@ import com.green.wallet.R.id.*
 import com.green.wallet.databinding.ActivityMainBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.OrderItem
+import com.green.wallet.domain.domainmodel.TibetSwapExchange
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.BaseActivity
 import com.green.wallet.presentation.custom.*
@@ -60,6 +62,8 @@ import com.green.wallet.presentation.main.service.AppRemovedRecentTaskService
 import com.green.wallet.presentation.main.swap.qrsend.FragmentQRSend
 import com.green.wallet.presentation.main.swap.requestdetail.OrderDetailFragment
 import com.green.wallet.presentation.main.swap.send.SwapSendFragment
+import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidityDetailsFragment
+import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
@@ -172,7 +176,9 @@ class MainActivity : BaseActivity() {
 				sendFragment, impMnemonicFragment,
 				verificationFragment,
 				entPasscodeFrMain,
-				fragmentSendNFT
+				fragmentSendNFT,
+				fragmentSwapSend,
+				fragmentSwapMain
 			)
 			if (shouldStopUpdateBalance.contains(dest.id)) {
 				VLog.d("ShouldStopUpdateBalance destination on MainActivity")
@@ -320,6 +326,16 @@ class MainActivity : BaseActivity() {
 				}
 
 				fragmentOrderDetail -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+
+				fragmentTibetSwapDetail -> {
+					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+					window.statusBarColor = getColorResource(R.color.primary_app_background)
+				}
+
+				fragmentTibetLiquidDetail -> {
 					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
 					window.statusBarColor = getColorResource(R.color.primary_app_background)
 				}
@@ -481,7 +497,8 @@ class MainActivity : BaseActivity() {
 					fragmentOrderDetail,
 					btmChooseDApps,
 					fragmentQrCodeSend,
-					fragmentSwapSend
+					fragmentSwapSend,
+					fragmentTibetSwapDetail
 				).contains(destination.id)
 			) {
 				binding.mainBottomNav.visibility = View.GONE
@@ -584,12 +601,6 @@ class MainActivity : BaseActivity() {
 		navController.popBackStack()
 	}
 
-
-	fun backPressedOnImpMnemonicFragment() {
-		val bundle = bundleOf(HomeFragment.SHOW_DIALOG_ONE to true)
-		navController.navigate(homeFragment, bundle)
-	}
-
 	fun move2AllWalletFragment() {
 		navController.navigate(action_walletFragment_to_allWalletFragment)
 	}
@@ -677,9 +688,9 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentSwapMain)
 	}
 
-	fun move2QRSendFragment(address: String) {
+	fun move2QRSendFragment(orderItem: OrderItem) {
 		val bundle = bundleOf()
-		bundle.putString(FragmentQRSend.SEND_ADDRESS_KEY, address)
+		bundle.putParcelable(FragmentQRSend.ORDER_ITEM_KEY, orderItem)
 		navController.navigate(fragmentQrCodeSend, bundle)
 	}
 
@@ -890,6 +901,12 @@ class MainActivity : BaseActivity() {
 		navController.navigate(fragmentOrderDetail, bundle)
 	}
 
+	fun move2TibetSwapExchangeDetail(item: TibetSwapExchange) {
+		val bundle = bundleOf()
+		bundle.putString(TibetSwapDetailFragment.TIBET_SWAP_OFFER_KEY, item.offer_id)
+		navController.navigate(fragmentTibetSwapDetail, bundle)
+	}
+
 	fun move2BtmDialogChooseNetwork(hasAtLeastOneWallet: Boolean, dataList: List<String>) {
 		val bundle = bundleOf(
 			BtmSheetDialogChooseNetwork.DATA_LIST_KEY to dataList,
@@ -915,19 +932,41 @@ class MainActivity : BaseActivity() {
 		}
 	}
 
-	fun move2BtmDialogPayment(address: String, amount: Double) {
+	fun move2BtmDialogPayment(address: String, amount: Double,orderItem:OrderItem) {
 		val bundle = bundleOf(
 			BtmChooseDAppsPayment.ADDRESS_KEY to address,
 			BtmChooseDAppsPayment.AMOUNT_KEY to amount
 		)
+		bundle.putParcelable(BtmChooseDAppsPayment.ORDER_ITEM_KEY,orderItem)
 		navController.navigate(btmChooseDApps, bundle)
 	}
+
+	fun move2BtmChooseWalletDialog() {
+		if (navController.currentDestination?.id == btmSheetDialogChooseWallet)
+			return
+		navController.navigate(btmSheetDialogChooseWallet)
+	}
+
+	fun move2BtmCreateOfferXCHCATDialog() {
+		navController.navigate(btmSheetDialogCreateOfferXCHCAT)
+	}
+
+	fun move2BtmCreateOfferLiquidityDialog() {
+		navController.navigate(btmSheetDialogCreateLiquidityOffer)
+	}
+
 
 	fun move2WalletSettings(address: String) {
 		val bundle = bundleOf(
 			WalletSettingsFragment.ADDRESS_KEY to address
 		)
 		navController.navigate(walletSettings, bundle)
+	}
+
+	fun move2TibetLiquidityDetail(offerId: String) {
+		val bundle = bundleOf()
+		bundle.putString(TibetLiquidityDetailsFragment.TIBET_LIQUIDITY_OFFER_KEY, offerId)
+		navController.navigate(fragmentTibetLiquidDetail, bundle)
 	}
 
 

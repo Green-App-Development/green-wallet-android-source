@@ -103,7 +103,6 @@
 				android:autoSizeTextType="uniform"
 				android:text="Приватный ключ с публичным отпечатком 8745635630" />
 
-
 		<View
 				android:layout_width="match_parent"
 				android:layout_height="1dp"

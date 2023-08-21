@@ -16,12 +16,13 @@ import com.green.wallet.data.local.entity.*
 		NotifOtherEntity::class, TokenEntity::class,
 		SpentCoinsEntity::class, FaqItemEntity::class,
 		NFTInfoEntity::class, NFTCoinEntity::class,
-		OrderEntity::class
+		OrderEntity::class, TibetSwapEntity::class,
+		TibetLiquidityEntity::class
 	],
-	version = 35,
+	version = 36,
 	exportSchema = true,
 	autoMigrations = [
-		AutoMigration(from = 25, to = 34)
+		AutoMigration(from = 25, to = 34),
 	]
 )
 @TypeConverters(Converters::class)
@@ -37,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
 	abstract val nftCoinsDao: NftCoinsDao
 	abstract val nftInfoDao: NftInfoDao
 	abstract val orderExchangeDao: OrderExchangeDao
+	abstract val tibetDao: TibetDao
 
 	companion object {
 
@@ -109,7 +111,11 @@ abstract class AppDatabase : RoomDatabase() {
                 get_coin TEXT NOT NULL,
                 get_address TEXT NOT NULL,
                 tx_ID TEXT NOT NULL,
-                fee REAL NOT NULL
+                commission_fee REAL NOT NULL, 
+				amount_to_receive REAL NOT NULL,
+				commission_tron REAL NOT NULL,
+				commission_percent REAL NOT NULL,
+				expired_cancelled_time REAL NOT NULL
             )
         """.trimIndent()
 				database.execSQL(createTableQuery)
@@ -117,6 +123,51 @@ abstract class AppDatabase : RoomDatabase() {
 
 		}
 
+		val migration35To36 = object : Migration(35, 36) {
+
+			override fun migrate(database: SupportSQLiteDatabase) {
+				val addColumn = """
+           ALTER TABLE TokenEntity ADD COLUMN pair_id TEXT NOT NULL DEFAULT ''
+        """.trimIndent()
+				database.execSQL(addColumn)
+
+				val createTableTibetSwap = """
+            CREATE TABLE IF NOT EXISTS TibetSwapEntity (
+                offer_id TEXT PRIMARY KEY NOT NULL,
+				send_amount REAL NOT NULL,
+                receive_amount REAL NOT NULL,
+                send_coin TEXT NOT NULL,
+                receive_coin TEXT NOT NULL,
+                fee REAL NOT NULL,
+                time_created INTEGER NOT NULL,
+                status TEXT NOT NULL,
+				height INTEGER NOT NULL,
+				fk_address TEXT NOT NULL
+            )
+        """.trimIndent()
+				database.execSQL(createTableTibetSwap)
+
+
+				val createTableTibetLiquidity = """
+            CREATE TABLE IF NOT EXISTS TibetLiquidityEntity (
+                offer_id TEXT PRIMARY KEY NOT NULL,
+				xchAmount REAL NOT NULL,
+                catAmount REAL NOT NULL,
+                catToken TEXT NOT NULL,
+				liquidityAmount REAL NOT NULL,
+				liquidityToken TEXT NOT NULL,
+                fee REAL NOT NULL,
+                time_created INTEGER NOT NULL,
+                status TEXT NOT NULL,
+				height INTEGER NOT NULL,
+				addLiquidity INTEGER NOT NULL,
+				fk_address TEXT NOT NULL
+            )
+        """.trimIndent()
+				database.execSQL(createTableTibetLiquidity)
+			}
+
+		}
 
 	}
 

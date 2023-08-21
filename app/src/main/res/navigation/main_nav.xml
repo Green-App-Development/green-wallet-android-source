@@ -291,5 +291,36 @@
 			android:label=""
 			tools:layout="@layout/fragment_send_swap" />
 
+	<dialog
+			android:id="@+id/btmSheetDialogChooseWallet"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmChooseWallet"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_btm_choose_wallet" />
+
+	<dialog
+			android:id="@+id/btmSheetDialogCreateOfferXCHCAT"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferXCHCATDialog"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_btm_create_offer_xchcat" />
+
+	<dialog
+			android:id="@+id/btmSheetDialogCreateLiquidityOffer"
+			android:name="com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferLiquidityDialog"
+			android:label="btmDialog"
+			tools:layout="@layout/dialog_btm_create_offer_liquidity" />
+
+
+	<fragment
+			android:id="@+id/fragmentTibetSwapDetail"
+			android:name="com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment"
+			android:label="Tibet Swap Detail"
+			tools:layout="@layout/fragment_tibet_swap_detail" />
+
+	<fragment
+			android:id="@+id/fragmentTibetLiquidDetail"
+			android:name="com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidityDetailsFragment"
+			android:label="Tibet Liquid Detail"
+			tools:layout="@layout/fragment_tibet_liquidity_detail" />
+
 
 </navigation>

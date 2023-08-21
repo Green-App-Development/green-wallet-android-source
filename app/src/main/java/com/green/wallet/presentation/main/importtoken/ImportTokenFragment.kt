@@ -125,6 +125,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 			when (res.state) {
 				Resource.State.SUCCESS ->
 					tokenAdapter.updateTokenList(res.data!!)
+
 				Resource.State.ERROR -> manageExceptionDialogsForRest(
 					curActivity(),
 					dialogManager = dialogManager,

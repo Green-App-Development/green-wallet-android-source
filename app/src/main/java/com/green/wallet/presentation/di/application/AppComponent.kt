@@ -4,6 +4,9 @@ import android.content.Context
 import com.green.wallet.data.di.InteractModule
 import com.green.wallet.data.di.NetworkModule
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.main.swap.tibetswap.BtmChooseWallet
+import com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferLiquidityDialog
+import com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferXCHCATDialog
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -15,6 +18,9 @@ import dagger.android.AndroidInjector
 interface AppComponent : AndroidInjector<App> {
 
 	fun fcmComponentBuilder(): FCMServiceComponent.Builder
+	fun inject(dialogWallet: BtmChooseWallet)
+	fun inject(dialogWallet: BtmCreateOfferXCHCATDialog)
+	fun inject(dialogWallet: BtmCreateOfferLiquidityDialog)
 
 	@Component.Builder
 	interface Builder {

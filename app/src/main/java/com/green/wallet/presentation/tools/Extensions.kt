@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
@@ -197,6 +198,15 @@ fun Activity.copyToClipBoard(data: String) {
 }
 
 
+fun Context.copyToClipBoard(data: String) {
+	val clipBoard =
+		getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+	val clip = ClipData.newPlainText(
+		"label",
+		data
+	)
+	clipBoard.setPrimaryClip(clip)
+}
 
 
 

@@ -48,6 +48,9 @@ class Offer {
 
     for (var cs in bundle.coinSpends) {
       // you can't spend the same coin twice in the same SpendBundle
+      if(!adds.containsKey(cs.coin)){
+
+      }
       assert(!adds.containsKey(cs.coin));
       try {
         var coins = cs.additions;
