@@ -19,7 +19,7 @@ repositories {
 
 android {
 
-    compileSdk 32
+    compileSdk 33
 
     Properties properties = new Properties()
     properties.load(project.rootProject.file("local.properties").newDataInputStream())
@@ -28,8 +28,8 @@ android {
     defaultConfig {
         applicationId "com.green.wallet"
         minSdk 26
-        targetSdk 32
-        versionCode 17 //for Google Play
+        targetSdk 33
+        versionCode 18 //for Google Play
         versionName "0.0.86"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -51,13 +51,15 @@ android {
 
         release {
             // Configuration details for release signing
-            storeFile file("$rootDir/app/cert.final")
+            storeFile file("$rootDir/cert.final")
             storePassword properties.getProperty("SIGN_IN_PASSWORD")
             keyAlias properties.getProperty("KEY_ALIAS")
             keyPassword properties.getProperty("SIGN_IN_PASSWORD")
         }
         // Other signing configurations
     }
+
+
 
 
     buildTypes {
