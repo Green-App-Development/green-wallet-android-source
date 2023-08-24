@@ -31,7 +31,7 @@ jobs:
       - name: Load local properties file
         run: echo "${{ secrets.LOCAL_PROPERTIES }}" > local.properties
       - name: Load encoded certificate to decode and sign up
-        run: echo "${{ secrets.CERT_BASE_64 }}" | base64 --decode > $GITHUB_WORKSPACE/app/cert.final
+        run: echo "${{ secrets.CERT_BASE_64 }}" | base64 --decode > $GITHUB_WORKSPACE/cert.final
       - name: Load encoded JSON for push app bundle
         run: echo "${{ secrets.PRIVATE_WALLET_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/app/private_wallet.json
       - name: Load encoded Google Services JSON
