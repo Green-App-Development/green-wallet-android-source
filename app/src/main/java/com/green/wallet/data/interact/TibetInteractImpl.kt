@@ -15,8 +15,7 @@ import com.green.wallet.presentation.tools.WALLET_FEE_ADDRESS
 import com.green.wallet.presentation.tools.copyToClipBoard
 import javax.inject.Inject
 
-class TibetInteractImpl
-@Inject constructor(
+class TibetInteractImpl @Inject constructor(
     private val tibetService: TibetExchangeService,
     private val tokenDao: TokenDao,
     private val tibetDao: TibetDao,
@@ -32,7 +31,7 @@ class TibetInteractImpl
                     val tokenJson = tokenList[i]
                     val assetId = tokenJson.asJsonObject.get("asset_id").asString
                     val pairId = tokenJson.asJsonObject.get("pair_id").asString
-//					VLog.d("Asset ID : $assetId  PairID : $pairId")
+					VLog.d("Asset ID : $assetId  PairID : $pairId")
                     tokenDao.updateTokenEntityPairIDByHash(pair_id = pairId, hash = assetId)
                 }
             } else {

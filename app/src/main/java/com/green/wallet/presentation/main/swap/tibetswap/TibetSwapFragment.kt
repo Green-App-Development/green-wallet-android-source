@@ -144,20 +144,22 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.tokenTibetList.collectLatest {
-                    if (it.isNotEmpty()) {
-                        adTibetLiquidity.updateData(it.map { it.code })
-                    } else {
-                        requireActivity().apply {
-                            dialogManager.showFailureDialog(
-                                this,
-                                getStringResource(R.string.service_is_unavailable),
-                                getStringResource(R.string.failed),
-                                getStringResource(R.string.ok_button)
-                            ) {
+                    it?.let {
+                        if (it.isNotEmpty()) {
+                            adTibetLiquidity.updateData(it.map { it.code })
+                        } else {
+                            requireActivity().apply {
+                                dialogManager.showFailureDialog(
+                                    this,
+                                    getStringResource(R.string.service_is_unavailable),
+                                    getStringResource(R.string.failed),
+                                    getStringResource(R.string.ok_button)
+                                ) {
 
+                                }
                             }
+                            binding.btnGenerateOffer.isEnabled = false
                         }
-                        binding.btnGenerateOffer.isEnabled = false
                     }
                 }
             }
