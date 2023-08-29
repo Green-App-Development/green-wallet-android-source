@@ -165,7 +165,7 @@ class BlockChainInteractImpl @Inject constructor(
             for (hash in wallet.puzzle_hashes) {
                 nftBalanceByHash(
                     wallet,
-                    hash,
+                    "0xf8d19425eb64311039796cfb860af56c53ca02c279b558023c8e5416e07b3bfa",
                     curBlockChainService,
                     networkItem,
                     methodChannel

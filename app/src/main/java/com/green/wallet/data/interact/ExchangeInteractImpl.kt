@@ -160,8 +160,7 @@ class ExchangeInteractImpl @Inject constructor(
         for (order in ordersList) {
             val exchangeStatus = getOrderStatus(order.order_hash)
             if (exchangeStatus != null) {
-//                val status = mapNetworkOrderStatusToLocal(exchangeStatus.result.status)
-                val status = OrderStatus.InProgress
+                val status = mapNetworkOrderStatusToLocal(exchangeStatus.result.status)
                 VLog.d("ExchangeStatus : $exchangeStatus of orderItem : $order")
                 if (status != order.status) {
                     orderExchangeDao.updateOrderStatusByHash(status, order.order_hash)
