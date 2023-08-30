@@ -49,6 +49,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
@@ -246,12 +247,16 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
     private fun FragmentTibetswapBinding.calculateCoursePrice(amountOut: Double) {
         val amountIn = edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0
+        val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
+        if (amountIn == 0.0) {
+            txtCoursePrice.setText("1 $tokenCode = ∞ XCH")
+            return
+        }
         val xchAmount = if (vm.xchToCAT) amountIn else amountOut
         val catAmount = if (vm.xchToCAT) amountOut else amountIn
         val oneToken = xchAmount / catAmount
         val format = formattedDoubleAmountWithPrecision(oneToken, 9)
         if (vm.tokenList.value.isEmpty()) return
-        val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
         txtCoursePrice.setText("1 $tokenCode = $format XCH")
     }
 
@@ -694,6 +699,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         val tokenAmount =
             ((amount * 1000L).toInt() * tibetLiquid.token_reserve) / tibetLiquid.liquidity
         var xch = ((amount * 1000L).toLong() * tibetLiquid.xch_reserve) / tibetLiquid.liquidity
+        VLog.d("XCH calculateCAT : $xch  ${amount*1000L*tibetLiquid.xch_reserve}")
         xch += (amount * 1000L).toLong()
         binding.apply {
             edtAmountCatTibet.setText(formattedDoubleAmountWithPrecision(tokenAmount / 1000.0))
@@ -702,7 +708,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         vm.xchDeposit = xch / PRECISION_XCH
         vm.liquidityAmount = amount
         vm.catTibetAmount = tokenAmount / 1000.0
-        return xch != 0L && tokenAmount != 0L
+        return xch != 0.0 && tokenAmount != 0L
     }
 
     private fun FragmentTibetswapBinding.changeLayoutPositions() {

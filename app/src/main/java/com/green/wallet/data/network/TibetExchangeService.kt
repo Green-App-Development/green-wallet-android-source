@@ -4,6 +4,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.green.wallet.data.network.dto.tibet.TibetLiquidityDto
 import com.green.wallet.data.network.dto.tibet.TibetSwapDto
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,7 +16,7 @@ import retrofit2.http.Query
 interface TibetExchangeService {
 
 	@GET("tokens")
-	suspend fun getTokensWithPairID(): Response<JsonArray>
+	suspend fun getTokensWithPairID(): ResponseBody
 
 	@GET("quote/{pair_id}")
 	suspend fun calculateAmountInOut(

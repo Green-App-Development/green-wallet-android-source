@@ -9,6 +9,7 @@ import com.green.wallet.domain.domainmodel.TibetLiquidityExchange
 import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.presentation.tools.DEV_FEE_ADDRESS
+import com.green.wallet.presentation.tools.JsonHelper
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.WALLET_FEE_ADDRESS
@@ -19,23 +20,16 @@ class TibetInteractImpl @Inject constructor(
     private val tibetService: TibetExchangeService,
     private val tokenDao: TokenDao,
     private val tibetDao: TibetDao,
-    private val context: Context
+    private val context: Context,
+    private val jsonHelper: JsonHelper
 ) : TibetInteract {
 
     override suspend fun saveTokensPairID() {
         try {
             val res = tibetService.getTokensWithPairID()
-            if (res.isSuccessful) {
-                val tokenList = res.body()!!
-                for (i in 0 until tokenList.size()) {
-                    val tokenJson = tokenList[i]
-                    val assetId = tokenJson.asJsonObject.get("asset_id").asString
-                    val pairId = tokenJson.asJsonObject.get("pair_id").asString
-					VLog.d("Asset ID : $assetId  PairID : $pairId")
-                    tokenDao.updateTokenEntityPairIDByHash(pair_id = pairId, hash = assetId)
-                }
-            } else {
-                VLog.d("Request is no success in getting tokens with pair id : ${res.message()}")
+            jsonHelper.parseJsonTibetTokenAssetIDPairID(res.string()) { assetID, pairID ->
+                VLog.d("Tibet TokenList pair id asset id : $assetID $pairID")
+                tokenDao.updateTokenEntityPairIDByHash(pair_id = pairID, hash = assetID)
             }
         } catch (ex: Exception) {
             VLog.d("Exception occurred while getting tokens with pair : ${ex.message}")
