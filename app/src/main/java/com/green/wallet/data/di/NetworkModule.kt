@@ -1,6 +1,7 @@
 package com.green.wallet.data.di
 
 import androidx.navigation.Navigator
+import com.google.gson.GsonBuilder
 import com.green.wallet.BuildConfig
 import com.green.wallet.data.network.DexieService
 import com.green.wallet.data.network.ExchangeService
@@ -102,9 +103,7 @@ class NetworkModule {
 		}
 		return Retrofit.Builder()
 			.client(getUnsafeOkHttpClient(interceptor))
-			.addConverterFactory(
-				GsonConverterFactory.create()
-			)
+			.addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
 	}
 
 

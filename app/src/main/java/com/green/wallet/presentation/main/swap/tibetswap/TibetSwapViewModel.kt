@@ -68,7 +68,7 @@ class TibetSwapViewModel @Inject constructor(
     private val _tokenList = MutableStateFlow<List<Token>>(emptyList())
     val tokenList = _tokenList.asStateFlow()
 
-    private val _tokenTibetList = MutableStateFlow<List<Token>>(emptyList())
+    private val _tokenTibetList = MutableStateFlow<List<Token>?>(null)
     val tokenTibetList = _tokenTibetList.asStateFlow()
 
 

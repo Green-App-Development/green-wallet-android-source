@@ -350,18 +350,21 @@ class BlockChainInteractImpl @Inject constructor(
             resMap["collection"] = collection.substring(1, collection.length - 1)
             resMap["name"] = name.substring(1, name.length - 1)
             val attributeMap = hashMapOf<String, String>()
-            val attJsonArray = resJson["attributes"].asJsonArray
-            for (attr in attJsonArray) {
-                attr.asJsonObject["trait_type"] ?: continue
-                attr.asJsonObject["value"] ?: continue
-                val trait = attr.asJsonObject["trait_type"].asString
-                val value = attr.asJsonObject["value"].asString
-                VLog.d("TraitType : $trait and Value : $value of nft attributes")
-                attributeMap[trait] = value
+            if(resJson["attributes"]!=null) {
+                val attJsonArray = resJson["attributes"].asJsonArray
+                for (attr in attJsonArray) {
+                    attr.asJsonObject["trait_type"] ?: continue
+                    attr.asJsonObject["value"] ?: continue
+                    val trait = attr.asJsonObject["trait_type"].asString
+                    val value = attr.asJsonObject["value"].asString
+                    VLog.d("TraitType : $trait and Value : $value of nft attributes")
+                    attributeMap[trait] = value
+                }
             }
             resMap["attributes"] = attributeMap
             return resMap
         } catch (ex: Exception) {
+            VLog.d("Exception in getting meta data json with url $metaDataUrlJson Exception : $ex")
             return null
         }
     }

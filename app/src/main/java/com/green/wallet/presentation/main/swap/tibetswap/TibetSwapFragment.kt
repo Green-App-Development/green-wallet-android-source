@@ -49,6 +49,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 import javax.inject.Inject
 
 class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
@@ -144,20 +145,22 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.tokenTibetList.collectLatest {
-                    if (it.isNotEmpty()) {
-                        adTibetLiquidity.updateData(it.map { it.code })
-                    } else {
-                        requireActivity().apply {
-                            dialogManager.showFailureDialog(
-                                this,
-                                getStringResource(R.string.service_is_unavailable),
-                                getStringResource(R.string.failed),
-                                getStringResource(R.string.ok_button)
-                            ) {
+                    it?.let {
+                        if (it.isNotEmpty()) {
+                            adTibetLiquidity.updateData(it.map { it.code })
+                        } else {
+                            requireActivity().apply {
+                                dialogManager.showFailureDialog(
+                                    this,
+                                    getStringResource(R.string.service_is_unavailable),
+                                    getStringResource(R.string.failed),
+                                    getStringResource(R.string.ok_button)
+                                ) {
 
+                                }
                             }
+                            binding.btnGenerateOffer.isEnabled = false
                         }
-                        binding.btnGenerateOffer.isEnabled = false
                     }
                 }
             }
@@ -214,7 +217,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
                                     edtUpdateCourse.setText(
                                         "${
                                             formattedDollarWithPrecision(
-                                                it.data?.price_impact ?: 0.0,
+                                                (it.data?.price_impact ?: 0.0)*100,
                                                 2
                                             )
                                         }%"
@@ -244,12 +247,16 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
     private fun FragmentTibetswapBinding.calculateCoursePrice(amountOut: Double) {
         val amountIn = edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0
+        val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
+        if (amountIn == 0.0) {
+            txtCoursePrice.setText("1 $tokenCode = ∞ XCH")
+            return
+        }
         val xchAmount = if (vm.xchToCAT) amountIn else amountOut
         val catAmount = if (vm.xchToCAT) amountOut else amountIn
         val oneToken = xchAmount / catAmount
         val format = formattedDoubleAmountWithPrecision(oneToken, 9)
         if (vm.tokenList.value.isEmpty()) return
-        val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
         txtCoursePrice.setText("1 $tokenCode = $format XCH")
     }
 
@@ -691,8 +698,10 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         val tibetLiquid = vm.curTibetLiquidity ?: return false
         val tokenAmount =
             ((amount * 1000L).toInt() * tibetLiquid.token_reserve) / tibetLiquid.liquidity
-        var xch = ((amount * 1000L).toLong() * tibetLiquid.xch_reserve) / tibetLiquid.liquidity
-        xch += (amount * 1000L).toLong()
+        val xch =
+            ((BigInteger("${(1000 * amount).toLong()}").multiply(BigInteger("${tibetLiquid.xch_reserve}"))).divide(
+                BigInteger("${tibetLiquid.liquidity}")
+            )).plus(BigInteger("${(amount * 1000).toLong()}")).toDouble()
         binding.apply {
             edtAmountCatTibet.setText(formattedDoubleAmountWithPrecision(tokenAmount / 1000.0))
             edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xch / PRECISION_XCH))
@@ -700,7 +709,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         vm.xchDeposit = xch / PRECISION_XCH
         vm.liquidityAmount = amount
         vm.catTibetAmount = tokenAmount / 1000.0
-        return xch != 0L && tokenAmount != 0L
+        return xch != 0.0 && tokenAmount != 0L
     }
 
     private fun FragmentTibetswapBinding.changeLayoutPositions() {
