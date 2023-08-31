@@ -217,7 +217,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
                                     edtUpdateCourse.setText(
                                         "${
                                             formattedDollarWithPrecision(
-                                                it.data?.price_impact ?: 0.0,
+                                                (it.data?.price_impact ?: 0.0)*100,
                                                 2
                                             )
                                         }%"
@@ -698,9 +698,10 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         val tibetLiquid = vm.curTibetLiquidity ?: return false
         val tokenAmount =
             ((amount * 1000L).toInt() * tibetLiquid.token_reserve) / tibetLiquid.liquidity
-        var xch = ((amount * 1000L).toLong() * tibetLiquid.xch_reserve) / tibetLiquid.liquidity
-        VLog.d("XCH calculateCAT : $xch  ${amount*1000L*tibetLiquid.xch_reserve}")
-        xch += (amount * 1000L).toLong()
+        val xch =
+            ((BigInteger("${(1000 * amount).toLong()}").multiply(BigInteger("${tibetLiquid.xch_reserve}"))).divide(
+                BigInteger("${tibetLiquid.liquidity}")
+            )).plus(BigInteger("${(amount * 1000).toLong()}")).toDouble()
         binding.apply {
             edtAmountCatTibet.setText(formattedDoubleAmountWithPrecision(tokenAmount / 1000.0))
             edtAmountXCH.setText(formattedDoubleAmountWithPrecision(xch / PRECISION_XCH))
