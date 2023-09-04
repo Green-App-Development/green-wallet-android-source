@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.local.AppDatabase
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.domain.interact.SupportInteract
+import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +19,10 @@ import javax.inject.Inject
 class IntroActViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val appDatabase: AppDatabase,
-	private val greenAppInteract: GreenAppInteract
+	private val greenAppInteract: GreenAppInteract,
+	private val supportInteract:SupportInteract,
+	private val cryptocurrencyInteract: CryptocurrencyInteract,
+	private val tibetInteract: TibetInteract
 ) : ViewModel() {
 
 	private var clearingJob: Job? = null
@@ -27,6 +33,27 @@ class IntroActViewModel @Inject constructor(
 			val timeDifference = System.currentTimeMillis() - serverTime
 			VLog.d("Time Difference : $timeDifference is saved in settings on Authenticate")
 			prefs.saveSettingLong(PrefsManager.TIME_DIFFERENCE, timeDifference)
+		}
+		requestPerApplication()
+	}
+
+	private fun requestPerApplication(){
+		viewModelScope.launch {
+			with(greenAppInteract) {
+				getAvailableNetworkItemsFromRestAndSave()
+				getAvailableLanguageList()
+				getVerifiedDidList()
+				getAgreementsText()
+				updateCoinDetails()
+			}
+			supportInteract.getFAQQuestionAnswers()
+			with(cryptocurrencyInteract) {
+				getAllTails()
+				checkingDefaultWalletTails()
+			}
+			with(tibetInteract) {
+				saveTokensPairID()
+			}
 		}
 	}
 
