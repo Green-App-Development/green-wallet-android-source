@@ -143,7 +143,7 @@ class MainViewModel @Inject constructor(
 
 	suspend fun getAvailableNetworkItems() =
 		greenAppInteract.getAllNetworkItemsListFromPrefs()
-
+	
 	suspend fun getWalletSizeInDB() = walletInteract.getAllWalletList()
 
 }

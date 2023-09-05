@@ -90,7 +90,6 @@ class App : DaggerApplication() {
 		Restring.init(this)
 		ViewPump.init(RewordInterceptor)
 		determineModeAndLanguage()
-		requestsPerApplication()
 		updateBalanceEachPeriodically()
 		warmupFlutterEngine()
 		WorkManager.initialize(
@@ -112,26 +111,6 @@ class App : DaggerApplication() {
 			}
 		FirebaseMessaging.getInstance().token.addOnSuccessListener {
 			VLog.d("Retrieved token successfully : $it")
-		}
-	}
-
-	private fun requestsPerApplication() {
-		CoroutineScope(Dispatchers.IO).launch {
-			with(greenAppInteract) {
-				getAvailableNetworkItemsFromRestAndSave()
-				getAvailableLanguageList()
-				getVerifiedDidList()
-				getAgreementsText()
-				updateCoinDetails()
-			}
-			supportInteract.getFAQQuestionAnswers()
-			with(cryptocurrencyInteract) {
-				getAllTails()
-				checkingDefaultWalletTails()
-			}
-			with(tibetInteract) {
-				saveTokensPairID()
-			}
 		}
 	}
 
