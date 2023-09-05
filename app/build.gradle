@@ -29,7 +29,7 @@ android {
         applicationId "com.green.wallet"
         minSdk 26
         targetSdk 33
-        versionCode 20 //for Google Play
+        versionCode 21 //for Google Play
         versionName "0.0.88"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
