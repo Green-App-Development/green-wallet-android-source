@@ -1,7 +1,6 @@
 package com.green.wallet.data.di
 
 import android.content.Context
-import androidx.navigation.Navigator
 import com.google.gson.GsonBuilder
 import com.green.wallet.BuildConfig
 import com.green.wallet.data.network.DexieService
