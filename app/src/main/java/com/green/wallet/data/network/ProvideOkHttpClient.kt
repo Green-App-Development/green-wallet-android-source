@@ -1,5 +1,7 @@
 package com.green.wallet.data.network
 
+import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -13,7 +15,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
-fun getUnsafeOkHttpClient(interceptor: Interceptor): OkHttpClient {
+fun getUnsafeOkHttpClient(context: Context, interceptor: Interceptor): OkHttpClient {
 	try {
 		val trustAllCerts: Array<TrustManager> = arrayOf(object : X509TrustManager {
 			override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
@@ -46,6 +48,7 @@ fun getUnsafeOkHttpClient(interceptor: Interceptor): OkHttpClient {
 			.readTimeout(timeoutInSec.toLong(), TimeUnit.SECONDS)
 			.dispatcher(dispatcher)
 			.addInterceptor(interceptor)
+			.addInterceptor(ChuckerInterceptor(context))
 
 		builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
 

@@ -1,5 +1,6 @@
 package com.green.wallet.data.di
 
+import android.content.Context
 import androidx.navigation.Navigator
 import com.google.gson.GsonBuilder
 import com.green.wallet.BuildConfig
@@ -23,14 +24,14 @@ class NetworkModule {
 	@AppScope
 	@Provides
 	@Named("retrofit_green_app")
-	fun provideLanguageRetrofitInstance(): Retrofit {
+	fun provideLanguageRetrofitInstance(context:Context): Retrofit {
 
 		val interceptor = HttpLoggingInterceptor().apply {
 			level = HttpLoggingInterceptor.Level.BODY
 		}
 
 		return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL_GREEN_APP)
-			.client(getUnsafeOkHttpClient(interceptor))
+			.client(getUnsafeOkHttpClient(context,interceptor))
 			.addConverterFactory(
 				GsonConverterFactory.create()
 			).build()
@@ -40,14 +41,14 @@ class NetworkModule {
 	@AppScope
 	@Provides
 	@Named("retrofit_tibet_api")
-	fun provideDexieRetrofitInstance(): Retrofit {
+	fun provideDexieRetrofitInstance(context:Context): Retrofit {
 
 		val interceptor = HttpLoggingInterceptor().apply {
 			level = HttpLoggingInterceptor.Level.BODY
 		}
 
 		return Retrofit.Builder().baseUrl(BuildConfig.TIBET_API)
-			.client(getUnsafeOkHttpClient(interceptor))
+			.client(getUnsafeOkHttpClient(context,interceptor))
 			.addConverterFactory(
 				GsonConverterFactory.create()
 			).build()
@@ -56,14 +57,14 @@ class NetworkModule {
 	@AppScope
 	@Provides
 	@Named("retrofit_dexie_api")
-	fun provideTibetRetrofitInstance(): Retrofit {
+	fun provideTibetRetrofitInstance(context:Context): Retrofit {
 
 		val interceptor = HttpLoggingInterceptor().apply {
 			level = HttpLoggingInterceptor.Level.BODY
 		}
 
 		return Retrofit.Builder().baseUrl(BuildConfig.DEXIE_API)
-			.client(getUnsafeOkHttpClient(interceptor))
+			.client(getUnsafeOkHttpClient(context,interceptor))
 			.addConverterFactory(
 				GsonConverterFactory.create()
 			).build()
@@ -97,12 +98,12 @@ class NetworkModule {
 
 	@Provides
 	@AppScope
-	fun provideRetrofitBuilder(): Retrofit.Builder {
+	fun provideRetrofitBuilder(context:Context): Retrofit.Builder {
 		val interceptor = HttpLoggingInterceptor().apply {
 			level = HttpLoggingInterceptor.Level.BODY
 		}
 		return Retrofit.Builder()
-			.client(getUnsafeOkHttpClient(interceptor))
+			.client(getUnsafeOkHttpClient(context,interceptor))
 			.addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
 	}
 
