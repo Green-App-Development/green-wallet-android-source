@@ -28,8 +28,7 @@ import com.green.wallet.presentation.main.receive.ReceiveFragment
 import com.green.wallet.presentation.main.scan.ScannerFragment
 import com.green.wallet.presentation.main.send.SendFragment
 import com.green.wallet.presentation.main.support.ListingFragment
-import com.green.wallet.presentation.main.support.Questio
-nFragment
+import com.green.wallet.presentation.main.support.QuestionFragment
 import com.green.wallet.presentation.main.support.SupportFragment
 import com.green.wallet.presentation.main.support.faq.FAQFragment
 import com.green.wallet.presentation.main.swap.exchange.ExchangeFragment
