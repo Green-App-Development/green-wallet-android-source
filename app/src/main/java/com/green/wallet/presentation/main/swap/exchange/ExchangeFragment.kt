@@ -116,6 +116,8 @@ class ExchangeFragment : DaggerFragment() {
                             Resource.State.LOADING -> {
 
                             }
+
+                            else -> Unit
                         }
                     }
                 }
@@ -605,6 +607,8 @@ class ExchangeFragment : DaggerFragment() {
                                     it.error
                                 )
                             }
+
+                            else -> Unit
                         }
                     }
                 }

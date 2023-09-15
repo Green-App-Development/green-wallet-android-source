@@ -76,7 +76,7 @@ class ReceiveFragment : DaggerFragment() {
 //        initViewDetails()
 		registerBtnClicks()
 //        determineOpenOneWallet()
-		intViewPagerAdapterWithList(curNetworkType, fingerPrint = curFingerPrint)
+		intViewPagerAdapterWithList(curNetworkType)
 		updateNetworkType(networkType = curNetworkType)
 		initNetworkTypeAdapter()
 	}
@@ -89,7 +89,7 @@ class ReceiveFragment : DaggerFragment() {
 			initNetworkTypeAdapter()
 	}
 
-	private fun intViewPagerAdapterWithList(networkType: String, fingerPrint: Long?) {
+	private fun intViewPagerAdapterWithList(networkType: String) {
 		lifecycleScope.launch {
 
 			val walletLisByNetworkType =
@@ -209,8 +209,7 @@ class ReceiveFragment : DaggerFragment() {
 						VLog.d("Choose spinner for network on receive Fragme")
 						networkAdapter.selectedPosition = p2
 						intViewPagerAdapterWithList(
-							networkAdapter.dataOptions[p2],
-							curFingerPrint
+							networkAdapter.dataOptions[p2]
 						)
 						updateNetworkType(networkAdapter.dataOptions[p2])
 					}

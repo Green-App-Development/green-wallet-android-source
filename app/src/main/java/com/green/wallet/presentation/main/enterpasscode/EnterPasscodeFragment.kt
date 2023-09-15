@@ -152,6 +152,7 @@ class EnterPasscodeFragment : DaggerFragment() {
 			ReasonEnterCode.DELETE_WALLET -> showSuccessDeletedDialog()
 			ReasonEnterCode.SHOW_DATA -> showWalletData()
 			ReasonEnterCode.SEND_MONEY -> sendMoneySuccess()
+			else -> Unit
 		}
 	}
 
