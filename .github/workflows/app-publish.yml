@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "add_flut" ]
+    branches: [ "chucker" ]
 
 jobs:
   build:
@@ -36,6 +36,8 @@ jobs:
         run: echo "${{ secrets.PRIVATE_WALLET_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/app/private_wallet.json
       - name: Load encoded Google Services JSON
         run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/app/google-services.json
+      - name: Building and Uploading Debug Version To Firebase App Distribution
+        run: ./gradlew assembleDebug appDistributionUploadDebug
       - name: Build with Gradle
         run: ./gradlew publishBundle
       - name: Build with Gradle
@@ -58,8 +60,8 @@ jobs:
       - name: Upload Release Asset
         id: upload_release_asset
         uses: actions/upload-release-asset@v1
-      - name : Building and Uploading Debug Version To Firebase App Distribution
-        run : ./gradlew assembleDebug appDistributionUploadDebug
+      - name: Building and Uploading Debug Version To Firebase App Distribution
+        run: ./gradlew assembleDebug appDistributionUploadDebug
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
