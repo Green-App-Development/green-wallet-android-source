@@ -103,6 +103,8 @@ class ExchangeInteractImpl @Inject constructor(
         return Resource.error(Exception("Unknown exception"))
     }
 
+
+
     override suspend fun getExchangeRequest(fromToken: String): Resource<ExchangeRate> {
         try {
             val guid = prefsInteract.getSettingString(PrefsManager.USER_GUID, "")
