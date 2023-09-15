@@ -24,10 +24,7 @@ jobs:
         run: |
           flutter config --no-analytics
           cd greenapp
-          flutter clean
-          flutter build
           flutter pub get
-          flutter upgrade
           flutter build bundle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
