@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AddressDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
     suspend fun insertAddressEntity(addressEntity: AddressEntity): Long
 
     @Delete

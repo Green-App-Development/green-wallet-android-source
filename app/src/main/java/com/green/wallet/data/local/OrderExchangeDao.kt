@@ -14,7 +14,7 @@ import java.util.Optional
 @Dao
 interface OrderExchangeDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertOrderExchange(orderEntity: OrderEntity)
 
     @Query("SELECT * FROM OrderEntity WHERE order_hash=:order_hash")

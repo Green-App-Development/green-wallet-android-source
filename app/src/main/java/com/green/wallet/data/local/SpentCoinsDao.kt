@@ -2,7 +2,7 @@ package com.green.wallet.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.SpentCoinsEntity
 import kotlinx.coroutines.flow.Flow

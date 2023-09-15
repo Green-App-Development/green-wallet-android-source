@@ -9,7 +9,7 @@ import java.util.*
 interface NftInfoDao {
 
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	@Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
 	suspend fun insertNftInfoEntity(nftInfoEntity: NFTInfoEntity)
 
 	@Query("SELECT * FROM NFTInfoEntity WHERE nft_coin_hash=:nft_coin_hash")

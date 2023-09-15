@@ -1,7 +1,7 @@
 package com.green.wallet.data.local
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import com.green.wallet.data.local.dto.ChiaWalletDTO
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.local.relations.WalletWithNFTInfoRelation
