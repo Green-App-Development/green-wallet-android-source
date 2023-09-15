@@ -4,14 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
-import androidx.room.Update
 import com.green.wallet.data.local.entity.TibetLiquidityEntity
 import com.green.wallet.data.local.entity.TibetSwapEntity
-import com.green.wallet.domain.domainmodel.OrderItem
-import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.presentation.tools.OrderStatus
 import kotlinx.coroutines.flow.Flow
-import java.util.Optional
 
 
 @Dao

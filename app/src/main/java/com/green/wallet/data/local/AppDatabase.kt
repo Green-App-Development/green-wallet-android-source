@@ -10,6 +10,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.green.wallet.data.local.entity.*
 
+@TypeConverters(Converters::class)
 @Database(
 	entities = [
 		AddressEntity::class, WalletEntity::class, TransactionEntity::class,
@@ -25,7 +26,6 @@ import com.green.wallet.data.local.entity.*
 		AutoMigration(from = 25, to = 34),
 	]
 )
-@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
 	abstract val addressDao: AddressDao
