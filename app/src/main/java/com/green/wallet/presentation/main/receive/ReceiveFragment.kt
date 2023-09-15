@@ -222,11 +222,6 @@ class ReceiveFragment : DaggerFragment() {
 		}
 	}
 
-
-	override fun startActivityForResult(intent: Intent?, requestCode: Int) {
-		super.startActivityForResult(intent, requestCode)
-	}
-
 	private fun curActivity() = requireActivity() as MainActivity
 
 
