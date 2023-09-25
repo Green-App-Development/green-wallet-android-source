@@ -79,7 +79,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
     }
 
     val adTibetLiquidity by lazy {
-        DynamicSpinnerAdapter(150, requireActivity(), listOf(""))
+        DynamicSpinnerAdapter(150, requireActivity(), mutableListOf(""))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,6 +146,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.tokenTibetList.collectLatest {
                     it?.let {
+                        VLog.d("Token  Tibet List : $it")
                         if (it.isNotEmpty()) {
                             adTibetLiquidity.updateData(it.map { it.code })
                         } else {
@@ -217,7 +218,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
                                     edtUpdateCourse.setText(
                                         "${
                                             formattedDollarWithPrecision(
-                                                (it.data?.price_impact ?: 0.0)*100,
+                                                (it.data?.price_impact ?: 0.0) * 100,
                                                 2
                                             )
                                         }%"
@@ -247,7 +248,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
     private fun FragmentTibetswapBinding.calculateCoursePrice(amountOut: Double) {
         val amountIn = edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0
-        val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
+        val tokenCode = vm.tokenList.value?.get(vm.catAdapPosition)?.code
         if (amountIn == 0.0) {
             txtCoursePrice.setText("1 $tokenCode = ∞ XCH")
             return
@@ -256,7 +257,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         val catAmount = if (vm.xchToCAT) amountOut else amountIn
         val oneToken = xchAmount / catAmount
         val format = formattedDoubleAmountWithPrecision(oneToken, 9)
-        if (vm.tokenList.value.isEmpty()) return
+        if (vm.tokenList.value?.isEmpty() == true) return
         txtCoursePrice.setText("1 $tokenCode = $format XCH")
     }
 
@@ -265,23 +266,37 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.tokenList.collectLatest {
-                    if (it.isNotEmpty()) {
-                        VLog.d("On collection based on code : ${it.map { it.code }}")
-                        ad2Swap.updateData(it.map { it.code })
-                        if (vm.xchToCAT) {
-                            binding.changeSwapAdapter(ad1Swap, ad2Swap)
-                            choosingXCHToCAT(true)
+                    it?.let {
+                        if (it.isNotEmpty()) {
+                            VLog.d("On collection based on code : ${it.map { it.code }}")
+                            ad2Swap.updateData(it.map { it.code })
+                            if (vm.xchToCAT) {
+                                binding.changeSwapAdapter(ad1Swap, ad2Swap)
+                                choosingXCHToCAT(true)
+                            } else {
+                                binding.changeSwapAdapter(ad2Swap, ad1Swap)
+                                choosingXCHToCAT(false)
+                            }
+                            adCATLiquidity.updateData(it.map { it.code })
+                            if (vm.catTibetAdapterPosition != -1) binding.tokenTibetCatSpinner.setSelection(
+                                vm.catTibetAdapterPosition
+                            )
+                            if (vm.catLiquidityAdapterPos != -1) binding.tokenTibetSpinner.setSelection(
+                                vm.catLiquidityAdapterPos
+                            )
                         } else {
-                            binding.changeSwapAdapter(ad2Swap, ad1Swap)
-                            choosingXCHToCAT(false)
+                            requireActivity().apply {
+                                dialogManager.showFailureDialog(
+                                    this,
+                                    getStringResource(R.string.service_is_unavailable),
+                                    getStringResource(R.string.failed),
+                                    getStringResource(R.string.ok_button)
+                                ) {
+
+                                }
+                            }
+                            binding.btnGenerateOffer.isEnabled = false
                         }
-                        adCATLiquidity.updateData(it.map { it.code })
-                        if (vm.catTibetAdapterPosition != -1) binding.tokenTibetCatSpinner.setSelection(
-                            vm.catTibetAdapterPosition
-                        )
-                        if (vm.catLiquidityAdapterPos != -1) binding.tokenTibetSpinner.setSelection(
-                            vm.catLiquidityAdapterPos
-                        )
                     }
                 }
             }
@@ -660,7 +675,8 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         tibetLiquidityJob = lifecycleScope.launch(CoroutineExceptionHandler { _, throwable ->
 
         }) {
-            val pairID = vm.tokenList.value[vm.catTibetAdapterPosition].pairID
+            val pairID =
+                vm.tokenTibetList.value?.get(vm.catTibetAdapterPosition)?.pairID ?: return@launch
             val res = vm.getTibetLiquidity(pairID)
             if (res != null) {
                 vm.curTibetLiquidity = res

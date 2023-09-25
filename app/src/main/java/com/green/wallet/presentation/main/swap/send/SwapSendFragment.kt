@@ -391,7 +391,7 @@ class SwapSendFragment : DaggerFragment() {
 			tokenWalletList.filter {
 				(it.code == "XCH" || it.asset_id.trim().isNotEmpty() || it.code == "XCC")
 			}
-				.map { it.code }.toList()
+				.map { it.code }.toMutableList()
 		)
 		binding.tokenSpinner.adapter = tokenAdapter
 		if (tokendAdapterPosition < tokenWalletList.size) {

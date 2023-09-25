@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SupportInteract
@@ -21,7 +22,8 @@ class MainViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val walletInteract: WalletInteract,
 	private val greenAppInteract: GreenAppInteract,
-	private val supportInteract: SupportInteract
+	private val supportInteract: SupportInteract,
+	private val cryptoInteract:CryptocurrencyInteract
 ) : ViewModel() {
 
 	init {
@@ -37,6 +39,7 @@ class MainViewModel @Inject constructor(
 			if (curLangCode.isNotEmpty()) {
 				greenAppInteract.downloadLanguageTranslate(curLangCode)
 			}
+			cryptoInteract.getAllTails()
 		}
 	}
 

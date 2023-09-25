@@ -52,6 +52,7 @@ class IntroActViewModel @Inject constructor(
 				checkingDefaultWalletTails()
 			}
 			with(tibetInteract) {
+				return@launch
 				saveTokensPairID()
 			}
 		}

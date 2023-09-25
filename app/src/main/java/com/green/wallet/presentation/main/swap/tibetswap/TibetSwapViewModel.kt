@@ -65,7 +65,7 @@ class TibetSwapViewModel @Inject constructor(
     var availableXCHAmount: Double = 0.0
     var catEnough = false
 
-    private val _tokenList = MutableStateFlow<List<Token>>(emptyList())
+    private val _tokenList = MutableStateFlow<List<Token>?>(null)
     val tokenList = _tokenList.asStateFlow()
 
     private val _tokenTibetList = MutableStateFlow<List<Token>?>(null)
@@ -114,6 +114,7 @@ class TibetSwapViewModel @Inject constructor(
     private fun retrieveTibetTokenList() {
         viewModelScope.launch {
             val res = tokenInteract.getTibetTokenList()
+            VLog.d("On Retrieve Tibet Token List : $res")
             val newList = mutableListOf<Token>()
             var gwtToken: Token? = null
             for (token in res) {
@@ -147,7 +148,7 @@ class TibetSwapViewModel @Inject constructor(
         val debouncedFlow = userSwapInputChannel.receiveAsFlow().debounce(INPUT_DEBOUNCE_VALUE)
         swapMainScope?.launch(handler) {
             debouncedFlow.collectLatest { input ->
-                calculateAmountOut(input, _tokenList.value[catAdapPosition].pairID, xchToCAT)
+                calculateAmountOut(input, _tokenList.value?.get(catAdapPosition)?.pairID ?: "", xchToCAT)
             }
         }
     }
