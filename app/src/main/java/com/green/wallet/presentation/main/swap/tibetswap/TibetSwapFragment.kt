@@ -27,6 +27,7 @@ import com.green.wallet.databinding.FragmentTibetswapBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
+import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
@@ -52,7 +53,7 @@ import kotlinx.coroutines.launch
 import java.math.BigInteger
 import javax.inject.Inject
 
-class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
+class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
 
     private lateinit var binding: FragmentTibetswapBinding
 
@@ -111,6 +112,12 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         initCalculateOutput()
         initSuccessClearingFields()
         vm.initWalletList()
+        vm.retrieveTibetTokenList()
+        vm.retrieveTokenList()
+    }
+
+    override suspend fun collectingFlowsOnStarted() {
+        vm.fiveMinTillGetListOfTokensFromTibet()
     }
 
     private fun initSuccessClearingFields() {
@@ -146,7 +153,6 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.tokenTibetList.collectLatest {
                     it?.let {
-                        VLog.d("Token  Tibet List : $it")
                         if (it.isNotEmpty()) {
                             adTibetLiquidity.updateData(it.map { it.code })
                         } else {

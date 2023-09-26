@@ -25,6 +25,7 @@ class TibetInteractImpl @Inject constructor(
 ) : TibetInteract {
 
     override suspend fun saveTokensPairID() {
+        return
         try {
             val res = tibetService.getTokensWithPairID()
             jsonHelper.parseJsonTibetTokenAssetIDPairID(res.string()) { assetID, pairID ->
@@ -32,7 +33,7 @@ class TibetInteractImpl @Inject constructor(
                 tokenDao.updateTokenEntityPairIDByHash(pair_id = pairID, hash = assetID)
             }
         } catch (ex: Exception) {
-            VLog.d("Exception occurred while getting tokens with pair : ${ex.message}")
+            VLog.d("Exception occurred while getting tokens with pair : ${ex.message} : $ex")
         }
     }
 
