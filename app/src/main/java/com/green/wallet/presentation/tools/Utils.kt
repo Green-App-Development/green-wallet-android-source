@@ -267,4 +267,10 @@ fun hideFingerPrint(fingerPrint: Long): String {
 	return "$fingerPrint"
 }
 
-
+fun getNumberFromDouble(value:String):Double{
+	if(value.isEmpty()) return 0.0
+	if(value[value.length-1]=='.'){
+		return value.substring(0,value.length-1).toDoubleOrNull() ?: 0.0
+	}
+	return value.toDoubleOrNull() ?: 0.0
+}

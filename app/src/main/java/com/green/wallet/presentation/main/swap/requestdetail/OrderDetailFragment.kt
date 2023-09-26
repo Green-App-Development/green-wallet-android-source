@@ -22,6 +22,7 @@ import com.green.wallet.databinding.FragmentRequestDetailsBinding
 import com.green.wallet.domain.domainmodel.OrderItem
 import com.green.wallet.presentation.custom.ConnectionLiveData
 import com.green.wallet.presentation.custom.DialogManager
+import com.green.wallet.presentation.custom.base.makeViewVisibleAndGone
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -107,6 +108,12 @@ class OrderDetailFragment : DaggerFragment() {
                     layoutInProgress.visibility = View.GONE
                     layoutWaiting.visibility = View.GONE
                     edtData.text = formattedTimeForOrderItem(orderItem.timeCreated)
+
+                    imgCpyRequestHash.setOnClickListener {
+                        makeViewVisibleAndGone(relCopied)
+                        getMainActivity().copyToClipBoard(orderItem.hash)
+                    }
+
                     if (status == OrderStatus.Cancelled) {
                         statusCancelled()
                         return@collectLatest
@@ -117,7 +124,7 @@ class OrderDetailFragment : DaggerFragment() {
                     edtReceiveAmount.text = "$amountToReceive " + orderItem.getCoin
                     edtAddressReceive.text = formatString(9, orderItem.getAddress, 6)
                     edtCourseExchange.text =
-                        "1 ${orderItem.sendCoin} = ${
+                        "1 XCH = ${
                             formattedDollarWithPrecision(
                                 orderItem.rate
                             )
@@ -149,7 +156,7 @@ class OrderDetailFragment : DaggerFragment() {
                             layoutInProgress.visibility = View.VISIBLE
                             val timeDiff =
                                 orderItem.expiredCancelledTime - System.currentTimeMillis()
-                            startTimeExpiresStatusInProgress(timeDiff/1000L)
+                            startTimeExpiresStatusInProgress(timeDiff / 1000L)
                         }
 
                         else -> {
@@ -169,19 +176,18 @@ class OrderDetailFragment : DaggerFragment() {
                         getMainActivity().getStringResource(R.string.completion_oper_flow) + ":"
 
                     imgCpyAddress.setOnClickListener {
+                        makeViewVisibleAndGone(relCopied)
                         getMainActivity().copyToClipBoard(orderItem.giveAddress)
                     }
 
                     imgCpyReceiveAddress.setOnClickListener {
+                        makeViewVisibleAndGone(relCopied)
                         getMainActivity().copyToClipBoard(orderItem.getAddress)
                     }
 
                     imgCpyHashTransaction.setOnClickListener {
+                        makeViewVisibleAndGone(relCopied)
                         getMainActivity().copyToClipBoard(orderItem.txID)
-                    }
-
-                    imgCpyRequestHash.setOnClickListener {
-                        getMainActivity().copyToClipBoard(orderItem.hash)
                     }
 
                     initClickListeners(orderItem)
@@ -208,23 +214,23 @@ class OrderDetailFragment : DaggerFragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun startTimeExpiresStatusInProgress(timeDiff: Long) {
+    private suspend fun startTimeExpiresStatusInProgress(timeDiff: Long) {
         val txtFinishTran = binding.txtFinishTran
         val edtFinishTime = binding.edtFinishTranTime
         txtFinishTran.text = requireActivity().getStringResource(R.string.ending_operation) + ":"
-        lifecycleScope.launch {
-            var totalSeconds = timeDiff
-            while (totalSeconds >= 0) {
-                val minutes = totalSeconds / 60
-                val seconds = totalSeconds % 60
-                edtFinishTime.text =
-                    "${addZeroToFrontIfNeeded(minutes)}:${addZeroToFrontIfNeeded(seconds)}"
-                totalSeconds--
-                delay(1000)
-            }
-            edtFinishTime.text = "00:00"
-            vm.updateOrderStatus(orderHash, OrderStatus.Cancelled)
+
+        var totalSeconds = timeDiff
+        while (totalSeconds >= 0) {
+            val minutes = totalSeconds / 60
+            val seconds = totalSeconds % 60
+            edtFinishTime.text =
+                "${addZeroToFrontIfNeeded(minutes)}:${addZeroToFrontIfNeeded(seconds)}"
+            totalSeconds--
+            delay(1000)
         }
+        edtFinishTime.text = "00:00"
+        vm.updateOrderStatus(orderHash, OrderStatus.Cancelled)
+
     }
 
     private fun initClickListeners(orderItem: OrderItem) {

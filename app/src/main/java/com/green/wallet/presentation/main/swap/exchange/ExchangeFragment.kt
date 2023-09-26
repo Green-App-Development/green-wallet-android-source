@@ -589,7 +589,8 @@ class ExchangeFragment : DaggerFragment() {
                                             getMainActivity(),
                                             getStringResource(R.string.complete_exchange),
                                             getStringResource(R.string.complete_exchange_txt),
-                                            getStringResource(R.string.my_orders)
+                                            getStringResource(R.string.my_orders),
+                                            cancellable = false
                                         ) {
                                             swapMainSharedVM.move2RequestHistory()
                                         }

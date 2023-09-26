@@ -22,6 +22,7 @@ import com.green.wallet.databinding.FragmentTibetLiquidityDetailBinding
 import com.green.wallet.databinding.FragmentTibetSwapDetailBinding
 import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetSwapExchange
+import com.green.wallet.presentation.custom.base.makeViewVisibleAndGone
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -30,110 +31,113 @@ import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_request_details.relCopied
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TibetLiquidityDetailsFragment : DaggerFragment() {
 
-	@Inject
-	lateinit var viewModelFactory: ViewModelFactory
-	private val vm: TibetLiquidityDetailViewModel by viewModels { viewModelFactory }
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private val vm: TibetLiquidityDetailViewModel by viewModels { viewModelFactory }
 
-	private lateinit var binding: FragmentTibetLiquidityDetailBinding
+    private lateinit var binding: FragmentTibetLiquidityDetailBinding
 
-	companion object {
-		const val TIBET_LIQUIDITY_OFFER_KEY = "TIBET_LIQUIDITY_OFFER_KEY"
-	}
+    companion object {
+        const val TIBET_LIQUIDITY_OFFER_KEY = "TIBET_LIQUIDITY_OFFER_KEY"
+    }
 
-	var offerId = ""
+    var offerId = ""
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		arguments?.let {
-			offerId = it.getString(TIBET_LIQUIDITY_OFFER_KEY, "")
-		}
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            offerId = it.getString(TIBET_LIQUIDITY_OFFER_KEY, "")
+        }
+    }
 
 
-	override fun onCreateView(
-		inflater: LayoutInflater,
-		container: ViewGroup?,
-		savedInstanceState: Bundle?
-	): View {
-		binding = FragmentTibetLiquidityDetailBinding.inflate(layoutInflater)
-		return binding.root
-	}
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentTibetLiquidityDetailBinding.inflate(layoutInflater)
+        return binding.root
+    }
 
-	private fun initDetailTibetLiquidity() {
-		lifecycleScope.launch {
-			repeatOnLifecycle(Lifecycle.State.STARTED) {
-				vm.getTibetLiquidityByOfferId(offerId).collectLatest {
-					binding.initTibetLiquidityDetail(it)
-				}
-			}
-		}
-	}
+    private fun initDetailTibetLiquidity() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.getTibetLiquidityByOfferId(offerId).collectLatest {
+                    binding.initTibetLiquidityDetail(it)
+                }
+            }
+        }
+    }
 
-	@SuppressLint("SetTextI18n")
-	private fun FragmentTibetLiquidityDetailBinding.initTibetLiquidityDetail(item: TibetLiquidity) {
-		edtData.text = formattedTimeForOrderItem(item.time_created)
-		val status = item.status
-		txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
-			getRequestStatusTranslation(
-				getMainActivity(),
-				status
-			)
-		}"
-		val xchCat = "${formattedDoubleAmountWithPrecision(item.xchAmount)} XCH\n${
-			formattedDoubleAmountWithPrecision(item.catAmount)
-		} ${item.catToken}"
-		val liquid =
-			"${formattedDoubleAmountWithPrecision(item.liquidityAmount)} ${item.liquidityToken}"
-		if (item.addLiquidity) {
-			edtSendAmount.text = xchCat
-			edtReceiveAmount.text = liquid
-		} else {
-			edtSendAmount.text = liquid
-			edtReceiveAmount.text = xchCat
-		}
+    @SuppressLint("SetTextI18n")
+    private fun FragmentTibetLiquidityDetailBinding.initTibetLiquidityDetail(item: TibetLiquidity) {
+        edtData.text = formattedTimeForOrderItem(item.time_created)
+        val status = item.status
+        txtStatus.text = "${getMainActivity().getStringResource(R.string.status_title)}: ${
+            getRequestStatusTranslation(
+                getMainActivity(),
+                status
+            )
+        }"
+        val xchCat = "${formattedDoubleAmountWithPrecision(item.xchAmount)} XCH\n${
+            formattedDoubleAmountWithPrecision(item.catAmount)
+        } ${item.catToken}"
+        val liquid =
+            "${formattedDoubleAmountWithPrecision(item.liquidityAmount)} ${item.liquidityToken}"
+        if (item.addLiquidity) {
+            edtSendAmount.text = xchCat
+            edtReceiveAmount.text = liquid
+        } else {
+            edtSendAmount.text = liquid
+            edtReceiveAmount.text = xchCat
+        }
 
-		edtHashTransaction.text = formatString(7, item.offer_id, 4)
-		edtCommissionNetwork.text = formattedDoubleAmountWithPrecision(item.fee)
-		if (item.height != 0) {
-			edtBlockHeight.text = item.height.toString()
-		}
-		imgCpyHashTransaction.setOnClickListener {
-			requireActivity().copyToClipBoard(item.offer_id)
-		}
-		changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
+        edtHashTransaction.text = formatString(7, item.offer_id, 4)
+        edtCommissionNetwork.text = formattedDoubleAmountWithPrecision(item.fee)
+        if (item.height != 0) {
+            edtBlockHeight.text = item.height.toString()
+        }
+        imgCpyHashTransaction.setOnClickListener {
+            makeViewVisibleAndGone(relCopied)
+            requireActivity().copyToClipBoard(item.offer_id)
+        }
 
-		backLayout.setOnClickListener {
-			getMainActivity().popBackStackOnce()
-		}
+        changeColorTxtStatusRequest(txtStatus, getRequestStatusColor(status, getMainActivity()))
 
-	}
+        backLayout.setOnClickListener {
+            getMainActivity().popBackStackOnce()
+        }
 
-	private fun changeColorTxtStatusRequest(txt: TextView, clr: Int) {
-		val text = txt.text.toString()
-		val pivot = text.indexOf(":")
-		val spannableString = SpannableString(text)
-		val textPart =
-			ForegroundColorSpan(getMainActivity().getColorResource(R.color.txt_status_request))
-		val amountPart = ForegroundColorSpan(clr)
-		spannableString.setSpan(textPart, 0, pivot, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-		spannableString.setSpan(
-			amountPart,
-			pivot + 1,
-			text.length,
-			Spanned.SPAN_INCLUSIVE_INCLUSIVE
-		)
-		txt.text = spannableString
-	}
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		initDetailTibetLiquidity()
-	}
+    private fun changeColorTxtStatusRequest(txt: TextView, clr: Int) {
+        val text = txt.text.toString()
+        val pivot = text.indexOf(":")
+        val spannableString = SpannableString(text)
+        val textPart =
+            ForegroundColorSpan(getMainActivity().getColorResource(R.color.txt_status_request))
+        val amountPart = ForegroundColorSpan(clr)
+        spannableString.setSpan(textPart, 0, pivot, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+        spannableString.setSpan(
+            amountPart,
+            pivot + 1,
+            text.length,
+            Spanned.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        txt.text = spannableString
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initDetailTibetLiquidity()
+    }
 
 }

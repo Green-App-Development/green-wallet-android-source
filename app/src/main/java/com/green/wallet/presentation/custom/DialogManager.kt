@@ -397,6 +397,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 		status: String,
 		statement: String,
 		btnText: String,
+		cancellable:Boolean=true,
 		onClick: () -> Unit
 	) {
 		val dialog = Dialog(activity, R.style.RoundedCornersDialog)
@@ -416,6 +417,7 @@ class DialogManager @Inject constructor(private val newBtnEffectInstance: Animat
 			width,
 			WindowManager.LayoutParams.WRAP_CONTENT
 		)
+		dialog.setCancelable(cancellable)
 		dialog.setCanceledOnTouchOutside(false)
 		dialog.show()
 	}
