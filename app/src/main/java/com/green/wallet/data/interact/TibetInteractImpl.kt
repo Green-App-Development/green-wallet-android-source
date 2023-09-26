@@ -25,7 +25,6 @@ class TibetInteractImpl @Inject constructor(
 ) : TibetInteract {
 
     override suspend fun saveTokensPairID() {
-        return
         try {
             val res = tibetService.getTokensWithPairID()
             jsonHelper.parseJsonTibetTokenAssetIDPairID(res.string()) { assetID, pairID ->
