@@ -79,7 +79,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             firebaseAppDistribution {
-                serviceCredentialsFile="${rootDir}/app/private_wallet.json"
+                serviceCredentialsFile="${rootDir}/app/green_wallet_firebase.json"
                 releaseNotes="Sample release notes"
                 testers="internal-testers"
             }
