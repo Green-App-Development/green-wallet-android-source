@@ -18,6 +18,8 @@ buildscript {
 //		 in the individual module build.gradle files
         classpath 'com.github.triplet.gradle:play-publisher:3.8.0'
 
+        classpath 'com.google.firebase:firebase-appdistribution-gradle:4.0.0'
+
     }
 }
 
