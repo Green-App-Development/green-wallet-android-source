@@ -39,7 +39,7 @@ jobs:
       - name: Load encoded Google Service JSON Firebase App
         run: echo "${{ secrets.FIREBASE_JSON }}" | base64 --decode > $GITHUB_WORKSPACE/app/green_wallet_firebase.json
       - name: Uploading debug build apk to firebase app distrubution
-        run: assembleDebug appDistributionUploadDebug
+        run: ./gradlew assembleDebug appDistributionUploadDebug
       - name: Build with Gradle
         run: ./gradlew publishBundle
       - name: Build with Gradle
