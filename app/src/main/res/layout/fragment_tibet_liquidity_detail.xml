@@ -1,320 +1,343 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
-		android:id="@+id/root"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/primary_app_background">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_app_background">
 
-	<androidx.constraintlayout.widget.Guideline
-			android:id="@+id/guideline50"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			app:layout_constraintGuide_percent="0.03" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.03" />
 
-	<LinearLayout
-			android:id="@+id/back_layout"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="15dp"
-			android:layout_marginTop="4dp"
-			android:clickable="true"
-			android:focusable="true"
-			android:foreground="?android:attr/selectableItemBackground"
-			android:orientation="horizontal"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="@+id/guideline50">
+    <LinearLayout
+        android:id="@+id/back_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline50">
 
-		<ImageView
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_vertical"
-				android:gravity="center_vertical"
-				android:src="@drawable/back_arrow_ic" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:src="@drawable/back_arrow_ic" />
 
-		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_vertical"
-				android:text="@string/back_btn"
-				android:textColor="@color/greey"
-				android:textFontWeight="500"
-				android:textSize="18sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="@string/back_btn"
+            android:textColor="@color/greey"
+            android:textFontWeight="500"
+            android:textSize="18sp" />
 
-	</LinearLayout>
+    </LinearLayout>
 
-	<RelativeLayout
-			android:id="@+id/rel_copy_hash"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toBottomOf="@+id/back_layout">
+    <RelativeLayout
+        android:id="@+id/rel_copy_hash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_layout">
 
-		<TextView
-				android:id="@+id/txtRequestHash"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerVertical="true"
-				android:text="@string/liq_operation"
-				android:textColor="@color/green"
-				android:textFontWeight="600"
-				android:textSize="23sp"
-				app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/txtRequestHash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/liq_operation"
+            android:textColor="@color/green"
+            android:textFontWeight="600"
+            android:textSize="23sp"
+            app:layout_constraintStart_toStartOf="parent" />
 
-		<ImageView
-				android:id="@+id/imgCpyRequestHash"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerVertical="true"
-				android:layout_marginStart="10dp"
-				android:visibility="gone"
-				android:layout_toRightOf="@+id/txtRequestHash"
-				android:src="@drawable/ic_copy_green" />
+        <ImageView
+            android:id="@+id/imgCpyRequestHash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toRightOf="@+id/txtRequestHash"
+            android:src="@drawable/ic_copy_green"
+            android:visibility="gone" />
 
-	</RelativeLayout>
-
-
-	<TextView
-			android:id="@+id/txtStatus"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="3dp"
-			android:text="Статус: Выполнена"
-			android:textColor="@color/hint_color"
-			android:textFontWeight="500"
-			android:textSize="16sp"
-			app:layout_constraintEnd_toEndOf="@+id/rel_copy_hash"
-			app:layout_constraintStart_toStartOf="@+id/rel_copy_hash"
-			app:layout_constraintTop_toBottomOf="@+id/rel_copy_hash" />
-
-	<ScrollView
-			android:id="@+id/scroll_view_properties"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:layout_marginTop="20dp"
-			app:layout_constraintTop_toBottomOf="@+id/txtStatus">
-
-		<androidx.appcompat.widget.LinearLayoutCompat
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:orientation="vertical">
-
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-
-				<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginStart="@dimen/request_property_start"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="@string/date_flow"
-						android:textColor="@color/secondary_text_color" />
-
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/line_divider" />
-
-				<TextView
-						android:id="@+id/edtData"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentEnd="true"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginEnd="@dimen/request_property_start"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="24/03/2023 19:11"
-						android:textColor="@color/secondary_text_color" />
-
-			</RelativeLayout>
+    </RelativeLayout>
 
 
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/txtStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="Статус: Выполнена"
+        android:textColor="@color/hint_color"
+        android:textFontWeight="500"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/rel_copy_hash"
+        app:layout_constraintStart_toStartOf="@+id/rel_copy_hash"
+        app:layout_constraintTop_toBottomOf="@+id/rel_copy_hash" />
 
-				<TextView
-						android:id="@+id/txtSent"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginStart="@dimen/request_property_start"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="@string/sent_flow"
-						android:textColor="@color/secondary_text_color" />
+    <ScrollView
+        android:id="@+id/scroll_view_properties"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/txtStatus">
 
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/line_divider" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-				<TextView
-						android:id="@+id/edtSendAmount"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentEnd="true"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginEnd="@dimen/request_property_start"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:gravity="end"
-						android:text="-"
-						android:textColor="@color/secondary_text_color" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-			</RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/request_property_start"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="@string/date_flow"
+                    android:textColor="@color/secondary_text_color" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/line_divider" />
 
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/edtData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginEnd="@dimen/request_property_start"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="24/03/2023 19:11"
+                    android:textColor="@color/secondary_text_color" />
 
-				<TextView
-						android:id="@+id/txtReceive"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginStart="@dimen/request_property_start"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="@string/received_flow"
-						android:textColor="@color/secondary_text_color" />
-
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/line_divider" />
-
-				<TextView
-						android:id="@+id/edtReceiveAmount"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentEnd="true"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginEnd="@dimen/request_property_start"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:gravity="end"
-						android:text="-"
-						android:textColor="@color/secondary_text_color" />
-
-			</RelativeLayout>
+            </RelativeLayout>
 
 
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-				<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginStart="@dimen/request_property_start"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="@string/hash_trans"
-						android:textColor="@color/secondary_text_color" />
+                <TextView
+                    android:id="@+id/txtSent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/request_property_start"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="@string/sent_flow"
+                    android:textColor="@color/secondary_text_color" />
 
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/line_divider" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/line_divider" />
 
-				<TextView
-						android:id="@+id/edtHashTransaction"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentEnd="true"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginEnd="@dimen/request_property_start"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="-"
-						android:textColor="@color/secondary_text_color" />
+                <TextView
+                    android:id="@+id/edtSendAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginEnd="@dimen/request_property_start"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:gravity="end"
+                    android:text="-"
+                    android:textColor="@color/secondary_text_color" />
 
-				<ImageView
-						android:id="@+id/imgCpyHashTransaction"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_centerVertical="true"
-						android:layout_marginEnd="8dp"
-						android:layout_toStartOf="@+id/edtHashTransaction"
-						android:src="@drawable/ic_copy_green"
-						android:visibility="gone" />
-
-			</RelativeLayout>
-
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-
-				<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginStart="@dimen/request_property_start"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="@string/chia_net_commission"
-						android:textColor="@color/secondary_text_color" />
-
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/line_divider" />
-
-				<TextView
-						android:id="@+id/edtCommissionNetwork"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentEnd="true"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginEnd="@dimen/request_property_start"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="-"
-						android:textColor="@color/secondary_text_color" />
-
-			</RelativeLayout>
-
-			<RelativeLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
-
-				<TextView
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginStart="@dimen/request_property_start"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="Высота"
-						android:textColor="@color/secondary_text_color" />
-
-				<View
-						android:layout_width="match_parent"
-						android:layout_height="1dp"
-						android:layout_alignParentBottom="true"
-						android:background="@color/line_divider" />
-
-				<TextView
-						android:id="@+id/edtBlockHeight"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_alignParentEnd="true"
-						android:layout_marginTop="@dimen/request_property_top"
-						android:layout_marginEnd="@dimen/request_property_start"
-						android:layout_marginBottom="@dimen/request_property_bottom"
-						android:text="-"
-						android:textColor="@color/secondary_text_color" />
-
-			</RelativeLayout>
+            </RelativeLayout>
 
 
-		</androidx.appcompat.widget.LinearLayoutCompat>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-	</ScrollView>
+                <TextView
+                    android:id="@+id/txtReceive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/request_property_start"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="@string/received_flow"
+                    android:textColor="@color/secondary_text_color" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/line_divider" />
+
+                <TextView
+                    android:id="@+id/edtReceiveAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginEnd="@dimen/request_property_start"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:gravity="end"
+                    android:text="-"
+                    android:textColor="@color/secondary_text_color" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/request_property_start"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="@string/hash_trans"
+                    android:textColor="@color/secondary_text_color" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/line_divider" />
+
+                <TextView
+                    android:id="@+id/edtHashTransaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginEnd="@dimen/request_property_start"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="-"
+                    android:textColor="@color/secondary_text_color" />
+
+                <ImageView
+                    android:id="@+id/imgCpyHashTransaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toStartOf="@+id/edtHashTransaction"
+                    android:src="@drawable/ic_copy_green"
+                    android:visibility="gone" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/request_property_start"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="@string/chia_net_commission"
+                    android:textColor="@color/secondary_text_color" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/line_divider" />
+
+                <TextView
+                    android:id="@+id/edtCommissionNetwork"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginEnd="@dimen/request_property_start"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="-"
+                    android:textColor="@color/secondary_text_color" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/request_property_start"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="Высота"
+                    android:textColor="@color/secondary_text_color" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/line_divider" />
+
+                <TextView
+                    android:id="@+id/edtBlockHeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/request_property_top"
+                    android:layout_marginEnd="@dimen/request_property_start"
+                    android:layout_marginBottom="@dimen/request_property_bottom"
+                    android:text="-"
+                    android:textColor="@color/secondary_text_color" />
+
+            </RelativeLayout>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/relCopied"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/copied_bcg"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="15dp"
+            android:text="@string/lable_copied"
+            android:textColor="@color/btn_copy_txt_icon_color"
+            android:textFontWeight="500" />
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

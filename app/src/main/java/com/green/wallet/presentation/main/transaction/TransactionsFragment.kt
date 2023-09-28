@@ -428,7 +428,7 @@ class TransactionsFragment : DaggerFragment(), TransactionItemAdapter.Transactio
 			dateAdapter = DynamicSpinnerAdapter(
 				180,
 				curActivity(),
-				listOf(
+				mutableListOf(
 					getStringResource(R.string.transactions_all),
 					getStringResource(R.string.transactions_today),
 					getStringResource(R.string.transactions_yesterday),

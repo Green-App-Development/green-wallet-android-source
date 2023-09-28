@@ -22,11 +22,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.common.tools.getLiquidityQuote
+import com.example.common.tools.getNumberFromDouble
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTibetswapBinding
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
+import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.custom.convertDpToPixel
 import com.green.wallet.presentation.custom.formattedDollarWithPrecision
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
@@ -52,7 +54,7 @@ import kotlinx.coroutines.launch
 import java.math.BigInteger
 import javax.inject.Inject
 
-class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
+class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATListener {
 
     private lateinit var binding: FragmentTibetswapBinding
 
@@ -79,7 +81,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
     }
 
     val adTibetLiquidity by lazy {
-        DynamicSpinnerAdapter(150, requireActivity(), listOf(""))
+        DynamicSpinnerAdapter(150, requireActivity(), mutableListOf(""))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +113,12 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         initCalculateOutput()
         initSuccessClearingFields()
         vm.initWalletList()
+        vm.retrieveTibetTokenList()
+        vm.retrieveTokenList()
+    }
+
+    override suspend fun collectingFlowsOnStarted() {
+        vm.fiveMinTillGetListOfTokensFromTibet()
     }
 
     private fun initSuccessClearingFields() {
@@ -217,8 +225,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
                                     edtUpdateCourse.setText(
                                         "${
                                             formattedDollarWithPrecision(
-                                                (it.data?.price_impact ?: 0.0)*100,
-                                                2
+                                                (it.data?.price_impact ?: 0.0) * 100, 2
                                             )
                                         }%"
                                     )
@@ -247,7 +254,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
     private fun FragmentTibetswapBinding.calculateCoursePrice(amountOut: Double) {
         val amountIn = edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0
-        val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
+        val tokenCode = vm.tokenList.value?.get(vm.catAdapPosition)?.code
         if (amountIn == 0.0) {
             txtCoursePrice.setText("1 $tokenCode = ∞ XCH")
             return
@@ -256,7 +263,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         val catAmount = if (vm.xchToCAT) amountOut else amountIn
         val oneToken = xchAmount / catAmount
         val format = formattedDoubleAmountWithPrecision(oneToken, 9)
-        if (vm.tokenList.value.isEmpty()) return
+        if (vm.tokenList.value?.isEmpty() == true) return
         txtCoursePrice.setText("1 $tokenCode = $format XCH")
     }
 
@@ -265,23 +272,37 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.tokenList.collectLatest {
-                    if (it.isNotEmpty()) {
-                        VLog.d("On collection based on code : ${it.map { it.code }}")
-                        ad2Swap.updateData(it.map { it.code })
-                        if (vm.xchToCAT) {
-                            binding.changeSwapAdapter(ad1Swap, ad2Swap)
-                            choosingXCHToCAT(true)
+                    it?.let {
+                        if (it.isNotEmpty()) {
+                            VLog.d("On collection based on code : ${it.map { it.code }}")
+                            ad2Swap.updateData(it.map { it.code })
+                            if (vm.xchToCAT) {
+                                binding.changeSwapAdapter(ad1Swap, ad2Swap)
+                                choosingXCHToCAT(true)
+                            } else {
+                                binding.changeSwapAdapter(ad2Swap, ad1Swap)
+                                choosingXCHToCAT(false)
+                            }
+                            adCATLiquidity.updateData(it.map { it.code })
+                            if (vm.catTibetAdapterPosition != -1) binding.tokenTibetCatSpinner.setSelection(
+                                vm.catTibetAdapterPosition
+                            )
+                            if (vm.catLiquidityAdapterPos != -1) binding.tokenTibetSpinner.setSelection(
+                                vm.catLiquidityAdapterPos
+                            )
                         } else {
-                            binding.changeSwapAdapter(ad2Swap, ad1Swap)
-                            choosingXCHToCAT(false)
+                            requireActivity().apply {
+                                dialogManager.showFailureDialog(
+                                    this,
+                                    getStringResource(R.string.service_is_unavailable),
+                                    getStringResource(R.string.failed),
+                                    getStringResource(R.string.ok_button)
+                                ) {
+
+                                }
+                            }
+                            binding.btnGenerateOffer.isEnabled = false
                         }
-                        adCATLiquidity.updateData(it.map { it.code })
-                        if (vm.catTibetAdapterPosition != -1) binding.tokenTibetCatSpinner.setSelection(
-                            vm.catTibetAdapterPosition
-                        )
-                        if (vm.catLiquidityAdapterPos != -1) binding.tokenTibetSpinner.setSelection(
-                            vm.catLiquidityAdapterPos
-                        )
                     }
                 }
             }
@@ -303,8 +324,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
     private fun resetTextAmountFrom() {
         VLog.d("Resetting text amount from : ${binding.edtAmountFrom.text}")
-        if (binding.edtAmountFrom.text.toString().isEmpty())
-            return
+        if (binding.edtAmountFrom.text.toString().isEmpty()) return
         binding.edtAmountFrom.setText(binding.edtAmountFrom.text.toString())
     }
 
@@ -419,8 +439,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
             }
         }
 
-        if (vm.swapInputState.isNotEmpty())
-            edtAmountFrom.setText(vm.swapInputState)
+        if (vm.swapInputState.isNotEmpty()) edtAmountFrom.setText(vm.swapInputState)
 
 
     }
@@ -440,37 +459,26 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
                 edtFromNetwork.text = "CAT2"
                 edtToNetwork.text = "Chia Network"
             }
+            edtAmountFrom.setText("")
         }
         constraintAfterCommaXCHCAT(xchToCat)
     }
 
     private fun constraintAfterCommaXCHCAT(xchToCat: Boolean) {
-        if (!xchToCat) {
-            binding.apply {
-                if (edtAmountFrom.text.toString().isEmpty())
-                    return
-                val formatted = formattedDollarWithPrecision(
-                    edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0, 3
-                )
-                edtAmountFrom.setText(formatted)
-            }
-        }
         val constraint = if (xchToCat) 12 else 3
+        val max = if (xchToCat) 100 else 1_000_000
         val filter = object : InputFilter {
             override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
+                p0: CharSequence?, p1: Int, p2: Int, p3: Spanned?, p4: Int, p5: Int
             ): CharSequence {
                 if (p0 == null) return ""
                 val curText = binding.edtAmountFrom.text.toString()
+                val value = getNumberFromDouble(curText + "$p0")
+                if (value > max)
+                    return ""
                 val locComo = curText.indexOf('.')
                 val cursor = binding.edtAmountFrom.selectionStart
-                if (locComo == -1 || locComo == 0 || cursor <= locComo)
-                    return p0
+                if (locComo == -1 || locComo == 0 || cursor <= locComo) return p0
                 val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
                 if (digitsAfterComo >= constraint) {
                     return ""
@@ -478,6 +486,7 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
                 return p0
             }
         }
+
         binding.edtAmountFrom.filters = arrayOf(filter)
     }
 
@@ -605,19 +614,13 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
 
         val catFilter = object : InputFilter {
             override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
+                p0: CharSequence?, p1: Int, p2: Int, p3: Spanned?, p4: Int, p5: Int
             ): CharSequence {
                 if (p0 == null) return ""
                 val curText = binding.edtAmountCatTibet.text.toString()
                 val locComo = curText.indexOf('.')
                 val cursor = binding.edtAmountCatTibet.selectionStart
-                if (locComo == -1 || locComo == 0 || cursor <= locComo)
-                    return p0
+                if (locComo == -1 || locComo == 0 || cursor <= locComo) return p0
                 val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
                 if (digitsAfterComo >= 3) {
                     return ""
@@ -629,19 +632,13 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         binding.edtAmountCatTibet.filters = arrayOf(catFilter)
         val tibetFilter = object : InputFilter {
             override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
+                p0: CharSequence?, p1: Int, p2: Int, p3: Spanned?, p4: Int, p5: Int
             ): CharSequence {
                 if (p0 == null) return ""
                 val curText = binding.edtAmountLiquidity.text.toString()
                 val locComo = curText.indexOf('.')
                 val cursor = binding.edtAmountLiquidity.selectionStart
-                if (locComo == -1 || locComo == 0 || cursor <= locComo)
-                    return p0
+                if (locComo == -1 || locComo == 0 || cursor <= locComo) return p0
                 val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
                 if (digitsAfterComo >= 3) {
                     return ""
@@ -660,7 +657,8 @@ class TibetSwapFragment : DaggerFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATL
         tibetLiquidityJob = lifecycleScope.launch(CoroutineExceptionHandler { _, throwable ->
 
         }) {
-            val pairID = vm.tokenList.value[vm.catTibetAdapterPosition].pairID
+            val pairID =
+                vm.tokenTibetList.value?.get(vm.catTibetAdapterPosition)?.pairID ?: return@launch
             val res = vm.getTibetLiquidity(pairID)
             if (res != null) {
                 vm.curTibetLiquidity = res

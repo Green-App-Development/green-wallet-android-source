@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SupportInteract
+import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.domain.interact.WalletInteract
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,11 +23,14 @@ class MainViewModel @Inject constructor(
 	private val prefs: PrefsInteract,
 	private val walletInteract: WalletInteract,
 	private val greenAppInteract: GreenAppInteract,
-	private val supportInteract: SupportInteract
+	private val supportInteract: SupportInteract,
+	private val cryptoInteract:CryptocurrencyInteract,
+	private val tibetInteract: TibetInteract
 ) : ViewModel() {
 
 	init {
 		oneTimeRequestEachApplication()
+		requestPerApplication()
 	}
 
 	private var updateCoinDetailsJob: Job? = null
@@ -145,5 +150,25 @@ class MainViewModel @Inject constructor(
 		greenAppInteract.getAllNetworkItemsListFromPrefs()
 	
 	suspend fun getWalletSizeInDB() = walletInteract.getAllWalletList()
+
+	private fun requestPerApplication(){
+		viewModelScope.launch {
+			with(greenAppInteract) {
+				getAvailableNetworkItemsFromRestAndSave()
+				getAvailableLanguageList()
+				getVerifiedDidList()
+				getAgreementsText()
+				updateCoinDetails()
+			}
+			supportInteract.getFAQQuestionAnswers()
+			with(cryptoInteract) {
+				getAllTails()
+				checkingDefaultWalletTails()
+			}
+			with(tibetInteract) {
+				saveTokensPairID()
+			}
+		}
+	}
 
 }

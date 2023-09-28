@@ -133,7 +133,7 @@ class UserNFTTokensFragment : DaggerFragment() {
 			DynamicSpinnerAdapter(
 				150,
 				curActivity(),
-				listOf(curActivity().getStringResource(R.string.all_nfts))
+				mutableListOf(curActivity().getStringResource(R.string.all_nfts))
 			)
 		binding.nftTypeSpinner.adapter = nftAdapter
 

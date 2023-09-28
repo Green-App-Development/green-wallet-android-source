@@ -418,7 +418,7 @@ class SendFragment : DaggerFragment() {
 			tokenWalletList.filter {
 				(it.code == "XCH" || it.asset_id.trim().isNotEmpty() || it.code == "XCC")
 			}
-				.map { it.code }.toList()
+				.map { it.code }.toMutableList()
 		)
 		binding.tokenSpinner.adapter = tokenAdapter
 		binding.icTokenDownward.setOnClickListener {
@@ -607,7 +607,7 @@ class SendFragment : DaggerFragment() {
 				viewModel.getDistinctNetworkTypeValues()
 
 			networkAdapter =
-				DynamicSpinnerAdapter(180, curActivity(), distinctNetworkTypes)
+				DynamicSpinnerAdapter(180, curActivity(), distinctNetworkTypes.toMutableList())
 			binding.networkSpinner.adapter = networkAdapter
 
 			binding.networkSpinner.setSelection(distinctNetworkTypes.indexOf(curNetworkType))

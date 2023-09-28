@@ -942,7 +942,8 @@ class MainActivity : BaseActivity() {
 	}
 
 	fun move2BtmChooseWalletDialog() {
-		if (navController.currentDestination?.id == btmSheetDialogChooseWallet)
+		val onTop=navController.currentDestination?.id
+		if (onTop==btmSheetDialogChooseWallet || onTop== btmSheetDialogCreateLiquidityOffer || onTop== btmSheetDialogChooseWallet)
 			return
 		navController.navigate(btmSheetDialogChooseWallet)
 	}

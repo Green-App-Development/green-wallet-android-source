@@ -17,6 +17,7 @@ import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getStringResource
+import kotlinx.android.synthetic.main.fragment_exchange.container
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,6 +59,7 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.walletList.collectLatest { walletList ->
                     walletList?.let {
+                        containerWallet.removeAllViews()
                         for (i in 0 until walletList.size) {
                             val bindingWallet = ItemWalletBtmChooseBinding.inflate(layoutInflater)
                             val wallet = walletList[i]

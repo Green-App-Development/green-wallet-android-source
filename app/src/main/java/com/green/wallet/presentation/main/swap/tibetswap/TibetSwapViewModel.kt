@@ -24,12 +24,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import javax.inject.Inject
 
 class TibetSwapViewModel @Inject constructor(
@@ -65,7 +67,7 @@ class TibetSwapViewModel @Inject constructor(
     var availableXCHAmount: Double = 0.0
     var catEnough = false
 
-    private val _tokenList = MutableStateFlow<List<Token>>(emptyList())
+    private val _tokenList = MutableStateFlow<List<Token>?>(null)
     val tokenList = _tokenList.asStateFlow()
 
     private val _tokenTibetList = MutableStateFlow<List<Token>?>(null)
@@ -95,8 +97,6 @@ class TibetSwapViewModel @Inject constructor(
 
     init {
         VLog.d("On create tibet vm swap : $this")
-        retrieveTokenList()
-        retrieveTibetTokenList()
     }
 
     fun getContainerBiggerSize(): Int {
@@ -111,7 +111,7 @@ class TibetSwapViewModel @Inject constructor(
         return if (nextContainerBigger) getContainerBiggerSize() else getContainerSmallerSize()
     }
 
-    private fun retrieveTibetTokenList() {
+    fun retrieveTibetTokenList() {
         viewModelScope.launch {
             val res = tokenInteract.getTibetTokenList()
             val newList = mutableListOf<Token>()
@@ -147,7 +147,11 @@ class TibetSwapViewModel @Inject constructor(
         val debouncedFlow = userSwapInputChannel.receiveAsFlow().debounce(INPUT_DEBOUNCE_VALUE)
         swapMainScope?.launch(handler) {
             debouncedFlow.collectLatest { input ->
-                calculateAmountOut(input, _tokenList.value[catAdapPosition].pairID, xchToCAT)
+                calculateAmountOut(
+                    input,
+                    _tokenList.value?.get(catAdapPosition)?.pairID ?: "",
+                    xchToCAT
+                )
             }
         }
     }
@@ -173,7 +177,7 @@ class TibetSwapViewModel @Inject constructor(
             address = address
         )
 
-    private fun retrieveTokenList() {
+    fun retrieveTokenList() {
         viewModelScope.launch {
             val res = tokenInteract.getTokenListPairIDExist()
             val newList = mutableListOf<Token>()
@@ -294,5 +298,11 @@ class TibetSwapViewModel @Inject constructor(
     suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
         spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
 
+    suspend fun fiveMinTillGetListOfTokensFromTibet() {
+        while (tokenList.value == null || tokenList.value?.isEmpty() == true) {
+            tibetInteract.saveTokensPairID()
+            delay(5000L)
+        }
+    }
 
 }

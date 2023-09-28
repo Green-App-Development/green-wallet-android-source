@@ -9,6 +9,7 @@ plugins {
     // Add the Crashlytics Gradle plugin
     id 'com.google.firebase.crashlytics'
     id 'com.github.triplet.play'
+    id 'com.google.firebase.appdistribution'
 }
 
 
@@ -29,8 +30,8 @@ android {
         applicationId "com.green.wallet"
         minSdk 26
         targetSdk 33
-        versionCode 21 //for Google Play
-        versionName "0.0.88"
+        versionCode 24 //for Google Play
+        versionName "0.0.92"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -76,6 +77,13 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            firebaseAppDistribution {
+                serviceCredentialsFile="${rootDir}/app/green_wallet_firebase.json"
+                releaseNotes="Sample release notes"
+                testers="internal-testers"
+            }
+
         }
 
     }
@@ -243,5 +251,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
     implementation "androidx.room:room-paging:$room_version"
 
+    debugImplementation("com.readystatesoftware.chuck:library:1.1.0")
+    releaseImplementation("com.readystatesoftware.chuck:library-no-op:1.1.0")
 
 }

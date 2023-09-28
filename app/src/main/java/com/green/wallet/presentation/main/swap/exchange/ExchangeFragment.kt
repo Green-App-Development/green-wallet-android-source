@@ -130,7 +130,7 @@ class ExchangeFragment : DaggerFragment() {
                     it?.let {
                         if (it.isNotEmpty()) {
                             val list = it.map { "Chia ${it.fingerPrint}" }
-                            val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list)
+                            val adapter = DynamicSpinnerAdapter(170, getMainActivity(), list.toMutableList())
                             binding.walletSpinner.apply {
                                 this.adapter = adapter
                                 onItemSelectedListener = object : OnItemSelectedListener {
@@ -589,7 +589,8 @@ class ExchangeFragment : DaggerFragment() {
                                             getMainActivity(),
                                             getStringResource(R.string.complete_exchange),
                                             getStringResource(R.string.complete_exchange_txt),
-                                            getStringResource(R.string.my_orders)
+                                            getStringResource(R.string.my_orders),
+                                            cancellable = false
                                         ) {
                                             swapMainSharedVM.move2RequestHistory()
                                         }

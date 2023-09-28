@@ -151,17 +151,17 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 			clickedPositionsFee(2)
 		}
 
-		if (vm.catAdapPosition >= vm.tokenList.value.size || vm.catAdapPosition == -1)
+		if (vm.catAdapPosition >= vm.tokenList.value!!.size || vm.catAdapPosition == -1)
 			dismiss()
 
-		val tokenCode = vm.tokenList.value[vm.catAdapPosition].code
-		val assetID = vm.tokenList.value[vm.catAdapPosition].hash
+		val tokenCode = vm.tokenList.value!![vm.catAdapPosition].code
+		val assetID = vm.tokenList.value!![vm.catAdapPosition].hash
 		txtCAT.text = tokenCode
 		txtWalletAddress.text = formatString(10, vm.curWallet?.address ?: "", 6)
 		var amountFrom = vm.tibetSwap.value?.data?.amount_in ?: 0L
 		var amountTo = vm.tibetSwap.value?.data?.amount_out ?: 0L
 		val assetId = vm.tibetSwap.value?.data?.asset_id ?: ""
-		val pairId = vm.tokenList.value[vm.catAdapPosition].pairID
+		val pairId = vm.tokenList.value!![vm.catAdapPosition].pairID
 		val donationAmount: Double
 
 		val devFee =
@@ -530,10 +530,10 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 				layouts[i].visibility = View.VISIBLE
 			} else {
 				layouts[i].visibility = View.INVISIBLE
-			}
-			requireActivity().apply {
-				txtViews[i][0].setTextColor(getColorResource(R.color.greey))
-				txtViews[i][1].setTextColor(getColorResource(R.color.greey))
+				requireActivity().apply {
+					txtViews[i][0].setTextColor(getColorResource(R.color.greey))
+					txtViews[i][1].setTextColor(getColorResource(R.color.greey))
+				}
 			}
 		}
 		val curFee = getFeeBasedOnPosition()
@@ -542,8 +542,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 			binding.btnSign.isEnabled = enoughAmountFee
 			if (enoughAmountFee) {
 				requireActivity().apply {
-					txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
-					txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+					txtViews[pos][0].setTextColor(getColorResource(R.color.green))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.white))
 				}
 			} else {
 				requireActivity().apply {
@@ -556,8 +556,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
 			binding.btnSign.isEnabled = enoughXCH && vm.catEnough
 			if (enoughXCH) {
 				requireActivity().apply {
-					txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
-					txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+					txtViews[pos][0].setTextColor(getColorResource(R.color.green))
+					txtViews[pos][1].setTextColor(getColorResource(R.color.white))
 				}
 			} else {
 				requireActivity().apply {

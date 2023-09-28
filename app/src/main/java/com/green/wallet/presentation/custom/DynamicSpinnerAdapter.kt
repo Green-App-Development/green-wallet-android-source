@@ -19,13 +19,15 @@ import com.green.wallet.presentation.tools.pxToDp
 class DynamicSpinnerAdapter(
 	private val widthDp: Int,
 	private val context: Context,
-	var dataOptions: List<String>
+	var dataOptions: MutableList<String>
 ) : BaseAdapter() {
 
 	var selectedPosition: Int = 0
 
+
 	fun updateData(list: List<String>) {
-		dataOptions = list
+		dataOptions.clear()
+		dataOptions.addAll(list)
 		notifyDataSetChanged()
 	}
 
