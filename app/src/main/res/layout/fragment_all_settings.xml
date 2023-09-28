@@ -5,6 +5,7 @@
 		android:id="@+id/root_all_settings"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+	    android:splitMotionEvents="false"
 		android:background="@color/cardView_background">
 
 	<LinearLayout

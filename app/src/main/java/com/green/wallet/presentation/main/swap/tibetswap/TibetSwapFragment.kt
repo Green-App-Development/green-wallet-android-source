@@ -225,8 +225,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                                     edtUpdateCourse.setText(
                                         "${
                                             formattedDollarWithPrecision(
-                                                (it.data?.price_impact ?: 0.0) * 100,
-                                                2
+                                                (it.data?.price_impact ?: 0.0) * 100, 2
                                             )
                                         }%"
                                     )
@@ -325,8 +324,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
     private fun resetTextAmountFrom() {
         VLog.d("Resetting text amount from : ${binding.edtAmountFrom.text}")
-        if (binding.edtAmountFrom.text.toString().isEmpty())
-            return
+        if (binding.edtAmountFrom.text.toString().isEmpty()) return
         binding.edtAmountFrom.setText(binding.edtAmountFrom.text.toString())
     }
 
@@ -441,8 +439,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
             }
         }
 
-        if (vm.swapInputState.isNotEmpty())
-            edtAmountFrom.setText(vm.swapInputState)
+        if (vm.swapInputState.isNotEmpty()) edtAmountFrom.setText(vm.swapInputState)
 
 
     }
@@ -462,37 +459,26 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 edtFromNetwork.text = "CAT2"
                 edtToNetwork.text = "Chia Network"
             }
+            edtAmountFrom.setText("")
         }
         constraintAfterCommaXCHCAT(xchToCat)
     }
 
     private fun constraintAfterCommaXCHCAT(xchToCat: Boolean) {
-        if (!xchToCat) {
-            binding.apply {
-                if (edtAmountFrom.text.toString().isEmpty())
-                    return
-                val formatted = formattedDollarWithPrecision(
-                    edtAmountFrom.text.toString().toDoubleOrNull() ?: 0.0, 3
-                )
-                edtAmountFrom.setText(formatted)
-            }
-        }
         val constraint = if (xchToCat) 12 else 3
+        val max = if (xchToCat) 100 else 1_000_000
         val filter = object : InputFilter {
             override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
+                p0: CharSequence?, p1: Int, p2: Int, p3: Spanned?, p4: Int, p5: Int
             ): CharSequence {
                 if (p0 == null) return ""
                 val curText = binding.edtAmountFrom.text.toString()
+                val value = getNumberFromDouble(curText + "$p0")
+                if (value > max)
+                    return ""
                 val locComo = curText.indexOf('.')
                 val cursor = binding.edtAmountFrom.selectionStart
-                if (locComo == -1 || locComo == 0 || cursor <= locComo)
-                    return p0
+                if (locComo == -1 || locComo == 0 || cursor <= locComo) return p0
                 val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
                 if (digitsAfterComo >= constraint) {
                     return ""
@@ -500,6 +486,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 return p0
             }
         }
+
         binding.edtAmountFrom.filters = arrayOf(filter)
     }
 
@@ -627,19 +614,13 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
         val catFilter = object : InputFilter {
             override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
+                p0: CharSequence?, p1: Int, p2: Int, p3: Spanned?, p4: Int, p5: Int
             ): CharSequence {
                 if (p0 == null) return ""
                 val curText = binding.edtAmountCatTibet.text.toString()
                 val locComo = curText.indexOf('.')
                 val cursor = binding.edtAmountCatTibet.selectionStart
-                if (locComo == -1 || locComo == 0 || cursor <= locComo)
-                    return p0
+                if (locComo == -1 || locComo == 0 || cursor <= locComo) return p0
                 val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
                 if (digitsAfterComo >= 3) {
                     return ""
@@ -651,19 +632,13 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         binding.edtAmountCatTibet.filters = arrayOf(catFilter)
         val tibetFilter = object : InputFilter {
             override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
+                p0: CharSequence?, p1: Int, p2: Int, p3: Spanned?, p4: Int, p5: Int
             ): CharSequence {
                 if (p0 == null) return ""
                 val curText = binding.edtAmountLiquidity.text.toString()
                 val locComo = curText.indexOf('.')
                 val cursor = binding.edtAmountLiquidity.selectionStart
-                if (locComo == -1 || locComo == 0 || cursor <= locComo)
-                    return p0
+                if (locComo == -1 || locComo == 0 || cursor <= locComo) return p0
                 val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
                 if (digitsAfterComo >= 3) {
                     return ""

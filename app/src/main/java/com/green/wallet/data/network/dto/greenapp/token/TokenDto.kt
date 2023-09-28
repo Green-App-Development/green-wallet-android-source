@@ -4,20 +4,30 @@ import com.green.wallet.data.local.entity.TokenEntity
 
 
 data class TokenDto(
-	val name: String,
-	val code: String,
-	val hash: String,
-	val logo_url: String?,
-	val default_tail: Int,
-	val price: String?
+    val name: String,
+    val code: String,
+    val hash: String,
+    val logo_url: String?,
+    val default_tail: Int,
+    val price: String?
 ) {
-	fun toTokenEntity() = TokenEntity(
-		code,
-		name,
-		hash,
-		logo_url ?: "",
-		default_tail = default_tail,
-		enabled = true,
-		price = price?.toDoubleOrNull() ?: 0.0
-	)
+    fun toTokenEntity() = TokenEntity(
+        code,
+        name,
+        hash,
+        logo_url ?: "",
+        default_tail = default_tail,
+        enabled = true,
+        price = price?.toDoubleOrNull() ?: 0.0
+    )
+
+    override fun equals(other: Any?): Boolean {
+        val otherObj = other as? TokenDto
+        return otherObj?.hash == this.hash
+    }
+
+    override fun hashCode(): Int {
+        return this.hash.hashCode()
+    }
+
 }
