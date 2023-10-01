@@ -100,7 +100,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         VLog.d("On View Created on tibet swap fragment")
-        chooseWalletIfNeeded()
+        
         with(binding) {
             commonListeners()
             prepareRelChosen()
@@ -141,10 +141,18 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
     private fun FragmentTibetswapBinding.commonListeners() {
         btnGenerateOffer.setOnClickListener {
-            if (vm.isShowingSwap) {
-                getMainActivity().move2BtmCreateOfferXCHCATDialog()
-            } else {
-                getMainActivity().move2BtmCreateOfferLiquidityDialog()
+            val list = vm.walletList.value
+            if (list?.isNotEmpty() == true) {
+                if (list.size == 1) {
+                    vm.curWallet = list[0]
+                    if (vm.isShowingSwap) {
+                        getMainActivity().move2BtmCreateOfferXCHCATDialog()
+                    } else {
+                        getMainActivity().move2BtmCreateOfferLiquidityDialog()
+                    }
+                } else {
+                    getMainActivity().move2BtmChooseWalletDialog()
+                }
             }
         }
     }
@@ -168,37 +176,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                                 }
                             }
                             binding.btnGenerateOffer.isEnabled = false
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    private fun chooseWalletIfNeeded() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.walletList.collectLatest {
-                    it?.let {
-                        if (it.isNotEmpty()) {
-                            if (it.size == 1) {
-                                vm.curWallet = it[0]
-                            } else {
-                                getMainActivity().move2BtmChooseWalletDialog()
-                            }
-                        } else {
-                            getMainActivity().apply {
-                                dialogManager.showFailureDialog(
-                                    this,
-                                    status = getStringResource(R.string.pop_up_failed_create_a_mnemonic_phrase_title),
-                                    description = getStringResource(R.string.exchange_fail),
-                                    action = getStringResource(R.string.network_description_btn),
-                                    false
-                                ) {
-                                    getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
-                                }
-                            }
                         }
                     }
                 }
