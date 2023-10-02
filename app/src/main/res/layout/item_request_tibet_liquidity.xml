@@ -1,150 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:background="@color/primary_app_background">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/primary_app_background">
 
-	<androidx.constraintlayout.widget.ConstraintLayout
-			android:layout_width="match_parent"
-			android:layout_height="110dp"
-			android:layout_marginStart="10dp"
-			android:layout_marginTop="4dp"
-			android:layout_marginEnd="10dp"
-			android:layout_marginBottom="12dp"
-			android:background="@drawable/bcg_request_item"
-			android:paddingStart="12dp"
-			android:paddingEnd="12dp"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bcg_request_item"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-		<TextView
-				android:id="@+id/txtRequestHash"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="6dp"
-				android:text="Create Offer"
-				android:textColor="@color/txt_request_id"
-				android:textFontWeight="500"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/txtRequestHash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Create Offer"
+            android:textColor="@color/txt_request_id"
+            android:textFontWeight="500"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-		<TextView
-				android:id="@+id/txtStatusRequest"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginTop="6dp"
-				android:text=" выполнена"
-				android:textColor="@color/green"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/txtStatusRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text=" выполнена"
+            android:textColor="@color/green"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-		<ImageView
-				android:id="@+id/img_dot"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_vertical"
-				android:layout_marginTop="2dp"
-				android:layout_marginEnd="8dp"
-				android:src="@drawable/ic_dot_green"
-				app:layout_constraintBottom_toBottomOf="@id/txtStatusRequest"
-				app:layout_constraintEnd_toStartOf="@+id/txtStatusRequest"
-				app:layout_constraintTop_toTopOf="@+id/txtStatusRequest" />
-
-
-		<TextView
-				android:id="@+id/txtDate"
-				android:layout_width="wrap_content"
-				android:layout_height="20dp"
-				android:layout_marginTop="4dp"
-				android:text="24/03/2023 19:11"
-				android:textColor="@color/sorting_txt_category"
-				android:textFontWeight="500"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/txtStatusRequest" />
-
-		<TextView
-				android:id="@+id/txtSendAmount"
-				android:layout_width="0dp"
-				android:layout_height="20dp"
-				android:layout_marginTop="4dp"
-				android:autoSizeMaxTextSize="20sp"
-				android:autoSizeMinTextSize="5sp"
-				android:autoSizeTextType="uniform"
-				android:maxLines="1"
-				android:singleLine="true"
-				android:text="Отправлено:"
-				android:textColor="@color/sorting_txt_category"
-				android:textFontWeight="400"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/txtRequestHash" />
-
-		<TextView
-				android:id="@+id/txtSendAmountValue"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="5dp"
-				android:autoSizeTextType="uniform"
-				android:text="-"
-				android:textColor="@color/sorting_txt_category"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				app:layout_constraintStart_toEndOf="@id/txtSendAmount"
-				app:layout_constraintTop_toTopOf="@+id/txtSendAmount" />
+        <ImageView
+            android:id="@+id/img_dot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_dot_green"
+            app:layout_constraintBottom_toBottomOf="@id/txtStatusRequest"
+            app:layout_constraintEnd_toStartOf="@+id/txtStatusRequest"
+            app:layout_constraintTop_toTopOf="@+id/txtStatusRequest" />
 
 
-		<ImageView
-				android:id="@+id/imgArrowRight"
-				android:layout_width="20dp"
-				android:layout_height="20dp"
-				android:layout_marginBottom="8dp"
-				android:rotation="-90"
-				android:src="@drawable/ic_arrow_downword"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:text="24/03/2023 19:11"
+            android:textColor="@color/sorting_txt_category"
+            android:textFontWeight="500"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtStatusRequest" />
 
-		<TextView
-				android:id="@+id/txtDetailRequest"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginEnd="3dp"
-				android:text="@string/see_more_flow"
-				android:textColor="@color/secondary_text_color"
-				android:textSize="14sp"
-				app:layout_constraintBottom_toBottomOf="@id/imgArrowRight"
-				app:layout_constraintEnd_toStartOf="@+id/imgArrowRight"
-				app:layout_constraintTop_toTopOf="@+id/imgArrowRight" />
+        <TextView
+            android:id="@+id/txtSendAmount"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="5sp"
+            android:autoSizeTextType="uniform"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Отправлено:"
+            android:textColor="@color/sorting_txt_category"
+            android:textFontWeight="400"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtRequestHash" />
 
-		<TextView
-				android:id="@+id/txtReceiveAmount"
-				android:layout_width="0dp"
-				android:layout_height="20dp"
-				android:layout_marginTop="4dp"
-				android:autoSizeMaxTextSize="20sp"
-				android:autoSizeMinTextSize="5sp"
-				android:autoSizeTextType="uniform"
-				android:singleLine="true"
-				android:text="Получено:"
-				android:textColor="@color/sorting_txt_category"
-				android:textFontWeight="400"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toBottomOf="@+id/txtSendAmountValue" />
+        <TextView
+            android:id="@+id/txtSendAmountValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:autoSizeTextType="uniform"
+            android:text="-"
+            android:textColor="@color/sorting_txt_category"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/txtSendAmount"
+            app:layout_constraintTop_toTopOf="@+id/txtSendAmount" />
 
-		<TextView
-				android:id="@+id/txtReceiveAmountValue"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="5dp"
-				android:text="-"
-				android:textColor="@color/sorting_txt_category"
-				android:textFontWeight="400"
-				android:textSize="14sp"
-				app:layout_constraintStart_toEndOf="@id/txtReceiveAmount"
-				app:layout_constraintTop_toTopOf="@+id/txtReceiveAmount" />
 
-	</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imgArrowRight"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="8dp"
+            android:rotation="-90"
+            android:src="@drawable/ic_arrow_downword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/txtDetailRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="@string/see_more_flow"
+            android:textColor="@color/secondary_text_color"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/imgArrowRight"
+            app:layout_constraintEnd_toStartOf="@+id/imgArrowRight"
+            app:layout_constraintTop_toTopOf="@+id/imgArrowRight" />
+
+        <TextView
+            android:id="@+id/txtReceiveAmount"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
+            android:autoSizeMaxTextSize="20sp"
+            android:autoSizeMinTextSize="5sp"
+            android:autoSizeTextType="uniform"
+            android:singleLine="true"
+            android:text="Получено:"
+            android:textColor="@color/sorting_txt_category"
+            android:textFontWeight="400"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtSendAmountValue" />
+
+        <TextView
+            android:id="@+id/txtReceiveAmountValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="-"
+            android:textColor="@color/sorting_txt_category"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@id/txtReceiveAmount"
+            app:layout_constraintTop_toTopOf="@+id/txtReceiveAmount" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -531,8 +531,8 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
             } else {
                 layouts[i].visibility = View.INVISIBLE
                 requireActivity().apply {
-                    txtViews[i][0].setTextColor(getColorResource(R.color.greey))
-                    txtViews[i][1].setTextColor(getColorResource(R.color.greey))
+                    txtViews[i][0].setTextColor(getColorResource(R.color.ic_filter_edge))
+                    txtViews[i][1].setTextColor(getColorResource(R.color.ic_filter_edge))
                 }
             }
         }
@@ -543,7 +543,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
             if (enoughAmountFee) {
                 requireActivity().apply {
                     txtViews[pos][0].setTextColor(getColorResource(R.color.green))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.white))
+                    txtViews[pos][1].setTextColor(getColorResource(R.color.secondary_text_color))
                 }
             } else {
                 requireActivity().apply {
@@ -557,7 +557,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
             if (enoughXCH) {
                 requireActivity().apply {
                     txtViews[pos][0].setTextColor(getColorResource(R.color.green))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.white))
+                    txtViews[pos][1].setTextColor(getColorResource(R.color.secondary_text_color))
                 }
             } else {
                 requireActivity().apply {

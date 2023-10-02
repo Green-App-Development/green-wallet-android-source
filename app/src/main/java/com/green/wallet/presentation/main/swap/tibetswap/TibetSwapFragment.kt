@@ -100,7 +100,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         VLog.d("On View Created on tibet swap fragment")
-        
         with(binding) {
             commonListeners()
             prepareRelChosen()
@@ -736,7 +735,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
             if (prevRunning) return@setOnClickListener
             vm.isShowingSwap = true
             txtSwap.setTextColor(requireActivity().getColorResource(R.color.green))
-            txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.greey))
+            txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.ic_filter_edge))
             scrollLiquidity.visibility = View.GONE
             scrollSwap.visibility = View.VISIBLE
         }
@@ -746,7 +745,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
             val prevRunning = animManager.moveViewToRightByWidth(relChosen, width)
             if (prevRunning) return@setOnClickListener
             vm.isShowingSwap = false
-            txtSwap.setTextColor(requireActivity().getColorResource(R.color.greey))
+            txtSwap.setTextColor(requireActivity().getColorResource(R.color.ic_filter_edge))
             txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.green))
             scrollLiquidity.visibility = View.VISIBLE
             scrollSwap.visibility = View.GONE
