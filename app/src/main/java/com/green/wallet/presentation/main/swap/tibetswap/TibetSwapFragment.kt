@@ -25,6 +25,7 @@ import com.example.common.tools.getLiquidityQuote
 import com.example.common.tools.getNumberFromDouble
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTibetswapBinding
+import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
@@ -114,6 +115,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         vm.initWalletList()
         vm.retrieveTibetTokenList()
         vm.retrieveTokenList()
+
     }
 
     override suspend fun collectingFlowsOnStarted() {
@@ -819,6 +821,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         super.onDestroyView()
         VLog.d("On Destroy view for Tibet swap fragment")
         vm.swapMainScope?.cancel()
+        (requireActivity().application as App).updateBalanceEachPeriodically()
     }
 
     override fun onSuccessClearFields() {

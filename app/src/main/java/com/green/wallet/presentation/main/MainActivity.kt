@@ -178,7 +178,9 @@ class MainActivity : BaseActivity() {
                 entPasscodeFrMain,
                 fragmentSendNFT,
                 fragmentSwapSend,
-                fragmentSwapMain
+                fragmentSwapMain,
+                btmSheetDialogCreateLiquidityOffer,
+                btmSheetDialogCreateOfferXCHCAT
             )
             if (shouldStopUpdateBalance.contains(dest.id)) {
                 VLog.d("ShouldStopUpdateBalance destination on MainActivity")
