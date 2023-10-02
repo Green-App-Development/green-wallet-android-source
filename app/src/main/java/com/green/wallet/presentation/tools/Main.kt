@@ -8,6 +8,7 @@ class Main {}
 fun main() {
 
 
+
 }
 
 fun countVisitedNodes(edges: List<Int>): IntArray {
