@@ -71,8 +71,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/options_container">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnGenerateOffer"
+        app:layout_constraintTop_toBottomOf="@+id/options_container"
+        tools:layout_editor_absoluteX="10dp">
 
         <ScrollView
             android:id="@+id/scroll_swap"
