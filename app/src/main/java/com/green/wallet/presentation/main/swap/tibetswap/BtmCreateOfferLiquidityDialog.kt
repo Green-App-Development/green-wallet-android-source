@@ -532,8 +532,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                 layouts[i].visibility = View.INVISIBLE
             }
             requireActivity().apply {
-                txtViews[i][0].setTextColor(getColorResource(R.color.greey))
-                txtViews[i][1].setTextColor(getColorResource(R.color.greey))
+                txtViews[i][0].setTextColor(getColorResource(R.color.ic_filter_edge))
+                txtViews[i][1].setTextColor(getColorResource(R.color.ic_filter_edge))
             }
         }
         val curFee = getFeeBasedOnPosition()
@@ -542,8 +542,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
             binding.btnSign.isEnabled = enoughXCH && vm.catEnough
             if (enoughXCH) {
                 requireActivity().apply {
-                    txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+                    txtViews[pos][0].setTextColor(getColorResource(R.color.green))
+                    txtViews[pos][1].setTextColor(getColorResource(R.color.secondary_text_color))
                 }
             } else {
                 requireActivity().apply {
@@ -556,8 +556,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
             binding.btnSign.isEnabled = enoughXCH && vm.catEnough
             if (enoughXCH) {
                 requireActivity().apply {
-                    txtViews[pos][0].setTextColor(getColorResource(R.color.greey))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.greey))
+                    txtViews[pos][0].setTextColor(getColorResource(R.color.green))
+                    txtViews[pos][1].setTextColor(getColorResource(R.color.secondary_text_color))
                 }
             } else {
                 requireActivity().apply {

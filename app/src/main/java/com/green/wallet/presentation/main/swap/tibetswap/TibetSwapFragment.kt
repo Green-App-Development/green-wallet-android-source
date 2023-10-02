@@ -25,6 +25,7 @@ import com.example.common.tools.getLiquidityQuote
 import com.example.common.tools.getNumberFromDouble
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentTibetswapBinding
+import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.DynamicSpinnerAdapter
@@ -100,7 +101,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         VLog.d("On View Created on tibet swap fragment")
-        chooseWalletIfNeeded()
         with(binding) {
             commonListeners()
             prepareRelChosen()
@@ -115,6 +115,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         vm.initWalletList()
         vm.retrieveTibetTokenList()
         vm.retrieveTokenList()
+
     }
 
     override suspend fun collectingFlowsOnStarted() {
@@ -141,10 +142,18 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
     private fun FragmentTibetswapBinding.commonListeners() {
         btnGenerateOffer.setOnClickListener {
-            if (vm.isShowingSwap) {
-                getMainActivity().move2BtmCreateOfferXCHCATDialog()
-            } else {
-                getMainActivity().move2BtmCreateOfferLiquidityDialog()
+            val list = vm.walletList.value
+            if (list?.isNotEmpty() == true) {
+                if (list.size == 1) {
+                    vm.curWallet = list[0]
+                    if (vm.isShowingSwap) {
+                        getMainActivity().move2BtmCreateOfferXCHCATDialog()
+                    } else {
+                        getMainActivity().move2BtmCreateOfferLiquidityDialog()
+                    }
+                } else {
+                    getMainActivity().move2BtmChooseWalletDialog()
+                }
             }
         }
     }
@@ -168,37 +177,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                                 }
                             }
                             binding.btnGenerateOffer.isEnabled = false
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    private fun chooseWalletIfNeeded() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.walletList.collectLatest {
-                    it?.let {
-                        if (it.isNotEmpty()) {
-                            if (it.size == 1) {
-                                vm.curWallet = it[0]
-                            } else {
-                                getMainActivity().move2BtmChooseWalletDialog()
-                            }
-                        } else {
-                            getMainActivity().apply {
-                                dialogManager.showFailureDialog(
-                                    this,
-                                    status = getStringResource(R.string.pop_up_failed_create_a_mnemonic_phrase_title),
-                                    description = getStringResource(R.string.exchange_fail),
-                                    action = getStringResource(R.string.network_description_btn),
-                                    false
-                                ) {
-                                    getMainActivity().showBtmDialogCreateOrImportNewWallet(false)
-                                }
-                            }
                         }
                     }
                 }
@@ -759,7 +737,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
             if (prevRunning) return@setOnClickListener
             vm.isShowingSwap = true
             txtSwap.setTextColor(requireActivity().getColorResource(R.color.green))
-            txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.greey))
+            txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.ic_filter_edge))
             scrollLiquidity.visibility = View.GONE
             scrollSwap.visibility = View.VISIBLE
         }
@@ -769,7 +747,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
             val prevRunning = animManager.moveViewToRightByWidth(relChosen, width)
             if (prevRunning) return@setOnClickListener
             vm.isShowingSwap = false
-            txtSwap.setTextColor(requireActivity().getColorResource(R.color.greey))
+            txtSwap.setTextColor(requireActivity().getColorResource(R.color.ic_filter_edge))
             txtLiquidity.setTextColor(requireActivity().getColorResource(R.color.green))
             scrollLiquidity.visibility = View.VISIBLE
             scrollSwap.visibility = View.GONE
@@ -843,6 +821,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         super.onDestroyView()
         VLog.d("On Destroy view for Tibet swap fragment")
         vm.swapMainScope?.cancel()
+        (requireActivity().application as App).updateBalanceEachPeriodically()
     }
 
     override fun onSuccessClearFields() {

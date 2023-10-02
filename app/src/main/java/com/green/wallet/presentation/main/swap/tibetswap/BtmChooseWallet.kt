@@ -16,6 +16,7 @@ import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.hidePublicKey
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import kotlinx.android.synthetic.main.fragment_exchange.container
 import kotlinx.coroutines.flow.collectLatest
@@ -49,8 +50,8 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.initFingerPrints()
         VLog.d("On View Created ChooseWallet with vm : $vm")
-        dialog?.setCanceledOnTouchOutside(false)
-        dialog?.setCancelable(false)
+        dialog?.setCanceledOnTouchOutside(true)
+        dialog?.setCancelable(true)
     }
 
     private fun DialogBtmChooseWalletBinding.initFingerPrints() {
@@ -72,7 +73,11 @@ class BtmChooseWallet : BottomSheetDialogFragment() {
                                     }"
                                 root.setOnClickListener {
                                     vm.curWallet = wallet
-                                    dismiss()
+                                    if (vm.isShowingSwap) {
+                                        getMainActivity().move2BtmCreateOfferXCHCATDialog()
+                                    } else {
+                                        getMainActivity().move2BtmCreateOfferLiquidityDialog()
+                                    }
                                 }
                                 if (i == walletList.size - 1)
                                     viewDivider.visibility = View.GONE

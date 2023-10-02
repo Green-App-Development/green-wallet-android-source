@@ -86,6 +86,22 @@ class OrderDetailFragment : DaggerFragment() {
             getMainActivity().popBackStackOnce()
         }
 
+        refresh.apply {
+            setOnRefreshListener {
+                if (connectionLiveData.isOnline) {
+                    vm.updateOrdersStatus {
+                        isRefreshing = false
+                    }
+                } else {
+                    isRefreshing = false
+                    dialogMan.showNoInternetTimeOutExceptionDialog(requireActivity()) {
+
+                    }
+                }
+            }
+            setColorSchemeResources(R.color.green)
+        }
+
     }
 
 
@@ -192,22 +208,6 @@ class OrderDetailFragment : DaggerFragment() {
 
                     initClickListeners(orderItem)
 
-                    refresh.apply {
-                        setOnRefreshListener {
-                            VLog.d("Is Online ${connectionLiveData.isOnline}")
-                            if (connectionLiveData.isOnline) {
-                                vm.updateOrdersStatus {
-                                    isRefreshing = false
-                                }
-                            } else {
-                                isRefreshing = false
-                                dialogMan.showNoInternetTimeOutExceptionDialog(requireActivity()) {
-
-                                }
-                            }
-                        }
-                        setColorSchemeResources(R.color.green)
-                    }
                 }
             }
         }
@@ -229,7 +229,6 @@ class OrderDetailFragment : DaggerFragment() {
             delay(1000)
         }
         edtFinishTime.text = "00:00"
-        vm.updateOrderStatus(orderHash, OrderStatus.Cancelled)
 
     }
 

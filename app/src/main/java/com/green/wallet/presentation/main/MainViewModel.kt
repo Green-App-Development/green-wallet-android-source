@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
 		requestPerApplication()
 	}
 
-	private var updateCoinDetailsJob: Job? = null
+		private var updateCoinDetailsJob: Job? = null
 
 	private fun oneTimeRequestEachApplication() {
 		updateCoinDetailsJob?.cancel()

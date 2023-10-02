@@ -10,6 +10,7 @@
         android:left="15dp"
         android:right="15dp"
         android:top="15dp" />
-    <solid android:color="@color/cardView_background" />
+
+    <solid android:color="@color/primary_app_background" />
 
 </shape>
