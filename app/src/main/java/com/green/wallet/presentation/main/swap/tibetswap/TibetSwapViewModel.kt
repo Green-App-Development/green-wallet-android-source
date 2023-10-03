@@ -117,7 +117,7 @@ class TibetSwapViewModel @Inject constructor(
             val newList = mutableListOf<Token>()
             var gwtToken: Token? = null
             for (token in res) {
-                if (token.code == "GWT-XCH") {
+                if (token.code.contains("GWT")) {
                     gwtToken = token
                 } else
                     newList.add(token)

@@ -164,6 +164,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 vm.tokenTibetList.collectLatest {
                     it?.let {
                         if (it.isNotEmpty()) {
+                            adCATLiquidity.updateData(it.map { it.code })
                             adTibetLiquidity.updateData(it.map { it.code })
                         } else {
                             requireActivity().apply {
@@ -261,7 +262,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                                 binding.changeSwapAdapter(ad2Swap, ad1Swap)
                                 choosingXCHToCAT(false)
                             }
-                            adCATLiquidity.updateData(it.map { it.code })
                             if (vm.catTibetAdapterPosition != -1) binding.tokenTibetCatSpinner.setSelection(
                                 vm.catTibetAdapterPosition
                             )
@@ -637,6 +637,14 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         }) {
             val pairID =
                 vm.tokenTibetList.value?.get(vm.catTibetAdapterPosition)?.pairID ?: return@launch
+            VLog.d(
+                "CAT TibetAdapterPosition : ${vm.catTibetAdapterPosition} PairID : $pairID Token : ${
+                    vm.tokenTibetList.value?.get(
+                        vm.catTibetAdapterPosition
+                    )
+                }"
+            )
+
             val res = vm.getTibetLiquidity(pairID)
             if (res != null) {
                 vm.curTibetLiquidity = res
