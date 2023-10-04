@@ -28,7 +28,7 @@ class TibetInteractImpl @Inject constructor(
         try {
             val res = tibetService.getTokensWithPairID()
             jsonHelper.parseJsonTibetTokenAssetIDPairID(res.string()) { assetID, pairID ->
-                VLog.d("Tibet TokenList pair id asset id : $assetID $pairID")
+//                VLog.d("Tibet TokenList pair id asset id : $assetID $pairID")
                 tokenDao.updateTokenEntityPairIDByHash(pair_id = pairID, hash = assetID)
             }
         } catch (ex: Exception) {
