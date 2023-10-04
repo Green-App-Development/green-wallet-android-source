@@ -113,18 +113,18 @@ class TibetSwapViewModel @Inject constructor(
 
     fun retrieveTibetTokenList() {
         viewModelScope.launch {
-            val res = tokenInteract.getTokenListPairIDExist()
+            val res = tokenInteract.getTibetTokenList()
             val newList = mutableListOf<Token>()
             var gwtToken: Token? = null
             for (token in res) {
-                if (token.code.contains("GWT")) {
+                if (token.code.contains("GWT-XCH")) {
                     gwtToken = token
                 } else
                     newList.add(token)
             }
             if (gwtToken != null)
                 newList.add(0, gwtToken)
-            VLog.d("New List for tibet liquidity : $newList ")
+            VLog.d("New List for tibet tokens : $newList ")
             _tokenTibetList.emit(newList)
         }
     }
