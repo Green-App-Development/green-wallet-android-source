@@ -405,6 +405,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
             }
             vm.swapInputState = it.toString()
             btnGenerateOffer.isEnabled = amount != 0.0
+            edtAmountTo.text = ""
         }
 
         edtAmountFrom.setOnFocusChangeListener { p0, p1 ->
@@ -678,6 +679,13 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
     private fun calculateTibetCATXCH(str: String): Boolean {
         if (vm.toTibet) return false
+//        if (str.isEmpty()) {
+//            binding.apply {
+//                edtAmountCatTibet.setText("")
+//                edtAmountXCH.setText("")
+//            }
+//            return false
+//        }
         val amount = str.toDoubleOrNull() ?: return false
         val tibetLiquid = vm.curTibetLiquidity ?: return false
         val tokenAmount =
@@ -786,7 +794,8 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         }
 
         checkboxAgree.setOnCheckedChangeListener { compoundButton, checked ->
-            btnGenerateOffer.isEnabled = checked
+            btnGenerateOffer.isEnabled = checked && edtAmountTo.text.toString()
+                .toDoubleOrNull() != null && edtAmountFrom.text.toString().toDoubleOrNull() != null
         }
 
     }

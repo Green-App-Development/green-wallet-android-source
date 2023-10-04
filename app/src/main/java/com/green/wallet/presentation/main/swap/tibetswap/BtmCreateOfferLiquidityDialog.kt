@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.common.tools.formatString
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -104,6 +105,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         val token = vm.tokenList.value?.get(vm.catTibetAdapterPosition) ?: return
         val tibetToken = vm.tokenTibetList.value!![vm.catLiquidityAdapterPos]
         val wallet = vm.curWallet!!
+        txtWalletAddress.text = formatString(10, wallet.address, 5)
         VLog.d("Choosing token : $token  and Tibet Token : $tibetToken")
         val liquidity = vm.liquidityAmount
         if (vm.toTibet) {
