@@ -20,7 +20,7 @@ repositories {
 
 android {
 
-    compileSdk 33
+    compileSdk 34
 
     Properties properties = new Properties()
     properties.load(project.rootProject.file("local.properties").newDataInputStream())
@@ -29,9 +29,9 @@ android {
     defaultConfig {
         applicationId "com.green.wallet"
         minSdk 26
-        targetSdk 33
-        versionCode 27 //for Google Play
-        versionName "0.0.95"
+        targetSdk 34
+        versionCode 29 //for Google Play
+        versionName "0.0.97"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

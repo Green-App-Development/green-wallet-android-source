@@ -472,7 +472,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                     isDialogOutsideTouchable = false
                 ) {
                     Handler(Looper.myLooper()!!).postDelayed({
-                        popBackStackOnce()
+                       popBackStackTwice()
                     }, 500)
                 }
             }
