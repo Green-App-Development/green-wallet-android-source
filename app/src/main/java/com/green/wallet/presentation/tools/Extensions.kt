@@ -26,89 +26,90 @@ import com.green.wallet.presentation.main.MainActivity
 
 
 interface OnSwipeHelper {
-	fun swipedLeft()
-	fun swipedRight()
-	fun swipedTop()
-	fun swipedBottom()
+    fun swipedLeft()
+    fun swipedRight()
+    fun swipedTop()
+    fun swipedBottom()
 }
 
 fun View.onSwipeListener(context: Context, swipeHelper: OnSwipeHelper) {
-	this.setOnTouchListener(object : View.OnTouchListener {
+    this.setOnTouchListener(object : View.OnTouchListener {
 
-		private val gestureDetector: GestureDetector
+        private val gestureDetector: GestureDetector
 
-		private val SWIPE_THRESHOLD = 50
-		private val SWIPE_VELOCITY_THRESHOLD = 50
+        private val SWIPE_THRESHOLD = 50
+        private val SWIPE_VELOCITY_THRESHOLD = 50
 
-		init {
-			gestureDetector = GestureDetector(context, GestureListener())
-		}
+        init {
+            gestureDetector = GestureDetector(context, GestureListener())
+        }
 
-		override fun onTouch(v: View, event: MotionEvent): Boolean {
-			return gestureDetector.onTouchEvent(event)
-		}
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            return gestureDetector.onTouchEvent(event)
+        }
 
-		private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
-
-
-			override fun onDown(e: MotionEvent): Boolean {
-				return true
-			}
-
-			override fun onFling(
-				e1: MotionEvent,
-				e2: MotionEvent,
-				velocityX: Float,
-				velocityY: Float
-			): Boolean {
-				var result = false
-				try {
-					val diffY = e2.y - e1.y
-					val diffX = e2.x - e1.x
-					if (Math.abs(diffX) > Math.abs(diffY)) {
-						if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-							if (diffX > 0) {
-								onSwipeRight()
-							} else {
-								onSwipeLeft()
-							}
-							result = true
-						}
-					} else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-						if (diffY > 0) {
-							onSwipeBottom()
-						} else {
-							onSwipeTop()
-						}
-						result = true
-					}
-				} catch (exception: Exception) {
-					exception.printStackTrace()
-				}
-
-				return result
-			}
+        private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
 
 
-		}
+            override fun onDown(e: MotionEvent): Boolean {
+                return true
+            }
 
-		fun onSwipeRight() {
-			swipeHelper.swipedRight()
-		}
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
 
-		fun onSwipeLeft() {
-			swipeHelper.swipedLeft()
-		}
+                var result = false
+                try {
+                    val diffY = e2.y - (e1?.y ?: 0f)
+                    val diffX = e2.x - (e1?.x ?: 0f)
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight()
+                            } else {
+                                onSwipeLeft()
+                            }
+                            result = true
+                        }
+                    } else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            onSwipeBottom()
+                        } else {
+                            onSwipeTop()
+                        }
+                        result = true
+                    }
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
+                }
 
-		fun onSwipeTop() {
-			swipeHelper.swipedTop()
-		}
+                return result
+            }
 
-		fun onSwipeBottom() {
-			swipeHelper.swipedBottom()
-		}
 
-	})
+        }
+
+        fun onSwipeRight() {
+            swipeHelper.swipedRight()
+        }
+
+        fun onSwipeLeft() {
+            swipeHelper.swipedLeft()
+        }
+
+        fun onSwipeTop() {
+            swipeHelper.swipedTop()
+        }
+
+        fun onSwipeBottom() {
+            swipeHelper.swipedBottom()
+        }
+
+    })
 }
 
 fun Activity.getColorResource(resId: Int): Int = ContextCompat.getColor(this, resId)
@@ -121,91 +122,91 @@ fun Activity.getBooleanResource(resId: Int) = resources.getBoolean(resId)
 
 
 fun Activity.pxToDp(px: Int): Int {
-	val displayMetrics = resources.displayMetrics
-	return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+    val displayMetrics = resources.displayMetrics
+    return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
 }
 
 fun Context.dpToPx(dp: Int): Int {
-	val density = resources.displayMetrics.density
-	val pxValue = (dp * density).toInt()
-	return pxValue
+    val density = resources.displayMetrics.density
+    val pxValue = (dp * density).toInt()
+    return pxValue
 }
 
 fun Activity.getResourceAnimation(resId: Int) = AnimationUtils.loadAnimation(this, resId)
 
 
 fun ImageView.loadSvg(url: String) {
-	val imageLoader = ImageLoader.Builder(this.context)
-		.componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
-		.build()
+    val imageLoader = ImageLoader.Builder(this.context)
+        .componentRegistry { add(SvgDecoder(this@loadSvg.context)) }
+        .build()
 
-	val request = ImageRequest.Builder(this.context)
-		.crossfade(true)
-		.crossfade(500)
-		.data(url)
-		.target(this)
-		.build()
+    val request = ImageRequest.Builder(this.context)
+        .crossfade(true)
+        .crossfade(500)
+        .data(url)
+        .target(this)
+        .build()
 
-	imageLoader.enqueue(request)
+    imageLoader.enqueue(request)
 }
 
 fun View.preventDoubleClick(interval: Long = 1000) {
-	isEnabled = false
-	postDelayed({
-		isEnabled = true
-	}, interval)
+    isEnabled = false
+    postDelayed({
+        isEnabled = true
+    }, interval)
 }
 
 val FragmentManager.currentNavigationFragment: Fragment?
-	get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+    get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()
 
 fun Fragment.getMainActivity(): MainActivity {
-	return requireActivity() as MainActivity
+    return requireActivity() as MainActivity
 }
 
 
 fun Activity.getCustomProgressLayoutWithParams(size: Int, thickness: Int): View {
-	val binding = NftImgPlaceholderBinding.inflate(layoutInflater)
-	binding.progressBar.apply {
-		indicatorSize = size
-		trackThickness = thickness
-	}
-	val layoutParams = LinearLayout.LayoutParams(
-		LinearLayout.LayoutParams.MATCH_PARENT,
-		LinearLayout.LayoutParams.MATCH_PARENT
-	)
-	binding.root.layoutParams = layoutParams
-	return binding.root
+    val binding = NftImgPlaceholderBinding.inflate(layoutInflater)
+    binding.progressBar.apply {
+        indicatorSize = size
+        trackThickness = thickness
+    }
+    val layoutParams = LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.MATCH_PARENT
+    )
+    binding.root.layoutParams = layoutParams
+    return binding.root
 }
 
 fun Activity.makeGreenDuringFocus(txt: TextView) {
-	txt.setTextColor(getColorResource(R.color.green))
+    txt.setTextColor(getColorResource(R.color.green))
 }
 
 fun Activity.makeGreyDuringNonFocus(txt: TextView) {
-	txt.setTextColor(getColorResource(R.color.grey_txt_color))
+    txt.setTextColor(getColorResource(R.color.grey_txt_color))
 }
 
 
 fun Activity.copyToClipBoard(data: String) {
-	val clipBoard =
-		getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-	val clip = ClipData.newPlainText(
-		"label",
-		data
-	)
-	clipBoard.setPrimaryClip(clip)
+    val clipBoard =
+        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(
+        "label",
+        data
+    )
+    clipBoard.setPrimaryClip(clip)
 }
 
 
 fun Context.copyToClipBoard(data: String) {
-	val clipBoard =
-		getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-	val clip = ClipData.newPlainText(
-		"label",
-		data
-	)
-	clipBoard.setPrimaryClip(clip)
+    val clipBoard =
+        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(
+        "label",
+        data
+    )
+    clipBoard.setPrimaryClip(clip)
 }
 
 
