@@ -11,7 +11,7 @@ class AESEncryptor @Inject constructor() {
 
     fun decrypt(strToDecrypt: String, secretKeySpec: SecretKeySpec): String {
         try {
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec)
             return String(
                 cipher.doFinal(
