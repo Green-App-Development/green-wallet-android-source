@@ -56,7 +56,7 @@ class AESEncryptor @Inject constructor() {
     }
 
     companion object {
-        const val ALGORITHM_AES = "AES/GCM/NoPadding"
+        const val ALGORITHM_AES = "AES/ECB/PKCS5Padding"
     }
 
 
