@@ -11,7 +11,7 @@ class AESEncryptor @Inject constructor() {
 
     fun decrypt(strToDecrypt: String, secretKeySpec: SecretKeySpec): String {
         try {
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            val cipher = Cipher.getInstance(ALGORITHM_AES)
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec)
             return String(
                 cipher.doFinal(
@@ -29,7 +29,7 @@ class AESEncryptor @Inject constructor() {
 
     fun encrypt(strToEncrypt: String, secretKeySpec: SecretKeySpec): String {
         try {
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            val cipher = Cipher.getInstance(ALGORITHM_AES)
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec)
             val final = cipher.doFinal(strToEncrypt.toByteArray(charset("UTF-8")))
             return android.util.Base64.encodeToString(final, android.util.Base64.DEFAULT)
@@ -53,6 +53,10 @@ class AESEncryptor @Inject constructor() {
             e.printStackTrace()
         }
         return null
+    }
+
+    companion object {
+        const val ALGORITHM_AES = "AES/GCM/NoPadding"
     }
 
 
