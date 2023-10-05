@@ -18,7 +18,7 @@ jobs:
           cache: gradle
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
-        with:
+        with: 
           flutter-version: '3.10'  # Replace with your desired Flutter version
       - name: Init flutter project set up as a module
         run: |
