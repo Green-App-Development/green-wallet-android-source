@@ -1,18 +1,17 @@
-package com.green.wallet.presentation.custom
+package com.green.wallet.presentation.custom.encryptor
 
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-import javax.inject.Inject
 
-class AESEncryptor @Inject constructor() {
+class FirstStageEncryptor : Encryptor {
 
-    fun decrypt(strToDecrypt: String, secretKeySpec: SecretKeySpec): String {
+    override fun decrypt(strToDecrypt: String, alias: String): String {
         try {
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec)
+            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            cipher.init(Cipher.DECRYPT_MODE, getAESKey(alias))
             return String(
                 cipher.doFinal(
                     android.util.Base64.decode(
@@ -27,10 +26,10 @@ class AESEncryptor @Inject constructor() {
         return ""
     }
 
-    fun encrypt(strToEncrypt: String, secretKeySpec: SecretKeySpec): String {
+    override fun encrypt(strToEncrypt: String, alias: String): String {
         try {
             val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-            cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec)
+            cipher.init(Cipher.ENCRYPT_MODE, getAESKey(alias))
             val final = cipher.doFinal(strToEncrypt.toByteArray(charset("UTF-8")))
             return android.util.Base64.encodeToString(final, android.util.Base64.DEFAULT)
         } catch (ex: Exception) {
@@ -39,7 +38,7 @@ class AESEncryptor @Inject constructor() {
         return ""
     }
 
-    fun getAESKey(myKey: String): SecretKeySpec? {
+    private fun getAESKey(myKey: String): SecretKeySpec? {
         val sha: MessageDigest?
         try {
             var key = myKey.toByteArray(charset("UTF-8"))
@@ -57,3 +56,4 @@ class AESEncryptor @Inject constructor() {
 
 
 }
+

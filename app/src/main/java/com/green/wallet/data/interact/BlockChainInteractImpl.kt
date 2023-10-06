@@ -25,15 +25,15 @@ import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
+import com.green.wallet.presentation.custom.encryptor.Encryptor
+import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
-import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import okhttp3.internal.wait
 import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
@@ -49,7 +49,7 @@ class BlockChainInteractImpl @Inject constructor(
     private val retrofitBuilder: Retrofit.Builder,
     private val gson: Gson,
     private val tokenDao: TokenDao,
-    private val encryptor: AESEncryptor,
+    private val encryptor: EncryptorProvider,
     private val notificationHelper: NotificationHelper,
     private val spentCoinsInteract: SpentCoinsInteract,
     private val spentCoinsDao: SpentCoinsDao,
@@ -69,8 +69,8 @@ class BlockChainInteractImpl @Inject constructor(
     override suspend fun saveNewWallet(
         wallet: Wallet, imported: Boolean
     ): Resource<String> {
-        val key = encryptor.getAESKey(prefs.getSettingString(PrefsManager.PASSCODE, ""))
-        val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key!!)
+        val key = prefs.getSettingString(PrefsManager.PASSCODE, "")
+        val encMnemonics = encryptor.encrypt(wallet.mnemonics.toString(), key)
         var savedTime = greenAppInteract.getServerTime()
         if (savedTime == -1L) savedTime = System.currentTimeMillis()
         val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
@@ -350,7 +350,7 @@ class BlockChainInteractImpl @Inject constructor(
             resMap["collection"] = collection.substring(1, collection.length - 1)
             resMap["name"] = name.substring(1, name.length - 1)
             val attributeMap = hashMapOf<String, String>()
-            if(resJson["attributes"]!=null) {
+            if (resJson["attributes"] != null) {
                 val attJsonArray = resJson["attributes"].asJsonArray
                 for (attr in attJsonArray) {
                     attr.asJsonObject["trait_type"] ?: continue

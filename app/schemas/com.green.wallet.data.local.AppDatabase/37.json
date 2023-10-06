@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 37,
-    "identityHash": "62278c9022bbd508ebcf807df2fb0d61",
+    "identityHash": "bbae36e744a3658ff02997e1a420d92d",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "WalletEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fingerPrint` INTEGER NOT NULL, `privateKey` TEXT NOT NULL, `puzzle_hashes` TEXT NOT NULL, `address` TEXT NOT NULL, `mnemonics` TEXT NOT NULL, `networkType` TEXT NOT NULL, `homeAdded` INTEGER NOT NULL, `balance` REAL NOT NULL, `hashListImported` TEXT NOT NULL, `hashWithAmount` TEXT NOT NULL, `savedTime` INTEGER NOT NULL, `observer_hash` INTEGER NOT NULL, `non_observer_hash` INTEGER NOT NULL, `tokens_start_height` TEXT NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fingerPrint` INTEGER NOT NULL, `privateKey` TEXT NOT NULL, `puzzle_hashes` TEXT NOT NULL, `address` TEXT NOT NULL, `mnemonics` TEXT NOT NULL, `networkType` TEXT NOT NULL, `homeAdded` INTEGER NOT NULL, `balance` REAL NOT NULL, `hashListImported` TEXT NOT NULL, `hashWithAmount` TEXT NOT NULL, `savedTime` INTEGER NOT NULL, `observer_hash` INTEGER NOT NULL, `non_observer_hash` INTEGER NOT NULL, `tokens_start_height` TEXT NOT NULL, `encrypt_stage` INTEGER NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "fingerPrint",
@@ -134,6 +134,12 @@
             "fieldPath": "tokensStartHeight",
             "columnName": "tokens_start_height",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encryptedStage",
+            "columnName": "encrypt_stage",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -621,7 +627,7 @@
       },
       {
         "tableName": "OrderEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `fee` REAL NOT NULL, PRIMARY KEY(`order_hash`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`order_hash` TEXT NOT NULL, `status` TEXT NOT NULL, `amount_to_send` REAL NOT NULL, `give_address` TEXT NOT NULL, `time_created` INTEGER NOT NULL, `rate` REAL NOT NULL, `send_coin` TEXT NOT NULL, `get_coin` TEXT NOT NULL, `get_address` TEXT NOT NULL, `tx_ID` TEXT NOT NULL, `commission_fee` REAL NOT NULL, `amount_to_receive` REAL NOT NULL, `commission_tron` REAL NOT NULL, `commission_percent` REAL NOT NULL, `expired_cancelled_time` INTEGER NOT NULL, PRIMARY KEY(`order_hash`))",
         "fields": [
           {
             "fieldPath": "order_hash",
@@ -684,9 +690,33 @@
             "notNull": true
           },
           {
-            "fieldPath": "fee",
-            "columnName": "fee",
+            "fieldPath": "commission_fee",
+            "columnName": "commission_fee",
             "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "amount_to_receive",
+            "columnName": "amount_to_receive",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commission_tron",
+            "columnName": "commission_tron",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commission_percent",
+            "columnName": "commission_percent",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expired_cancelled_time",
+            "columnName": "expired_cancelled_time",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -701,7 +731,7 @@
       },
       {
         "tableName": "TibetSwapEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `send_amount` REAL NOT NULL, `receive_amount` REAL NOT NULL, `send_coin` TEXT NOT NULL, `receive_coin` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `send_amount` REAL NOT NULL, `receive_amount` REAL NOT NULL, `send_coin` TEXT NOT NULL, `receive_coin` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `fk_address` TEXT NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
         "fields": [
           {
             "fieldPath": "offer_id",
@@ -746,6 +776,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "fk_address",
+            "columnName": "fk_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
             "fieldPath": "status",
             "columnName": "status",
             "affinity": "TEXT",
@@ -769,7 +805,7 @@
       },
       {
         "tableName": "TibetLiquidityEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `xchAmount` REAL NOT NULL, `catAmount` REAL NOT NULL, `catToken` TEXT NOT NULL, `liquidityAmount` REAL NOT NULL, `liquidityToken` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, `addLiquidity` INTEGER NOT NULL, PRIMARY KEY(`offer_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offer_id` TEXT NOT NULL, `xchAmount` REAL NOT NULL, `catAmount` REAL NOT NULL, `catToken` TEXT NOT NULL, `liquidityAmount` REAL NOT NULL, `liquidityToken` TEXT NOT NULL, `fee` REAL NOT NULL, `time_created` INTEGER NOT NULL, `status` TEXT NOT NULL, `height` INTEGER NOT NULL, `addLiquidity` INTEGER NOT NULL, `fk_address` TEXT NOT NULL, PRIMARY KEY(`offer_id`))",
         "fields": [
           {
             "fieldPath": "offer_id",
@@ -836,6 +872,12 @@
             "columnName": "addLiquidity",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "fk_address",
+            "columnName": "fk_address",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -851,7 +893,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '62278c9022bbd508ebcf807df2fb0d61')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bbae36e744a3658ff02997e1a420d92d')"
     ]
   }
 }

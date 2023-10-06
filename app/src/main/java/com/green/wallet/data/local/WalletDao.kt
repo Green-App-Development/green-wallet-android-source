@@ -142,4 +142,6 @@ interface WalletDao {
     @Query("SELECT fingerPrint,address FROM WalletEntity")
     suspend fun getChiaWalletList(): List<ChiaWalletDTO>
 
+    @Query("UPDATE WalletEntity SET mnemonics=:encrypted,encrypt_stage=:stage WHERE address=:address")
+    suspend fun updateMnemonicsAndEncStage(encrypted: String, stage: Int, address: String)
 }
