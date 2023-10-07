@@ -10,7 +10,7 @@ class FirstStageEncryptor : Encryptor {
 
     override fun decrypt(strToDecrypt: String, alias: String): String {
         try {
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+            val cipher = Cipher.getInstance(ALGORITHM_OLD_ENC)
             cipher.init(Cipher.DECRYPT_MODE, getAESKey(alias))
             return String(
                 cipher.doFinal(
@@ -28,8 +28,8 @@ class FirstStageEncryptor : Encryptor {
 
     override fun encrypt(strToEncrypt: String, alias: String): String {
         try {
-            val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
-            cipher.init(Cipher.ENCRYPT_MODE, getAESKey(alias))
+            val cipher = Cipher.getInstance(ALGORITHM_OLD_ENC)
+            cipher.init(Cipher.DECRYPT_MODE, getAESKey(alias))
             val final = cipher.doFinal(strToEncrypt.toByteArray(charset("UTF-8")))
             return android.util.Base64.encodeToString(final, android.util.Base64.DEFAULT)
         } catch (ex: Exception) {
@@ -54,6 +54,9 @@ class FirstStageEncryptor : Encryptor {
         return null
     }
 
+    companion object {
+        const val ALGORITHM_OLD_ENC = "AES/ECB/PKCS5Padding"
+    }
+
 
 }
-

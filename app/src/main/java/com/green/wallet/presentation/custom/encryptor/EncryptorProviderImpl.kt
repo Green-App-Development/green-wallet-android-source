@@ -4,7 +4,11 @@ import android.content.Context
 
 class EncryptorProviderImpl(private val context: Context) : EncryptorProvider {
 
-    lateinit var encryptor: Encryptor
+    var encryptor: Encryptor
+
+    init {
+        encryptor = SecondStageEncryptor(context)
+    }
 
     override fun setStage(stage: Int) {
         encryptor = when (stage) {
