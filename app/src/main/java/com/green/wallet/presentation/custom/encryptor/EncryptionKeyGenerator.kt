@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import com.green.wallet.BuildConfig
 import timber.log.Timber
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -17,8 +18,8 @@ import javax.crypto.KeyGenerator
 object EncryptionKeyGenerator {
 
     const val ANDROID_KEY_STORE = "AndroidKeyStore"
-    private const val KEY_STORE_FILE_NAME = "DWOIajda658DGSAda897asd"
-    private const val KEY_STORE_PASSWORD = "HuidHd78wd7DASHDUAHW"
+    private const val KEY_STORE_FILE_NAME = BuildConfig.KEY_STORE_FILE_NAME
+    private const val KEY_STORE_PASSWORD = BuildConfig.KEY_STORE_PASSWORD
 
     @TargetApi(Build.VERSION_CODES.M)
     internal fun generateSecretKey(keyStore: KeyStore, alias: String): SecurityKey? {

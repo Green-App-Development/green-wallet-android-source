@@ -9,6 +9,7 @@ import java.security.KeyStoreException
 
 object EncryptionUtils {
 
+
     private val keyStore: KeyStore?
         get() = try {
             val keyStore = KeyStore.getInstance(EncryptionKeyGenerator.ANDROID_KEY_STORE)
@@ -39,6 +40,7 @@ object EncryptionUtils {
         }
         else -> EncryptionKeyGenerator.generateSecretKeyPre18(context, alias)
     }
+
 
     fun clear(alias: String) = try {
         val keyStore = keyStore
