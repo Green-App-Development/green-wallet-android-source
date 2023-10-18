@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 36,
-    "identityHash": "875f73438ac4901f2f42b7eb652dd173",
+    "identityHash": "bbae36e744a3658ff02997e1a420d92d",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "WalletEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fingerPrint` INTEGER NOT NULL, `privateKey` TEXT NOT NULL, `puzzle_hashes` TEXT NOT NULL, `address` TEXT NOT NULL, `mnemonics` TEXT NOT NULL, `networkType` TEXT NOT NULL, `homeAdded` INTEGER NOT NULL, `balance` REAL NOT NULL, `hashListImported` TEXT NOT NULL, `hashWithAmount` TEXT NOT NULL, `savedTime` INTEGER NOT NULL, `observer_hash` INTEGER NOT NULL, `non_observer_hash` INTEGER NOT NULL, `tokens_start_height` TEXT NOT NULL, PRIMARY KEY(`address`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fingerPrint` INTEGER NOT NULL, `privateKey` TEXT NOT NULL, `puzzle_hashes` TEXT NOT NULL, `address` TEXT NOT NULL, `mnemonics` TEXT NOT NULL, `networkType` TEXT NOT NULL, `homeAdded` INTEGER NOT NULL, `balance` REAL NOT NULL, `hashListImported` TEXT NOT NULL, `hashWithAmount` TEXT NOT NULL, `savedTime` INTEGER NOT NULL, `observer_hash` INTEGER NOT NULL, `non_observer_hash` INTEGER NOT NULL, `tokens_start_height` TEXT NOT NULL, `encrypt_stage` INTEGER NOT NULL, PRIMARY KEY(`address`))",
         "fields": [
           {
             "fieldPath": "fingerPrint",
@@ -134,6 +134,12 @@
             "fieldPath": "tokensStartHeight",
             "columnName": "tokens_start_height",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encryptedStage",
+            "columnName": "encrypt_stage",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -887,7 +893,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '875f73438ac4901f2f42b7eb652dd173')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bbae36e744a3658ff02997e1a420d92d')"
     ]
   }
 }

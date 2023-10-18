@@ -5,15 +5,13 @@ import com.google.gson.reflect.TypeToken
 import com.green.wallet.data.local.NftCoinsDao
 import com.green.wallet.data.local.NftInfoDao
 import com.green.wallet.data.local.WalletDao
-import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTCoin
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.PrefsInteract
-import com.green.wallet.presentation.custom.AESEncryptor
-import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.custom.encryptor.Encryptor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -22,7 +20,6 @@ class NFtInteractImpl @Inject constructor(
 	private val walletDao: WalletDao,
 	private val nftInfoDao: NftInfoDao,
 	private val nftCoinDao: NftCoinsDao,
-	private val encryptor: AESEncryptor,
 	private val prefs: PrefsInteract
 ) : NFTInteract {
 
