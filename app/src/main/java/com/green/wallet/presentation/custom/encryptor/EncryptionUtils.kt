@@ -41,7 +41,6 @@ object EncryptionUtils {
         else -> EncryptionKeyGenerator.generateSecretKeyPre18(context, alias)
     }
 
-
     fun clear(alias: String) = try {
         val keyStore = keyStore
         if (keyStore?.containsAlias(alias) == true) {
