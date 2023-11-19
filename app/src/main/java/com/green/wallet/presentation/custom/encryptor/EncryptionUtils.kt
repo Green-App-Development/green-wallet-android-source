@@ -9,6 +9,7 @@ import java.security.KeyStoreException
 
 object EncryptionUtils {
 
+
     private val keyStore: KeyStore?
         get() = try {
             val keyStore = KeyStore.getInstance(EncryptionKeyGenerator.ANDROID_KEY_STORE)
