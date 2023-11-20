@@ -2,11 +2,14 @@ package com.green.wallet.presentation.onboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.green.wallet.BuildConfig
 import com.green.wallet.data.network.dto.greenapp.lang.LanguageItemDto
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.custom.NotificationHelper
+import com.green.wallet.presentation.custom.encryptor.Encryptor
+import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.custom.isExceptionBelongsToNoInternet
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
@@ -22,77 +25,79 @@ import javax.inject.Inject
 
 
 class OnBoardViewModel @Inject constructor(
-	private val prefs: PrefsInteract,
-	private val greenAppInteract: GreenAppInteract,
-	notificationHelper: NotificationHelper
+    private val prefs: PrefsInteract,
+    private val greenAppInteract: GreenAppInteract,
+    private val encryptor: EncryptorProvider,
+    notificationHelper: NotificationHelper
 ) : ViewModel() {
 
-	private val _languageList =
-		MutableStateFlow<Resource<List<LanguageItemDto>>>(Resource.loading())
-	val languageList: StateFlow<Resource<List<LanguageItemDto>>> = _languageList
+    private val _languageList =
+        MutableStateFlow<Resource<List<LanguageItemDto>>>(Resource.loading())
+    val languageList: StateFlow<Resource<List<LanguageItemDto>>> = _languageList
 
-	private val _downloadingLang = MutableStateFlow<Resource<String>?>(null)
-	val downloadingLang = _downloadingLang.asStateFlow()
+    private val _downloadingLang = MutableStateFlow<Resource<String>?>(null)
+    val downloadingLang = _downloadingLang.asStateFlow()
 
-	private val handler = CoroutineExceptionHandler { _, ex ->
-		VLog.d("Exception occurred in getting lang list : ${ex.message}")
-	}
-
-
-	init {
-		notificationHelper.buildingNotificationChannels()
-	}
+    private val handler = CoroutineExceptionHandler { _, ex ->
+        VLog.d("Exception occurred in getting lang list : ${ex.message}")
+    }
 
 
-	private var downloadLangJob: Job? = null
-	private var langListJob: Job? = null
+    init {
+        notificationHelper.buildingNotificationChannels()
+    }
 
-	suspend fun getGreetingAgreementText() = greenAppInteract.getAgreementsText()
 
-	suspend fun downloadLanguage(langCode: String) =
-		greenAppInteract.downloadLanguageTranslate(langCode)
+    private var downloadLangJob: Job? = null
+    private var langListJob: Job? = null
 
-	fun saveUserUnBoarded(boarded: Boolean) {
-		viewModelScope.launch {
-			prefs.saveSettingBoolean(PrefsManager.USER_UNBOARDED, boarded)
-		}
-	}
+    suspend fun getGreetingAgreementText() = greenAppInteract.getAgreementsText()
 
-	fun savePasscode(password: String) {
-		viewModelScope.launch {
-			prefs.saveSettingString(PrefsManager.PASSCODE, password)
-		}
-	}
+    suspend fun downloadLanguage(langCode: String) =
+        greenAppInteract.downloadLanguageTranslate(langCode)
 
-	fun saveLastVisitedValue(value: Long) {
-		viewModelScope.launch {
-			prefs.saveSettingLong(PrefsManager.LAST_VISITED, value = value)
-		}
-	}
+    fun saveUserUnBoarded(boarded: Boolean) {
+        viewModelScope.launch {
+            prefs.saveSettingBoolean(PrefsManager.USER_UNBOARDED, boarded)
+        }
+    }
 
-	fun getAllLanguageList(times: Int) {
-		langListJob?.cancel()
-		langListJob = viewModelScope.launch {
-			val res = greenAppInteract.getAvailableLanguageList()
-			_languageList.emit(res)
-			if (times != 0 && res.state == Resource.State.ERROR && isExceptionBelongsToNoInternet(
-					res.error!!
-				)
-			) {
-				delay(2500)
-				getAllLanguageList(times - 1)
-			}
-		}
-	}
+    fun savePasscode(password: String) {
+        viewModelScope.launch {
+            val encryptedPassCode = encryptor.encrypt(password, BuildConfig.KEY_PASSCODE)
+            prefs.saveSettingString(PrefsManager.PASSCODE, encryptedPassCode)
+        }
+    }
 
-	fun saveAppInstallTime(value: Long) {
-		viewModelScope.launch {
-			prefs.saveSettingLong(PrefsManager.APP_INSTALL_TIME, value)
-			val guid = UUID.randomUUID().toString().replace("-", "").uppercase()
-			VLog.d("Saving GUID : $guid")
-			prefs.saveSettingString(PrefsManager.USER_GUID, guid)
-		}
-	}
+    fun saveLastVisitedValue(value: Long) {
+        viewModelScope.launch {
+            prefs.saveSettingLong(PrefsManager.LAST_VISITED, value = value)
+        }
+    }
+
+    fun getAllLanguageList(times: Int) {
+        langListJob?.cancel()
+        langListJob = viewModelScope.launch {
+            val res = greenAppInteract.getAvailableLanguageList()
+            _languageList.emit(res)
+            if (times != 0 && res.state == Resource.State.ERROR && isExceptionBelongsToNoInternet(
+                    res.error!!
+                )
+            ) {
+                delay(2500)
+                getAllLanguageList(times - 1)
+            }
+        }
+    }
+
+    fun saveAppInstallTime(value: Long) {
+        viewModelScope.launch {
+            prefs.saveSettingLong(PrefsManager.APP_INSTALL_TIME, value)
+            val guid = UUID.randomUUID().toString().replace("-", "").uppercase()
+            VLog.d("Saving GUID : $guid")
+            prefs.saveSettingString(PrefsManager.USER_GUID, guid)
+        }
+    }
 
 
 }

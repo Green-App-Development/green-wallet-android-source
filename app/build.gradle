@@ -45,6 +45,7 @@ android {
         buildConfigField "String", "DEXIE_API", "\"${properties.getProperty("DEXIE_API")}\""
         buildConfigField "String", "KEY_STORE_FILE_NAME", "\"${properties.getProperty("KEY_STORE_FILE_NAME")}\""
         buildConfigField "String", "KEY_STORE_PASSWORD", "\"${properties.getProperty("KEY_STORE_PASSWORD")}\""
+        buildConfigField "String", "KEY_PASSCODE", "\"${properties.getProperty("KEY_PASSCODE")}\""
 
         javaCompileOptions {
             annotationProcessorOptions {
