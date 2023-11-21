@@ -9,6 +9,7 @@ import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SupportInteract
 import com.green.wallet.domain.interact.TibetInteract
+import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class IntroActViewModel @Inject constructor(
     private val prefs: PrefsInteract,
     private val appDatabase: AppDatabase,
-    private val greenAppInteract: GreenAppInteract
+    private val greenAppInteract: GreenAppInteract,
+    val encryptor: EncryptorProvider
 ) : ViewModel() {
 
     private var clearingJob: Job? = null

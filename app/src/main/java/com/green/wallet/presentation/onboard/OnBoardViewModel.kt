@@ -65,6 +65,7 @@ class OnBoardViewModel @Inject constructor(
     fun savePasscode(password: String) {
         viewModelScope.launch {
             val encryptedPassCode = encryptor.encrypt(password, BuildConfig.KEY_PASSCODE)
+            VLog.d("Saving pass code value : $encryptedPassCode")
             prefs.saveSettingString(PrefsManager.PASSCODE, encryptedPassCode)
         }
     }

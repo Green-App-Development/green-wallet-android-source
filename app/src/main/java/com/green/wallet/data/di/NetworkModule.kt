@@ -30,7 +30,8 @@ class NetworkModule {
     fun provideLanguageRetrofitInstance(@Named("chucker") httpClient: OkHttpClient): Retrofit {
 
         val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level =
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         }
 
         return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL_GREEN_APP)
@@ -93,7 +94,8 @@ class NetworkModule {
     @AppScope
     fun provideRetrofitBuilder(): Retrofit.Builder {
         val interceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level =
+                if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         }
         return Retrofit.Builder().client(getUnsafeOkHttpClient(interceptor))
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
