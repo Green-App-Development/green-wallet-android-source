@@ -46,6 +46,7 @@ import com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment.C
 import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWalletFragment
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
+import com.green.wallet.presentation.main.dapp.trade.TraderFragment
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
@@ -153,8 +154,13 @@ class MainActivity : BaseActivity() {
         startServiceAppRemoveRecentTask()
         registerReceiver(m_timeChangedReceiver, timeIntentFilter)
         initUpdateBalanceJobRegulation()
+//        openFragment()
+
     }
 
+    private fun openFragment() {
+        supportFragmentManager.beginTransaction().replace(container, TraderFragment()).commit()
+    }
 
     private fun initCheckingBundleFromPushNotification() {
         val bundle = intent.getBundleExtra(MAIN_BUNDLE_KEY)
@@ -210,7 +216,7 @@ class MainActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         VLog.d("OnStart on MainActivity")
-        checkUserLastVisitTime()
+//        checkUserLastVisitTime()
     }
 
     private fun checkUserLastVisitTime() {
@@ -500,8 +506,8 @@ class MainActivity : BaseActivity() {
                     btmChooseDApps,
                     fragmentQrCodeSend,
                     fragmentSwapSend,
-                    fragmentTibetSwapDetail
-                ).contains(destination.id)
+                    fragmentTibetSwapDetail,
+                ).contains(destination.id) || true
             ) {
                 binding.mainBottomNav.visibility = View.GONE
             } else {

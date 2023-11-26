@@ -3,7 +3,7 @@ package com.green.wallet.data.local
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.presentation.tools.Status

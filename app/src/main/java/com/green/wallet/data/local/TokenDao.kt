@@ -9,7 +9,7 @@ import java.util.*
 interface TokenDao {
 
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.Companion.IGNORE)
     suspend fun insertToken(tokenEntity: TokenEntity)
 
     @Query("UPDATE TokenEntity SET price=:price WHERE code=:code")
@@ -41,5 +41,8 @@ interface TokenDao {
 
     @Query("SELECT * FROM TokenEntity WHERE code LIKE '%' || :space || '%'")
     suspend fun getTibetTokenList(space: String = "-"): List<TokenEntity>
+
+    @Query("SELECT code FROM TokenEntity WHERE hash=:hash")
+    suspend fun getTokenCodeByHash(hash: String): Optional<String>
 
 }

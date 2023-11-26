@@ -26,10 +26,14 @@
 			android:theme="@style/MyLightTheme">
 		<activity
 				android:name="com.green.wallet.presentation.main.MainActivity"
-				android:exported="false"
+				android:exported="true"
 				android:screenOrientation="portrait"
 				android:windowSoftInputMode="stateHidden|adjustPan">
 
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
 
 		</activity>
 
@@ -47,10 +51,6 @@
 				android:screenOrientation="portrait"
 				android:windowSoftInputMode="adjustPan|adjustResize">
 
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
 
 		</activity>
 

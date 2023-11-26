@@ -63,6 +63,7 @@ class OffersService {
       buildKeychainForNft: (phs) async => keychain,
     );
 
+
     if (completedOffer.isValid()) {
       final spendBundle = completedOffer.toValidSpend(arbitragePh: changePuzzlehash);
       final chiaResponse = await fullNode.pushTransaction(spendBundle);

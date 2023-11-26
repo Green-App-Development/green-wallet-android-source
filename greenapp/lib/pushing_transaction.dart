@@ -12,7 +12,6 @@ class PushingTransaction {
   static const MethodChannel _channel =
       MethodChannel('METHOD_CHANNEL_GENERATE_HASH');
 
-
   final cachedWalletChains = Map<String, WalletKeychain>();
 
   init() {
@@ -346,11 +345,216 @@ class PushingTransaction {
             }
           }
           break;
+        case "AnalyzeOffer":
+          {
+            try {
+              var args = call.arguments;
+              var offer = args["offer"];
+              analyzeTakingOffer(offerStr: offer);
+            } catch (ex) {
+              debugPrint("Exception in getting params form analyzing offer");
+              _channel.invokeMethod("exception");
+            }
+          }
+          break;
+        case "PushingOffer":
+          {
+            try {
+              var args = call.arguments;
+              debugPrint("PushingOffer args got called : ${call.arguments}");
+              debugPrint("AssetID that is being asked : ${args["asset_id"]}");
+              var assetID = args["asset_id"].toString();
+              var offer = args["offer"];
+              var mnemonics = args["mnemonics"].toString().split(' ');
+              var url = args["url"].toString();
+              var observer = int.parse(args["observer"].toString());
+              var nonObserver = int.parse(args["nonObserver"].toString());
+              var fee = int.parse(args["fee"].toString());
+              var spentCoins = args["spentCoins"];
+              if (assetID.isEmpty) {
+                pushingOfferWithXCH(
+                    offer: offer,
+                    mnemonics: mnemonics,
+                    url: url,
+                    observer: observer,
+                    nonObserver: nonObserver,
+                    fee: fee);
+              } else {
+                pushingOfferWithCAT(
+                    offer: offer,
+                    mnemonics: mnemonics,
+                    url: url,
+                    observer: observer,
+                    nonObserver: nonObserver,
+                    fee: fee);
+              }
+            } catch (ex) {
+              debugPrint("Exception in getting params from pushing offer");
+            }
+          }
       }
     });
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
+    analyzeOffer(
+        offerStr:
+            "offer1qqr83wcuu2rykcmqvpsxygqqa6wdw7l95dk68vl9mr2dkvl98r6g76an3qez5ppgyh00jfdqw4uy5w2vrk7f6wj6lw8adl4rkhlk3mflttacl4h7lur64as8zlhqhn8h04883476dz7x6mny6jzdcga33n4s8n884cxcekcemz6mk3jk4v925trha2kuwcv0k59xl377mx32g5h2c52wfycczdlns04vgl4cx77f6d8xs4f3m23zpghmeuyfzktsvljul5lf6fragjk9qdl5ewns7nam4t68j7e4se98ynkx67tjl3kfx0zse96wllnt0ahda2x20ymlh3pwqaeu7fue4anp5hn74af8dwvdt9aatrhf5pqzt2qgvnwecw8nkvmr8mqw9r83t77l05j0slhyegkjhfnvd024xtj0mxwjthmj3zgpnyqx33cqwjsnvcuzl5crrw7xrqakw6lww0c47699l82mgktl765h0rw823r3g908whmwmlhz8lkmp7lujr0jhnt4zljde56xa8uaqm9h9vxkqey94lalur70u7m0vd7pdhdnuhl24v8nknmlvy3t60ve083dajur3elel5lc49ulsv7kqnzy9smsndcr2hd07has6sjax77tmkm59e2vyce5g7revgd8a8jh6jg3zwaz9pujzh3gdlwkjjqc9xh8jw707rsde2utp3xzxks44axmempy2wmr2622mtjk0658jlkha7j3yhswmx0dxwnjg0h7zfujf64czed7mdz67lx60hsav0u2z783f2akdkcaduyavkdpjfynttzeqlul0kh68gltqcpfpfdkcgepjqhv0tdapgq8wtt37y4534ts");
+  }
+
+  Future<void> analyzeOffer({required String offerStr}) async {
+    final offer = Offer.fromBench32(offerStr);
+    final tradeManager = TradeManagerService();
+    final analized = await tradeManager.analizeOffer(
+        fee: 0,
+        targetPuzzleHash: Puzzlehash.zeros(),
+        changePuzzlehash: Puzzlehash.zeros(),
+        offer: offer);
+    if (analized != null) {
+      print("Analized Requested : ${analized.requested}");
+      print("Analized Offered : ${analized.offered}");
+    } else {
+      print("Analized is null");
+    }
+  }
+
+  Future<void> pushingOfferWithXCH(
+      {required String offer,
+      required List<String> mnemonics,
+      required String url,
+      required int observer,
+      required int nonObserver,
+      required int fee}) async {
+    var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+    var keychain = cachedWalletChains[key] ??
+        generateKeyChain(mnemonics, observer, nonObserver);
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+    final standartWalletService = StandardWalletService();
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    for (var element in keychain.unhardenedMap.entries) {
+      puzzleHashes.add(element.key);
+    }
+
+    var fullNodeRpc = FullNodeHttpRpc(url);
+    var fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    //search for xch full coins
+    var curXCHAmount = 0;
+    List<Coin> totalXCHCoins =
+        await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+    List<Coin> neededXCHCoins = [];
+    for (var coin in totalXCHCoins) {
+      // var isCoinSpent =
+      // spentCoinsParents.contains(coin.parentCoinInfo.toString());
+      if (true) {
+        curXCHAmount += coin.amount;
+        neededXCHCoins.add(coin);
+        // if (curXCHAmount >= fee) {
+        //   break;
+        // }
+      }
+    }
+    final xchFullCoins =
+        standartWalletService.convertXchCoinsToFull(neededXCHCoins);
+    debugPrint("XCH coins : $neededXCHCoins");
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final offerFrom32 = Offer.fromBench32(offer);
+    final responseResult = await offerService.responseOffer(
+        fee: 0,
+        targetPuzzleHash: targePh,
+        offer: offerFrom32,
+        changePuzzlehash: changePh,
+        coinsToUse: xchFullCoins);
+
+    debugPrint(
+        "Result from pushing xch offer to cat : ${responseResult.item1.success}");
+  }
+
+  Future<void> pushingOfferWithCAT(
+      {required String offer,
+      required List<String> mnemonics,
+      required String url,
+      required int observer,
+      required int nonObserver,
+      required int fee}) async {}
+
+  Future<void> pushingOffer({
+    required String offerStr,
+    required List<String> mnemonics,
+    required String url,
+    required String assetID,
+    required int observer,
+    required int nonObserver,
+    required int fee,
+  }) async {
+    var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+    var keychain = cachedWalletChains[key] ??
+        generateKeyChain(mnemonics, observer, nonObserver);
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+    final standartWalletService = StandardWalletService();
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    for (var element in keychain.unhardenedMap.entries) {
+      puzzleHashes.add(element.key);
+    }
+
+    if (assetID.isNotEmpty) {
+      keychain = keychain
+        ..addOuterPuzzleHashesForAssetId(Puzzlehash.fromHex(assetID));
+    }
+
+    var fullNodeRpc = FullNodeHttpRpc(url);
+    var fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final assetId = Puzzlehash.fromHex(assetID);
+
+    var myOuterPuzzlehashes = keychain.getOuterPuzzleHashesForAssetId(assetId);
+
+    for (var element in keychain.hardenedMap.keys) {
+      var outer = WalletKeychain.makeOuterPuzzleHash(
+        element,
+        assetId,
+      );
+      myOuterPuzzlehashes.add(outer);
+    }
+
+    // remove duplicate puzzlehashes
+    myOuterPuzzlehashes = myOuterPuzzlehashes.toSet().toList();
+  }
+
+  Future<void> analyzeTakingOffer({required String offerStr}) async {
+    final offer = Offer.fromBench32(offerStr);
+    final tradeManager = TradeManagerService();
+    final analized = await tradeManager.analizeOffer(
+        fee: 0,
+        targetPuzzleHash: Puzzlehash.zeros(),
+        changePuzzlehash: Puzzlehash.zeros(),
+        offer: offer);
+    if (analized != null) {
+      print("Analyzed Requested : ${analized.requested}");
+      print("Analyzed Offered : ${analized.offered}");
+      var offeredItem = analized.offered.entries.first;
+      var offeredAssetId = offeredItem.key?.assetId ?? "";
+      var offeredAmount = offeredItem.value;
+      var requestedItem = analized.requested.entries.first;
+      var requestedAssetId = requestedItem.key?.assetId ?? "";
+      var requestedAmount = requestedItem.value[0];
+      _channel.invokeMethod("AnalyzeOffer", {
+        "requested_asset_id": requestedAssetId.toString(),
+        "offered_asset_id": offeredAssetId.toString(),
+        "offered_amount": offeredAmount,
+        "requested_amount": requestedAmount
+      });
+    } else {
+      print("Analyzed is null");
+      _channel.invokeMethod("exception", "analyzeOffer is null");
+    }
   }
 
   Future<void> offerRemoveLiquidity(
@@ -1188,8 +1392,8 @@ class PushingTransaction {
     for (var coin in feeStandardCoinsTotal) {
       var feeCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      // debugPrint(
-      //     "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
+// debugPrint(
+//     "FeeCoinIsSpent for fee when sending token : $feeCoinSpent and Infos : $spentCoinsParents");
       if (coin.amount != 0 && !feeCoinSpent) {
         feeSum += coin.amount;
         standardCoinsForFee.add(coin);
@@ -1273,7 +1477,7 @@ class PushingTransaction {
           return b.amount.compareTo(a.amount);
         });
 
-        // debugPrint("Sorted all coins : $allCoins");
+// debugPrint("Sorted all coins : $allCoins");
 
         List<Coin> requiredCoins = [];
         var sum = 0;
@@ -1347,17 +1551,17 @@ class PushingTransaction {
 
       debugPrint("Map to Android : $mapToAndroid");
 
-      // def_tokens.forEach((asset_id) {
-      //   List<String> outer_hashes = [];
-      //   main_puzzle_hashes.forEach((main_hash) {
-      //     if (asset_id.isNotEmpty)
-      //       outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-      //               Puzzlehash.fromHex(main_hash.toHex()),
-      //               Puzzlehash.fromHex(asset_id))
-      //           .toHex());
-      //   });
-      //   mapToAndroid[asset_id] = outer_hashes;
-      // });
+// def_tokens.forEach((asset_id) {
+//   List<String> outer_hashes = [];
+//   main_puzzle_hashes.forEach((main_hash) {
+//     if (asset_id.isNotEmpty)
+//       outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
+//               Puzzlehash.fromHex(main_hash.toHex()),
+//               Puzzlehash.fromHex(asset_id))
+//           .toHex());
+//   });
+//   mapToAndroid[asset_id] = outer_hashes;
+// });
 
       _channel.invokeMethod("getHash", mapToAndroid);
     } catch (ex) {
@@ -1442,10 +1646,10 @@ class PushingTransaction {
       {required List<String> mnemonic, required String httpUrl}) async {
     try {
       final keychain = generateKeyChainForAssets(mnemonic, "", 1);
-      // initializing Service,
+// initializing Service,
       Network chosenNetwork = Network.mainnet;
       NetworkContext().setBlockchainNetwork(blockchainNetworks[chosenNetwork]!);
-      // get outer puzzle hashes from keychain
+// get outer puzzle hashes from keychain
       final myOuterPuzzlehashes = keychain.getOuterPuzzleHashesForAssetId(
           Puzzlehash.fromHex(
               '7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02'));
@@ -1469,7 +1673,7 @@ class PushingTransaction {
           },
           body: jsonEncode(body));
 
-      //Here I have to get unspent GAD coins
+//Here I have to get unspent GAD coins
       debugPrint("Response Data on Flutter ${responseData.body}");
       if (responseData.statusCode == 200) {
         debugPrint(
@@ -1596,7 +1800,7 @@ class PushingTransaction {
       coins: fullCoins,
       changePuzzlehash: changePh,
       targetPuzzleHash: targePh,
-      //fee: 1000000,
+//fee: 1000000,
     );
 
     print("Offer from gad to xch");
@@ -1692,20 +1896,20 @@ class PushingTransaction {
       "vanish"
     ];
 
-    // var mnemonic = [
-    //   "pact",
-    //   "talent",
-    //   "divide",
-    //   "syrup",
-    //   "kiss",
-    //   "second",
-    //   "tide",
-    //   "inform",
-    //   "device",
-    //   "question",
-    //   "season",
-    //   "brain"
-    // ];
+// var mnemonic = [
+//   "pact",
+//   "talent",
+//   "divide",
+//   "syrup",
+//   "kiss",
+//   "second",
+//   "tide",
+//   "inform",
+//   "device",
+//   "question",
+//   "season",
+//   "brain"
+// ];
 
     NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
@@ -1744,7 +1948,7 @@ class PushingTransaction {
       myOuterPuzzlehashes.add(outer);
     }
 
-    // remove duplicate puzzlehashes
+// remove duplicate puzzlehashes
     myOuterPuzzlehashes = myOuterPuzzlehashes.toSet().toList();
 
     /// Search for the cat coins for offered
@@ -1758,7 +1962,7 @@ class PushingTransaction {
     List<CatCoin> catCoins = [];
     List<Coin> basicCatCoins = responseDataCAT;
 
-    // hydrate cat coins
+// hydrate cat coins
     for (final coin in basicCatCoins) {
       await getCatCoinsDetail(
         coin: coin,
@@ -1768,9 +1972,9 @@ class PushingTransaction {
       );
     }
 
-    // hydrate full coins
+// hydrate full coins
     List<FullCoin>? fullCatCoins = catCoins.map((e) {
-      //Search for the Coin
+//Search for the Coin
       final coinFounded = basicCatCoins
           .where(
             (coin_) => coin_.id == e.id,
@@ -1785,12 +1989,12 @@ class PushingTransaction {
       );
     }).toList();
 
-    //search for xch full coins
+//search for xch full coins
     final xchFullCoins = standartWalletService.convertXchCoinsToFull(
       await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
     );
 
-    // concatenate all coins, the OfferService will be grouped for asset
+// concatenate all coins, the OfferService will be grouped for asset
     final allCoins = fullCatCoins + xchFullCoins;
 
     final changePh = keychain.puzzlehashes[0];
@@ -1798,13 +2002,13 @@ class PushingTransaction {
 
     final offer = await offerService.createOffer(
       offerredAmounts: {
-        //Remember, always use the offerred amount is negative
+//Remember, always use the offerred amount is negative
         OfferAssetData.cat(
           tailHash: gwtHash,
         ): -1000
       },
       requesteAmounts: {
-        // Remember, always use the requested amount is positive
+// Remember, always use the requested amount is positive
         null: [
           44414023,
         ]
@@ -1812,7 +2016,7 @@ class PushingTransaction {
       coins: allCoins,
       changePuzzlehash: changePh,
       targetPuzzleHash: targePh,
-      //fee: 1000000,
+//fee: 1000000,
     );
     final str = offer.toBench32();
     debugPrint("Offer str cat for xch : $str");
@@ -1851,10 +2055,10 @@ class PushingTransaction {
       var coinMap = json.decode(nftCoin) as Map<String, dynamic>;
       var nftParentCoin = json.decode(nftParentCoinJson)["coin_solution"]
           as Map<String, dynamic>;
-      // debugPrint(
-      //     "NFtParentCoin after decoding and casting : $nftParentCoin $coinMap");
+// debugPrint(
+//     "NFtParentCoin after decoding and casting : $nftParentCoin $coinMap");
       final coin = Coin.fromChiaCoinRecordJson(coinMap);
-      // debugPrint("fromChiaCoinRecordJson : $coin");
+// debugPrint("fromChiaCoinRecordJson : $coin");
       final parentSpendCoin = CoinSpend.fromJson(nftParentCoin);
       final puzzleReveal = parentSpendCoin.puzzleReveal;
       final nftUncurried = UncurriedNFT.uncurry(
@@ -2065,24 +2269,24 @@ class PushingTransaction {
       jsonDecode(response.body) as Map<String, dynamic>,
     ).coinRecords.map((record) => record.toCoin()).toList();
 
-    // final mainHidratedCoins = await fullNode.hydrateFullCoins(mainChildrens);
-    //
-    // if (mainHidratedCoins.isEmpty) {
-    //   throw Exception("Can't be found the NFT coin with launcher ${launcherId}");
-    // }
-    // FullCoin nftCoin = mainHidratedCoins.first;
-    // print(nftCoin.type);
-    // final foundedCoins = await fullNode.getAllLinageSingletonCoin(nftCoin);
-    // final eveCcoin = foundedCoins.first;
-    // final uncurriedNft = UncurriedNFT.tryUncurry(eveCcoin.parentCoinSpend!.puzzleReveal);
-    // if (uncurriedNft!.supportDid) {
-    //   final minterDid = NftService()
-    //       .getnewOwnerDid(unft: uncurriedNft, solution: eveCcoin.parentCoinSpend!.solution);
-    //   if (minterDid != null) {
-    //     return DidService(fullNode: fullNode, keychain: keychain)
-    //         .getDidInfoByLauncherId(Puzzlehash(minterDid));
-    //   }
-    // }
+// final mainHidratedCoins = await fullNode.hydrateFullCoins(mainChildrens);
+//
+// if (mainHidratedCoins.isEmpty) {
+//   throw Exception("Can't be found the NFT coin with launcher ${launcherId}");
+// }
+// FullCoin nftCoin = mainHidratedCoins.first;
+// print(nftCoin.type);
+// final foundedCoins = await fullNode.getAllLinageSingletonCoin(nftCoin);
+// final eveCcoin = foundedCoins.first;
+// final uncurriedNft = UncurriedNFT.tryUncurry(eveCcoin.parentCoinSpend!.puzzleReveal);
+// if (uncurriedNft!.supportDid) {
+//   final minterDid = NftService()
+//       .getnewOwnerDid(unft: uncurriedNft, solution: eveCcoin.parentCoinSpend!.solution);
+//   if (minterDid != null) {
+//     return DidService(fullNode: fullNode, keychain: keychain)
+//         .getDidInfoByLauncherId(Puzzlehash(minterDid));
+//   }
+// }
     return null;
   }
 
@@ -2135,11 +2339,11 @@ class PushingTransaction {
       mapToAndroid["metadataUrl"] =
           info.metadata.toList()[2].cons[1].toString();
       mapToAndroid["metadataHash"] = info.metadataUpdaterHash.toHex();
-      // mapToAndroid["licenseUris"] = info.licenseUris.toList();
+// mapToAndroid["licenseUris"] = info.licenseUris.toList();
       mapToAndroid["supportsDid"] = info.supportDid;
 
-      // debugPrint("Data url photo : ${info.metadata.toList()[2].cons[1].toString()}");
-      // debugPrint("Data url photo : ${info.metadata.toList()}");
+// debugPrint("Data url photo : ${info.metadata.toList()[2].cons[1].toString()}");
+// debugPrint("Data url photo : ${info.metadata.toList()}");
 
       _channel.invokeMethod("unCurriedNFTInfo", mapToAndroid);
     } catch (ex) {

@@ -75,6 +75,8 @@ class TransactionItemAdapter(
                     txtStatus.text = curActivity.getStringResource(R.string.transactions_pendind)
                     txtStatus.setTextColor(curActivity.getColorResource(R.color.txt_inprogress))
                 }
+
+                else -> Unit
             }
             txtHeightTransaction.text = "${transaction.confirmed_at_height}"
             txtToken.text =

@@ -131,6 +131,8 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 					dialogManager = dialogManager,
 					res.error
 				)
+
+				else -> Unit
 			}
 		}
 	}
