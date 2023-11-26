@@ -12,3 +12,5 @@ evaluate(new File(
 
 include ':wallet-sdk'
 project(':wallet-sdk').projectDir = new File('../green-wallet-android-source/greenapp')
+include ':compose'
+include ':core'

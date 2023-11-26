@@ -5,5 +5,6 @@ enum class ReasonEnterCode {
     SHOW_DATA,
     DELETE_WALLET,
     SEND_MONEY,
-    AUTHENTICATION
+    AUTHENTICATION,
+    CONNECTION_REQUEST
 }

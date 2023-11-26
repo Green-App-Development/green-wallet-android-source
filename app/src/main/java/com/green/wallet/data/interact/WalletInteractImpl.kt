@@ -404,6 +404,20 @@ class WalletInteractImpl @Inject constructor(
     override suspend fun getMainPuzzleHashes(address: String): List<String> =
         walletDao.getWalletByAddress(address)[0].puzzle_hashes
 
+    override suspend fun getHomeFirstWallet(): Wallet? {
+        val list = walletDao.getHomeFirstWallet()
+        if (list.isNotEmpty()) {
+            val it = list[0]
+            return list[0].toWallet(
+                getDecryptedMnemonicsList(
+                    it.encMnemonics,
+                    it.address
+                )
+            )
+        }
+        return null
+    }
+
     data class AssetIDWithPriority(val asset_id: String, val priority: Int)
 
 }

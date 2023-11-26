@@ -135,6 +135,8 @@ class LanguageFragment : DaggerFragment() {
 					updateView()
 					curActivity().move2TermsFragment()
 				}
+
+				else -> Unit
 			}
 		}
 	}

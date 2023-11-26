@@ -9,6 +9,7 @@ import com.green.wallet.presentation.main.address.AddressViewModel
 import com.green.wallet.presentation.main.allsettings.AllSettingsViewModel
 import com.green.wallet.presentation.main.createnewwallet.NewWalletViewModel
 import com.green.wallet.presentation.main.dapp.DAppViewModel
+import com.green.wallet.presentation.main.dapp.trade.TraderViewModel
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeViewModel
 import com.green.wallet.presentation.main.home.HomeFragmentViewModel
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicViewModel
@@ -210,6 +211,16 @@ abstract class ViewModelsModule {
 	@Binds
 	@ViewModelKey(TibetLiquidityDetailViewModel::class)
 	abstract fun bindingTibetLiquidityDetailViewModel(viewModel: TibetLiquidityDetailViewModel): ViewModel
+
+
+	@IntoMap
+	@Binds
+	@ViewModelKey(TraderViewModel::class)
+	abstract fun bindingTraderViewModel(viewModel: TraderViewModel): ViewModel
+
+
+
+
 
 
 }

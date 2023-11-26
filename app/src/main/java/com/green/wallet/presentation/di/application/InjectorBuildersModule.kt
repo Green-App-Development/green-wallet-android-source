@@ -14,6 +14,7 @@ import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWallet
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
 import com.green.wallet.presentation.main.dapp.DAppFragment
+import com.green.wallet.presentation.main.dapp.trade.TraderFragment
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
@@ -202,5 +203,8 @@ abstract class InjectorBuildersModule {
 	@ContributesAndroidInjector
 	abstract fun injectIntoTibetLiquidityDetailFragment(): TibetLiquidityDetailsFragment
 
+
+	@ContributesAndroidInjector
+	abstract fun injectIntoTraderFragment(): TraderFragment
 
 }
