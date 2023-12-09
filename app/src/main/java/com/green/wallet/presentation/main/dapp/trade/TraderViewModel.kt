@@ -5,6 +5,7 @@ import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.main.dapp.trade.models.OfferToken
 import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
 import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import javax.inject.Inject
 
 
@@ -27,7 +30,9 @@ class TraderViewModel @Inject constructor(
 
     var wallet: Wallet? = null
 
-    private val _offerViewState = MutableStateFlow(OfferViewState())
+    private val _offerViewState = MutableStateFlow(
+        OfferViewState()
+    )
     val offerViewState = _offerViewState.asStateFlow()
 
     init {
@@ -62,30 +67,46 @@ class TraderViewModel @Inject constructor(
     }
 
     fun updateTakingOffer(
-        requestedAssetId: String,
-        offeredAssetId: String,
-        requestedAmount: Long,
-        offeredAmount: Long
+        requestedJson: String,
+        offeredJson: String
     ) {
         viewModelScope.launch {
-            val requestedCode = tokenInteract.getTokenCodeByHash(requestedAssetId)
-            val offeredCode = tokenInteract.getTokenCodeByHash(offeredAssetId)
-            val dividedReqAmount =
-                requestedAmount / if (requestedAssetId.isEmpty()) PRECISION_XCH else PRECISION_CAT
-            val dividedOfferedAmount =
-                offeredAmount / if (offeredAssetId.isEmpty()) PRECISION_XCH else PRECISION_CAT
             _offerViewState.update {
                 it.copy(
                     acceptOffer = true,
-                    offeringCode = offeredCode.ifEmpty { "XCH" },
-                    requestingCode = requestedCode.ifEmpty { "XCH" },
-                    offerAmount = dividedOfferedAmount,
-                    requestingAmount = dividedReqAmount,
-                    requestingAssetId = requestedAssetId
+                    offered = parseTokenJson(offeredJson),
+                    requested = parseTokenJson(requestedJson)
                 )
             }
             VLog.d("OfferViewState update : ${_offerViewState.value}")
         }
+    }
+
+    private suspend fun parseTokenJson(json: String): List<OfferToken> {
+        val list = mutableListOf<OfferToken>()
+        val jsonArr = JSONArray(json)
+        for (i in 0 until jsonArr.length()) {
+            val item = JSONObject(jsonArr.get(i).toString())
+
+            val assetID = item.getString("assetID") ?: ""
+            val assetAmount = item.getInt("assetAmount")
+
+            var code = "XCH"
+            if (assetID.isNotEmpty())
+                code = tokenInteract.getTokenCodeByHash(assetID)
+            val dividedAmount =
+                assetAmount / if (assetID.isEmpty()) PRECISION_XCH else PRECISION_CAT
+
+            list.add(
+                OfferToken(
+                    assetID = assetID,
+                    assetAmount = dividedAmount,
+                    code = code
+                )
+            )
+        }
+
+        return list
     }
 
 }

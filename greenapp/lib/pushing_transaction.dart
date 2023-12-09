@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'dart:math';
 
+import 'TokenInfo.dart';
 import 'nft_service.dart';
 
 class PushingTransaction {
@@ -362,32 +363,19 @@ class PushingTransaction {
             try {
               var args = call.arguments;
               debugPrint("PushingOffer args got called : ${call.arguments}");
-              debugPrint("AssetID that is being asked : ${args["asset_id"]}");
-              var assetID = args["asset_id"].toString();
               var offer = args["offer"];
               var mnemonics = args["mnemonics"].toString().split(' ');
               var url = args["url"].toString();
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
-              var spentCoins = args["spentCoins"];
-              if (assetID.isEmpty) {
-                pushingOfferWithXCH(
-                    offer: offer,
-                    mnemonics: mnemonics,
-                    url: url,
-                    observer: observer,
-                    nonObserver: nonObserver,
-                    fee: fee);
-              } else {
-                pushingOfferWithCAT(
-                    offer: offer,
-                    mnemonics: mnemonics,
-                    url: url,
-                    observer: observer,
-                    nonObserver: nonObserver,
-                    fee: fee);
-              }
+              pushingOfferWithCAT(
+                  offerString: offer,
+                  mnemonics: mnemonics,
+                  url: url,
+                  observer: observer,
+                  nonObserver: nonObserver,
+                  fee: fee);
             } catch (ex) {
               debugPrint("Exception in getting params from pushing offer");
             }
@@ -476,12 +464,126 @@ class PushingTransaction {
   }
 
   Future<void> pushingOfferWithCAT(
-      {required String offer,
+      {required String offerString,
       required List<String> mnemonics,
       required String url,
       required int observer,
       required int nonObserver,
-      required int fee}) async {}
+      required int fee}) async {
+    var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+    var keychain = cachedWalletChains[key] ??
+        generateKeyChain(mnemonics, observer, nonObserver);
+    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+    final standartWalletService = StandardWalletService();
+    final puzzleHashes =
+        keychain.hardenedMap.entries.map((e) => e.key).toList();
+    for (var element in keychain.unhardenedMap.entries) {
+      puzzleHashes.add(element.key);
+    }
+
+    var fullNodeRpc = FullNodeHttpRpc(url);
+    var fullNode = ChiaFullNodeInterface(fullNodeRpc);
+    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+
+    final offer = Offer.fromBench32(offerString);
+    final tradeManager = TradeManagerService();
+    final analized = await tradeManager.analizeOffer(
+        fee: 0,
+        targetPuzzleHash: Puzzlehash.zeros(),
+        changePuzzlehash: Puzzlehash.zeros(),
+        offer: offer);
+
+    List<Future<void>> futures = [];
+    List<FullCoin> allFullCoins = [];
+    var xchRequested = false;
+    for (var entry in analized!.requested.entries) {
+      OfferAssetData? key = entry.key;
+      final amountReq = entry.value[0];
+      if (key?.assetId != null) {
+        futures.add(getFullCoinsByAssetId(
+            url: url,
+            fullNode: fullNode,
+            assetId: key!.assetId.toString(),
+            fullCoins: allFullCoins,
+            innerHashes: puzzleHashes));
+      } else {
+        xchRequested = true;
+      }
+    }
+
+    debugPrint("Futures size ${futures.length}");
+    await Future.wait(futures);
+
+    List<Coin> totalXCHCoins =
+        await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+    final xchFullCoins =
+        standartWalletService.convertXchCoinsToFull(totalXCHCoins);
+
+    final changePh = keychain.puzzlehashes[0];
+    final targePh = keychain.puzzlehashes[1];
+
+    final offerFrom32 = Offer.fromBench32(offerString);
+    final responseResult = await offerService.responseOffer(
+        fee: 0,
+        targetPuzzleHash: targePh,
+        offer: offerFrom32,
+        changePuzzlehash: changePh,
+        coinsToUse: allFullCoins + xchFullCoins);
+
+    debugPrint(
+        "Result from pushing xch offer to cat : ${responseResult.item1.success}");
+  }
+
+  Future<void> getFullCoinsByAssetId(
+      {required String url,
+      required ChiaFullNodeInterface fullNode,
+      required String assetId,
+      required List<FullCoin> fullCoins,
+      required List<Puzzlehash> innerHashes}) async {
+    List<Puzzlehash> outer = [];
+    var catHash = Puzzlehash.fromHex(assetId);
+    for (var hash in innerHashes) {
+      var cur = WalletKeychain.makeOuterPuzzleHash(
+        hash,
+        catHash,
+      );
+      outer.add(cur);
+    }
+
+    final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(
+      outer,
+    );
+
+    List<CatCoin> catCoins = [];
+    List<Coin> basicCatCoins = responseDataCAT;
+    // hydrate cat coins
+    for (final coin in basicCatCoins) {
+      await getCatCoinsDetail(
+        coin: coin,
+        httpUrl: url,
+        catCoins: catCoins,
+        fullNode: fullNode,
+      );
+    }
+
+    // hydrate full coins
+    List<FullCoin>? fullCatCoins;
+    catCoins.map((e) {
+      //Search for the Coin
+      final coinFounded = basicCatCoins
+          .where(
+            (coin_) => coin_.id == e.id,
+          )
+          .toList();
+
+      final coin = coinFounded.first;
+
+      fullCoins.add(FullCoin.fromCoin(
+        coin,
+        e.parentCoinSpend,
+      ));
+    }).toList();
+  }
 
   Future<void> pushingOffer({
     required String offerStr,
@@ -539,18 +641,23 @@ class PushingTransaction {
     if (analized != null) {
       print("Analyzed Requested : ${analized.requested}");
       print("Analyzed Offered : ${analized.offered}");
-      var offeredItem = analized.offered.entries.first;
-      var offeredAssetId = offeredItem.key?.assetId ?? "";
-      var offeredAmount = offeredItem.value;
-      var requestedItem = analized.requested.entries.first;
-      var requestedAssetId = requestedItem.key?.assetId ?? "";
-      var requestedAmount = requestedItem.value[0];
-      _channel.invokeMethod("AnalyzeOffer", {
-        "requested_asset_id": requestedAssetId.toString(),
-        "offered_asset_id": offeredAssetId.toString(),
-        "offered_amount": offeredAmount,
-        "requested_amount": requestedAmount
-      });
+      List<TokenInfo> requested = [];
+      for (var entry in analized.requested.entries) {
+        OfferAssetData? key = entry.key;
+        List<int> values = entry.value;
+        requested.add(
+            TokenInfo(assetID: key?.assetId.toString(), amount: values[0]));
+      }
+
+      List<TokenInfo> offered = [];
+      for (var entry in analized.offered.entries) {
+        OfferAssetData? key = entry.key;
+        int value = entry.value;
+        offered.add(TokenInfo(assetID: key?.assetId.toString(), amount: value));
+      }
+
+      _channel.invokeMethod("AnalyzeOffer",
+          {"requested": jsonEncode(requested), "offered": jsonEncode(offered)});
     } else {
       print("Analyzed is null");
       _channel.invokeMethod("exception", "analyzeOffer is null");

@@ -12,7 +12,7 @@ sealed interface TraderEvent {
 
     data class ParseTakeOffer(val offer: String) : TraderEvent
 
-    data class SendOffer(val offer: String) : TraderEvent
+    data class SendOffer(val offer: String, val fee: Int) : TraderEvent
 
     data class ShowCreateOfferDialog(val params: CreateOfferParams) : TraderEvent
 

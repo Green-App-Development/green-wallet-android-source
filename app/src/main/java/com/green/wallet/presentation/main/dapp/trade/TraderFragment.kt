@@ -74,7 +74,10 @@ class TraderFragment : BaseComposeFragment() {
                             }
 
                             is TraderEvent.SendOffer -> {
-                                callFlutterToPushTakeOffer(viewModel.offerViewState.value.offer)
+                                callFlutterToPushTakeOffer(
+                                    viewModel.offerViewState.value.offer,
+                                    it.fee
+                                )
                             }
 
                             else -> Unit
@@ -94,17 +97,11 @@ class TraderFragment : BaseComposeFragment() {
                 "AnalyzeOffer" -> {
                     val arguments = (call.arguments as HashMap<*, *>)
                     VLog.d("Analyzing offer from flutter ${call.method}")
-                    val requestedAssetId = arguments["requested_asset_id"]?.toString().orEmpty()
-                    val offeredAssetId = arguments["offered_asset_id"]?.toString().orEmpty()
-                    val requestedAmount =
-                        Math.abs(arguments["requested_amount"]?.toString()?.toLong() ?: 0L)
-                    val offeredAmount =
-                        Math.abs(arguments["offered_amount"]?.toString()?.toLong() ?: 0L)
+                    val requested = arguments["requested"]?.toString().orEmpty()
+                    val offered = arguments["offered"]?.toString().orEmpty()
                     viewModel.updateTakingOffer(
-                        requestedAssetId,
-                        offeredAssetId,
-                        requestedAmount,
-                        offeredAmount
+                        requestedJson = requested,
+                        offeredJson = offered
                     )
                 }
 
@@ -123,7 +120,7 @@ class TraderFragment : BaseComposeFragment() {
         methodChannel.invokeMethod("AnalyzeOffer", map)
     }
 
-    private suspend fun callFlutterToPushTakeOffer(offer: String) {
+    private suspend fun callFlutterToPushTakeOffer(offer: String, fee: Int) {
         val map = hashMapOf<String, Any>()
         map["offer"] = offer
         val wallet = viewModel.wallet ?: return
@@ -131,9 +128,8 @@ class TraderFragment : BaseComposeFragment() {
         map["observer"] = wallet.observerHash
         map["nonObserver"] = wallet.nonObserverHash
         map["url"] = url
-        map["fee"] = 0
+        map["fee"] = fee
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
-        map["asset_id"] = viewModel.offerViewState.value.requestingAssetId
         methodChannel.invokeMethod("PushingOffer", map)
     }
 
@@ -146,10 +142,8 @@ class TraderFragment : BaseComposeFragment() {
         map["url"] = url
         map["fee"] = 0
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
-        map["request_asset_id"] = createOffer.requestAssets?.get(0)?.assetId.toString()
-        map["request_amount"] = createOffer.requestAssets?.get(0)?.amount.toString()
-        map["offer_asset_id"] = createOffer.offerAssets?.get(0)?.assetId.toString()
-        map["offer_amount"] = createOffer.offerAssets?.get(0)?.amount.toString()
+        map["request"] = Gson().toJson(createOffer.requestAssets)
+        map["offer"] = Gson().toJson(createOffer.offerAssets)
         methodChannel.invokeMethod("CreateOffer", map)
     }
 

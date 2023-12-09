@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -49,6 +51,7 @@ import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
+import com.green.wallet.presentation.main.dapp.trade.models.OfferToken
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -143,48 +146,55 @@ fun ModelBottomSheetOffer(
                         textAlign = TextAlign.Start
                     )
                     FixedSpacer(height = size_12)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        DefaultText(
-                            text = state.offeringCode,
-                            size = text_14,
-                            color = Provider.current.txtPrimaryColors,
-                            fontWeight = FontWeight.W500,
-                            textAlign = TextAlign.Start
-                        )
-                        val fromTokenClr =
-                            if (state.acceptOffer) Provider.current.green else Provider.current.errorColor
-                        DefaultText(
-                            text = "${formattedDoubleAmountWithPrecision(state.offerAmount)} ${state.offeringCode}",
-                            size = text_14,
-                            color = fromTokenClr,
-                            fontWeight = FontWeight.W500,
-                            textAlign = TextAlign.Start
-                        )
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        items(items = state.offered) { item ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                DefaultText(
+                                    text = item.code,
+                                    size = text_14,
+                                    color = Provider.current.txtPrimaryColors,
+                                    fontWeight = FontWeight.W500,
+                                    textAlign = TextAlign.Start
+                                )
+                                val fromTokenClr =
+                                    if (state.acceptOffer) Provider.current.green else Provider.current.errorColor
+                                DefaultText(
+                                    text = "${formattedDoubleAmountWithPrecision(item.assetAmount)} ${item.code}",
+                                    size = text_14,
+                                    color = fromTokenClr,
+                                    fontWeight = FontWeight.W500,
+                                    textAlign = TextAlign.Start
+                                )
+                            }
+                        }
                     }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        val toTokenClr =
-                            if (state.acceptOffer) Provider.current.errorColor else Provider.current.green
-
-                        DefaultText(
-                            text = state.requestingCode,
-                            size = text_14,
-                            color = Provider.current.txtPrimaryColors,
-                            fontWeight = FontWeight.W500,
-                            textAlign = TextAlign.Start
-                        )
-                        DefaultText(
-                            text = "${formattedDoubleAmountWithPrecision(state.requestingAmount)} ${state.requestingCode}",
-                            size = text_14,
-                            color = toTokenClr,
-                            fontWeight = FontWeight.W500,
-                            textAlign = TextAlign.Start
-                        )
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        items(items = state.requested) { item ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                DefaultText(
+                                    text = item.code,
+                                    size = text_14,
+                                    color = Provider.current.txtPrimaryColors,
+                                    fontWeight = FontWeight.W500,
+                                    textAlign = TextAlign.Start
+                                )
+                                val fromTokenClr =
+                                    if (state.acceptOffer) Provider.current.errorColor else Provider.current.green
+                                DefaultText(
+                                    text = "${formattedDoubleAmountWithPrecision(item.assetAmount)} ${item.code}",
+                                    size = text_14,
+                                    color = fromTokenClr,
+                                    fontWeight = FontWeight.W500,
+                                    textAlign = TextAlign.Start
+                                )
+                            }
+                        }
                     }
                     FixedSpacer(height = size_15)
                     Box(
@@ -262,6 +272,20 @@ fun ModelBottomSheetOffer(
 @Composable
 fun ModelBottomSheetAcceptOfferPreview() {
     GreenWalletTheme {
-        ModelBottomSheetOffer()
+        ModelBottomSheetOffer(
+            state = OfferViewState(
+                acceptOffer = false,
+                offered = listOf(
+                    OfferToken("XCH", "", 0.00003),
+                    OfferToken("GAD", "", 0.00003),
+                    OfferToken("TIBET", "", 0.00003),
+                ),
+                requested = listOf(
+                    OfferToken("XCH", "", 0.00003),
+                    OfferToken("GAD", "", 0.00003),
+                    OfferToken("TIBET", "", 0.00003),
+                )
+            )
+        )
     }
 }
