@@ -1,6 +1,7 @@
 package com.green.compose.web_header
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -71,7 +72,10 @@ fun WebViewHeader(
             Icon(
                 painter = painterResource(id = R.drawable.three_dots),
                 contentDescription = null,
-                tint = Provider.current.txtPrimaryColors
+                tint = Provider.current.txtPrimaryColors,
+                modifier = Modifier.clickable {
+                    threeDots()
+                }
             )
             FixedSpacer(width = size_12)
             Icon(

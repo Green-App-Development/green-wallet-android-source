@@ -9,6 +9,8 @@ import android.webkit.WebViewClient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
@@ -92,18 +94,21 @@ fun TraderScreen(
             WebViewHeader(
                 modifier = Modifier.background(
                     color = Provider.current.background
-                )
+                ),
+                threeDots = {
+
+                }
             )
-            WebViewContainer(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Black),
-                url = "",
-                mContext = context,
-                webView = webView,
-                onEvent = onEvent,
-                state = state
-            )
+//            WebViewContainer(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .background(color = Color.Black),
+//                url = "",
+//                mContext = context,
+//                webView = webView,
+//                onEvent = onEvent,
+//                state = state
+//            )
         }
         ModelBottomSheetConnect(
             isConnected = state.isConnected,
@@ -123,9 +128,23 @@ fun TraderScreen(
             state = offerViewState,
             modifier = Modifier,
             sign = {
-                onEvent(TraderEvent.SendOffer(offerViewState.offer))
+                onEvent(TraderEvent.SendOffer(offerViewState.offer, 311))
             }
         )
+    }
+}
+
+@Composable
+fun DropDownWebViewHeader(
+    expanded: Boolean = false,
+    close: () -> Unit = {}
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = {
+            close()
+        }) {
+
     }
 }
 
@@ -156,7 +175,7 @@ fun WebViewContainer(
                         onEvent = onEvent
                     )
                 )
-                this.loadUrl("file:///android_asset/index.html")
+                this.loadUrl("https://green-app-sigma.vercel.app/")
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         bridge.init()
