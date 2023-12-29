@@ -63,6 +63,6 @@ dependencies {
     // Android Studio Preview support
     api 'androidx.compose.ui:ui-tooling-preview'
     debugImplementation 'androidx.compose.ui:ui-tooling'
-    api 'io.coil-kt:coil-compose:2.5.0'
+    api 'com.github.skydoves:landscapist-glide:2.1.13'
 
 }
