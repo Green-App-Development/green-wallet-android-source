@@ -62,8 +62,6 @@ android {
     }
 
 
-
-
     buildTypes {
 
         release {
@@ -80,9 +78,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             firebaseAppDistribution {
-                serviceCredentialsFile="${rootDir}/app/green_wallet_firebase.json"
-                releaseNotes="Sample release notes"
-                testers="internal-testers"
+                serviceCredentialsFile = "${rootDir}/app/green_wallet_firebase.json"
+                releaseNotes = "Sample release notes"
+                testers = "internal-testers"
             }
 
         }
@@ -235,6 +233,7 @@ dependencies {
     implementation project(':flutter')
     implementation project(':compose')
     implementation project(':core')
+    implementation project(':uikit')
 
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 

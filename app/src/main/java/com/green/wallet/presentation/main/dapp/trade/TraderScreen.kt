@@ -6,9 +6,14 @@ import android.graphics.Bitmap
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -17,17 +22,34 @@ import androidx.compose.material.Surface
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.green.compose.dimens.size_12
+import com.green.compose.dimens.size_15
+import com.green.compose.dimens.size_200
+import com.green.compose.dimens.size_40
+import com.green.compose.dimens.text_12
+import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.compose.web_header.WebViewHeader
+import com.green.wallet.R
 import com.green.wallet.presentation.main.dapp.trade.bottom.ModelBottomSheetConnect
 import com.green.wallet.presentation.main.dapp.trade.bottom.ModelBottomSheetOffer
+import com.green.wallet.presentation.main.dapp.trade.components.DropDownWebViewHeader
 import com.green.wallet.presentation.tools.VLog
 import de.andycandy.android.bridge.Bridge
 import kotlinx.coroutines.flow.Flow
@@ -45,6 +67,7 @@ fun TraderScreen(
     onEvent: (TraderEvent) -> Unit = {},
     events: Flow<TraderEvent> = flowOf()
 ) {
+
     val context = LocalContext.current
 
     val connectionSheetState = rememberModalBottomSheetState(
@@ -55,6 +78,8 @@ fun TraderScreen(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
+
+    var dropDownMenu by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
@@ -91,24 +116,31 @@ fun TraderScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+
             WebViewHeader(
                 modifier = Modifier.background(
                     color = Provider.current.background
                 ),
                 threeDots = {
+                    dropDownMenu = true
+                },
+                back = {
+
+                },
+                closeX = {
 
                 }
             )
-//            WebViewContainer(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(color = Color.Black),
-//                url = "",
-//                mContext = context,
-//                webView = webView,
-//                onEvent = onEvent,
-//                state = state
-//            )
+            WebViewContainer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Black),
+                url = "",
+                mContext = context,
+                webView = webView,
+                onEvent = onEvent,
+                state = state
+            )
         }
         ModelBottomSheetConnect(
             isConnected = state.isConnected,
@@ -131,19 +163,13 @@ fun TraderScreen(
                 onEvent(TraderEvent.SendOffer(offerViewState.offer, 311))
             }
         )
-    }
-}
 
-@Composable
-fun DropDownWebViewHeader(
-    expanded: Boolean = false,
-    close: () -> Unit = {}
-) {
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = {
-            close()
-        }) {
+        DropDownWebViewHeader(
+            expanded = dropDownMenu,
+            close = {
+                dropDownMenu = false
+            }
+        )
 
     }
 }
@@ -175,7 +201,8 @@ fun WebViewContainer(
                         onEvent = onEvent
                     )
                 )
-                this.loadUrl("https://green-app-sigma.vercel.app/")
+//                this.loadUrl("https://green-app-sigma.vercel.app/")
+                this.loadUrl("file:///android_asset/index.html")
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         bridge.init()

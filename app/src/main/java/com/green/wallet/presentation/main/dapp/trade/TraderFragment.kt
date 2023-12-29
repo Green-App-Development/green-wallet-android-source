@@ -96,7 +96,7 @@ class TraderFragment : BaseComposeFragment() {
             when (call.method) {
                 "AnalyzeOffer" -> {
                     val arguments = (call.arguments as HashMap<*, *>)
-                    VLog.d("Analyzing offer from flutter ${call.method}")
+                    VLog.d("Analyzing offer from flutter ${call.arguments}")
                     val requested = arguments["requested"]?.toString().orEmpty()
                     val offered = arguments["offered"]?.toString().orEmpty()
                     viewModel.updateTakingOffer(

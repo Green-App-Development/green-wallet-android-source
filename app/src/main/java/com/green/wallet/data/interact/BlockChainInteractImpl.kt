@@ -21,6 +21,7 @@ import com.green.wallet.data.network.dto.spendbundle.SpenBunde
 import com.green.wallet.data.network.dto.spendbundle.SpendBundle
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.NftOfferCoin
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
@@ -1022,5 +1023,30 @@ class BlockChainInteractImpl @Inject constructor(
         return null
     }
 
-
+    override suspend fun getNftInfoByCoinID(
+        networkType: String,
+        coinID: String
+    ): NftOfferCoin? {
+        val networkItem = getNetworkItemFromPrefs(networkType)
+            ?: throw Exception("Exception in converting json str to networkItem")
+        val walletService = retrofitBuilder.baseUrl(networkItem.wallet + '/').build()
+            .create(BlockChainService::class.java)
+        val body = hashMapOf<String, Any>()
+        body["coin_id"] = coinID
+        body["latest"] = true
+        body["ignore_size_limit"] = false
+        body["reuse_puzhash"] = true
+        val reqNFTInfo = walletService.getNFTInfoByCoinId(body)
+        if (reqNFTInfo.isSuccessful) {
+            val nftInfo = reqNFTInfo.body()!!.nft_info
+            val metaData = getMetaDataNFT(nftInfo.metadata_uris?.get(0) ?: "") ?: return null
+            val collection = metaData["collection"].toString()
+            return NftOfferCoin(
+                imageUrl = nftInfo.data_uris?.get(0) ?: "",
+                collection = collection,
+                nftID = nftInfo.nft_id ?: "",
+            )
+        }
+        return null
+    }
 }

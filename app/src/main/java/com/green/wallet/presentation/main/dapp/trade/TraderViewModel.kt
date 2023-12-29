@@ -3,9 +3,12 @@ package com.green.wallet.presentation.main.dapp.trade
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
-import com.green.wallet.presentation.main.dapp.trade.models.OfferToken
+import com.green.wallet.presentation.main.dapp.trade.models.CatToken
+import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.main.dapp.trade.models.TokenOffer
 import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
 import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
@@ -26,6 +29,7 @@ class TraderViewModel @Inject constructor(
     private val tokenInteract: TokenInteract,
     private val walletInteract: WalletInteract,
     val prefsManager: PrefsManager,
+    private val blockChainInteract: BlockChainInteract
 ) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
 
     var wallet: Wallet? = null
@@ -82,28 +86,53 @@ class TraderViewModel @Inject constructor(
         }
     }
 
-    private suspend fun parseTokenJson(json: String): List<OfferToken> {
-        val list = mutableListOf<OfferToken>()
+    private suspend fun parseTokenJson(json: String): List<TokenOffer> {
+        val list = mutableListOf<TokenOffer>()
         val jsonArr = JSONArray(json)
         for (i in 0 until jsonArr.length()) {
             val item = JSONObject(jsonArr.get(i).toString())
 
             val assetID = item.getString("assetID") ?: ""
             val assetAmount = item.getInt("assetAmount")
+            val spentType = item.getString("type")
+            VLog.d("SpentType : $spentType, AssetID : $assetID, AssetAmount : $assetAmount")
+            var token: TokenOffer? = null
+            when (spentType) {
 
-            var code = "XCH"
-            if (assetID.isNotEmpty())
-                code = tokenInteract.getTokenCodeByHash(assetID)
-            val dividedAmount =
-                assetAmount / if (assetID.isEmpty()) PRECISION_XCH else PRECISION_CAT
+                "null" -> {
+                    var code = "XCH"
+                    if (assetID != "null") {
+                        code = tokenInteract.getTokenCodeByHash(assetID)
+                    }
+                    val dividedAmount =
+                        assetAmount / if (assetID.isEmpty()) PRECISION_XCH else PRECISION_CAT
 
-            list.add(
-                OfferToken(
-                    assetID = assetID,
-                    assetAmount = dividedAmount,
-                    code = code
-                )
-            )
+                    token = CatToken(
+                        assetID = assetID,
+                        amount = dividedAmount,
+                        code = code
+                    )
+
+                }
+
+                "nft" -> {
+                    val nftInfo =
+                        blockChainInteract.getNftInfoByCoinID(
+                            "Chia Network",
+                            coinID = assetID
+                        )
+                    token = NftToken(
+                        collection = nftInfo?.collection ?: "",
+                        nftId = nftInfo?.nftID ?: "",
+                        imgUrl = nftInfo?.imageUrl ?: ""
+                    )
+                }
+            }
+
+            if (token != null) {
+                VLog.d("Adding Token Abstract : $token")
+                list.add(token)
+            }
         }
 
         return list

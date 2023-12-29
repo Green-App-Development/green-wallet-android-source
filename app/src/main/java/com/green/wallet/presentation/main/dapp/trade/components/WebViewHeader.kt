@@ -1,4 +1,4 @@
-package com.green.compose.web_header
+package com.green.wallet.presentation.main.dapp.trade.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,8 +87,8 @@ fun WebViewHeader(
                         threeDots()
                     }
             )
-
             FixedSpacer(width = size_12)
+
             Icon(
                 painter = painterResource(id = R.drawable.ic_x),
                 contentDescription = null,

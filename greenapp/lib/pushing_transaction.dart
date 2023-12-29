@@ -639,22 +639,31 @@ class PushingTransaction {
         changePuzzlehash: Puzzlehash.zeros(),
         offer: offer);
     if (analized != null) {
-      print("Analyzed Requested : ${analized.requested}");
-      print("Analyzed Offered : ${analized.offered}");
+      debugPrint("Analyzed Requested : ${analized.requested}");
+      debugPrint("Analyzed Offered : ${analized.offered}");
       List<TokenInfo> requested = [];
       for (var entry in analized.requested.entries) {
         OfferAssetData? key = entry.key;
         List<int> values = entry.value;
-        requested.add(
-            TokenInfo(assetID: key?.assetId.toString(), amount: values[0]));
+        var spentType = key?.type;
+        requested.add(TokenInfo(
+            assetID: key?.assetId.toString(),
+            amount: values[0],
+            type: spentType?.value));
       }
 
       List<TokenInfo> offered = [];
       for (var entry in analized.offered.entries) {
         OfferAssetData? key = entry.key;
         int value = entry.value;
-        offered.add(TokenInfo(assetID: key?.assetId.toString(), amount: value));
+        var spentType = key?.type;
+        offered.add(TokenInfo(
+            assetID: key?.assetId.toString(),
+            amount: value,
+            type: spentType?.value));
       }
+
+      debugPrint("Requested asset list : $requested");
 
       _channel.invokeMethod("AnalyzeOffer",
           {"requested": jsonEncode(requested), "offered": jsonEncode(offered)});

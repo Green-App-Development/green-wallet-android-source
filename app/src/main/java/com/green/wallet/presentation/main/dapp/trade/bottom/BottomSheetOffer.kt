@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.bumptech.glide.integration.compose.GlideImage
 import com.green.compose.buttons.DefaultButton
 import com.green.compose.custom.FeeChoices
 import com.green.compose.custom.FixedSpacer
@@ -37,8 +37,6 @@ import com.green.compose.dimens.size_16
 import com.green.compose.dimens.size_18
 import com.green.compose.dimens.size_20
 import com.green.compose.dimens.size_26
-import com.green.compose.dimens.size_300
-import com.green.compose.dimens.size_500
 import com.green.compose.dimens.size_6
 import com.green.compose.dimens.size_80
 import com.green.compose.dimens.size_9
@@ -51,7 +49,8 @@ import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
-import com.green.wallet.presentation.main.dapp.trade.models.OfferToken
+import com.green.wallet.presentation.main.dapp.trade.models.CatToken
+import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -148,51 +147,27 @@ fun ModelBottomSheetOffer(
                     FixedSpacer(height = size_12)
                     LazyColumn(modifier = Modifier.fillMaxWidth()) {
                         items(items = state.offered) { item ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                DefaultText(
-                                    text = item.code,
-                                    size = text_14,
-                                    color = Provider.current.txtPrimaryColors,
-                                    fontWeight = FontWeight.W500,
-                                    textAlign = TextAlign.Start
-                                )
-                                val fromTokenClr =
-                                    if (state.acceptOffer) Provider.current.green else Provider.current.errorColor
-                                DefaultText(
-                                    text = "${formattedDoubleAmountWithPrecision(item.assetAmount)} ${item.code}",
-                                    size = text_14,
-                                    color = fromTokenClr,
-                                    fontWeight = FontWeight.W500,
-                                    textAlign = TextAlign.Start
-                                )
+                            when (item) {
+                                is CatToken -> {
+                                    CatTokenItem(item, state.acceptOffer)
+                                }
+
+                                is NftToken -> {
+
+                                }
                             }
                         }
                     }
                     LazyColumn(modifier = Modifier.fillMaxWidth()) {
                         items(items = state.requested) { item ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                DefaultText(
-                                    text = item.code,
-                                    size = text_14,
-                                    color = Provider.current.txtPrimaryColors,
-                                    fontWeight = FontWeight.W500,
-                                    textAlign = TextAlign.Start
-                                )
-                                val fromTokenClr =
-                                    if (state.acceptOffer) Provider.current.errorColor else Provider.current.green
-                                DefaultText(
-                                    text = "${formattedDoubleAmountWithPrecision(item.assetAmount)} ${item.code}",
-                                    size = text_14,
-                                    color = fromTokenClr,
-                                    fontWeight = FontWeight.W500,
-                                    textAlign = TextAlign.Start
-                                )
+                            when (item) {
+                                is CatToken -> {
+                                    CatTokenItem(item, !state.acceptOffer)
+                                }
+
+                                is NftToken -> {
+
+                                }
                             }
                         }
                     }
@@ -255,7 +230,7 @@ fun ModelBottomSheetOffer(
                     DefaultText(
                         text = "Sign",
                         size = text_15,
-                        color = Provider.current.txtPrimaryColors
+                        color = Provider.current.txtPrimaryColor
                     )
                 }
                 FixedSpacer(height = size_10)
@@ -266,6 +241,40 @@ fun ModelBottomSheetOffer(
     }
 }
 
+@Composable
+fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        GlideImage(
+            model =,
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
+fun CatTokenItem(item: CatToken, acceptOffer: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        DefaultText(
+            text = item.code,
+            size = text_14,
+            color = Provider.current.txtPrimaryColor,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Start
+        )
+        val fromTokenClr =
+            if (acceptOffer) Provider.current.errorColor else Provider.current.green
+        DefaultText(
+            text = "${formattedDoubleAmountWithPrecision(item.amount)} ${item.code}",
+            size = text_14,
+            color = fromTokenClr,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Start
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Preview(showBackground = true)
@@ -274,16 +283,16 @@ fun ModelBottomSheetAcceptOfferPreview() {
     GreenWalletTheme {
         ModelBottomSheetOffer(
             state = OfferViewState(
-                acceptOffer = false,
+                acceptOffer = true,
                 offered = listOf(
-                    OfferToken("XCH", "", 0.00003),
-                    OfferToken("GAD", "", 0.00003),
-                    OfferToken("TIBET", "", 0.00003),
+                    CatToken("XCH", "", 0.00003),
+                    CatToken("GAD", "", 0.00003),
+                    CatToken("TIBET", "", 0.00003),
                 ),
                 requested = listOf(
-                    OfferToken("XCH", "", 0.00003),
-                    OfferToken("GAD", "", 0.00003),
-                    OfferToken("TIBET", "", 0.00003),
+                    CatToken("XCC", "", 0.0013),
+                    CatToken("GWT", "", 0.11),
+                    CatToken("CHIA", "", 0.456),
                 )
             )
         )

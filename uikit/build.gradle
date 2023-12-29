@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    namespace 'com.green.compose'
-    compileSdk 34
+    namespace 'com.greenwallet.uikit'
+    compileSdk 33
 
     defaultConfig {
         minSdk 24
@@ -24,11 +24,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        compose true
-    }
-
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -43,26 +38,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    def composeBom = platform('androidx.compose:compose-bom:2023.10.01')
-    api composeBom
-    androidTestImplementation composeBom
-
-    api 'androidx.compose.runtime:runtime'
-    // Choose one of the following:
-    // Material Design 3
-    api 'androidx.compose.material3:material3'
-    // or Material Design 2
-    api 'androidx.compose.material:material'
-    // or skip Material Design and build directly on top of foundational components
-    api 'androidx.compose.foundation:foundation'
-    // or only import the main APIs for the underlying toolkit systems,
-    // such as input and measurement/layout
-    api 'androidx.compose.ui:ui'
-
-    // Android Studio Preview support
-    api 'androidx.compose.ui:ui-tooling-preview'
-    debugImplementation 'androidx.compose.ui:ui-tooling'
-    api 'io.coil-kt:coil-compose:2.5.0'
-
 }

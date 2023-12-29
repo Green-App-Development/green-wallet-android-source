@@ -1,7 +1,7 @@
 package com.green.wallet.presentation.main.dapp.trade.models
 
-data class OfferToken(
+data class CatToken(
     val code: String,
     val assetID: String,
-    val assetAmount: Double
-)
+    override val amount: Double
+) : TokenOffer(amount)
