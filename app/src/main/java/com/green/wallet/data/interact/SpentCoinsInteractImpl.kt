@@ -20,25 +20,25 @@ class SpentCoinsInteractImpl @Inject constructor(
 
     override suspend fun insertSpentCoinsJson(
         spentCoinsJson: String,
-        time_created: Long,
+        timeCreated: Long,
         code: String,
-        fk_address: String
+        fkAddress: String
     ) {
         try {
             val spentCoinsJsonArray = JSONArray(spentCoinsJson)
             for (i in 0 until spentCoinsJsonArray.length()) {
                 val coinJson = JSONObject(spentCoinsJsonArray[i].toString())
                 val amount = coinJson.getLong("amount")
-                val parent_coin_info = coinJson.getString("parent_coin_info")
-                val puzzle_hash = coinJson.getString("puzzle_hash")
+                val parentCoinInfo = coinJson.getString("parent_coin_info")
+                val puzzleHash = coinJson.getString("puzzle_hash")
                 val division = getTokenPrecisionByCode(code)
                 val coinEntity = SpentCoinsEntity(
-                    parent_coin_info,
-                    puzzle_hash,
+                    parentCoinInfo,
+                    puzzleHash,
                     amount / division,
-                    fk_address,
+                    fkAddress,
                     code,
-                    time_created
+                    timeCreated
                 )
                 VLog.d("InsertingCoinEntity on coinInteractImpl class after pushing : $coinEntity")
                 spentCoinsDao.insertSpentCoins(coinEntity)

@@ -67,6 +67,7 @@ import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
+import com.green.wallet.presentation.main.dapp.trade.components.ChooseFeeProgressValue
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.TokenOffer
@@ -87,6 +88,8 @@ fun ModelBottomSheetOffer(
     var spendableExpanded by remember { mutableStateOf(false) }
     val modifierLazy = remember { Modifier }
     var heightOfLazyColumn by remember { mutableStateOf(-1) }
+
+    var feeCommission by remember { mutableStateOf(0) }
 
     LaunchedEffect(heightOfLazyColumn) {
         if (heightOfLazyColumn != -1)
@@ -242,13 +245,12 @@ fun ModelBottomSheetOffer(
                         textAlign = TextAlign.Start
                     )
                     FixedSpacer(height = size_9)
-                    FeeChoices(
-                        feePos = {
 
-                        },
-                        modifier = Modifier.fillMaxWidth(),
+                    ChooseFeeProgressValue(
+                        modifier = Modifier.fillMaxWidth()
                     )
                     FixedSpacer(height = size_14)
+
                     DefaultText(
                         text = "Custom",
                         size = text_14,

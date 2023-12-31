@@ -369,15 +369,19 @@ class PushingTransaction {
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
+              var spentCoins = args["spentCoins"];
               pushingOfferWithCAT(
                   offerString: offer,
                   mnemonics: mnemonics,
                   url: url,
                   observer: observer,
                   nonObserver: nonObserver,
+                  spentCoins: spentCoins,
                   fee: fee);
             } catch (ex) {
-              debugPrint("Exception in getting params from pushing offer");
+              debugPrint(
+                  "Exception in getting params from pushing offer : $ex");
+              _channel.invokeMethod("exception");
             }
           }
       }
@@ -469,6 +473,7 @@ class PushingTransaction {
       required String url,
       required int observer,
       required int nonObserver,
+      required String spentCoins,
       required int fee}) async {
     var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
     var keychain = cachedWalletChains[key] ??
@@ -483,7 +488,6 @@ class PushingTransaction {
 
     var fullNodeRpc = FullNodeHttpRpc(url);
     var fullNode = ChiaFullNodeInterface(fullNodeRpc);
-    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
 
     final offer = Offer.fromBench32(offerString);
     final tradeManager = TradeManagerService();
@@ -493,9 +497,20 @@ class PushingTransaction {
         changePuzzlehash: Puzzlehash.zeros(),
         offer: offer);
 
+    List<String> spentCoinsParents = [];
+    if (spentCoins.isNotEmpty) {
+      List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoins);
+      for (var item in spentCoinsJsonDecoded) {
+        var parent_coin_info = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parent_coin_info);
+      }
+    }
+
     List<Future<void>> futures = [];
     List<FullCoin> allFullCoins = [];
-    var xchRequested = false;
+
+    Map<String, List<Coin>> spentCoinsMap = {};
+
     for (var entry in analized!.requested.entries) {
       OfferAssetData? key = entry.key;
       final amountReq = entry.value[0];
@@ -505,33 +520,80 @@ class PushingTransaction {
             fullNode: fullNode,
             assetId: key!.assetId.toString(),
             fullCoins: allFullCoins,
-            innerHashes: puzzleHashes));
+            innerHashes: puzzleHashes,
+            spentCoinsParents: spentCoinsParents,
+            spentCoinsMap: spentCoinsMap,
+            reqAmount: amountReq));
       } else {
-        xchRequested = true;
+        getFullXCHCoinsByAssetId(
+            url: url,
+            fullNode: fullNode,
+            assetId: key!.assetId.toString(),
+            fullCoins: allFullCoins,
+            innerHashes: puzzleHashes,
+            spentCoinsParents: spentCoinsParents,
+            spentCoinsMap: spentCoinsMap,
+            xchAmount: amountReq + fee,
+            standartWalletService: standartWalletService);
       }
     }
 
     debugPrint("Futures size ${futures.length}");
     await Future.wait(futures);
 
-    List<Coin> totalXCHCoins =
-        await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
-    final xchFullCoins =
-        standartWalletService.convertXchCoinsToFull(totalXCHCoins);
-
     final changePh = keychain.puzzlehashes[0];
     final targePh = keychain.puzzlehashes[1];
 
+    debugPrint("Json Encode before offer32 : ${jsonEncode(spentCoinsMap)}");
+
     final offerFrom32 = Offer.fromBench32(offerString);
-    final responseResult = await offerService.responseOffer(
-        fee: 0,
-        targetPuzzleHash: targePh,
-        offer: offerFrom32,
-        changePuzzlehash: changePh,
-        coinsToUse: allFullCoins + xchFullCoins);
+    // final responseResult = await offerService.responseOffer(
+    //     fee: fee,
+    //     targetPuzzleHash: targePh,
+    //     offer: offerFrom32,
+    //     changePuzzlehash: changePh,
+    //     coinsToUse: allFullCoins);
+
+    // debugPrint(
+    //     "Result from pushing xch offer to cat : ${responseResult.item1.success}");
 
     debugPrint(
-        "Result from pushing xch offer to cat : ${responseResult.item1.success}");
+        "Pushing offer with args got called : ${jsonEncode(spentCoinsMap)}");
+
+    _channel.invokeMethod(
+        "PushingOffer", {"spentCoins": jsonEncode(spentCoinsMap)});
+  }
+
+  Future<void> getFullXCHCoinsByAssetId(
+      {required String url,
+      required ChiaFullNodeInterface fullNode,
+      required String assetId,
+      required StandardWalletService standartWalletService,
+      required List<FullCoin> fullCoins,
+      required List<Puzzlehash> innerHashes,
+      required List<String> spentCoinsParents,
+      required Map<String, List<Coin>> spentCoinsMap,
+      required int xchAmount}) async {
+    List<Coin> totalXCHCoins =
+        await fullNode.getCoinsByPuzzleHashes(innerHashes);
+    var curAmount = 0;
+    List<Coin> neededCoins = [];
+
+    for (final coin in totalXCHCoins) {
+      var isSpentCoin =
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
+      if (!isSpentCoin) {
+        curAmount += coin.amount;
+        neededCoins.add(coin);
+      }
+      if (curAmount >= xchAmount) {
+        break;
+      }
+    }
+
+    fullCoins.addAll(standartWalletService.convertXchCoinsToFull(neededCoins));
+
+    spentCoinsMap["null"] = neededCoins;
   }
 
   Future<void> getFullCoinsByAssetId(
@@ -539,7 +601,10 @@ class PushingTransaction {
       required ChiaFullNodeInterface fullNode,
       required String assetId,
       required List<FullCoin> fullCoins,
-      required List<Puzzlehash> innerHashes}) async {
+      required List<Puzzlehash> innerHashes,
+      required List<String> spentCoinsParents,
+      required Map<String, List<Coin>> spentCoinsMap,
+      required int reqAmount}) async {
     List<Puzzlehash> outer = [];
     var catHash = Puzzlehash.fromHex(assetId);
     for (var hash in innerHashes) {
@@ -556,18 +621,31 @@ class PushingTransaction {
 
     List<CatCoin> catCoins = [];
     List<Coin> basicCatCoins = responseDataCAT;
-    // hydrate cat coins
+
+    var curAmount = 0;
+
+    List<Coin> neededCatCoins = [];
+
     for (final coin in basicCatCoins) {
-      await getCatCoinsDetail(
-        coin: coin,
-        httpUrl: url,
-        catCoins: catCoins,
-        fullNode: fullNode,
-      );
+      var isCoinSpent =
+          spentCoinsParents.contains(coin.parentCoinInfo.toString());
+      if (!isCoinSpent) {
+        curAmount += coin.amount;
+        neededCatCoins.add(coin);
+        await getCatCoinsDetail(
+          coin: coin,
+          httpUrl: url,
+          catCoins: catCoins,
+          fullNode: fullNode,
+        );
+        if (curAmount >= reqAmount) {
+          break;
+        }
+      }
     }
 
-    // hydrate full coins
-    List<FullCoin>? fullCatCoins;
+    spentCoinsMap[assetId] = neededCatCoins;
+
     catCoins.map((e) {
       //Search for the Coin
       final coinFounded = basicCatCoins

@@ -507,7 +507,7 @@ class MainActivity : BaseActivity() {
                     fragmentQrCodeSend,
                     fragmentSwapSend,
                     fragmentTibetSwapDetail,
-                ).contains(destination.id) || true
+                ).contains(destination.id)
             ) {
                 binding.mainBottomNav.visibility = View.GONE
             } else {

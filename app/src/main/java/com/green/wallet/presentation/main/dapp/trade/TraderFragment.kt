@@ -84,8 +84,6 @@ class TraderFragment : BaseComposeFragment() {
                         }
                     }
                 }
-                delay(1000L)
-                initListeningMethod()
             }
         }
 
@@ -109,6 +107,13 @@ class TraderFragment : BaseComposeFragment() {
                     val args = (call.arguments as HashMap<*, *>)
 
                 }
+
+                "PushingOffer" -> {
+                    val arguments = (call.arguments as HashMap<*, *>)
+                    VLog.d("PushingOffer result from flutter ${call.arguments}")
+                    val spentCoins = arguments["spentCoins"].toString()
+                    viewModel.saveSpentCoins(spentCoins)
+                }
             }
         }
     }
@@ -118,6 +123,7 @@ class TraderFragment : BaseComposeFragment() {
         map["offer"] = offer
         VLog.d("Invoked method to parse offer : $map")
         methodChannel.invokeMethod("AnalyzeOffer", map)
+        initListeningMethod()
     }
 
     private suspend fun callFlutterToPushTakeOffer(offer: String, fee: Int) {
@@ -130,7 +136,9 @@ class TraderFragment : BaseComposeFragment() {
         map["url"] = url
         map["fee"] = fee
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
+        map["spentCoins"] = ""
         methodChannel.invokeMethod("PushingOffer", map)
+        initListeningMethod()
     }
 
     private suspend fun callFlutterToCreateOffer(createOffer: CreateOfferParams) {
@@ -145,6 +153,7 @@ class TraderFragment : BaseComposeFragment() {
         map["request"] = Gson().toJson(createOffer.requestAssets)
         map["offer"] = Gson().toJson(createOffer.offerAssets)
         methodChannel.invokeMethod("CreateOffer", map)
+        initListeningMethod()
     }
 
     private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {

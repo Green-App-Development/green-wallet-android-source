@@ -95,10 +95,33 @@ class TraderViewModel @Inject constructor(
                 it.copy(
                     acceptOffer = true,
                     offered = parseTokenJson(offeredJson),
-                    requested = parseTokenJson(requestedJson, true)+tempList
+                    requested = parseTokenJson(requestedJson, true)
                 )
             }
             VLog.d("OfferViewState update : ${_offerViewState.value}")
+        }
+    }
+
+    fun saveSpentCoins(spentCoins: String) {
+        viewModelScope.launch {
+            val timeCreated = System.currentTimeMillis()
+            val jsonObject = JSONObject(spentCoins)
+            for (key in jsonObject.keys()) {
+                val value = jsonObject[key]
+                if (value == "null") {
+                    spentCoinsInteract.insertSpentCoinsJson(
+                        value.toString(),
+                        timeCreated,
+                        "XCH",
+                        wallet?.address.orEmpty()
+                    )
+                } else {
+                    val code = tokenInteract.getTokenCodeByHash(key)
+                    spentCoinsInteract.insertSpentCoinsJson(
+                        value.toString(), timeCreated, code, wallet?.address.orEmpty()
+                    )
+                }
+            }
         }
     }
 
@@ -115,58 +138,52 @@ class TraderViewModel @Inject constructor(
             val assetAmount = item.getInt("assetAmount")
             val spentType = item.getString("type")
             VLog.d("SpentType : $spentType, AssetID : $assetID, AssetAmount : $assetAmount")
-            var token: TokenOffer? = null
-            when (spentType) {
-
-                "null" -> {
-                    var code = "XCH"
-                    if (assetID != "null") {
-                        code = tokenInteract.getTokenCodeByHash(assetID)
-                    } else {
-                        assetID = ""
-                    }
-                    val dividedAmount =
-                        assetAmount / if (assetID.isEmpty()) PRECISION_XCH else PRECISION_CAT
-
-                    var spendableBalance = 0.0
-                    if (needSpendableBalance && false) {
-                        spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
-                            assetID,
-                            code,
-                            wallet?.address ?: ""
-                        ).first()
-                    }
-
-                    token = CatToken(
-                        assetID = assetID,
-                        amount = dividedAmount,
-                        code = code,
-                        spendableBalance = spendableBalance
-                    )
-
-                }
-
-                "nft" -> {
-                    val timeTaken = measureTimeMillis {
-                        val nftInfo =
-                            blockChainInteract.getNftInfoByCoinID(
-                                "Chia Network",
-                                coinID = assetID
-                            )
-                        token = NftToken(
-                            collection = nftInfo?.collection ?: "",
-                            nftId = nftInfo?.nftID ?: "",
-                            imgUrl = nftInfo?.imageUrl ?: ""
+            var token: TokenOffer
+            if (spentType == "nft") {
+                val timeTaken = measureTimeMillis {
+                    val nftInfo =
+                        blockChainInteract.getNftInfoByCoinID(
+                            "Chia Network",
+                            coinID = assetID
                         )
-                    }
-                    VLog.d("TimeTaken to know about nft : ${timeTaken / 1000}")
+                    token = NftToken(
+                        collection = nftInfo?.collection ?: "",
+                        nftId = nftInfo?.nftID ?: "",
+                        imgUrl = nftInfo?.imageUrl ?: ""
+                    )
                 }
+                VLog.d("TimeTaken to know about nft : ${timeTaken / 1000}")
+
+            } else {
+                var code = "XCH"
+                if (assetID != "null") {
+                    code = tokenInteract.getTokenCodeByHash(assetID)
+                } else {
+                    assetID = ""
+                }
+                val dividedAmount =
+                    assetAmount / if (assetID.isEmpty()) PRECISION_XCH else PRECISION_CAT
+
+                var spendableBalance = 0.0
+                if (needSpendableBalance && false) {
+                    spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
+                        assetID,
+                        code,
+                        wallet?.address ?: ""
+                    ).first()
+                }
+
+                token = CatToken(
+                    assetID = assetID,
+                    amount = dividedAmount,
+                    code = code,
+                    spendableBalance = spendableBalance
+                )
             }
 
-            if (token != null) {
-                VLog.d("Adding Token Abstract : $token")
-                list.add(token!!)
-            }
+            VLog.d("Adding Token Abstract : $token")
+            list.add(token)
+
         }
 
         return list

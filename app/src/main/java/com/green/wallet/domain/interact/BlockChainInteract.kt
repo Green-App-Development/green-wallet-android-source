@@ -23,7 +23,7 @@ interface BlockChainInteract {
         networkType: String,
         fingerPrint: Long,
         code: String,
-        dest_puzzle_hash: String,
+        destPuzzleHash: String,
         address: String,
         fee: Double,
         spentCoinsJson: String,

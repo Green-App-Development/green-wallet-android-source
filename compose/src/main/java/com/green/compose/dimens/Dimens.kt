@@ -13,6 +13,7 @@ val size_8 = 8.dp
 val size_9 = 9.dp
 val size_10 = 10.dp
 val size_12 = 12.dp
+val size_13 = 13.dp
 val size_14 = 14.dp
 val size_15 = 15.dp
 val size_16 = 16.dp
