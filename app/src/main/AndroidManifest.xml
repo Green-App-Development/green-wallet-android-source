@@ -1,92 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:tools="http://schemas.android.com/tools"
-		package="com.green.wallet">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.green.wallet">
 
-	<uses-permission android:name="android.permission.CAMERA" />
-	<uses-permission android:name="android.permission.USE_BIOMETRIC" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.ACTION_TIME_CHANGED" />
-	<uses-permission android:name="android.permission.ACTION_TIMEZONE_CHANGED" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACTION_TIME_CHANGED" />
+    <uses-permission android:name="android.permission.ACTION_TIMEZONE_CHANGED" />
 
-	<uses-feature
-			android:name="android.hardware.camera"
-			android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
-	<application
-			android:name="com.green.wallet.presentation.App"
-			android:allowBackup="false"
-			android:icon="@mipmap/ic_launcher"
-			android:label="@string/app_name"
-			android:resizeableActivity="false"
-			android:roundIcon="@mipmap/ic_launcher_round"
-			android:supportsRtl="true"
-			android:theme="@style/MyLightTheme">
-		<activity
-				android:name="com.green.wallet.presentation.main.MainActivity"
-				android:exported="true"
-				android:screenOrientation="portrait"
-				android:windowSoftInputMode="stateHidden|adjustPan">
+    <application
+        android:name="com.green.wallet.presentation.App"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:resizeableActivity="false"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/MyLightTheme">
+        <activity
+            android:name="com.green.wallet.presentation.main.MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan">
 
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+        </activity>
 
-		</activity>
+        <activity
+            android:name="com.green.wallet.presentation.onboard.OnBoardActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|adjustResize">
 
-		<activity
-				android:name="com.green.wallet.presentation.onboard.OnBoardActivity"
-				android:exported="false"
-				android:screenOrientation="portrait"
-				android:windowSoftInputMode="adjustPan|adjustResize">
+        </activity>
 
-		</activity>
+        <activity
+            android:name="com.green.wallet.presentation.intro.IntroActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|adjustResize">
 
-		<activity
-				android:name="com.green.wallet.presentation.intro.IntroActivity"
-				android:exported="true"
-				android:screenOrientation="portrait"
-				android:windowSoftInputMode="adjustPan|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
+        </activity>
 
-		</activity>
+        <service
+            android:name="com.green.wallet.presentation.main.service.AppRemovedRecentTaskService"
+            android:enabled="true" />
 
-		<service
-				android:name="com.green.wallet.presentation.main.service.AppRemovedRecentTaskService"
-				android:enabled="true" />
+        <service
+            android:name="com.green.wallet.data.network.FirebasePushNotifService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
-		<service
-				android:name="com.green.wallet.data.network.FirebasePushNotifService"
-				android:exported="false">
-			<intent-filter>
-				<action android:name="com.google.firebase.MESSAGING_EVENT" />
-			</intent-filter>
-		</service>
+        <receiver
+            android:name="com.green.wallet.presentation.main.receiver.NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
 
-		<receiver
-				android:name="com.green.wallet.presentation.main.receiver.NetworkChangeReceiver"
-				android:enabled="true"
-				android:exported="false">
-			<intent-filter>
-				<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-				<action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-				<action android:name="android.net.wifi.STATE_CHANGE" />
-			</intent-filter>
-		</receiver>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
+        <!-- If you are using androidx.startup to initialize other components -->
+        <!--            <meta-data-->
+        <!--                android:name="androidx.work.impl.WorkManagerInitializer"-->
+        <!--                android:value="androidx.startup"-->
+        <!--                tools:node="remove" />-->
 
-		<provider
-				android:name="androidx.startup.InitializationProvider"
-				android:authorities="${applicationId}.androidx-startup"
-				tools:node="remove" />
-		<!-- If you are using androidx.startup to initialize other components -->
-		<!--            <meta-data-->
-		<!--                android:name="androidx.work.impl.WorkManagerInitializer"-->
-		<!--                android:value="androidx.startup"-->
-		<!--                tools:node="remove" />-->
-
-	</application>
+    </application>
 
 </manifest>

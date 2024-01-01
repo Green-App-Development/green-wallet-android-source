@@ -138,6 +138,8 @@ class MainActivity : BaseActivity() {
     var listingFragmentView: View? = null
     var sendNftFragmentView: View? = null
 
+    var needToRestartHomeFragment = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         VLog.d(
@@ -243,6 +245,11 @@ class MainActivity : BaseActivity() {
     private fun initStatusBarColorRegulation() {
         navController.addOnDestinationChangedListener { navController, dest, bundle ->
             VLog.d("MainNav navController destination id changed  : ${dest.id}")
+            if (dest.id != homeFragment) {
+                needToRestartHomeFragment = true
+            } else {
+                restartHomeFragment()
+            }
             when (dest.id) {
                 homeFragment -> {
                     binding.mainBottomNav.menu.findItem(home).isChecked = true
@@ -356,6 +363,14 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun restartHomeFragment() {
+        if (needToRestartHomeFragment) {
+            needToRestartHomeFragment = false
+            navController.popBackStack()
+            navController.navigate(homeFragment)
+        }
+    }
+
     private fun bottomNavViewClicks() {
         binding.mainBottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -413,6 +428,7 @@ class MainActivity : BaseActivity() {
             }
             navController.popBackStack()
         }
+
     }
 
 
