@@ -54,5 +54,8 @@ abstract class InteractModule {
 	@Binds
 	abstract fun bindTibetInteractImpl(tibetInteractImpl: TibetInteractImpl): TibetInteract
 
+	@Binds
+	abstract fun bindDexieInteractImpl(dexieInteractImpl: DexieInteractImpl): DexieInteract
+
 
 }

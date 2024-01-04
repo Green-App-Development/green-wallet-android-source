@@ -27,7 +27,6 @@ import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
-import dagger.android.support.DaggerFragment
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Address
@@ -35,6 +34,7 @@ import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
+import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.*
@@ -56,7 +56,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class SendFragment : DaggerFragment() {
+class SendFragment : BaseFragment() {
 
     private lateinit var binding: FragmentSendBinding
     private lateinit var networkAdapter: DynamicSpinnerAdapter
@@ -113,7 +113,7 @@ class SendFragment : DaggerFragment() {
     }
 
     private var curTokenWalletList = listOf<TokenWallet>()
-    private val twoEdtsFilled = mutableSetOf<Int>()
+    private val threeEdtsFilled = mutableSetOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,6 +135,16 @@ class SendFragment : DaggerFragment() {
         VLog.d("OnCreateView on send Fragment")
         curActivity().sendCoinsFragmentView = view
         return binding.root
+    }
+
+    override fun collectFlowOnStarted(scope: CoroutineScope) {
+        scope.launch {
+            val fee = viewModel.getDexieFee()
+            with(binding) {
+                edtEnterCommission.setText(formattedDoubleAmountWithPrecision(fee.min))
+            }
+            initRecommendedCommissionFee(fee.recommended)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -319,12 +329,12 @@ class SendFragment : DaggerFragment() {
                 txtEnterAddressWallet.visibility = View.VISIBLE
             if (edtEnterCommission.text.toString().isNotEmpty())
                 txtEnterCommission.visibility = View.VISIBLE
-            if (twoEdtsFilled.size >= 2) {
+            if (threeEdtsFilled.size >= 2) {
                 btnContinue.isEnabled = true
             }
             txtWalletAmount.text = lastTokenBalanceText
             txtWalletAmountInUsd.text = lastTokenBalanceTxtInUSDT
-            VLog.d("EdtFilledSize : ${twoEdtsFilled.size}")
+            VLog.d("EdtFilledSize : ${threeEdtsFilled.size}")
         }
     }
 
@@ -551,7 +561,6 @@ class SendFragment : DaggerFragment() {
                         text = getShortNetworkType(curNetworkType)
                     }
                     txtRecommendedCommission.visibility = View.VISIBLE
-                    changeCommissionValueFromRest()
                 } else if (edtEnterCommission.text.toString().isEmpty()) {
                     txtEnterCommission.visibility = View.INVISIBLE
                     edtEnterCommission.hint =
@@ -566,6 +575,7 @@ class SendFragment : DaggerFragment() {
                 if (!focus) {
                     view3.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
                 }
+                enableBtnContinueTwoEdtsFilled()
             }
 
 
@@ -580,22 +590,17 @@ class SendFragment : DaggerFragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun changeCommissionValueFromRest() {
-        lifecycleScope.launch {
-            val commission =
-                viewModel.getCoinDetailsFeeCommission(getShortNetworkType(curNetworkType))
-
-            val text = formattedDoubleAmountWithPrecision(commission)
-            val ss = SpannableString(text)
-            val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
-            val underlineSpan = UnderlineSpan()
-            ss.setSpan(fcsGreen, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
-            ss.setSpan(underlineSpan, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
-            binding.txtRecommendedCommission.apply {
-                setText("$ss")
-                movementMethod = LinkMovementMethod.getInstance()
-                paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
-            }
+    private fun initRecommendedCommissionFee(commission: Double) {
+        val text = formattedDoubleAmountWithPrecision(commission)
+        val ss = SpannableString(text)
+        val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
+        val underlineSpan = UnderlineSpan()
+        ss.setSpan(fcsGreen, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
+        ss.setSpan(underlineSpan, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
+        binding.txtRecommendedCommission.apply {
+            setText("$ss")
+            movementMethod = LinkMovementMethod.getInstance()
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
     }
 
@@ -956,9 +961,9 @@ class SendFragment : DaggerFragment() {
 
         edtAddressWallet.addTextChangedListener {
             if (it.isNullOrEmpty()) {
-                twoEdtsFilled.remove(1)
+                threeEdtsFilled.remove(1)
             } else {
-                twoEdtsFilled.add(1)
+                threeEdtsFilled.add(1)
                 txtEnterAddressWallet.visibility = View.VISIBLE
                 edtAddressWallet.hint = ""
                 line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
@@ -1092,7 +1097,7 @@ class SendFragment : DaggerFragment() {
     private fun initAmountNotEnoughWarnings() {
         val amountSending = binding.edtEnterAmount.text.toString().toDoubleOrNull()
         if (amountSending == null || amountSending == 0.0) {
-            twoEdtsFilled.remove(2)
+            threeEdtsFilled.remove(2)
             hideNotEnoughAmountWarningSending()
             hideAmountNotEnoughWarning()
             convertAmountToUSDGAD(0.0)
@@ -1109,12 +1114,12 @@ class SendFragment : DaggerFragment() {
             val total =
                 amountSending + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountFee ?: 0.0)
             if (total > spendableAmountToken) {
-                twoEdtsFilled.remove(2)
+                threeEdtsFilled.remove(2)
                 showNotEnoughAmountWarning()
                 notEnoughAmountWarningSending()
                 isSendingAmountEnough = false
             } else {
-                twoEdtsFilled.add(2)
+                threeEdtsFilled.add(2)
                 hideAmountNotEnoughWarning()
                 hideNotEnoughAmountWarningSending()
             }
@@ -1123,7 +1128,7 @@ class SendFragment : DaggerFragment() {
             val total =
                 amountFee + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountSending ?: 0.0)
             if (total > spendableAmountFee) {
-                twoEdtsFilled.remove(2)
+                threeEdtsFilled.remove(2)
                 notEnoughAmountWarningTextFee()
                 showNotEnoughAmountFee()
                 if (tokenAdapter.selectedPosition == 0) {
@@ -1137,6 +1142,7 @@ class SendFragment : DaggerFragment() {
                 hideNotEnoughAmountFee()
             }
         }
+
         enableBtnContinueTwoEdtsFilled()
     }
 
@@ -1236,8 +1242,9 @@ class SendFragment : DaggerFragment() {
     }
 
     private fun enableBtnContinueTwoEdtsFilled() {
-        binding.btnContinue.isEnabled = twoEdtsFilled.size >= 2
+        binding.btnContinue.isEnabled = threeEdtsFilled.size >= 2
     }
+
 
     private fun showConfirmTransactionDialog() {
         val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)

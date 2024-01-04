@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 abstract class BaseFragment : DaggerFragment() {
@@ -16,12 +17,12 @@ abstract class BaseFragment : DaggerFragment() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                collectingFlowsOnStarted()
+                collectFlowOnStarted(this)
             }
         }
     }
 
-    open suspend fun collectingFlowsOnStarted() {}
+    open fun collectFlowOnStarted(scope: CoroutineScope) {}
 
 
 }

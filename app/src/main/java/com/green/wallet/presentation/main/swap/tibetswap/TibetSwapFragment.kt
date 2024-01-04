@@ -48,6 +48,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_tibetswap.containerSwap
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
@@ -118,8 +119,10 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
     }
 
-    override suspend fun collectingFlowsOnStarted() {
-        vm.fiveMinTillGetListOfTokensFromTibet()
+    override fun collectFlowOnStarted(scope: CoroutineScope) {
+        scope.launch {
+            vm.fiveMinTillGetListOfTokensFromTibet()
+        }
     }
 
     private fun initSuccessClearingFields() {
