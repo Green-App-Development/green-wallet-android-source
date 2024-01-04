@@ -67,10 +67,12 @@ class TransactionItemAdapter(
                     txtStatus.text = curActivity.getStringResource(R.string.transactions_incoming)
                     txtStatus.setTextColor(curActivity.getColorResource(R.color.txt_incoming))
                 }
+
                 Status.Outgoing -> {
                     txtStatus.text = curActivity.getStringResource(R.string.incoming_outgoing)
                     txtStatus.setTextColor(curActivity.getColorResource(R.color.txt_outcoming))
                 }
+
                 Status.InProgress -> {
                     txtStatus.text = curActivity.getStringResource(R.string.transactions_pendind)
                     txtStatus.setTextColor(curActivity.getColorResource(R.color.txt_inprogress))
@@ -78,7 +80,7 @@ class TransactionItemAdapter(
 
                 else -> Unit
             }
-            txtHeightTransaction.text = "${transaction.confirmed_at_height}"
+            txtHeightTransaction.text = "${transaction.confirmedAtHeight}"
             txtToken.text =
                 "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
                     transaction.code
@@ -94,6 +96,9 @@ class TransactionItemAdapter(
             rootLayout.setOnClickListener {
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)
             }
+
+
+
         }
 
         fun onBindEmptyPlaceHolder() {
@@ -106,6 +111,9 @@ class TransactionItemAdapter(
 
     interface TransactionListener {
         fun onTransactionItemClicked(transaction: Transaction)
+
+        fun onSpeedyTransaction(transaction: Transaction)
+
     }
 
 }
