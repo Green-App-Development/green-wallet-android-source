@@ -26,7 +26,7 @@ class TransPagingAdapter(
 	class TransDiffCallback : DiffUtil.ItemCallback<Transaction>() {
 
 		override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
-			return oldItem.transactionId == newItem.transactionId
+			return oldItem.transaction_id == newItem.transaction_id
 		}
 
 		override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
@@ -63,7 +63,7 @@ class TransPagingAdapter(
 
 				else -> Unit
 			}
-			txtHeightTransaction.text = "${transaction.confirmedAtHeight}"
+			txtHeightTransaction.text = "${transaction.confirmed_at_height}"
 			txtToken.text =
 				"${formattedDoubleAmountWithPrecision(transaction.amount)} ${
 					transaction.code

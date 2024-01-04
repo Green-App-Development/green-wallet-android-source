@@ -1,75 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_transaction_item"
-    android:layout_width="match_parent"
-    android:layout_height="45dp"
-    android:background="@color/bcg_transaction_item"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:layout_constraintTop_toBottomOf="@+id/linear_sorting_by_status">
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/root_transaction_item"
+		android:layout_width="match_parent"
+		android:layout_height="45dp"
+		android:background="@color/bcg_transaction_item"
+		android:foreground="?android:attr/selectableItemBackground"
+		app:layout_constraintTop_toBottomOf="@+id/linear_sorting_by_status">
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="100">
+	<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:weightSum="100">
 
-        <TextView
-            android:id="@+id/txtStatus"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="26"
-            android:gravity="center_vertical"
-            android:paddingStart="5dp"
-            android:text="In Processing"
-            android:textColor="@color/txt_trans_property"
-            android:textFontWeight="500"
-            android:textSize="15sp" />
+		<TextView
+				android:id="@+id/txtStatus"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="26"
+				android:gravity="center_vertical"
+				android:paddingStart="5dp"
+				android:text="In Processing"
+				android:textColor="@color/txt_trans_property"
+				android:textFontWeight="500"
+				android:textSize="15sp" />
 
+		<TextView
+				android:id="@+id/txtHeightTrans"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="26"
+				android:gravity="center_vertical"
+				android:paddingStart="20dp"
+				android:text="23423232"
+				android:textColor="@color/txt_trans_property"
+				android:textFontWeight="500"
+				android:textSize="15sp" />
 
-        <RelativeLayout
-            android:id="@+id/centerLayout"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="26">
-
-            <TextView
-                android:id="@+id/txtHeightTrans"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingStart="20dp"
-                android:text="0"
-                android:textColor="@color/txt_trans_property"
-                android:textFontWeight="500"
-                android:textSize="15sp" />
-
-
-
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/txtToken"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="48"
-            android:gravity="center_vertical"
-            android:paddingEnd="5dp"
-            android:text="0.12345678 XCH"
-            android:textAlignment="textEnd"
-            android:textColor="@color/txt_trans_property"
-            android:textFontWeight="500"
-            android:textSize="15sp"
-            tools:ignore="RtlCompat" />
+		<TextView
+				android:id="@+id/txtToken"
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="48"
+				android:gravity="center_vertical"
+				android:paddingEnd="5dp"
+				android:text="0.12345678 XCH"
+				android:textAlignment="textEnd"
+				android:textColor="@color/txt_trans_property"
+				android:textFontWeight="500"
+				android:textSize="15sp"
+				tools:ignore="RtlCompat" />
 
 
-    </LinearLayout>
+	</LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/transaction_divider" />
+	<View
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_alignParentBottom="true"
+			android:background="@color/transaction_divider" />
 
 </RelativeLayout>
