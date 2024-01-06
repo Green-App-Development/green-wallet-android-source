@@ -111,7 +111,7 @@ class TransPagingAdapter(
 
             centerLayout.setOnClickListener {
                 it.startAnimation(animManager.getBtnEffectAnimation())
-                if (transaction.confirmedAtHeight == 0L) {
+                if (transaction.confirmedAtHeight == 0L || true) {
                     transactionItemListener.onTransactionSpeedUpClick(transaction = transaction)
                 } else {
                     transactionItemListener.onTransactionItemClicked(transaction = transaction)

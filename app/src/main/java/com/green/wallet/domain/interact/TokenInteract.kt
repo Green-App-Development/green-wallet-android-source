@@ -22,4 +22,6 @@ interface TokenInteract {
 
     suspend fun getTokenCodeByHash(hash: String): String
 
+    suspend fun getTokenByCode(code: String): Token?
+
 }

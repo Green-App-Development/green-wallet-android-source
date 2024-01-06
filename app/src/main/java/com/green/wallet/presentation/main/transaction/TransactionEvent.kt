@@ -4,9 +4,6 @@ import com.green.wallet.domain.domainmodel.Transaction
 
 sealed interface TransactionEvent {
 
-    data class BottomSheetCAT(val transaction: Transaction?) : TransactionEvent
-
-    object BottomSheetNFT : TransactionEvent
-
+    data class SpeedyBtmDialog(val transaction: Transaction?) : TransactionEvent
 
 }

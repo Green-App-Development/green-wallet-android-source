@@ -10,10 +10,9 @@ import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.TransactionInteract
 import com.green.wallet.domain.interact.WalletInteract
-import com.green.wallet.presentation.main.transaction.states.CatDialogState
-import com.green.wallet.presentation.main.transaction.states.NftDialogState
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
+import com.greenwallet.core.base.BaseIntentViewModel
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -29,23 +28,18 @@ class TransactionsViewModel @Inject constructor(
     private val walletInteract: WalletInteract,
     private val greenAppInteract: GreenAppInteract,
     private val nftInteract: NFTInteract
-) : BaseViewModel<TransactionState, TransactionEvent>(TransactionState()) {
+) : BaseIntentViewModel<TransactionState, TransactionEvent, TransactionIntent>(TransactionState()) {
 
     private val _nftInfoState = MutableStateFlow<NFTInfo?>(null)
     val nftInfoState = _nftInfoState.asStateFlow()
 
-    private val _catBtmDialogState = MutableStateFlow(CatDialogState())
-    private val catBtmDialogState = _catBtmDialogState.asStateFlow()
-
-    private val _nftBtmDialogState = MutableStateFlow(NftDialogState())
-    private val nftBtmDialogState = _nftBtmDialogState.asStateFlow()
-
     init {
-        viewModelScope.launch {
-            delay(2000L)
-            setEvent(TransactionEvent.BottomSheetCAT(null))
-        }
+//        viewModelScope.launch {
+//            delay(2000L)
+//            setEvent(TransactionEvent.BottomSheetCAT(null))
+//        }
     }
+
 
     suspend fun getAllQueriedTransactionList(
         fkAddress: String?,
@@ -161,6 +155,14 @@ class TransactionsViewModel @Inject constructor(
         viewModelScope.launch {
             val nftInfo = nftInteract.getNftINFOByHash(hash)
             _nftInfoState.emit(nftInfo)
+        }
+    }
+
+    override fun handleIntent(intent: TransactionIntent) {
+        when (intent) {
+            is TransactionIntent.OnSpeedyTran -> {
+                setEvent(TransactionEvent.SpeedyBtmDialog(intent.tran))
+            }
         }
     }
 

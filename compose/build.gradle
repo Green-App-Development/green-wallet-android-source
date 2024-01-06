@@ -65,4 +65,6 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     api 'com.github.skydoves:landscapist-glide:2.1.13'
 
+    api "androidx.lifecycle:lifecycle-runtime-compose:2.6.2"
+
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,8 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
@@ -38,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.green.compose.buttons.DefaultButton
-import com.green.compose.custom.FeeChoices
 import com.green.compose.custom.FixedSpacer
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
@@ -70,9 +72,10 @@ import com.green.wallet.presentation.main.dapp.trade.OfferViewState
 import com.green.wallet.presentation.main.dapp.trade.components.ChooseFeeProgressValue
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
-import com.green.wallet.presentation.main.dapp.trade.models.TokenOffer
+import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.VLog
-import kotlinx.coroutines.delay
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -284,7 +287,7 @@ fun ModelBottomSheetOffer(
 
 @Composable
 fun SpendableBalance(
-    requested: List<TokenOffer>,
+    requested: List<Token>,
     expanded: Boolean = false,
     expand: (Int) -> Unit
 ) {
@@ -366,16 +369,16 @@ fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
             .fillMaxWidth()
             .height(size_130)
     ) {
-//        GlideImage(
-//            imageModel = { nftToken.imgUrl },
-//            imageOptions = ImageOptions(
-//                contentScale = ContentScale.Crop,
-//                alignment = Alignment.Center
-//            ),
-//            modifier = Modifier
-//                .size(size_130)
-//                .clip(RoundedCornerShape(size_10))
-//        )
+        GlideImage(
+            imageModel = { nftToken.imgUrl },
+            imageOptions = ImageOptions(
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center
+            ),
+            modifier = Modifier
+                .size(size_130)
+                .clip(RoundedCornerShape(size_10))
+        )
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -432,8 +435,9 @@ fun CatTokenItem(item: CatToken, acceptOffer: Boolean) {
         )
         val fromTokenClr =
             if (acceptOffer) Provider.current.errorColor else Provider.current.green
+        val sign = if (acceptOffer) "-" else "+"
         DefaultText(
-            text = "${formattedDoubleAmountWithPrecision(item.amount)} ${item.code}",
+            text = "$sign${formattedDoubleAmountWithPrecision(item.amount)} ${item.code}",
             size = text_14,
             color = fromTokenClr,
             fontWeight = FontWeight.W500,

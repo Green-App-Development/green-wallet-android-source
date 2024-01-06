@@ -4,4 +4,4 @@ data class NftToken(
     var collection: String,
     var nftId: String,
     val imgUrl: String
-) : TokenOffer(1.0)
+) : Token(1.0)

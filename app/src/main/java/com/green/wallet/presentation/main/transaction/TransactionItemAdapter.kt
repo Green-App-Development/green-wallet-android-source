@@ -96,6 +96,9 @@ class TransactionItemAdapter(
             rootLayout.setOnClickListener {
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)
             }
+
+
+
         }
 
         fun onBindEmptyPlaceHolder() {

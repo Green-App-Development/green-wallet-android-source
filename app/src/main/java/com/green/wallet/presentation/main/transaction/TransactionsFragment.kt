@@ -33,10 +33,8 @@ import com.green.wallet.presentation.viewBinding
 import com.example.common.tools.*
 import com.green.wallet.databinding.DialogTranNftDetailsBinding
 import com.green.wallet.presentation.custom.base.BaseFragment
-import com.green.wallet.presentation.main.transaction.btmsheets.SpeedyBtmCatDialog
+import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyBtmDialog
 import com.green.wallet.presentation.tools.*
-import com.greenwallet.core.base.ComposeProvider
-import com.greenwallet.core.base.getParentOfType
 import com.greenwallet.core.ext.collectFlow
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.coroutines.CoroutineScope
@@ -635,27 +633,15 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
     }
 
     override fun onTransactionSpeedUpClick(transaction: Transaction) {
-        initSpeedyTransaction(transaction)
-    }
-
-    private fun initSpeedyTransaction(transaction: Transaction) {
-        if (transaction.code == "NFT") {
-
-        } else {
-
-        }
+        viewModel.handleIntent(TransactionIntent.OnSpeedyTran(transaction))
     }
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun collectFlowOnStarted(scope: CoroutineScope) {
         viewModel.event.collectFlow(scope) {
             when (it) {
-                is TransactionEvent.BottomSheetCAT -> {
-                    SpeedyBtmCatDialog.build(it.transaction).show(childFragmentManager, "")
-                }
-
-                TransactionEvent.BottomSheetNFT -> {
-
+                is TransactionEvent.SpeedyBtmDialog -> {
+                    SpeedyBtmDialog.build(it.transaction).show(childFragmentManager, "")
                 }
             }
         }

@@ -66,5 +66,12 @@ class TokenInteractImpl @Inject constructor(
         return ""
     }
 
+    override suspend fun getTokenByCode(code: String): Token? {
+        val result = tokenDao.getTokenByCode(code)
+        if (result.isPresent)
+            return result.get().toToken(false, 1, "")
+        return null
+    }
+
 
 }

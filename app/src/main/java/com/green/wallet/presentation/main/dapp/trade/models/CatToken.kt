@@ -5,4 +5,4 @@ data class CatToken(
     val assetID: String,
     override val amount: Double,
     val spendableBalance: Double = 0.0,
-) : TokenOffer(amount)
+) : Token(amount)

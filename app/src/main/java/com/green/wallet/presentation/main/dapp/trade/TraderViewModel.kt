@@ -9,7 +9,7 @@ import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
-import com.green.wallet.presentation.main.dapp.trade.models.TokenOffer
+import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
 import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
@@ -25,7 +25,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
 import kotlin.system.measureTimeMillis
-import kotlin.time.measureTime
 
 
 class TraderViewModel @Inject constructor(
@@ -128,8 +127,8 @@ class TraderViewModel @Inject constructor(
     private suspend fun parseTokenJson(
         json: String,
         needSpendableBalance: Boolean = false
-    ): List<TokenOffer> {
-        val list = mutableListOf<TokenOffer>()
+    ): List<Token> {
+        val list = mutableListOf<Token>()
         val jsonArr = JSONArray(json)
         for (i in 0 until jsonArr.length()) {
             val item = JSONObject(jsonArr.get(i).toString())
@@ -138,7 +137,7 @@ class TraderViewModel @Inject constructor(
             val assetAmount = item.getInt("assetAmount")
             val spentType = item.getString("type")
             VLog.d("SpentType : $spentType, AssetID : $assetID, AssetAmount : $assetAmount")
-            var token: TokenOffer
+            var token: Token
             if (spentType == "nft") {
                 val timeTaken = measureTimeMillis {
                     val nftInfo =
