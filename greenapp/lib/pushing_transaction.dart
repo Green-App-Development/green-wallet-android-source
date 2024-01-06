@@ -399,10 +399,10 @@ class PushingTransaction {
                   amount: args['amount'],
                   mnemonic: args['mnemonic'].toString().split(' ').toList(),
                   httpUrl: args['url'],
-                  destAddress: args['dest'],
+                  destPuzzleHash: args['dest'],
                   networkType: args['network_type'],
                   spentCoinsJson: args['spentCoins'],
-                  usedCoinsJson: args['usedCoins'],
+                  tranCoinsJson: args['tranCoins'],
                   observer: args['observer'],
                   nonObserver: args['nonObserver']);
             } catch (ex) {
@@ -526,15 +526,14 @@ class PushingTransaction {
       List<Future<void>> futures = [];
       List<Coin> standardCoinsForFee = [];
       if (fee > 0) {
-
         List<Puzzlehash> myPuzzlehashes =
-        keychain.unhardenedMap.keys.toList().sublist(0, observer);
+            keychain.unhardenedMap.keys.toList().sublist(0, observer);
 
         myPuzzlehashes
             .addAll(keychain.hardenedMap.keys.toList().sublist(0, nonObserver));
 
         List<Coin> feeStandardCoinsTotal =
-        await fullNode.getCoinsByPuzzleHashes(myPuzzlehashes);
+            await fullNode.getCoinsByPuzzleHashes(myPuzzlehashes);
 
         feeStandardCoinsTotal.sort((a, b) {
           return b.amount.compareTo(a.amount);
@@ -543,7 +542,7 @@ class PushingTransaction {
         var curFee = 0;
         for (final coin in feeStandardCoinsTotal) {
           var contains =
-          tranCoinsParents.contains(coin.parentCoinInfo.toString());
+              tranCoinsParents.contains(coin.parentCoinInfo.toString());
           if (contains) {
             curFee += coin.amount;
             standardCoinsForFee.add(coin);
@@ -552,9 +551,9 @@ class PushingTransaction {
 
         for (final coin in feeStandardCoinsTotal) {
           var isSpent =
-          spentCoinsParents.contains(coin.parentCoinInfo.toString());
+              spentCoinsParents.contains(coin.parentCoinInfo.toString());
           if (!isSpent) {
-            curFee +=  coin.amount;
+            curFee += coin.amount;
             standardCoinsForFee.add(coin);
           }
           if (curFee >= fee) {
@@ -765,7 +764,7 @@ class PushingTransaction {
               dest_puzzle_has, Puzzlehash.fromHex(assetId))
           .toHex();
 
-      _channel.invokeMethod('getSpendBundle', {
+      _channel.invokeMethod('SpeedyTransfer', {
         "spendBundle": spendBundle.toJson(),
         "dest_puzzle_hash": outer_dest_puzzle_hash,
         "spentCoins": jsonEncode(standardCoinsForFee),
@@ -782,15 +781,15 @@ class PushingTransaction {
       required int amount,
       required List<String> mnemonic,
       required String httpUrl,
-      required String destAddress,
+      required String destPuzzleHash,
       required String networkType,
-      required String usedCoinsJson,
+      required String tranCoinsJson,
       required String spentCoinsJson,
       required int observer,
       required int nonObserver}) async {
     try {
       debugPrint(
-          "fee : $fee amount : $amount  mnemonic : $mnemonic url : $httpUrl dest : $destAddress isTypeNetwork : $networkType  hashCounter : $observer");
+          "fee : $fee amount : $amount  mnemonic : $mnemonic url : $httpUrl dest : $destPuzzleHash isTypeNetwork : $networkType  hashCounter : $observer");
       var key = "${mnemonic.join(" ")}_${observer}_$nonObserver";
       final keychain = cachedWalletChains[key] ??
           generateKeyChain(mnemonic, observer, nonObserver);
@@ -823,8 +822,6 @@ class PushingTransaction {
         "puzzle_hashes": myPuzzlehashes.map<String>((e) => e.toHex()).toList()
       };
 
-      var destPuzzleHash = Address(destAddress).toPuzzlehash();
-
       final responseData =
           await post(Uri.parse("$httpUrl/get_coin_records_by_puzzle_hashes"),
               headers: <String, String>{
@@ -839,11 +836,11 @@ class PushingTransaction {
         spentCoinsParents.add(parentCoinInfo);
       }
 
-      List<dynamic> usedCoinsJsonDecoded = json.decode(usedCoinsJson);
-      List<String> usedCoinsParents = [];
-      for (var item in usedCoinsJsonDecoded) {
+      List<dynamic> tranCoinsJsonDecoded = json.decode(tranCoinsJson);
+      List<String> tranCoinsParents = [];
+      for (var item in tranCoinsJsonDecoded) {
         var parentCoinInfo = item["parent_coin_info"].toString();
-        usedCoinsParents.add(parentCoinInfo);
+        tranCoinsParents.add(parentCoinInfo);
       }
 
       debugPrint("SpentCoinsPrototypes on sending xch : $spentCoinsParents");
@@ -865,7 +862,7 @@ class PushingTransaction {
         var total = amount + fee;
         for (final coin in allCoins) {
           var isUsed =
-              usedCoinsParents.contains(coin.parentCoinInfo.toString());
+              tranCoinsParents.contains(coin.parentCoinInfo.toString());
           if (isUsed) {
             sum += coin.amount;
             requiredCoins.add(coin);
@@ -885,16 +882,16 @@ class PushingTransaction {
         }
 
         final spendBundle = standardWalletService.createSpendBundle(
-          payments: [Payment(amount, destPuzzleHash)],
+          payments: [Payment(amount, Puzzlehash.fromHex(destPuzzleHash))],
           coinsInput: requiredCoins,
           keychain: keychain,
           changePuzzlehash: keychain.puzzlehashes[0],
           fee: fee,
         );
         debugPrint('SpendBundle on flutter : ${jsonEncode(requiredCoins)}');
-        _channel.invokeMethod('getSpendBundle', {
+        _channel.invokeMethod('SpeedyTransfer', {
           "spendBundle": spendBundle.toJson(),
-          "dest_puzzle_hash": destPuzzleHash.toHex(),
+          "dest_puzzle_hash": destPuzzleHash,
           "spentCoins": jsonEncode(requiredCoins)
         });
       } else {

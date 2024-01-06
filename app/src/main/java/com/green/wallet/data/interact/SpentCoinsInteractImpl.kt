@@ -40,7 +40,7 @@ class SpentCoinsInteractImpl @Inject constructor(
                     code,
                     timeCreated
                 )
-                VLog.d("InsertingCoinEntity on coinInteractImpl class after pushing : $coinEntity")
+                VLog.d("InsertingCoinEntity on coinInteractImpl class after pushing : $coinEntity of $spentCoinsJson")
                 spentCoinsDao.insertSpentCoins(coinEntity)
             }
         } catch (ex: Exception) {
@@ -103,6 +103,12 @@ class SpentCoinsInteractImpl @Inject constructor(
         val tokenAmount = walletEntity.hashWithAmount[assetID] ?: 0.0
         return spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, tokenCode)
             .map { list -> tokenAmount - (list.map { it.amount }.sum()) }
+    }
+
+    override suspend fun getSpentCoinsByTransactionTime(
+        timeCreated: Long
+    ): List<SpentCoin> {
+        return spentCoinsDao.getSpentCoinsByTranTimeCreated(timeCreated).map { it.toSpentCoin(0) }
     }
 
 

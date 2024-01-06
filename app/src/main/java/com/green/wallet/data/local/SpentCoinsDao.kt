@@ -3,6 +3,7 @@ package com.green.wallet.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.IGNORE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.SpentCoinsEntity
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SpentCoinsDao {
 
-    @Insert(onConflict = IGNORE)
+    @Insert(onConflict = REPLACE)
     suspend fun insertSpentCoins(spentCoinsEntity: SpentCoinsEntity)
 
     @Query("SELECT * FROM SpentCoins WHERE fk_address=:fk_address AND code=:code")

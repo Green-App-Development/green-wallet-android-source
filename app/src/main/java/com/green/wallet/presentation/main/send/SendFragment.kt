@@ -740,8 +740,6 @@ class SendFragment : BaseFragment() {
             val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
             val alreadySpentCoins =
                 viewModel.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, curCode)
-                    .toMutableList()
-            alreadySpentCoins.clear()
             val methodChannel = MethodChannel(
                 (curActivity().application as App).flutterEngine.dartExecutor.binaryMessenger,
                 METHOD_CHANNEL_GENERATE_HASH

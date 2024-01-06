@@ -1,32 +1,64 @@
 package com.green.wallet.presentation.main.transaction.btmSpeedy
 
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.green.wallet.data.network.dto.coinSolution.Coin
+import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
+import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.NFTInteract
+import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
+import com.green.wallet.domain.interact.TransactionInteract
+import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SpeedyDialogViewModel @Inject constructor(
     private val tokenInteract: TokenInteract,
-    private val nftInteract: NFTInteract
+    private val nftInteract: NFTInteract,
+    private val walletInteract: WalletInteract,
+    private val prefsManager: PrefsManager,
+    private val coinsInteract: SpentCoinsInteract,
+    private val blockChainInteract: BlockChainInteract,
+    private val transactionInteract: TransactionInteract
 ) : BaseViewModel<SpeedyTokenState, SpeedyTokenEvent>(SpeedyTokenState()) {
 
     private lateinit var transaction: Transaction
-
+    lateinit var wallet: Wallet
 
     fun setCurTransaction(tran: Transaction?) {
         VLog.d("Setting up transaction property : $tran")
         tran?.let {
             this.transaction = tran
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 getInfoAboutTransaction()
+                wallet =
+                    walletInteract.getWalletByAddress(tran.fkAddress)
             }
+        }
+    }
+
+    fun handleEvent(event: SpeedyTokenEvent) {
+        setEvent(event)
+        when (event) {
+            is SpeedyTokenEvent.OnFeeChosen -> {
+                _viewState.update { it.copy(fee = event.fee) }
+            }
+
+            else -> Unit
         }
     }
 
@@ -53,6 +85,56 @@ class SpeedyDialogViewModel @Inject constructor(
                         transaction.amount
                     )
                 )
+            }
+        }
+    }
+
+    suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {
+        val item = prefsManager.getObjectString(getPreferenceKeyForNetworkItem(networkType))
+        if (item.isEmpty()) return null
+        return Gson().fromJson(item, NetworkItem::class.java)
+    }
+
+    suspend fun getTranCoins() = withContext(Dispatchers.IO) {
+        coinsInteract.getSpentCoinsByTransactionTime(transaction.createdAtTime)
+    }
+
+    suspend fun getSpentCoins() = withContext(Dispatchers.IO) {
+        coinsInteract.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, "XCH")
+    }
+
+    fun burstTransaction(
+        spendBundleJson: String,
+        spentCoinsJson: String,
+        spentTokensJson: String,
+        url: String
+    ) {
+        viewModelScope.launch {
+            val result = blockChainInteract.push_tx(
+                jsonSpendBundle = spendBundleJson,
+                url = url,
+                sendAmount = transaction.amount,
+                networkType = wallet.networkType,
+                fingerPrint = wallet.fingerPrint,
+                code = transaction.code,
+                destPuzzleHash = transaction.toDestHash,
+                address = wallet.address,
+                fee = viewState.value.fee,
+                spentCoinsJson = spentCoinsJson,
+                spentCoinsToken = spentTokensJson
+            )
+            when (result.state) {
+                Resource.State.SUCCESS -> {
+                    transactionInteract.deleteTransByID(transaction.transactionId)
+                }
+
+                Resource.State.ERROR -> {
+
+                }
+
+                Resource.State.LOADING -> {
+
+                }
             }
         }
     }

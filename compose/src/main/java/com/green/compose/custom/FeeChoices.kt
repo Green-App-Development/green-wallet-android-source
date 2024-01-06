@@ -33,12 +33,12 @@ import com.green.compose.theme.Provider
 @Composable
 fun FeeChoices(
     modifier: Modifier = Modifier,
-    feePos: (Int) -> Unit = {}
+    fee: (Double) -> Unit = {}
 ) {
     var chosen by remember { mutableIntStateOf(1) }
 
     LaunchedEffect(chosen) {
-        feePos(chosen)
+        fee(getFeeOnChoosePos(chosen))
     }
 
     Row(
@@ -141,6 +141,15 @@ internal fun getColorFeeAmount(chosen: Boolean): Color {
     if (chosen)
         return Color.White
     return Provider.current.greyText
+}
+
+private fun getFeeOnChoosePos(pos: Int): Double {
+    return when (pos) {
+        0 -> 0.0
+        1 -> 0.00005
+        2 -> 0.005
+        else -> 0.0
+    }
 }
 
 

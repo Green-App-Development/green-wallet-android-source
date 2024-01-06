@@ -505,9 +505,10 @@ class BlockChainInteractImpl @Inject constructor(
         body["include_spent_coins"] = true
         val coinsByParentIdRes =
             service.getCoinRecordsByParentIds(body)
+        VLog.d("Coins by parents ids for transaction : ${coinsByParentIdRes.body()} : TargetAmount : $targetAmount")
         if (coinsByParentIdRes.isSuccessful) {
             for (c in coinsByParentIdRes.body()?.coin_records ?: return -1) {
-                if (c.coin.amount == targetAmount && c.coin.parent_coin_info == coin.parent_coin_info && c.spent)
+                if (c.coin.amount >= targetAmount && c.coin.parent_coin_info == coin.parent_coin_info && c.spent)
                     return c.spent_block_index
             }
         }

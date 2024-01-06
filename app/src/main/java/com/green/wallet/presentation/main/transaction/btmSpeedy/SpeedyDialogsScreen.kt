@@ -50,11 +50,13 @@ import com.green.wallet.presentation.main.dapp.trade.bottom.NftItem
 import com.green.wallet.presentation.main.dapp.trade.components.ChooseFeeProgressValue
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.main.transaction.TransactionEvent
 
 
 @Composable
 fun SpeedyTransactionBtmScreen(
-    state: SpeedyTokenState = SpeedyTokenState()
+    state: SpeedyTokenState = SpeedyTokenState(),
+    onEvent: (SpeedyTokenEvent) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -174,7 +176,10 @@ fun SpeedyTransactionBtmScreen(
             FixedSpacer(height = size_9)
 
             FeeChoices(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                fee = {
+                    onEvent(SpeedyTokenEvent.OnFeeChosen(it))
+                }
             )
 
             FixedSpacer(height = size_14)
@@ -193,7 +198,7 @@ fun SpeedyTransactionBtmScreen(
         DefaultButton(
             bcgColor = Provider.current.green,
             onClick = {
-
+                onEvent(SpeedyTokenEvent.OnSign)
             }) {
             DefaultText(
                 text = "Sign",
