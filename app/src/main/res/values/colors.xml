@@ -100,6 +100,7 @@
     <color name="txt_incoming">#3AAC59</color>
     <color name="txt_outcoming">#FF2222</color>
     <color name="txt_inprogress">#FEC182</color>
+    <color name="txt_inprogress_blue">#FF1E93FF</color>
     <color name="txt_greey">#C9C9C9</color>
     <color name="card_view_bcg_color">#FFFFFF</color>
     <color name="lang_divider">#E6E6E6</color>
@@ -134,5 +135,6 @@
     <color name="bcg_center_offer_dialog_tibet">#ffffff</color>
     <color name="bcg_fee_rectangle_tibet">#F4F4F4</color>
     <color name="bcg_chosen_tibet_fee">#FFFFFF</color>
+
 
 </resources>

@@ -77,11 +77,11 @@ class AuthFragmentIntro : DaggerFragment() {
 		super.onViewCreated(view, savedInstanceState)
 		registerBtnClicks()
 		fixTxtViewLateValue()
-//		//temp
-//		lifecycleScope.launch {
-//			delay(200)
-//			determineDestination()
-//		}
+		//temp
+		lifecycleScope.launch {
+			delay(500)
+			determineDestination()
+		}
 	}
 
 	private fun fixTxtViewLateValue() {

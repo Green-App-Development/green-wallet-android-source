@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.ComposeView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -68,12 +69,13 @@ import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFr
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
+import com.greenwallet.core.base.ComposeProvider
 import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), ComposeProvider {
 
 
     companion object {
@@ -989,6 +991,10 @@ class MainActivity : BaseActivity() {
         val bundle = bundleOf()
         bundle.putString(TibetLiquidityDetailsFragment.TIBET_LIQUIDITY_OFFER_KEY, offerId)
         navController.navigate(fragmentTibetLiquidDetail, bundle)
+    }
+
+    override fun getComposeView(): ComposeView {
+        return binding.composeView
     }
 
 

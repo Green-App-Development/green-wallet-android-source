@@ -32,6 +32,7 @@ import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidi
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel
 import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
+import com.green.wallet.presentation.main.transaction.btmsheets.CatDialogViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsViewModel
 import dagger.Binds
@@ -218,6 +219,11 @@ abstract class ViewModelsModule {
 	@ViewModelKey(TraderViewModel::class)
 	abstract fun bindingTraderViewModel(viewModel: TraderViewModel): ViewModel
 
+
+	@IntoMap
+	@Binds
+	@ViewModelKey(CatDialogViewModel::class)
+	abstract fun bindingCatDialogViewModel(viewModel: CatDialogViewModel): ViewModel
 
 
 
