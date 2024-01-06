@@ -10,6 +10,7 @@ import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.NFTInteract
+import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.TransactionInteract
@@ -21,6 +22,7 @@ import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,11 +35,19 @@ class SpeedyDialogViewModel @Inject constructor(
     private val prefsManager: PrefsManager,
     private val coinsInteract: SpentCoinsInteract,
     private val blockChainInteract: BlockChainInteract,
-    private val transactionInteract: TransactionInteract
+    private val transactionInteract: TransactionInteract,
+    private val prefs: PrefsInteract
 ) : BaseViewModel<SpeedyTokenState, SpeedyTokenEvent>(SpeedyTokenState()) {
 
     private lateinit var transaction: Transaction
     lateinit var wallet: Wallet
+
+    init {
+        viewModelScope.launch {
+            delay(1000L)
+            getTranCoins()
+        }
+    }
 
     fun setCurTransaction(tran: Transaction?) {
         VLog.d("Setting up transaction property : $tran")
@@ -96,7 +106,21 @@ class SpeedyDialogViewModel @Inject constructor(
     }
 
     suspend fun getTranCoins() = withContext(Dispatchers.IO) {
-        coinsInteract.getSpentCoinsByTransactionTime(transaction.createdAtTime)
+        val tranCoins = coinsInteract.getSpentCoinsByTransactionTime(
+            transaction.createdAtTime - prefs.getSettingLong(
+                PrefsManager.TIME_DIFFERENCE,
+                System.currentTimeMillis()
+            )
+        )
+        VLog.d(
+            "Transaction Coins for tran : $tranCoins time : ${
+                transaction.createdAtTime - prefs.getSettingLong(
+                    PrefsManager.TIME_DIFFERENCE,
+                    System.currentTimeMillis()
+                )
+            }"
+        )
+        tranCoins
     }
 
     suspend fun getSpentCoins() = withContext(Dispatchers.IO) {

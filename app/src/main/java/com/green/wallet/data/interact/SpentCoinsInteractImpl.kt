@@ -40,6 +40,7 @@ class SpentCoinsInteractImpl @Inject constructor(
                     code,
                     timeCreated
                 )
+                //1704544106000 1704544108523
                 VLog.d("InsertingCoinEntity on coinInteractImpl class after pushing : $coinEntity of $spentCoinsJson")
                 spentCoinsDao.insertSpentCoins(coinEntity)
             }

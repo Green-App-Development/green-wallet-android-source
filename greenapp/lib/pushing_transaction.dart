@@ -415,22 +415,34 @@ class PushingTransaction {
         case "SpeedyTransferCAT":
           {
             var args = call.arguments;
+            var fee = args['fee'];
+            var amount = args['amount'];
+            var mnemonic = args['mnemonic'].toString().split(' ').toList();
+            var url = args['url'];
+            var type = args['network_type'];
+            var spentCoins = args['spentCoins'];
+            var tranCoins = args['tranCoins'];
+            var observer = args['observer'];
+            var assetID = args['assetID'];
+            var nonObserver = args['nonObserver'];
+            debugPrint(
+                'Args speedy cat : $tranCoins $fee $amount $nonObserver $assetID $nonObserver $observer $spentCoins $type $url $mnemonic');
             try {
               speedyTransferCAT(
-                  fee: args['fee'],
+                  fee: fee,
                   amount: args['amount'],
                   mnemonic: args['mnemonic'].toString().split(' ').toList(),
                   httpUrl: args['url'],
-                  destAddress: args['dest'],
+                  destPuzzleHash: args['dest'],
                   networkType: args['network_type'],
                   spentCoinsJson: args['spentCoins'],
                   tranCoinsJson: args['tranCoins'],
                   observer: args['observer'],
-                  assetId: args['assetId'],
+                  assetId: args['assetID'],
                   nonObserver: args['nonObserver']);
             } catch (ex) {
               debugPrint(
-                  "Exception in getting params from RePushing tran : $ex");
+                  "Exception in getting params from RePushing tran for token : $ex");
 
               _channel.invokeMethod("exception");
             }
@@ -603,7 +615,7 @@ class PushingTransaction {
       required int amount,
       required List<String> mnemonic,
       required String httpUrl,
-      required String destAddress,
+      required String destPuzzleHash,
       required String networkType,
       required String tranCoinsJson,
       required String spentCoinsJson,
@@ -611,8 +623,8 @@ class PushingTransaction {
       required String assetId,
       required int nonObserver}) async {
     try {
-      print(
-          "flutter arguments for token fee : $fee amount : $amount  mnemonic : $mnemonic url : $httpUrl dest : $destAddress isTypeNetwork : $networkType asset_id : $assetId spentCoinJson : $spentCoinsJson observer : "
+      debugPrint(
+          "flutter arguments for token fee : $fee amount : $amount  mnemonic : $mnemonic url : $httpUrl dest : $destPuzzleHash isTypeNetwork : $networkType asset_id : $assetId spentCoinJson : $spentCoinsJson observer : "
           "$observer non-observer : $nonObserver");
       var stopwatch = Stopwatch()..start();
       var key = "${mnemonic.join(" ")}_${observer}_$nonObserver";
@@ -714,7 +726,7 @@ class PushingTransaction {
           await fullNode.getCoinsByPuzzleHashes(myOuterPuzzlehashes);
 
       debugPrint(
-          "My Response From retrieving cat  : $responseDataCAT, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
+          "My Second Response From retrieving cat  : $responseDataCAT, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
 
       List<Future<void>> futures = [];
 
@@ -724,14 +736,16 @@ class PushingTransaction {
         return b.amount.compareTo(a.amount);
       });
 
-      // debugPrint("AllCoins sorted by decreasing order : $allCatCoins");
+      debugPrint("TranCoinsParents after parsing : $tranCoinsParents");
+
+
 
       List<Coin> filteredCoins = [];
       var sum = 0;
       for (final coin in allCatCoins) {
-        var coinIsSpent =
-            spentCoinsParents.contains(coin.parentCoinInfo.toString());
-        if (coin.amount != 0 && !coinIsSpent) {
+        var contains =
+            tranCoinsParents.contains(coin.parentCoinInfo.toString());
+        if (contains) {
           filteredCoins.add(coin);
           sum += coin.amount;
           if (sum >= amount) {
@@ -751,22 +765,18 @@ class PushingTransaction {
       debugPrint("Sending cat coins future size : ${futures.length}");
       await Future.wait(futures);
       debugPrint("Sending cat coins : $catCoins");
+      debugPrint("Sending xch coins : $standardCoinsForFee");
       final spendBundle = catWalletService.createSpendBundle(
-          payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
+          payments: [Payment(amount, Puzzlehash.fromHex(destPuzzleHash))],
           catCoinsInput: catCoins,
           keychain: keyChainCAT,
           changePuzzlehash: keyChainCAT.puzzlehashes[0],
           fee: fee,
           standardCoinsForFee: standardCoinsForFee);
 
-      var dest_puzzle_has = Address(destAddress).toPuzzlehash();
-      var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
-              dest_puzzle_has, Puzzlehash.fromHex(assetId))
-          .toHex();
-
       _channel.invokeMethod('SpeedyTransfer', {
         "spendBundle": spendBundle.toJson(),
-        "dest_puzzle_hash": outer_dest_puzzle_hash,
+        "dest_puzzle_hash": destPuzzleHash,
         "spentCoins": jsonEncode(standardCoinsForFee),
         "spentTokens": jsonEncode(filteredCoins)
       });
@@ -1976,7 +1986,7 @@ class PushingTransaction {
           await fullNode.getCoinsByPuzzleHashes(myOuterPuzzlehashes);
 
       debugPrint(
-          "My Response From retrieving cat  : $responseDataCAT, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
+          "My First Response From retrieving cat: $responseDataCAT, to get unspent coins ${stopwatch.elapsedMilliseconds / 1000}s");
 
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];

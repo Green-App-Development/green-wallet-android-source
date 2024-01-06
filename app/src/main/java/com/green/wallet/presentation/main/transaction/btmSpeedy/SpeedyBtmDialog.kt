@@ -85,7 +85,7 @@ class SpeedyBtmDialog :
         argSpendBundle["network_type"] = convertNetworkTypeForFlutter(vm.wallet.networkType)
         argSpendBundle["observer"] = vm.wallet.observerHash
         argSpendBundle["nonObserver"] = vm.wallet.nonObserverHash
-        argSpendBundle["asset_id"] = catToken.assetID
+        argSpendBundle["assetID"] = catToken.assetID
         argSpendBundle["tranCoins"] = Gson().toJson(vm.getTranCoins())
         argSpendBundle["spentCoins"] = Gson().toJson(vm.getSpentCoins())
         if (catToken.code == "XCH" || catToken.code == "XCC") {

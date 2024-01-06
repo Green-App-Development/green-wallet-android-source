@@ -147,7 +147,7 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-                updateWalletNFTBalance(wallet)
+//                updateWalletNFTBalance(wallet)
             }
         }
     }
@@ -559,7 +559,6 @@ class BlockChainInteractImpl @Inject constructor(
             val serverTime = greenAppInteract.getServerTime()
             if (serverTime == -1L)
                 throw ServerMaintenanceExceptions()
-            val timeBeforePushingTrans = serverTime - 60 * 1000
             VLog.d("Push method got called in data layer code : $networkType")
             val curBlockChainService =
                 retrofitBuilder.baseUrl("$url/").build().create(BlockChainService::class.java)
@@ -595,7 +594,7 @@ class BlockChainInteractImpl @Inject constructor(
                     val trans = TransactionEntity(
                         UUID.randomUUID().toString(),
                         sendAmount,
-                        timeBeforePushingTrans,
+                        serverTime,
                         0,
                         Status.InProgress,
                         networkType,
@@ -607,15 +606,17 @@ class BlockChainInteractImpl @Inject constructor(
                     )
                     VLog.d("Inserting transaction entity : $trans and coinJson $spentCoinsJson and coinToken : $spentCoinsToken")
                     transactionDao.insertTransaction(trans)
-                    spentCoinsInteract.insertSpentCoinsJson(
-                        spentCoinsJson,
-                        timeBeforePushingTrans,
-                        getShortNetworkType(networkType),
-                        address
-                    )
-                    spentCoinsInteract.insertSpentCoinsJson(
-                        spentCoinsToken, timeBeforePushingTrans, code, address
-                    )
+                    if (spentCoinsJson.isNotEmpty())
+                        spentCoinsInteract.insertSpentCoinsJson(
+                            spentCoinsJson,
+                            serverTime,
+                            getShortNetworkType(networkType),
+                            address
+                        )
+                    if (spentCoinsToken.isNotEmpty())
+                        spentCoinsInteract.insertSpentCoinsJson(
+                            spentCoinsToken, serverTime, code, address
+                        )
                     return Resource.success("OK")
                 }
             } else {

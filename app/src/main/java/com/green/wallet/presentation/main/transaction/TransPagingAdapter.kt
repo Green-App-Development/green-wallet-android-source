@@ -19,6 +19,7 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 
@@ -111,6 +112,7 @@ class TransPagingAdapter(
 
             centerLayout.setOnClickListener {
                 it.startAnimation(animManager.getBtnEffectAnimation())
+                VLog.d("Clicked transaction from rec view : $transaction")
                 if (transaction.confirmedAtHeight == 0L || true) {
                     transactionItemListener.onTransactionSpeedUpClick(transaction = transaction)
                 } else {
