@@ -692,15 +692,17 @@ class PushingTransaction {
           }
         }
 
-        for (final coin in feeStandardCoinsTotal) {
-          var isSpent =
-              spentCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (!isSpent) {
-            curFee += coin.amount;
-            standardCoinsForFee.add(coin);
-          }
-          if (curFee >= fee) {
-            break;
+        if (curFee < fee) {
+          for (final coin in feeStandardCoinsTotal) {
+            var isSpent =
+                spentCoinsParents.contains(coin.parentCoinInfo.toString());
+            if (!isSpent) {
+              curFee += coin.amount;
+              standardCoinsForFee.add(coin);
+            }
+            if (curFee >= fee) {
+              break;
+            }
           }
         }
       }
@@ -738,13 +740,10 @@ class PushingTransaction {
 
       debugPrint("TranCoinsParents after parsing : $tranCoinsParents");
 
-
-
       List<Coin> filteredCoins = [];
       var sum = 0;
       for (final coin in allCatCoins) {
-        var contains =
-            tranCoinsParents.contains(coin.parentCoinInfo.toString());
+        var contains = tranCoinsParents.contains("0x${coin.parentCoinInfo}");
         if (contains) {
           filteredCoins.add(coin);
           sum += coin.amount;
@@ -753,6 +752,8 @@ class PushingTransaction {
           }
         }
       }
+
+      debugPrint("FilteredCoins after parsing : $filteredCoins");
 
       List<CatCoin> catCoins = [];
       for (final coin in filteredCoins) {
@@ -2042,7 +2043,8 @@ class PushingTransaction {
       }
       debugPrint("Sending cat coins future size : ${futures.length}");
       await Future.wait(futures);
-      debugPrint("Sending cat coins : $catCoins");
+      debugPrint(
+          "Sending cat coins : $catCoins,  Dest Hash : ${Address(destAddress).toPuzzlehash()}");
       final spendBundle = catWalletService.createSpendBundle(
           payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
           catCoinsInput: catCoins,
@@ -2058,7 +2060,7 @@ class PushingTransaction {
 
       _channel.invokeMethod('getSpendBundle', {
         "spendBundle": spendBundle.toJson(),
-        "dest_puzzle_hash": outer_dest_puzzle_hash,
+        "dest_puzzle_hash": dest_puzzle_has,
         "spentCoins": jsonEncode(standardCoinsForFee),
         "spentTokens": jsonEncode(filteredCoins)
       });
