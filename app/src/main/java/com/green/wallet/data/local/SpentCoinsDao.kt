@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy.Companion.IGNORE
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.SpentCoinsEntity
+import com.green.wallet.domain.domainmodel.SpentCoin
 import kotlinx.coroutines.flow.Flow
 
 

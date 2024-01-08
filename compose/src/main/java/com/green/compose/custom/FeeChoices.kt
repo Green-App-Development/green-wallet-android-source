@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,12 +34,16 @@ import com.green.compose.theme.Provider
 @Composable
 fun FeeChoices(
     modifier: Modifier = Modifier,
+    spendableFee: Double = 0.0,
     fee: (Double) -> Unit = {}
 ) {
     var chosen by remember { mutableIntStateOf(1) }
+    var isEnough by remember { mutableStateOf(true) }
 
     LaunchedEffect(chosen) {
-        fee(getFeeOnChoosePos(chosen))
+        val chosenFee = getFeeOnChoosePos(chosen)
+        fee(chosenFee)
+
     }
 
     Row(
@@ -65,12 +70,12 @@ fun FeeChoices(
             DefaultText(
                 text = "Long",
                 size = text_14,
-                color = getColorFeeText(chosen = 0 == chosen)
+                color = getColorFeeText(chosen = 0 == chosen, isEnough)
             )
             DefaultText(
                 text = "0 XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 0 == chosen)
+                color = getColorFeeAmount(chosen = 0 == chosen, isEnough)
             )
         }
 
@@ -87,12 +92,12 @@ fun FeeChoices(
             DefaultText(
                 text = "Medium",
                 size = text_14,
-                color = getColorFeeText(chosen = 1 == chosen)
+                color = getColorFeeText(chosen = 1 == chosen, isEnough)
             )
             DefaultText(
                 text = "0.00005 XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 1 == chosen)
+                color = getColorFeeAmount(chosen = 1 == chosen, isEnough)
             )
         }
 
@@ -109,12 +114,12 @@ fun FeeChoices(
             DefaultText(
                 text = "Short",
                 size = text_14,
-                color = getColorFeeText(chosen = 2 == chosen)
+                color = getColorFeeText(chosen = 2 == chosen, isEnough)
             )
             DefaultText(
                 text = "0.0005 XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 2 == chosen)
+                color = getColorFeeAmount(chosen = 2 == chosen, isEnough)
             )
         }
     }
@@ -130,16 +135,17 @@ internal fun Modifier.customFeeChosenBackground(pos: Int, curPos: Int): Modifier
 }
 
 @Composable
-internal fun getColorFeeText(chosen: Boolean): Color {
-    if (chosen)
-        return Provider.current.green
+internal fun getColorFeeText(chosen: Boolean, enough: Boolean): Color {
+    if (chosen) {
+        return if (enough) Provider.current.green else Provider.current.errorColor
+    }
     return Provider.current.greyText
 }
 
 @Composable
-internal fun getColorFeeAmount(chosen: Boolean): Color {
+internal fun getColorFeeAmount(chosen: Boolean, isEnough: Boolean): Color {
     if (chosen)
-        return Color.White
+        return if (isEnough) Color.White else Provider.current.errorColor
     return Provider.current.greyText
 }
 

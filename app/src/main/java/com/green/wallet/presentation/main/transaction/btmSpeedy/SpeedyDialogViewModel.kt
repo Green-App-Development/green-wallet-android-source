@@ -23,6 +23,7 @@ import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,6 +58,7 @@ class SpeedyDialogViewModel @Inject constructor(
                 getInfoAboutTransaction()
                 wallet =
                     walletInteract.getWalletByAddress(tran.fkAddress)
+                getSpentCoinsSum()
             }
         }
     }
@@ -125,6 +127,17 @@ class SpeedyDialogViewModel @Inject constructor(
 
     suspend fun getSpentCoins() = withContext(Dispatchers.IO) {
         coinsInteract.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, "XCH")
+    }
+
+    private fun getSpentCoinsSum() {
+        viewModelScope.launch {
+            coinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
+                .collectLatest { it ->
+                    val feeSpendable = wallet.balance - it
+                    VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
+                    _viewState.update { it.copy(spendableFee = feeSpendable) }
+                }
+        }
     }
 
     fun burstTransaction(

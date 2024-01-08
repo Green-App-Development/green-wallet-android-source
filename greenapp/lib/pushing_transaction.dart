@@ -2060,7 +2060,7 @@ class PushingTransaction {
 
       _channel.invokeMethod('getSpendBundle', {
         "spendBundle": spendBundle.toJson(),
-        "dest_puzzle_hash": dest_puzzle_has,
+        "dest_puzzle_hash": dest_puzzle_has.toHex(),
         "spentCoins": jsonEncode(standardCoinsForFee),
         "spentTokens": jsonEncode(filteredCoins)
       });

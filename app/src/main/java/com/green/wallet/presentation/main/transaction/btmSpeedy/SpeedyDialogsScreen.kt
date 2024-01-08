@@ -177,6 +177,7 @@ fun SpeedyTransactionBtmScreen(
 
             FeeChoices(
                 modifier = Modifier.fillMaxWidth(),
+                spendableFee = state.spendableFee,
                 fee = {
                     onEvent(SpeedyTokenEvent.OnFeeChosen(it))
                 }

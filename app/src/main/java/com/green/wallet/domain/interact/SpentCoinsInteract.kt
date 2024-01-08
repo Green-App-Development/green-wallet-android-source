@@ -32,4 +32,6 @@ interface SpentCoinsInteract {
 
     suspend fun getSpentCoinsByTransactionTime(timeCreated: Long): List<SpentCoin>
 
+    suspend fun getSpentCoinsBalanceByAddressAndCode(address: String, code: String): Flow<Double>
+
 }
