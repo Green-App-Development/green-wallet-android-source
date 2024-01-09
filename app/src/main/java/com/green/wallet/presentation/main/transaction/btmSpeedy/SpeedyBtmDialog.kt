@@ -58,7 +58,7 @@ class SpeedyBtmDialog :
                     SpeedyTokenEvent.OnSign -> {
                         when (state.token) {
                             is NftToken -> {
-
+                                nftTokenRePush(state.token as NftToken)
                             }
 
                             is CatToken -> {
@@ -71,6 +71,11 @@ class SpeedyBtmDialog :
                 }
             }
         }
+    }
+
+    private suspend fun nftTokenRePush(nftToken: NftToken) {
+
+
     }
 
     private suspend fun catTokenRePush(catToken: CatToken) {

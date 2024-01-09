@@ -1910,11 +1910,12 @@ class PushingTransaction {
       asset_ids.forEach((asset_id) {
         List<String> outer_hashes = [];
         main_puzzle_hashes.forEach((main_hash) {
-          if (asset_id.isNotEmpty)
+          if (asset_id.isNotEmpty) {
             outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
                     Puzzlehash.fromHex(main_hash.toHex()),
                     Puzzlehash.fromHex(asset_id))
                 .toHex());
+          }
         });
         mapToAndroid[asset_id] = outer_hashes;
       });
