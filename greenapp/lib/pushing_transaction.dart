@@ -163,21 +163,21 @@ class PushingTransaction {
               var nftCoin = args["coin"].toString();
               var mnemonics = args["mnemonics"].toString().split(' ');
               var observer = int.parse(args["observer"].toString());
-              var non_observer = int.parse(args["non_observer"].toString());
+              var nonObserver = int.parse(args["non_observer"].toString());
               var destAddress = args["destAddress"].toString();
               var fee = args['fee'];
               var spentXCHCoins = args['spentCoins'];
-              var base_url = args["base_url"];
+              var baseUrl = args["base_url"];
               var fromAddress = args["fromAddress"];
               generateNFTSpendBundle(
                   nftCoinJson: nftCoin,
                   mnemonics: mnemonics,
                   observer: observer,
-                  nonObserver: non_observer,
+                  nonObserver: nonObserver,
                   destAddress: destAddress,
                   fee: fee,
                   spentCoinsJson: spentXCHCoins,
-                  base_url: base_url,
+                  base_url: baseUrl,
                   fromAddress: fromAddress);
               break;
             } catch (ex) {
@@ -600,7 +600,7 @@ class PushingTransaction {
       );
       var bundleNFTJson = bundleNFT.toJson();
 
-      _channel.invokeMethod('nftSpendBundle', {
+      _channel.invokeMethod('SpeedyTransferNFT', {
         "spendBundle": bundleNFTJson,
         "spentCoins": jsonEncode(standardCoinsForFee)
       });

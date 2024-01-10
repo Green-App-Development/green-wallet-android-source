@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.transaction.btmSpeedy
 
+import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -73,9 +74,22 @@ class SpeedyBtmDialog :
         }
     }
 
-    private suspend fun nftTokenRePush(nftToken: NftToken) {
-
-
+    private suspend fun nftTokenRePush(nft: NftToken) {
+        val url = vm.getNetworkItemFromPrefs(vm.wallet.networkType)!!.full_node
+        val args = hashMapOf<String, Any>()
+        args["observer"] = vm.wallet.observerHash
+        args["non_observer"] = vm.wallet.nonObserverHash
+        args["destAddress"] =
+            transaction?.toDestHash ?: throw NotFoundException("Not found nft tran dest hash")
+        args["mnemonics"] = convertListToStringWithSpace(vm.wallet.mnemonics)
+        args["coinParentInfo"] = nft.nftId
+        args["base_url"] = url
+        args["spentCoins"] = Gson().toJson(vm.getSpentCoins())
+        args["tranCoins"] = Gson().toJson(vm.getTranCoins())
+        args["fromAddress"] = vm.nftCoin.puzzleHash
+        args["fee"] = (vm.viewState.value.fee * PRECISION_XCH).toLong()
+        methodChannel.invokeMethod("SpeedyTransferNFT", args)
+        initListeningMethod(url)
     }
 
     private suspend fun catTokenRePush(catToken: CatToken) {
@@ -119,6 +133,16 @@ class SpeedyBtmDialog :
                         spentTokensJson.toString(),
                         url
                     )
+                }
+
+                "SpeedyTransferNFT" -> {
+                    VLog.d("SpendBundleJson for NFT from flutter : ${method.arguments}")
+                    val argAnd = (method.arguments as HashMap<*, *>)
+                    val spendBundleJson =
+                        argAnd["spendBundle"].toString()
+                    val spentCoinsJson =
+                        argAnd["spentCoins"].toString()
+
                 }
             }
         }

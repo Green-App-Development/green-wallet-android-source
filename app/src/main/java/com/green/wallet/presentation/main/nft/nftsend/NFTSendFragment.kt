@@ -24,7 +24,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.withStateAtLeast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -34,8 +33,6 @@ import com.example.common.tools.addingDoubleDotsTxt
 import com.example.common.tools.formatString
 import com.google.gson.Gson
 import com.green.wallet.R
-import com.green.wallet.data.network.dto.coinSolution.Coin
-import com.green.wallet.data.network.dto.coinSolution.CoinSolution
 import com.green.wallet.data.network.dto.coins.CoinRecord
 import com.green.wallet.databinding.FragmentSendNftBinding
 import com.green.wallet.domain.domainmodel.Address
@@ -484,13 +481,13 @@ class NFTSendFragment : DaggerFragment() {
             val coin = CoinRecord(
                 coin = com.green.wallet.data.network.dto.coins.Coin(
                     amount = 1,
-                    parent_coin_info = nftCoin.coin_info,
-                    puzzle_hash = nftCoin.coin_hash
+                    parent_coin_info = nftCoin.coinInfo,
+                    puzzle_hash = nftCoin.coinHash
                 ),
-                confirmed_block_index = nftCoin.confirmed_block_index,
+                confirmed_block_index = nftCoin.confirmedBlockIndex,
                 spent = false,
-                spent_block_index = nftCoin.spent_block_index,
-                timestamp = nftCoin.time_stamp,
+                spent_block_index = nftCoin.spentBlockIndex,
+                timestamp = nftCoin.timeStamp,
                 coinbase = false
             )
             val enteredFee = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
@@ -509,7 +506,7 @@ class NFTSendFragment : DaggerFragment() {
             argsFlut["coin"] = gson.toJson(coin)
             argsFlut["base_url"] = vm.base_url
             argsFlut["spentCoins"] = Gson().toJson(alreadySpentCoins)
-            argsFlut["fromAddress"] = nftCoin.puzzle_hash
+            argsFlut["fromAddress"] = nftCoin.puzzleHash
             argsFlut["fee"] = fee
 
             methodChannel.setMethodCallHandler { method, callBack ->
@@ -524,11 +521,11 @@ class NFTSendFragment : DaggerFragment() {
 
                     vm.sendNFTBundle(
                         spendBundleJson,
-                        nftCoin.puzzle_hash,
+                        nftCoin.puzzleHash,
                         spentCoinsJson,
                         nftInfo,
                         enteredFee,
-                        nftCoin.confirmed_block_index.toInt(),
+                        nftCoin.confirmedBlockIndex.toInt(),
                         wallet.networkType
                     )
 

@@ -11,7 +11,6 @@ import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.PrefsInteract
-import com.green.wallet.presentation.custom.encryptor.Encryptor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -46,13 +45,13 @@ class NFtInteractImpl @Inject constructor(
 		}
 	}
 
-	override suspend fun getNFTCoinByHash(coin_hash: String): NFTCoin {
-		val nftCoin = nftCoinDao.getNFTCoinByParentCoinInfo(coin_hash)
+	override suspend fun getNFTCoinByHash(coinHash: String): NFTCoin {
+		val nftCoin = nftCoinDao.getNFTCoinByParentCoinInfo(coinHash)
 		return nftCoin.get().toNftCoin()
 	}
 
-	override suspend fun getNftINFOByHash(nft_coin_hash: String): NFTInfo {
-		val nftInfo = nftInfoDao.getNftInfoEntityByNftCoinHash(nft_coin_hash)
+	override suspend fun getNftINFOByHash(nftCoinHash: String): NFTInfo {
+		val nftInfo = nftInfoDao.getNftInfoEntityByNftCoinHash(nftCoinHash)
 		return nftInfo.get().toNFTInfo()
 	}
 

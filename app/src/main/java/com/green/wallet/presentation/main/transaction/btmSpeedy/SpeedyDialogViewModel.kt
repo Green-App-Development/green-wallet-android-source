@@ -5,6 +5,8 @@ import com.google.gson.Gson
 import com.green.wallet.data.network.dto.coinSolution.Coin
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.NFTCoin
+import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.domainmodel.Wallet
@@ -42,6 +44,7 @@ class SpeedyDialogViewModel @Inject constructor(
 
     private lateinit var transaction: Transaction
     lateinit var wallet: Wallet
+    lateinit var nftCoin: NFTCoin
 
     init {
         viewModelScope.launch {
@@ -77,6 +80,7 @@ class SpeedyDialogViewModel @Inject constructor(
     private suspend fun getInfoAboutTransaction() {
         if (transaction.code == "NFT") {
             val nftInfo = nftInteract.getNftINFOByHash(transaction.nftCoinHash)
+            this.nftCoin = nftInteract.getNFTCoinByHash(nftInfo.nft_coin_hash)
             VLog.d("NftInfo Entity from DB : $nftInfo")
             _viewState.update {
                 it.copy(
@@ -92,9 +96,9 @@ class SpeedyDialogViewModel @Inject constructor(
             _viewState.update {
                 it.copy(
                     token = CatToken(
-                        transaction.code,
+                        code = transaction.code,
                         assetID = token.hash,
-                        transaction.amount
+                        amount = transaction.amount
                     )
                 )
             }
