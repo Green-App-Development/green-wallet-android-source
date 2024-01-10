@@ -137,7 +137,7 @@ class SendFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun collectFlowOnStarted(scope: CoroutineScope) {
+    override fun collectFlowOnCreated(scope: CoroutineScope) {
         scope.launch {
             val fee = viewModel.getDexieFee()
             with(binding) {

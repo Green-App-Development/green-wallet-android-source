@@ -19,10 +19,14 @@ abstract class BaseFragment : DaggerFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 collectFlowOnStarted(this)
             }
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                collectFlowOnCreated(this)
+            }
         }
     }
 
     open fun collectFlowOnStarted(scope: CoroutineScope) {}
 
+    open fun collectFlowOnCreated(scope: CoroutineScope) {}
 
 }
