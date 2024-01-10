@@ -9,7 +9,6 @@ import com.green.wallet.domain.domainmodel.*
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
-import com.green.wallet.presentation.tools.NetworkType
 import com.green.wallet.presentation.tools.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

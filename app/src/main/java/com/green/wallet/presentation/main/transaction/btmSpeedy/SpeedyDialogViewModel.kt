@@ -2,12 +2,10 @@ package com.green.wallet.presentation.main.transaction.btmSpeedy
 
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.green.wallet.data.network.dto.coinSolution.Coin
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTCoin
 import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
@@ -45,6 +43,7 @@ class SpeedyDialogViewModel @Inject constructor(
     private lateinit var transaction: Transaction
     lateinit var wallet: Wallet
     lateinit var nftCoin: NFTCoin
+    lateinit var nftInfo: NFTInfo
 
     init {
         viewModelScope.launch {
@@ -79,15 +78,15 @@ class SpeedyDialogViewModel @Inject constructor(
 
     private suspend fun getInfoAboutTransaction() {
         if (transaction.code == "NFT") {
-            val nftInfo = nftInteract.getNftINFOByHash(transaction.nftCoinHash)
+            this.nftInfo = nftInteract.getNftINFOByHash(transaction.nftCoinHash)
             this.nftCoin = nftInteract.getNFTCoinByHash(nftInfo.nft_coin_hash)
             VLog.d("NftInfo Entity from DB : $nftInfo")
             _viewState.update {
                 it.copy(
                     token = NftToken(
-                        collection = nftInfo.collection,
-                        nftId = nftInfo.nft_id,
-                        imgUrl = nftInfo.data_url
+                        collection = this.nftInfo.collection,
+                        nftId = this.nftInfo.nft_id,
+                        imgUrl = this.nftInfo.data_url
                     )
                 )
             }
@@ -179,5 +178,34 @@ class SpeedyDialogViewModel @Inject constructor(
             }
         }
     }
+
+    fun burstTransactionNFT(spentBundleJson: String, spentCoinsJson: String, url: String) {
+        viewModelScope.launch {
+            val res=blockChainInteract.push_tx_nft(
+                spentBundleJson,
+                url,
+                transaction.toDestHash,
+                nftInfo,
+                spentCoinsJson,
+                viewState.value.fee,
+                nftCoin.confirmedBlockIndex.toInt(),
+                wallet.networkType
+            )
+            when (res.state) {
+                Resource.State.SUCCESS -> {
+                    transactionInteract.deleteTransByID(transaction.transactionId)
+                }
+
+                Resource.State.ERROR -> {
+
+                }
+
+                Resource.State.LOADING -> {
+
+                }
+            }
+        }
+    }
+
 
 }

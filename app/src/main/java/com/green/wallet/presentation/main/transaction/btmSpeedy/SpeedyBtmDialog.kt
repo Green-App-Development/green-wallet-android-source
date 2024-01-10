@@ -142,7 +142,7 @@ class SpeedyBtmDialog :
                         argAnd["spendBundle"].toString()
                     val spentCoinsJson =
                         argAnd["spentCoins"].toString()
-
+                    vm.burstTransactionNFT(spendBundleJson, spentCoinsJson, url)
                 }
             }
         }

@@ -555,21 +555,25 @@ class PushingTransaction {
         for (final coin in feeStandardCoinsTotal) {
           var contains =
               tranCoinsParents.contains(coin.parentCoinInfo.toString());
+          debugPrint("Contains checking for trans coins : $contains");
           if (contains) {
             curFee += coin.amount;
             standardCoinsForFee.add(coin);
           }
         }
 
-        for (final coin in feeStandardCoinsTotal) {
-          var isSpent =
-              spentCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (!isSpent) {
-            curFee += coin.amount;
-            standardCoinsForFee.add(coin);
-          }
-          if (curFee >= fee) {
-            break;
+        if (curFee < fee) {
+          for (final coin in feeStandardCoinsTotal) {
+            var isSpent =
+                spentCoinsParents.contains(coin.parentCoinInfo.toString());
+            debugPrint("IsSpent checking for spent coins : $isSpent");
+            if (!isSpent) {
+              curFee += coin.amount;
+              standardCoinsForFee.add(coin);
+            }
+            if (curFee >= fee) {
+              break;
+            }
           }
         }
       }

@@ -37,11 +37,11 @@ interface BlockChainInteract {
     suspend fun push_tx_nft(
         jsonSpendBundle: String,
         url: String,
-        dest_puzzle_hash: String,
+        destPuzzleHash: String,
         nftInfo: NFTInfo,
         spentCoinsJson: String,
         fee: Double,
-        confirm_height: Int,
+        confirmHeight: Int,
         networkType: String
     ): Resource<String>
 
