@@ -15,6 +15,7 @@ import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 
@@ -60,7 +61,6 @@ class TransactionItemAdapter(
         private val txtStatus: TextView = v.findViewById(R.id.txtStatus)
         private val txtHeightTransaction: TextView = v.findViewById(R.id.txtHeightTrans)
         private val txtToken: TextView = v.findViewById(R.id.txtToken)
-        private val deleteContainer: RelativeLayout = v.findViewById(R.id.container_delete)
 
         @SuppressLint("SetTextI18n")
         fun onBindTransaction(transaction: Transaction) {
@@ -101,10 +101,6 @@ class TransactionItemAdapter(
 
             rootLayout.setOnClickListener {
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)
-            }
-
-            deleteContainer.setOnClickListener {
-                transactionItemListener.onTransactionDelete(transaction = transaction)
             }
 
         }

@@ -640,7 +640,6 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         viewModel.handleIntent(TransactionIntent.OnDeleteTransaction(transaction))
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     override fun collectFlowOnStarted(scope: CoroutineScope) {
         viewModel.event.collectFlow(scope) {
             when (it) {
@@ -649,6 +648,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
                 }
 
                 is TransactionEvent.ShowWarningDeletionDialog -> {
+                    VLog.d("Show Warning Deletion dialog got called")
                     dialogManager.showWarningDeleteTransaction(
                         requireActivity(),
                         "Warning!",

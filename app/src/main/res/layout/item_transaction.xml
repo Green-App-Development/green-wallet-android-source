@@ -12,14 +12,14 @@
 
     <RelativeLayout
         android:id="@+id/container_delete"
-        android:layout_width="wrap_content"
+        android:layout_width="45dp"
         android:layout_height="45dp"
         android:background="@color/red_mnemonic">
 
         <ImageView
             android:id="@+id/ic_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:clickable="true"
             android:focusable="true"

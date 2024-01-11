@@ -52,6 +52,9 @@ class TransPagingAdapter(
         private val txtToken: TextView = v.findViewById(R.id.txtToken)
         private val centerLayout: ConstraintLayout = v.findViewById(R.id.centerLayout)
         private val imgSpeedUp: ImageView = v.findViewById(R.id.img_speed_up)
+        private val deleteContainer: RelativeLayout = v.findViewById(R.id.container_delete)
+        private val imgDelete: ImageView = v.findViewById(R.id.ic_delete)
+
 
         @SuppressLint("SetTextI18n")
         fun onBindTransaction(transaction: Transaction) {
@@ -94,6 +97,11 @@ class TransPagingAdapter(
 
             rootLayout.setOnClickListener {
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)
+            }
+
+            imgDelete.setOnClickListener {
+                VLog.d("Delete container transaction clicked")
+                transactionItemListener.onTransactionDelete(transaction = transaction)
             }
 
             if (transaction.confirmedAtHeight == 0L) {
