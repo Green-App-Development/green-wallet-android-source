@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.chauthai.swipereveallayout.SwipeRevealLayout
+import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.presentation.custom.AnimationManager
@@ -27,6 +29,7 @@ class TransactionItemAdapter(
     var itemCountFitsScreen = 0
     private var transactionList = mutableListOf<Transaction>()
     var curSortedStatus: Status? = null
+    private val viewBinderHelper = ViewBinderHelper()
 
     fun updateTransactionList(transactions: List<Transaction>) {
         transactionList.clear()
@@ -43,6 +46,8 @@ class TransactionItemAdapter(
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         if (position < transactionList.size) {
             holder.onBindTransaction(transactionList[position])
+            viewBinderHelper.setOpenOnlyOne(true)
+            viewBinderHelper.bind(holder.rootLayout, "$position")
         } else
             holder.onBindEmptyPlaceHolder()
     }
@@ -51,10 +56,11 @@ class TransactionItemAdapter(
 
 
     inner class TransactionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        private val rootLayout: RelativeLayout = v.findViewById(R.id.root_transaction_item)
+        val rootLayout: SwipeRevealLayout = v.findViewById(R.id.root_transaction_item)
         private val txtStatus: TextView = v.findViewById(R.id.txtStatus)
         private val txtHeightTransaction: TextView = v.findViewById(R.id.txtHeightTrans)
         private val txtToken: TextView = v.findViewById(R.id.txtToken)
+        private val deleteContainer: RelativeLayout = v.findViewById(R.id.container_delete)
 
         @SuppressLint("SetTextI18n")
         fun onBindTransaction(transaction: Transaction) {
@@ -97,7 +103,9 @@ class TransactionItemAdapter(
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)
             }
 
-
+            deleteContainer.setOnClickListener {
+                transactionItemListener.onTransactionDelete(transaction = transaction)
+            }
 
         }
 
@@ -113,6 +121,8 @@ class TransactionItemAdapter(
         fun onTransactionItemClicked(transaction: Transaction)
 
         fun onTransactionSpeedUpClick(transaction: Transaction)
+
+        fun onTransactionDelete(transaction: Transaction)
 
     }
 

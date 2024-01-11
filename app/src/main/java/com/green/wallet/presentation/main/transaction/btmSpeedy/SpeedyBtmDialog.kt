@@ -59,7 +59,7 @@ class SpeedyBtmDialog :
                     SpeedyTokenEvent.OnSign -> {
                         when (state.token) {
                             is NftToken -> {
-                                nftTokenRePush(state.token as NftToken)
+                                nftTokenRePush()
                             }
 
                             is CatToken -> {
@@ -74,7 +74,7 @@ class SpeedyBtmDialog :
         }
     }
 
-    private suspend fun nftTokenRePush(nft: NftToken) {
+    private suspend fun nftTokenRePush() {
         val url = vm.getNetworkItemFromPrefs(vm.wallet.networkType)!!.full_node
         val args = hashMapOf<String, Any>()
         args["observer"] = vm.wallet.observerHash

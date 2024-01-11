@@ -6,4 +6,6 @@ sealed interface TransactionEvent {
 
     data class SpeedyBtmDialog(val transaction: Transaction?) : TransactionEvent
 
+    data class ShowWarningDeletionDialog(val transaction: Transaction) : TransactionEvent
+
 }

@@ -153,7 +153,7 @@ private fun getFeeOnChoosePos(pos: Int): Double {
     return when (pos) {
         0 -> 0.0
         1 -> 0.00005
-        2 -> 0.005
+        2 -> 0.0006
         else -> 0.0
     }
 }

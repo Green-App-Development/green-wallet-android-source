@@ -636,12 +636,29 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         viewModel.handleIntent(TransactionIntent.OnSpeedyTran(transaction))
     }
 
+    override fun onTransactionDelete(transaction: Transaction) {
+        viewModel.handleIntent(TransactionIntent.OnDeleteTransaction(transaction))
+    }
+
     @OptIn(ExperimentalMaterialApi::class)
     override fun collectFlowOnStarted(scope: CoroutineScope) {
         viewModel.event.collectFlow(scope) {
             when (it) {
                 is TransactionEvent.SpeedyBtmDialog -> {
                     SpeedyBtmDialog.build(it.transaction).show(childFragmentManager, "")
+                }
+
+                is TransactionEvent.ShowWarningDeletionDialog -> {
+                    dialogManager.showWarningDeleteTransaction(
+                        requireActivity(),
+                        "Warning!",
+                        "This action will unlock the coins, but will not remove the transaction from the mempool. If you are not sure of your actions, use the Speed up function",
+                        "Cancel",
+                        "Delete",
+                        onDelete = {
+                            viewModel.handleIntent(TransactionIntent.DeleteTransaction(it.transaction))
+                        }
+                    )
                 }
             }
         }

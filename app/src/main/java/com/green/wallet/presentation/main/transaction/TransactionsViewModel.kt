@@ -163,6 +163,16 @@ class TransactionsViewModel @Inject constructor(
             is TransactionIntent.OnSpeedyTran -> {
                 setEvent(TransactionEvent.SpeedyBtmDialog(intent.tran))
             }
+
+            is TransactionIntent.OnDeleteTransaction -> {
+                setEvent(TransactionEvent.ShowWarningDeletionDialog(intent.tran))
+            }
+
+            is TransactionIntent.DeleteTransaction -> {
+                viewModelScope.launch {
+                    transactionInteract.deleteTransByID(intent.tran.transactionId)
+                }
+            }
         }
     }
 
