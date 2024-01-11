@@ -452,8 +452,8 @@ class PushingTransaction {
           {
             try {
               var args = call.arguments;
-              debugPrint("generateNftSpendBundle got called with args : $args");
-              var nftCoin = args["coin"].toString();
+              debugPrint("SpeedyTransferNFT got called with args : $args");
+              var nftParentCoinInfo = args["coinParentInfo"].toString();
               var mnemonics = args["mnemonics"].toString().split(' ');
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["non_observer"].toString());
@@ -465,7 +465,7 @@ class PushingTransaction {
               var fromAddress = args["fromAddress"];
 
               speedyTransferNFT(
-                  nftCoinJson: nftCoin,
+                  nftCoinParentInfo: nftParentCoinInfo,
                   mnemonics: mnemonics,
                   observer: observer,
                   nonObserver: nonObserver,
@@ -493,7 +493,7 @@ class PushingTransaction {
   }
 
   Future<void> speedyTransferNFT(
-      {required String nftCoinJson,
+      {required String nftCoinParentInfo,
       required List<String> mnemonics,
       required int observer,
       required int nonObserver,
@@ -509,14 +509,11 @@ class PushingTransaction {
       final keychain = cachedWalletChains[key] ??
           generateKeyChain(mnemonics, observer, nonObserver);
 
-      var coinMap = json.decode(nftCoinJson) as Map<String, dynamic>;
-
       NetworkContext()
           .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-      final coin = Coin.fromChiaCoinRecordJson(coinMap);
       debugPrint(
-          "NFTCoin to Send after decoding and parsing : $coin and baseURL : $baseUrl");
+          "NFTCoin to Send after decoding and parsing : $nftCoinParentInfo and baseURL : $baseUrl");
 
       final fullNodeRpc = FullNodeHttpRpc(baseUrl);
       final fullNode = ChiaFullNodeInterface(fullNodeRpc);
@@ -551,11 +548,14 @@ class PushingTransaction {
           return b.amount.compareTo(a.amount);
         });
 
+        debugPrint("TranCoinsParents : $tranCoinsParents");
+
         var curFee = 0;
         for (final coin in feeStandardCoinsTotal) {
           var contains =
-              tranCoinsParents.contains(coin.parentCoinInfo.toString());
-          debugPrint("Contains checking for trans coins : $contains");
+              tranCoinsParents.contains("0x${coin.parentCoinInfo.toString()}");
+          debugPrint(
+              "Contains checking for trans coins : $contains : ${coin.parentCoinInfo.toString()}");
           if (contains) {
             curFee += coin.amount;
             standardCoinsForFee.add(coin);
@@ -564,8 +564,8 @@ class PushingTransaction {
 
         if (curFee < fee) {
           for (final coin in feeStandardCoinsTotal) {
-            var isSpent =
-                spentCoinsParents.contains(coin.parentCoinInfo.toString());
+            var isSpent = spentCoinsParents
+                .contains("0x${coin.parentCoinInfo.toString()}");
             debugPrint("IsSpent checking for spent coins : $isSpent");
             if (!isSpent) {
               curFee += coin.amount;
@@ -581,9 +581,9 @@ class PushingTransaction {
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
       debugPrint(
-          "PuzzleHash to get nft coins: ${Puzzlehash.fromHex(fromAddress)}");
+          "PuzzleHash to get nft coins on speedy up hash : ${Puzzlehash.fromHex(fromAddress)} Info : ${Bytes.fromHex(nftCoinParentInfo)}");
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-          parent_coin_info: coin.parentCoinInfo,
+          parent_coin_info: Bytes.fromHex(nftCoinParentInfo),
           puzzle_hash: Puzzlehash.fromHex(fromAddress));
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
@@ -592,7 +592,9 @@ class PushingTransaction {
       debugPrint("Converting to FullNFTCoin : $nftFullCoin");
       debugPrint('Standard XCH for fee : $standardCoinsForFee');
 
-      final destPuzzleHash = Address(destAddress).toPuzzlehash();
+      final destPuzzleHash = Puzzlehash.fromHex(destAddress);
+      debugPrint("Dest Puzzle Hash on speedy up : $destPuzzleHash");
+
       await Future.wait(futures);
       var bundleNFT = NftWallet().createTransferSpendBundle(
         nftCoin: nftFullCoin.toNftCoinInfo(),
@@ -602,14 +604,14 @@ class PushingTransaction {
         fee: fee,
         changePuzzlehash: keychain.puzzlehashes[0],
       );
-      var bundleNFTJson = bundleNFT.toJson();
 
+      var bundleNFTJson = bundleNFT.toJson();
       _channel.invokeMethod('SpeedyTransferNFT', {
         "spendBundle": bundleNFTJson,
         "spentCoins": jsonEncode(standardCoinsForFee)
       });
     } catch (ex) {
-      debugPrint("Exception in sending nft token : $ex");
+      debugPrint("Exception in sending nft token speedy : $ex");
       _channel.invokeMethod("failedNFT", "Sorry, something went wrong : $ex");
     }
   }
@@ -2879,18 +2881,19 @@ class PushingTransaction {
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
       debugPrint(
-          "PuzzleHash to get nft coins: ${Puzzlehash.fromHex(fromAddress)}");
+          "PuzzleHash to get nft coins on generate spend bundle : ${Puzzlehash.fromHex(fromAddress)}");
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
           parent_coin_info: coin.parentCoinInfo,
           puzzle_hash: Puzzlehash.fromHex(fromAddress));
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
-
       final nftFullCoin = await nftService.convertFullCoin(nftCoin);
       debugPrint("Converting to FullNFTCoin : $nftFullCoin");
       debugPrint('Standard XCH for fee : $standardCoinsForFee');
 
       final destPuzzleHash = Address(destAddress).toPuzzlehash();
+      debugPrint("Dest Puzzle Hash on generating nft bundle : $destPuzzleHash");
+
       await Future.wait(futures);
       var bundleNFT = NftWallet().createTransferSpendBundle(
         nftCoin: nftFullCoin.toNftCoinInfo(),

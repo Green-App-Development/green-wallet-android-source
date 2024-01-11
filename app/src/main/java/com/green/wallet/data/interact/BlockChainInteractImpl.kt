@@ -147,7 +147,7 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-//                updateWalletNFTBalance(wallet)
+                updateWalletNFTBalance(wallet)
             }
         }
     }
@@ -217,7 +217,6 @@ class BlockChainInteractImpl @Inject constructor(
                         return
                     }
                     VLog.d("Inserting nftInfo to db : $nftInfoEntity")
-                    VLog.d("Inserting nftCoin to db : $nftCoinEntity")
                     nftInfoDao.insertNftInfoEntity(nftInfoEntity)
                     nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
                     if (nftCoinEntity.time_stamp * 1000L >= wallet.savedTime) {

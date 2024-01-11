@@ -82,7 +82,7 @@ class SpeedyBtmDialog :
         args["destAddress"] =
             transaction?.toDestHash ?: throw NotFoundException("Not found nft tran dest hash")
         args["mnemonics"] = convertListToStringWithSpace(vm.wallet.mnemonics)
-        args["coinParentInfo"] = nft.nftId
+        args["coinParentInfo"] = vm.nftCoin.coinInfo
         args["base_url"] = url
         args["spentCoins"] = Gson().toJson(vm.getSpentCoins())
         args["tranCoins"] = Gson().toJson(vm.getTranCoins())
