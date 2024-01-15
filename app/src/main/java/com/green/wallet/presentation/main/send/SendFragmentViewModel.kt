@@ -20,6 +20,11 @@ class SendFragmentViewModel @Inject constructor(
     private val dexieInteract: DexieInteract
 ) : BaseViewModel<TransferState, TransferEvent>(TransferState()) {
 
+    init {
+        getDexieFee()
+    }
+
+
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
     fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
@@ -97,7 +102,17 @@ class SendFragmentViewModel @Inject constructor(
     suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
         spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
 
-    suspend fun getDexieFee() = dexieInteract.getDexieMinFee()
+    private fun getDexieFee() {
+        viewModelScope.launch {
+            val dexie = dexieInteract.getDexieMinFee()
+            val spendableBalance =
+            _viewState.update {
+                it.copy(
+                    dexieFee = dexie.recommended
+                )
+            }
+        }
+    }
 
     private fun setLoading(loading: Boolean) {
         _viewState.update { it.copy(isLoading = loading) }

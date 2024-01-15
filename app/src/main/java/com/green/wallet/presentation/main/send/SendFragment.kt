@@ -17,16 +17,19 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
+import com.green.compose.custom.fee.FeeContainer
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Address
@@ -139,13 +142,7 @@ class SendFragment : BaseFragment() {
     }
 
     override fun collectFlowOnCreated(scope: CoroutineScope) {
-        scope.launch {
-            val fee = viewModel.getDexieFee()
-            with(binding) {
-                edtEnterCommission.setText(formattedDoubleAmountWithPrecision(fee.min))
-            }
-            initRecommendedCommissionFee(fee.recommended)
-        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -160,6 +157,18 @@ class SendFragment : BaseFragment() {
         VLog.d("OnViewCreated on send Fragment")
         initSwipeRefreshLayout()
         initNetworkAdapter()
+        initFeeComposeBlock()
+    }
+
+    private fun initFeeComposeBlock() {
+        binding.composeFeeBlock.setContent {
+
+            val state by viewModel.viewState.collectAsStateWithLifecycle()
+
+            FeeContainer(
+
+            )
+        }
     }
 
     private fun initConstrainsAfterCommobasedOnToken() {
@@ -189,30 +198,8 @@ class SendFragment : BaseFragment() {
                 return p0
             }
         }
-        val filterFeeAmountEdt = object : InputFilter {
-            override fun filter(
-                p0: CharSequence?,
-                p1: Int,
-                p2: Int,
-                p3: Spanned?,
-                p4: Int,
-                p5: Int
-            ): CharSequence {
-                if (p0 == null) return ""
-                val curText = binding.edtEnterCommission.text.toString()
-                val locComo = curText.indexOf('.')
-                if (locComo == -1 || locComo == 0)
-                    return p0
-                val digitsAfterComo = curText.substring(locComo + 1, curText.length).length
-                if (digitsAfterComo >= precisionAfterCommonFee) {
-                    return ""
-                }
-                return p0
-            }
-        }
         binding.apply {
             edtEnterAmount.filters = arrayOf(filterSendingAmountEdt)
-            edtEnterCommission.filters = arrayOf(filterFeeAmountEdt)
         }
     }
 
@@ -294,9 +281,9 @@ class SendFragment : BaseFragment() {
                             txtSpendableBalanceAmount.setText(
                                 "$txtSpendableBalance: $spendableAmountString"
                             )
-                            txtSpendableBalanceCommission.setText(
-                                "$txtSpendableBalance: $bigDecimalSpendableFee"
-                            )
+//                            txtSpendableBalanceCommission.setText(
+//                                "$txtSpendableBalance: $bigDecimalSpendableFee"
+//                            )
                         }
                         initAmountNotEnoughWarnings()
                         initConstrainsAfterCommobasedOnToken()
@@ -328,8 +315,6 @@ class SendFragment : BaseFragment() {
             }
             if (edtAddressWallet.text.toString().isNotEmpty())
                 txtEnterAddressWallet.visibility = View.VISIBLE
-            if (edtEnterCommission.text.toString().isNotEmpty())
-                txtEnterCommission.visibility = View.VISIBLE
             if (threeEdtsFilled.size >= 2) {
                 btnContinue.isEnabled = true
             }
@@ -549,42 +534,6 @@ class SendFragment : BaseFragment() {
                 if (!focus) {
                     view2.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
                 }
-            }
-
-            edtEnterCommission.setOnFocusChangeListener { view, focus ->
-                if (focus) {
-                    txtEnterCommission.visibility = View.VISIBLE
-                    txtSpendableBalanceCommission.visibility = View.VISIBLE
-                    edtEnterCommission.hint = ""
-                    view3.setBackgroundColor(curActivity().getColorResource(R.color.green))
-                    enterCommissionToken.apply {
-                        setTextColor(curActivity().getColorResource(R.color.green))
-                        text = getShortNetworkType(curNetworkType)
-                    }
-                    txtRecommendedCommission.visibility = View.VISIBLE
-                } else if (edtEnterCommission.text.toString().isEmpty()) {
-                    txtEnterCommission.visibility = View.INVISIBLE
-                    edtEnterCommission.hint =
-                        curActivity().getString(R.string.send_token_commission_amount)
-                    enterCommissionToken.apply {
-                        text = "-"
-                        setTextColor(curActivity().getColorResource(R.color.txtShortNetworkType))
-                    }
-                    txtRecommendedCommission.visibility = View.INVISIBLE
-                    txtSpendableBalanceCommission.visibility = View.GONE
-                }
-                if (!focus) {
-                    view3.setBackgroundColor(curActivity().getColorResource(R.color.edt_divider))
-                }
-                enableBtnContinueTwoEdtsFilled()
-            }
-
-
-            txtRecommendedCommission.setOnClickListener {
-                edtEnterCommission.setText(txtRecommendedCommission.text.toString().trim())
-            }
-            view3.setOnClickListener {
-                edtEnterCommission.setText(txtRecommendedCommission.text.toString().trim())
             }
 
         }
@@ -1169,13 +1118,7 @@ class SendFragment : BaseFragment() {
             val token = tokenAdapter.dataOptions[0]
             val text =
                 curActivity().getStringResource(R.string.send_token_insufficient_funds_error) + " $token"
-            txtNotEnoughFeeWarning.text = text
-            txtNotEnoughFeeWarning.visibility = View.VISIBLE
         }
-    }
-
-    private fun hideNotEnoughAmountFee() {
-        txtNotEnoughFeeWarning.visibility = View.GONE
     }
 
     private fun getTokenTypeThatIsNotEnough(): String {
