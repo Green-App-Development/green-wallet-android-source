@@ -6,4 +6,8 @@ sealed interface SpeedyTokenEvent {
 
     data class OnFeeChosen(val fee: Double) : SpeedyTokenEvent
 
+    object OnSpeedError : SpeedyTokenEvent
+
+    object OnSpeedSuccess : SpeedyTokenEvent
+
 }

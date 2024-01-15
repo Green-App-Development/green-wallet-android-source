@@ -22,13 +22,15 @@ data class CustomColorsPalette(
     val feeBackground: Color = Color.Unspecified,
     val feeBackgroundChoosen: Color = Color.Unspecified,
     val dividerColor: Color = Color.Unspecified,
-    val secondPrimaryTextColor: Color = Color.Unspecified
+    val secondPrimaryTextColor: Color = Color.Unspecified,
+    val btnInActive: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
     txtPrimaryColor = txtPrimaryColorsLight,
     primaryAppBackground = Color(0xFFF4F4F4),
-    dividerColor = Color(0xFFF2F2F2)
+    dividerColor = Color(0xFFF2F2F2),
+    btnInActive = Color(0xFFDADADA)
 )
 
 val OnDarkCustomColorsPalette = CustomColorsPalette(

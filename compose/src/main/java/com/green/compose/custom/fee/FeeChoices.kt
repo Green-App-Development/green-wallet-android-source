@@ -1,11 +1,10 @@
-package com.green.compose.custom
+package com.green.compose.custom.fee
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,16 +28,17 @@ import com.green.compose.dimens.text_15
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
+import com.green.compose.utils.doubleCeilString
 
 
 @Composable
 fun FeeChoices(
     modifier: Modifier = Modifier,
-    spendableFee: Double = 0.0,
+    normal: Double = 0.001,
+    spendableBalance: Double = 0.1,
     fee: (Double) -> Unit = {}
 ) {
     var chosen by remember { mutableIntStateOf(1) }
-    val isEnough by remember { mutableStateOf(true) }
 
     LaunchedEffect(chosen) {
         val chosenFee = getFeeOnChoosePos(chosen)
@@ -66,15 +66,18 @@ fun FeeChoices(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            val feeAmount = doubleCeilString(normal)
+
             DefaultText(
-                text = "Long",
+                text = "Normal",
                 size = text_14,
-                color = getColorFeeText(chosen = 0 == chosen, isEnough)
+                color = getColorFeeText(chosen = 0 == chosen, feeAmount.toDouble() <= spendableBalance)
             )
             DefaultText(
-                text = "0 XCH",
+                text = "$feeAmount XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 0 == chosen, isEnough)
+                color = getColorFeeAmount(chosen = 0 == chosen, feeAmount.toDouble() <= spendableBalance)
             )
         }
 
@@ -88,15 +91,16 @@ fun FeeChoices(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            val feeAmount = doubleCeilString(normal*1.5)
             DefaultText(
                 text = "Medium",
                 size = text_14,
-                color = getColorFeeText(chosen = 1 == chosen, isEnough)
+                color = getColorFeeText(chosen = 1 == chosen, feeAmount.toDouble() <= spendableBalance)
             )
             DefaultText(
-                text = "0.00005 XCH",
+                text = "$feeAmount XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 1 == chosen, isEnough)
+                color = getColorFeeAmount(chosen = 1 == chosen, feeAmount.toDouble() <= spendableBalance)
             )
         }
 
@@ -110,15 +114,16 @@ fun FeeChoices(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val feeAmount = doubleCeilString(normal*2)
             DefaultText(
-                text = "Short",
+                text = "Fast",
                 size = text_14,
-                color = getColorFeeText(chosen = 2 == chosen, isEnough)
+                color = getColorFeeText(chosen = 2 == chosen, feeAmount.toDouble() <= spendableBalance)
             )
             DefaultText(
-                text = "0.0005 XCH",
+                text = "$feeAmount XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 2 == chosen, isEnough)
+                color = getColorFeeAmount(chosen = 2 == chosen, feeAmount.toDouble() <= spendableBalance)
             )
         }
     }

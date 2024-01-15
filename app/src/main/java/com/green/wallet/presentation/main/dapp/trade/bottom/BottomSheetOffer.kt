@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.green.compose.buttons.DefaultButton
-import com.green.compose.custom.FixedSpacer
+import com.green.compose.custom.fee.FixedSpacer
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_100
@@ -69,7 +69,7 @@ import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
-import com.green.compose.custom.ChooseFeeProgressValue
+import com.green.compose.custom.fee.ChooseFeeProgressValue
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token

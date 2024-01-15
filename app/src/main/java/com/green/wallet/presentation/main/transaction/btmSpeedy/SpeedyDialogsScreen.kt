@@ -20,8 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.green.compose.buttons.DefaultButton
-import com.green.compose.custom.FeeChoices
-import com.green.compose.custom.FixedSpacer
+import com.green.compose.custom.fee.FeeContainer
+import com.green.compose.custom.fee.FixedSpacer
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_100
@@ -36,12 +36,14 @@ import com.green.compose.dimens.size_5
 import com.green.compose.dimens.size_6
 import com.green.compose.dimens.size_80
 import com.green.compose.dimens.size_9
+import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
 import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
+import com.green.compose.utils.formattedDoubleAmountWithPrecision
 import com.green.wallet.R
 import com.green.wallet.presentation.main.dapp.trade.bottom.CatTokenItem
 import com.green.wallet.presentation.main.dapp.trade.bottom.NftItem
@@ -51,8 +53,7 @@ import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 
 @Composable
 fun SpeedyTransactionBtmScreen(
-    state: SpeedyTokenState = SpeedyTokenState(),
-    onEvent: (SpeedyTokenEvent) -> Unit = {}
+    state: SpeedyTokenState = SpeedyTokenState(), onEvent: (SpeedyTokenEvent) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -60,16 +61,14 @@ fun SpeedyTransactionBtmScreen(
             .background(color = Provider.current.primaryAppBackground)
             .padding(
                 horizontal = size_16
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
+            ), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .width(size_80)
                 .height(size_6)
                 .background(
-                    color = Provider.current.iconGrey,
-                    shape = RoundedCornerShape(size_100)
+                    color = Provider.current.iconGrey, shape = RoundedCornerShape(size_100)
                 )
 
         )
@@ -77,16 +76,12 @@ fun SpeedyTransactionBtmScreen(
         Column(
             modifier = Modifier
                 .background(
-                    color = Provider.current.blackAppBackground,
-                    shape = RoundedCornerShape(size_15)
+                    color = Provider.current.blackAppBackground, shape = RoundedCornerShape(size_15)
                 )
                 .fillMaxWidth()
                 .padding(
-                    top = size_18,
-                    start = size_16,
-                    end = size_16
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
+                    top = size_18, start = size_16, end = size_16
+                ), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -106,8 +101,7 @@ fun SpeedyTransactionBtmScreen(
             }
             FixedSpacer(height = size_26)
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DefaultText(
                     text = "Current account",
@@ -159,7 +153,25 @@ fun SpeedyTransactionBtmScreen(
                     .height(size_1)
                     .background(color = Provider.current.secondGrey),
             )
-            FixedSpacer(height = size_18)
+
+            FixedSpacer(height = size_14)
+
+            val amount = formattedDoubleAmountWithPrecision(state.spendableBalance)
+            val feeEnough = state.spendableBalance >= state.fee
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = size_6),
+                horizontalAlignment = Alignment.Start
+            ) {
+                DefaultText(
+                    text = "Spendable Balance: $amount",
+                    size = text_12,
+                    color = if (feeEnough) Provider.current.greyText
+                    else Provider.current.errorColor
+                )
+            }
 
             DefaultText(
                 text = "Комиссия сети",
@@ -171,36 +183,21 @@ fun SpeedyTransactionBtmScreen(
             )
             FixedSpacer(height = size_9)
 
-            FeeChoices(
-                modifier = Modifier.fillMaxWidth(),
-                spendableFee = state.spendableFee,
+            FeeContainer(normal = state.normalFeeDexie,
+                spendableBalance = state.spendableBalance,
                 fee = {
                     onEvent(SpeedyTokenEvent.OnFeeChosen(it))
-                }
-            )
-
-            FixedSpacer(height = size_14)
-
-            DefaultText(
-                text = "Custom",
-                size = text_14,
-                color = Provider.current.green,
-                fontWeight = FontWeight.W500,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
+                })
             FixedSpacer(height = size_20)
         }
         FixedSpacer(height = size_20)
-        DefaultButton(
-            bcgColor = Provider.current.green,
-            onClick = {
-                onEvent(SpeedyTokenEvent.OnSign)
-            }) {
+
+        DefaultButton(bcgColor = if (state.fee <= state.spendableBalance) Provider.current.green
+        else Provider.current.btnInActive, onClick = {
+            onEvent(SpeedyTokenEvent.OnSign)
+        }) {
             DefaultText(
-                text = "Sign",
-                size = text_15,
-                color = Provider.current.txtPrimaryColor
+                text = "Sign", size = text_15, color = Provider.current.txtPrimaryColor
             )
         }
         FixedSpacer(height = size_10)

@@ -1,6 +1,7 @@
-package com.green.compose.custom
+package com.green.compose.custom.fee
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,8 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.green.compose.R
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_100
@@ -40,20 +44,22 @@ import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
-import com.green.wallet.R
-import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
-import com.green.wallet.presentation.tools.PRECISION_XCH
+import com.green.compose.utils.PRECISION_XCH
+import com.green.compose.utils.formattedDoubleAmountWithPrecision
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChooseFeeProgressValue(
     modifier: Modifier = Modifier,
-    initialValue: Int = 0,
-    maxValue: Int = 1_000_000_000,
-    onValueChange: (Int) -> Unit = {}
+    initialValue: Long = 0L,
+    spendableBalance: Double = 0.0,
+    maxValue: Long = 1_000_000_000L,
+    onFee: (Double) -> Unit = {},
+    onX: () -> Unit = {},
 ) {
-    var curValue by remember { mutableIntStateOf(initialValue) }
+    var curValue by remember { mutableLongStateOf(initialValue) }
+    var feeEnough by remember { mutableStateOf(true) }
 
     Column(
         modifier = modifier
@@ -73,7 +79,8 @@ fun ChooseFeeProgressValue(
             DefaultText(
                 text = "$curValue",
                 size = text_16,
-                color = Provider.current.txtPrimaryColor
+                color = if (feeEnough) Provider.current.txtPrimaryColor
+                else Provider.current.errorColor
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_x),
@@ -82,14 +89,18 @@ fun ChooseFeeProgressValue(
                 modifier = Modifier
                     .padding(end = size_5, top = size_2)
                     .size(size_13)
+                    .clickable {
+                        onX()
+                    }
             )
         }
 
         androidx.compose.material3.Slider(
             value = curValue.toFloat(),
             onValueChange = {
-                curValue = it.toInt()
-                onValueChange(it.toInt())
+                curValue = it.toLong()
+                onFee(curValue / PRECISION_XCH)
+                feeEnough = spendableBalance >= curValue / PRECISION_XCH
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,9 +135,15 @@ fun ChooseFeeProgressValue(
         DefaultText(
             text = "= $feePrecision XCH",
             size = text_16,
-            color = Provider.current.txtPrimaryColor,
+            color = if (feeEnough) Provider.current.txtPrimaryColor
+            else Provider.current.errorColor,
             modifier = Modifier.padding(start = size_8)
         )
+
+        LaunchedEffect(true) {
+            onFee(curValue / PRECISION_XCH)
+            feeEnough = spendableBalance >= curValue / PRECISION_XCH
+        }
 
     }
 }

@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.green.compose.R
 import com.green.compose.buttons.DefaultButton
-import com.green.compose.custom.FixedSpacer
+import com.green.compose.custom.fee.FixedSpacer
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_100
 import com.green.compose.dimens.size_12

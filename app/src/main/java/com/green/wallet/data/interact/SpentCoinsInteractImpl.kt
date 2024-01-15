@@ -117,7 +117,7 @@ class SpentCoinsInteractImpl @Inject constructor(
         code: String
     ): Flow<Double> {
         return spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, code)
-            .map { list -> list.map { it.amount }.sum() }
+            .map { list -> list.sumOf { it.amount } }
     }
 
 }

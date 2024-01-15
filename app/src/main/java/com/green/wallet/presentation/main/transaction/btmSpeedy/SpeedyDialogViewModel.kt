@@ -9,6 +9,7 @@ import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
+import com.green.wallet.domain.interact.DexieInteract
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
@@ -22,7 +23,6 @@ import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,7 +37,8 @@ class SpeedyDialogViewModel @Inject constructor(
     private val coinsInteract: SpentCoinsInteract,
     private val blockChainInteract: BlockChainInteract,
     private val transactionInteract: TransactionInteract,
-    private val prefs: PrefsInteract
+    private val prefs: PrefsInteract,
+    private val dexieInteract: DexieInteract
 ) : BaseViewModel<SpeedyTokenState, SpeedyTokenEvent>(SpeedyTokenState()) {
 
     private lateinit var transaction: Transaction
@@ -46,9 +47,14 @@ class SpeedyDialogViewModel @Inject constructor(
     lateinit var nftInfo: NFTInfo
 
     init {
+        getDexieFeeInteract()
+    }
+
+    private fun getDexieFeeInteract() {
         viewModelScope.launch {
-            delay(1000L)
-            getTranCoins()
+            _viewState.update {
+                it.copy(normalFeeDexie = dexieInteract.getDexieMinFee().recommended)
+            }
         }
     }
 
@@ -138,7 +144,7 @@ class SpeedyDialogViewModel @Inject constructor(
                 .collectLatest { it ->
                     val feeSpendable = wallet.balance - it
                     VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
-                    _viewState.update { it.copy(spendableFee = feeSpendable) }
+                    _viewState.update { it.copy(spendableBalance = feeSpendable) }
                 }
         }
     }
@@ -150,6 +156,7 @@ class SpeedyDialogViewModel @Inject constructor(
         url: String
     ) {
         viewModelScope.launch {
+            setLoading(true)
             val result = blockChainInteract.push_tx(
                 jsonSpendBundle = spendBundleJson,
                 url = url,
@@ -165,23 +172,25 @@ class SpeedyDialogViewModel @Inject constructor(
             )
             when (result.state) {
                 Resource.State.SUCCESS -> {
+                    setLoading(false)
                     transactionInteract.deleteTransByID(transaction.transactionId)
+                    setEvent(SpeedyTokenEvent.OnSpeedSuccess)
                 }
 
                 Resource.State.ERROR -> {
-
+                    setLoading(false)
+                    setEvent(SpeedyTokenEvent.OnSpeedError)
                 }
 
-                Resource.State.LOADING -> {
-
-                }
+                else -> Unit
             }
         }
     }
 
     fun burstTransactionNFT(spentBundleJson: String, spentCoinsJson: String, url: String) {
         viewModelScope.launch {
-            val res=blockChainInteract.push_tx_nft(
+            setLoading(true)
+            val res = blockChainInteract.push_tx_nft(
                 spentBundleJson,
                 url,
                 transaction.toDestHash,
@@ -194,18 +203,22 @@ class SpeedyDialogViewModel @Inject constructor(
             when (res.state) {
                 Resource.State.SUCCESS -> {
                     transactionInteract.deleteTransByID(transaction.transactionId)
+                    setLoading(false)
+                    setEvent(SpeedyTokenEvent.OnSpeedSuccess)
                 }
 
                 Resource.State.ERROR -> {
-
+                    setLoading(false)
+                    setEvent(SpeedyTokenEvent.OnSpeedError)
                 }
 
-                Resource.State.LOADING -> {
-
-                }
+                else -> Unit
             }
         }
     }
 
+    private fun setLoading(isLoading: Boolean) {
+        _viewState.update { it.copy(isLoading = isLoading) }
+    }
 
 }

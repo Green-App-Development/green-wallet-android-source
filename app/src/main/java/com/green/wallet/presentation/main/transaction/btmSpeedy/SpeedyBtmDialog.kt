@@ -2,6 +2,8 @@ package com.green.wallet.presentation.main.transaction.btmSpeedy
 
 import android.content.res.Resources.NotFoundException
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,6 +14,7 @@ import com.google.gson.Gson
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.base.BaseBottomSheetDialogFragment
 import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
@@ -19,9 +22,12 @@ import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.getStringResource
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
 import java.util.HashMap
+import javax.inject.Inject
 
 class SpeedyBtmDialog :
     BaseBottomSheetDialogFragment<SpeedyDialogViewModel>(SpeedyDialogViewModel::class.java) {
@@ -29,6 +35,9 @@ class SpeedyBtmDialog :
     private val transaction: Transaction? by lazy {
         arguments?.getParcelable(TRANSACTION_KEY)
     }
+
+    @Inject
+    lateinit var dialogManager: DialogManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +77,51 @@ class SpeedyBtmDialog :
                         }
                     }
 
+                    SpeedyTokenEvent.OnSpeedError -> {
+                        showFailedSendingTransaction()
+                    }
+
+                    SpeedyTokenEvent.OnSpeedSuccess -> {
+                        showSuccessSendMoneyDialog()
+                    }
+
                     else -> Unit
+                }
+            }
+        }
+    }
+
+    private fun showSuccessSendMoneyDialog() {
+        getMainActivity().apply {
+            if (!this.isDestroyed) {
+                dialogManager.showSuccessDialog(
+                    this,
+                    getStringResource(R.string.send_token_pop_up_succsess_title),
+                    getStringResource(R.string.send_token_pop_up_succsess_description),
+                    getStringResource(R.string.ready_btn),
+                    isDialogOutsideTouchable = false
+                ) {
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        popBackStackOnce()
+                    }, 500)
+                    dismiss()
+                }
+            }
+        }
+
+    }
+
+    private fun showFailedSendingTransaction() {
+        dialogManager.hidePrevDialogs()
+        requireActivity().apply {
+            if (!this.isFinishing) {
+                dialogManager.showFailureDialog(
+                    this,
+                    getStringResource(R.string.pop_up_failed_error_title),
+                    getStringResource(R.string.send_token_pop_up_transaction_fail_error_description),
+                    getStringResource(R.string.pop_up_failed_error_return_btn)
+                ) {
+                    dismiss()
                 }
             }
         }

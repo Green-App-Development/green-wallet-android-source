@@ -1,4 +1,4 @@
-package com.green.compose.custom
+package com.green.compose.custom.fee
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.interact.*
+import com.greenwallet.core.base.BaseViewModel
 import javax.inject.Inject
 
 
@@ -15,11 +16,10 @@ class SendFragmentViewModel @Inject constructor(
     private val tokenInteract: TokenInteract,
     private val spentCoinsInteract: SpentCoinsInteract,
     private val dexieInteract: DexieInteract
-) :
-    ViewModel() {
+) : BaseViewModel<TransferState, TransferEvent>(TransferState()) {
 
-    init{
-        viewModelScope
+    init {
+
     }
 
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
