@@ -1,10 +1,12 @@
 package com.green.wallet.presentation.main.send
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.interact.*
+import com.green.wallet.presentation.tools.Resource
 import com.greenwallet.core.base.BaseViewModel
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -18,41 +20,55 @@ class SendFragmentViewModel @Inject constructor(
     private val dexieInteract: DexieInteract
 ) : BaseViewModel<TransferState, TransferEvent>(TransferState()) {
 
-    init {
-
-    }
-
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
-
 
     fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
         walletInteract.getWalletWithTokensByFingerPrintNetworkTypeFlow(fingerPrint, type)
 
-    suspend fun push_transaction(
+    fun pushTransaction(
         spendBundle: String,
         url: String,
         amount: Double,
         networkType: String,
         fingerPrint: Long,
         code: String,
-        dest_puzzle_hash: String,
+        destPuzzleHash: String,
         address: String,
         fee: Double,
         spentCoinsJson: String,
         spentCoinsToken: String
-    ) = blockChainInteract.push_tx(
-        spendBundle,
-        url,
-        amount,
-        networkType,
-        fingerPrint,
-        code,
-        dest_puzzle_hash,
-        address,
-        fee,
-        spentCoinsJson,
-        spentCoinsToken
-    )
+    ) {
+        viewModelScope.launch {
+            setLoading(true)
+            val result = blockChainInteract.push_tx(
+                spendBundle,
+                url,
+                amount,
+                networkType,
+                fingerPrint,
+                code,
+                destPuzzleHash,
+                address,
+                fee,
+                spentCoinsJson,
+                spentCoinsToken
+            )
+
+            when (result.state) {
+                Resource.State.SUCCESS -> {
+                    setLoading(false)
+                    setEvent(TransferEvent.OnSuccessTransfer)
+                }
+
+                Resource.State.ERROR -> {
+                    setLoading(false)
+                    setEvent(TransferEvent.OnErrorTransfer)
+                }
+
+                Resource.State.LOADING -> Unit
+            }
+        }
+    }
 
     suspend fun checkIfAddressExistInDb(address: String) =
         addressInteract.checkIfAddressAlreadyExist(address = address)
@@ -82,5 +98,9 @@ class SendFragmentViewModel @Inject constructor(
         spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
 
     suspend fun getDexieFee() = dexieInteract.getDexieMinFee()
+
+    private fun setLoading(loading: Boolean) {
+        _viewState.update { it.copy(isLoading = loading) }
+    }
 
 }

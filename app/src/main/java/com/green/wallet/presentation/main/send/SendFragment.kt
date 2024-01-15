@@ -38,6 +38,7 @@ import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.*
+import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.dialog_confirm_transactions_coins.*
 import kotlinx.android.synthetic.main.dialog_notification_detail.*
@@ -648,7 +649,6 @@ class SendFragment : BaseFragment() {
                 if (it) {
                     VLog.d("Success entering the passcode : $it")
                     delay(500)
-                    dialogManager.showProgress(curActivity())
                     initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
                     curActivity().mainViewModel.send_money_false()
                 }
@@ -668,40 +668,19 @@ class SendFragment : BaseFragment() {
         spentCoinsJson: String,
         spentConisToken: String
     ) {
-        sendTransJob?.cancel()
-        sendTransJob = lifecycleScope.launch {
-            val res =
-                viewModel.push_transaction(
-                    spendBundleJSON,
-                    url,
-                    amount,
-                    networkType,
-                    fingerPrint,
-                    chosenTokenCode,
-                    dest_puzzle_hash,
-                    address = address,
-                    getDoubleValueFromEdt(binding.edtEnterCommission),
-                    spentCoinsJson,
-                    spentConisToken
-                )
-            when (res.state) {
-                Resource.State.SUCCESS -> {
-                    dialogManager.hidePrevDialogs()
-                    insertAddressEntityIfBoxChecked()
-                    showSuccessSendMoneyDialog()
-                }
-
-                Resource.State.ERROR -> {
-                    val error = res.error!!
-                    manageExceptionDialogsForBlockChain(curActivity(), dialogManager, error)
-                }
-
-                Resource.State.LOADING -> {
-
-                }
-            }
-
-        }
+        viewModel.pushTransaction(
+            spendBundleJSON,
+            url,
+            amount,
+            networkType,
+            fingerPrint,
+            chosenTokenCode,
+            dest_puzzle_hash,
+            address = address,
+            getDoubleValueFromEdt(binding.edtEnterCommission),
+            spentCoinsJson,
+            spentConisToken
+        )
     }
 
     private fun initFlutterToGenerateSpendBundle(
@@ -1302,10 +1281,10 @@ class SendFragment : BaseFragment() {
         super.onStart()
         VLog.d("SendFragment onStart")
         regulateVisibilityOfTxtsAfterPasscode()
-        if (dialogManager.isProgressDialogShowing() == true) {
-            dialogManager.hidePrevDialogs()
-            dialogManager.showProgress(curActivity())
-        }
+//        if (dialogManager.isProgressDialogShowing() == true) {
+//            dialogManager.hidePrevDialogs()
+//            dialogManager.showProgress(curActivity())
+//        }
     }
 
     override fun onResume() {
@@ -1342,6 +1321,32 @@ class SendFragment : BaseFragment() {
                         .show()
             }
         }
+
+
+    override fun collectFlowOnStarted(scope: CoroutineScope) {
+        viewModel.event.collectFlow(scope) {
+            when (it) {
+                TransferEvent.OnSuccessTransfer -> {
+                    showSuccessSendMoneyDialog()
+                }
+
+                TransferEvent.OnErrorTransfer -> {
+                    showFailedSendingTransaction()
+                }
+            }
+        }
+
+        viewModel.viewState.collectFlow(scope) {
+            initViewState(it)
+        }
+    }
+
+    private fun initViewState(it: TransferState) {
+        if (it.isLoading) {
+            dialogManager.showProgress(curActivity())
+        } else
+            dialogManager.hidePrevDialogs()
+    }
 
 
     override fun onDestroyView() {
