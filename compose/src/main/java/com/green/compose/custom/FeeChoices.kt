@@ -38,12 +38,11 @@ fun FeeChoices(
     fee: (Double) -> Unit = {}
 ) {
     var chosen by remember { mutableIntStateOf(1) }
-    var isEnough by remember { mutableStateOf(true) }
+    val isEnough by remember { mutableStateOf(true) }
 
     LaunchedEffect(chosen) {
         val chosenFee = getFeeOnChoosePos(chosen)
         fee(chosenFee)
-
     }
 
     Row(
@@ -165,7 +164,6 @@ fun FeeChoicesPreview() {
     GreenWalletTheme {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .background(color = Color.White)
         ) {
             FeeChoices()
