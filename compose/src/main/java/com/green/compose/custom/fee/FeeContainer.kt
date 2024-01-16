@@ -24,7 +24,7 @@ import com.green.compose.utils.PRECISION_XCH
 @Composable
 fun FeeContainer(
     normal: Double = 0.0005,
-    spendableBalance: Double = 0.0,
+    isEnough: Boolean = false,
     fee: (Double) -> Unit = {}
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -36,13 +36,14 @@ fun FeeContainer(
                 onX = {
                     customShown = false
                 },
-                spendableBalance = spendableBalance
+                isEnough = isEnough,
+                onFee = fee
             )
         } else {
             FeeChoices(
                 normal = normal,
                 fee = fee,
-                spendableBalance = spendableBalance
+                isEnough = isEnough
             )
             DefaultText(
                 text = "Custom",

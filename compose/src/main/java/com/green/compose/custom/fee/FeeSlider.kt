@@ -1,5 +1,6 @@
 package com.green.compose.custom.fee
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +54,7 @@ import com.green.compose.utils.formattedDoubleAmountWithPrecision
 fun ChooseFeeProgressValue(
     modifier: Modifier = Modifier,
     initialValue: Long = 0L,
-    spendableBalance: Double = 0.0,
+    isEnough: Boolean = false,
     maxValue: Long = 1_000_000_000L,
     onFee: (Double) -> Unit = {},
     onX: () -> Unit = {},
@@ -98,9 +99,10 @@ fun ChooseFeeProgressValue(
         androidx.compose.material3.Slider(
             value = curValue.toFloat(),
             onValueChange = {
+                Log.d("OnValueChange", "ChooseFeeProgressValue: $it ")
                 curValue = it.toLong()
                 onFee(curValue / PRECISION_XCH)
-                feeEnough = spendableBalance >= curValue / PRECISION_XCH
+                feeEnough = isEnough
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -142,7 +144,7 @@ fun ChooseFeeProgressValue(
 
         LaunchedEffect(true) {
             onFee(curValue / PRECISION_XCH)
-            feeEnough = spendableBalance >= curValue / PRECISION_XCH
+            feeEnough = isEnough
         }
 
     }

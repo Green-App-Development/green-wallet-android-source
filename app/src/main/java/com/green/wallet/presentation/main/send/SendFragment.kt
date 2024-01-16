@@ -12,7 +12,11 @@ import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -25,7 +29,12 @@ import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
 import com.green.compose.custom.fee.FeeContainer
+import com.green.compose.dimens.size_10
+import com.green.compose.dimens.size_20
+import com.green.compose.dimens.text_12
+import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
+import com.green.compose.theme.Provider
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Address
@@ -162,13 +171,27 @@ class SendFragment : BaseFragment() {
             val state by viewModel.viewState.collectAsStateWithLifecycle()
 
             GreenWalletTheme {
-                FeeContainer(
-                    normal = state.dexieFee,
-                    spendableBalance = state.xchSpendableBalance,
-                    fee = {
-                        viewModel.updateChosenFee(it)
-                    }
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    DefaultText(
+                        text = "Spendable Balance: ${state.xchSpendableBalance}",
+                        size = text_12,
+                        color = Provider.current.greyText,
+                        modifier = Modifier.padding(
+                            bottom = size_10
+                        )
+                    )
+
+                    FeeContainer(
+                        normal = state.dexieFee,
+                        isEnough = state.isFeeEnough,
+                        fee = {
+                            viewModel.updateChosenFee(it)
+                        }
+                    )
+                }
             }
         }
     }
@@ -306,23 +329,6 @@ class SendFragment : BaseFragment() {
         }
     }
 
-    private fun regulateVisibilityOfTxtsAfterPasscode() {
-        binding.apply {
-            if (edtEnterAmount.text.toString().isNotEmpty()) {
-                txtEnterAmount.visibility = View.VISIBLE
-                txtShortNetworkType.text = "$chosenTokenCode"
-            }
-            if (edtAddressWallet.text.toString().isNotEmpty())
-                txtEnterAddressWallet.visibility = View.VISIBLE
-            if (threeEdtsFilled.size >= 2) {
-                btnContinue.isEnabled = true
-            }
-            txtWalletAmount.text = lastTokenBalanceText
-            txtWalletAmountInUsd.text = lastTokenBalanceTxtInUSDT
-            VLog.d("EdtFilledSize : ${threeEdtsFilled.size}")
-        }
-    }
-
     private fun determineOneWalletShow() {
         if (curFingerPrint != null) {
             ic_wallet_list.visibility = View.INVISIBLE
@@ -431,6 +437,7 @@ class SendFragment : BaseFragment() {
                     checkingPrecisionsForEnterAmount()
                     calculateSpendableBalance()
                     updateAmounts(tokenWalletList[p2])
+                    viewModel.updateSendingToken(p2)
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -881,7 +888,7 @@ class SendFragment : BaseFragment() {
         }
 
         edtEnterAmount.addTextChangedListener {
-
+            viewModel.updateSendingAmount(it.toString())
         }
 
         btnContinue.setOnClickListener {
@@ -1102,7 +1109,6 @@ class SendFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         VLog.d("SendFragment onStart")
-        regulateVisibilityOfTxtsAfterPasscode()
 //        if (dialogManager.isProgressDialogShowing() == true) {
 //            dialogManager.hidePrevDialogs()
 //            dialogManager.showProgress(curActivity())
@@ -1160,6 +1166,7 @@ class SendFragment : BaseFragment() {
 
         viewModel.viewState.collectFlow(scope) {
             initViewState(it)
+            initAmountNotEnoughState(it)
         }
     }
 
@@ -1168,6 +1175,17 @@ class SendFragment : BaseFragment() {
             dialogManager.showProgress(curActivity())
         } else
             dialogManager.hidePrevDialogs()
+    }
+
+    private fun initAmountNotEnoughState(it: TransferState) {
+        binding.btnContinue.isEnabled = it.isFeeEnough && it.isSendingAmountEnough && it.amountValid
+        if (it.isSendingAmountEnough) {
+            hideAmountNotEnoughWarning()
+            hideNotEnoughAmountWarningSending()
+        } else {
+            showNotEnoughAmountWarning()
+            notEnoughAmountWarningSending()
+        }
     }
 
 

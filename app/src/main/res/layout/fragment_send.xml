@@ -576,14 +576,36 @@
 
                     </androidx.cardview.widget.CardView>
 
-                    <androidx.compose.ui.platform.ComposeView
-                        android:id="@+id/composeFeeBlock"
+                    <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="3dp"
                         app:layout_constraintBottom_toTopOf="@+id/dummy_view"
                         app:layout_constraintEnd_toStartOf="@+id/guideline16"
                         app:layout_constraintStart_toStartOf="@+id/guideline15"
-                        app:layout_constraintTop_toBottomOf="@+id/cardView2" />
+                        app:layout_constraintTop_toBottomOf="@+id/cardView2">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/send_fragment_card_view_bcg"
+                            android:orientation="vertical"
+                            android:paddingStart="15dp"
+                            android:paddingTop="15dp"
+                            android:paddingEnd="15dp"
+                            android:paddingBottom="25dp">
+
+                            <androidx.compose.ui.platform.ComposeView
+                                android:id="@+id/composeFeeBlock"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+
+                    </androidx.cardview.widget.CardView>
 
                     <View
                         android:id="@+id/dummy_view"

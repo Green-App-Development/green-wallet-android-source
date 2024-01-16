@@ -5,6 +5,7 @@ import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.tools.Resource
+import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -87,11 +88,8 @@ class SendFragmentViewModel @Inject constructor(
     suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
 
     fun getSpentCoinsAmountsAddressCodeForSpendableBalance(
-        address: String,
-        tokenCode: String,
-        networkType: String
-    ) =
-        spentCoinsInteract.getSumSpentCoinsForSpendableBalance(networkType, address, tokenCode)
+        address: String, tokenCode: String, networkType: String
+    ) = spentCoinsInteract.getSumSpentCoinsForSpendableBalance(networkType, address, tokenCode)
 
 
     suspend fun swipedRefreshLayout(onFinished: () -> Unit) {
@@ -106,6 +104,7 @@ class SendFragmentViewModel @Inject constructor(
     private fun getDexieFee() {
         viewModelScope.launch {
             val dexie = dexieInteract.getDexieMinFee()
+            VLog.d("Dexie Recommended Fee : $dexie")
             _viewState.update {
                 it.copy(
                     dexieFee = dexie.recommended
@@ -120,15 +119,49 @@ class SendFragmentViewModel @Inject constructor(
 
     fun updateSpendableBalance(wallet: WalletWithTokens) {
         viewModelScope.launch {
-            spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH").collect { amount ->
-                _viewState.update { it.copy(xchSpendableBalance = wallet.tokenWalletList[0].amount - amount) }
-            }
+            spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
+                .collect { amount ->
+                    _viewState.update { it.copy(xchSpendableBalance = wallet.tokenWalletList[0].amount - amount) }
+                }
         }
     }
 
     fun updateChosenFee(fee: Double) {
         viewModelScope.launch {
             _viewState.update { it.copy(chosenFee = fee) }
+            validatingEnoughAmounts()
+        }
+    }
+
+    fun updateSendingToken(posAdapter: Int) {
+        _viewState.update { it.copy(xchSending = posAdapter == 0) }
+    }
+
+    fun updateSendingAmount(amountStr: String) {
+        //1.
+        val amount = amountStr.toDoubleOrNull()
+        if (amount == null) {
+            _viewState.update { it.copy(amountValid = false) }
+        } else {
+            _viewState.update { it.copy(sendingAmount = amount, amountValid = true) }
+        }
+    }
+
+    private fun validatingEnoughAmounts() {
+        val value = viewState.value
+        if (viewState.value.xchSending) {
+            val totalAmount = value.sendingAmount + value.chosenFee
+            val isEnough = totalAmount <= value.xchSpendableBalance
+            _viewState.update { it.copy(isSendingAmountEnough = isEnough, isFeeEnough = isEnough) }
+        } else {
+            val sendEnough = value.sendingAmount <= value.catSpendableAmount
+            val feeEnough = value.chosenFee <= value.xchSpendableBalance
+            _viewState.update {
+                it.copy(
+                    isSendingAmountEnough = sendEnough,
+                    isFeeEnough = feeEnough
+                )
+            }
         }
     }
 

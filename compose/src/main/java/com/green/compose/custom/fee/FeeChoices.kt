@@ -35,7 +35,7 @@ import com.green.compose.utils.doubleCeilString
 fun FeeChoices(
     modifier: Modifier = Modifier,
     normal: Double = 0.001,
-    spendableBalance: Double = 0.1,
+    isEnough: Boolean = false,
     fee: (Double) -> Unit = {}
 ) {
     var chosen by remember { mutableIntStateOf(1) }
@@ -72,12 +72,18 @@ fun FeeChoices(
             DefaultText(
                 text = "Normal",
                 size = text_14,
-                color = getColorFeeText(chosen = 0 == chosen, feeAmount.toDouble() <= spendableBalance)
+                color = getColorFeeText(
+                    chosen = 0 == chosen,
+                    isEnough
+                )
             )
             DefaultText(
                 text = "$feeAmount XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 0 == chosen, feeAmount.toDouble() <= spendableBalance)
+                color = getColorFeeAmount(
+                    chosen = 0 == chosen,
+                    isEnough
+                )
             )
         }
 
@@ -91,16 +97,22 @@ fun FeeChoices(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val feeAmount = doubleCeilString(normal*1.5)
+            val feeAmount = doubleCeilString(normal * 1.5)
             DefaultText(
                 text = "Medium",
                 size = text_14,
-                color = getColorFeeText(chosen = 1 == chosen, feeAmount.toDouble() <= spendableBalance)
+                color = getColorFeeText(
+                    chosen = 1 == chosen,
+                    isEnough
+                )
             )
             DefaultText(
                 text = "$feeAmount XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 1 == chosen, feeAmount.toDouble() <= spendableBalance)
+                color = getColorFeeAmount(
+                    chosen = 1 == chosen,
+                    isEnough
+                )
             )
         }
 
@@ -114,16 +126,22 @@ fun FeeChoices(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val feeAmount = doubleCeilString(normal*2)
+            val feeAmount = doubleCeilString(normal * 2)
             DefaultText(
                 text = "Fast",
                 size = text_14,
-                color = getColorFeeText(chosen = 2 == chosen, feeAmount.toDouble() <= spendableBalance)
+                color = getColorFeeText(
+                    chosen = 2 == chosen,
+                    isEnough
+                )
             )
             DefaultText(
                 text = "$feeAmount XCH",
                 size = text_15,
-                color = getColorFeeAmount(chosen = 2 == chosen, feeAmount.toDouble() <= spendableBalance)
+                color = getColorFeeAmount(
+                    chosen = 2 == chosen,
+                    isEnough
+                )
             )
         }
     }

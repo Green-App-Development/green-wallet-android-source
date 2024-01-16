@@ -184,7 +184,7 @@ fun SpeedyTransactionBtmScreen(
             FixedSpacer(height = size_9)
 
             FeeContainer(normal = state.normalFeeDexie,
-                spendableBalance = state.spendableBalance,
+                false,
                 fee = {
                     onEvent(SpeedyTokenEvent.OnFeeChosen(it))
                 }

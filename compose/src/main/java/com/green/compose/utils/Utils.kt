@@ -15,5 +15,5 @@ fun formattedDoubleAmountWithPrecision(double: Double, precision: Int = 13): Str
 
 fun doubleCeilString(value: Double): String {
     val precision = formattedDoubleAmountWithPrecision(value, 6)
-    return formattedDoubleAmountWithPrecision(precision.toDouble() + 0.00001)
+    return formattedDoubleAmountWithPrecision((precision.toDouble() + 0.00001), 6)
 }
