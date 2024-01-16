@@ -891,7 +891,6 @@ class SwapSendFragment : DaggerFragment() {
 		if (amountFee == null || amountFee == 0.0) {
 			hideNotEnoughAmountWarningFee()
 			hideAmountNotEnoughWarning()
-			hideNotEnoughAmountFee()
 		}
 		var isSendingAmountEnough = true
 		if (amountSending != null && amountSending != 0.0) {
@@ -924,7 +923,6 @@ class SwapSendFragment : DaggerFragment() {
 				if (isSendingAmountEnough)
 					hideAmountNotEnoughWarning()
 				hideNotEnoughAmountWarningFee()
-				hideNotEnoughAmountFee()
 			}
 		}
 		enableBtnContinueTwoEdtsFilled()
@@ -980,11 +978,6 @@ class SwapSendFragment : DaggerFragment() {
 			txtNotEnoughFeeWarning.visibility = View.VISIBLE
 		}
 	}
-
-	private fun hideNotEnoughAmountFee() {
-		txtNotEnoughFeeWarning.visibility = View.GONE
-	}
-
 	private fun getTokenTypeThatIsNotEnough(): String {
 		binding.apply {
 			val enteredAmount = edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0

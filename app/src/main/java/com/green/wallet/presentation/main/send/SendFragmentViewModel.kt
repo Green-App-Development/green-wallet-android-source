@@ -2,6 +2,7 @@ package com.green.wallet.presentation.main.send
 
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Address
+import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.tools.Resource
 import com.greenwallet.core.base.BaseViewModel
@@ -23,7 +24,6 @@ class SendFragmentViewModel @Inject constructor(
     init {
         getDexieFee()
     }
-
 
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
@@ -97,6 +97,7 @@ class SendFragmentViewModel @Inject constructor(
     suspend fun swipedRefreshLayout(onFinished: () -> Unit) {
         blockChainInteract.updateBalanceAndTransactionsPeriodically()
         greenAppInteract.requestOtherNotifItems()
+        onFinished.invoke()
     }
 
     suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
@@ -105,7 +106,6 @@ class SendFragmentViewModel @Inject constructor(
     private fun getDexieFee() {
         viewModelScope.launch {
             val dexie = dexieInteract.getDexieMinFee()
-            val spendableBalance =
             _viewState.update {
                 it.copy(
                     dexieFee = dexie.recommended
@@ -116,6 +116,20 @@ class SendFragmentViewModel @Inject constructor(
 
     private fun setLoading(loading: Boolean) {
         _viewState.update { it.copy(isLoading = loading) }
+    }
+
+    fun updateSpendableBalance(wallet: WalletWithTokens) {
+        viewModelScope.launch {
+            spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH").collect { amount ->
+                _viewState.update { it.copy(xchSpendableBalance = wallet.tokenWalletList[0].amount - amount) }
+            }
+        }
+    }
+
+    fun updateChosenFee(fee: Double) {
+        viewModelScope.launch {
+            _viewState.update { it.copy(chosenFee = fee) }
+        }
     }
 
 }

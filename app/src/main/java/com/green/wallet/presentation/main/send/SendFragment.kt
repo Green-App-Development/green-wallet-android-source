@@ -2,16 +2,11 @@ package com.green.wallet.presentation.main.send
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputFilter
-import android.text.SpannableString
 import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ForegroundColorSpan
-import android.text.style.UnderlineSpan
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.webkit.*
@@ -30,6 +25,7 @@ import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
 import com.green.compose.custom.fee.FeeContainer
+import com.green.compose.theme.GreenWalletTheme
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Address
@@ -165,17 +161,21 @@ class SendFragment : BaseFragment() {
 
             val state by viewModel.viewState.collectAsStateWithLifecycle()
 
-            FeeContainer(
-
-            )
+            GreenWalletTheme {
+                FeeContainer(
+                    normal = state.dexieFee,
+                    spendableBalance = state.xchSpendableBalance,
+                    fee = {
+                        viewModel.updateChosenFee(it)
+                    }
+                )
+            }
         }
     }
 
     private fun initConstrainsAfterCommobasedOnToken() {
         val sendingToken = tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
-        val commissionToken = tokenAdapter.dataOptions[0]
         val precisionAfterCommonToken = getTokenPrecisionAfterComoByTokenCode(sendingToken)
-        val precisionAfterCommonFee = getTokenPrecisionAfterComoByTokenCode(commissionToken)
         val filterSendingAmountEdt = object : InputFilter {
             override fun filter(
                 p0: CharSequence?,
@@ -285,7 +285,6 @@ class SendFragment : BaseFragment() {
 //                                "$txtSpendableBalance: $bigDecimalSpendableFee"
 //                            )
                         }
-                        initAmountNotEnoughWarnings()
                         initConstrainsAfterCommobasedOnToken()
                     }
                 }
@@ -396,9 +395,9 @@ class SendFragment : BaseFragment() {
     private fun initCurWalletDetails(wallet: WalletWithTokens) {
         txt_network_name.text = wallet.networkType.split(" ")[0]
         txtHiddenPublicKey.text = hideFingerPrint(wallet.fingerPrint)
-
         updateTokensSpinner(wallet.tokenWalletList)
         verifySendingAddress(wallet.address)
+        viewModel.updateSpendableBalance(wallet)
     }
 
     private fun updateTokensSpinner(tokenWalletList: List<TokenWallet>) {
@@ -479,9 +478,6 @@ class SendFragment : BaseFragment() {
         if (txtShortNetworkType.text.toString().length > 1) {
             txtShortNetworkType.text = tokenWallet.code
         }
-        if (binding.enterCommissionToken.text.toString().length > 1) {
-            binding.enterCommissionToken.text = tokenAdapter.dataOptions[0]
-        }
         if (tokenAdapter.selectedPosition != 0) {
             binding.txtGAD.text = "XCH"
         } else {
@@ -536,21 +532,6 @@ class SendFragment : BaseFragment() {
                 }
             }
 
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun initRecommendedCommissionFee(commission: Double) {
-        val text = formattedDoubleAmountWithPrecision(commission)
-        val ss = SpannableString(text)
-        val fcsGreen = ForegroundColorSpan(resources.getColor(R.color.green))
-        val underlineSpan = UnderlineSpan()
-        ss.setSpan(fcsGreen, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
-        ss.setSpan(underlineSpan, 0, text.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE)
-        binding.txtRecommendedCommission.apply {
-            setText("$ss")
-            movementMethod = LinkMovementMethod.getInstance()
-            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
     }
 
@@ -612,7 +593,7 @@ class SendFragment : BaseFragment() {
         amount: Double,
         networkType: String,
         fingerPrint: Long,
-        dest_puzzle_hash: String,
+        destPuzzleHash: String,
         address: String,
         spentCoinsJson: String,
         spentConisToken: String
@@ -624,9 +605,9 @@ class SendFragment : BaseFragment() {
             networkType,
             fingerPrint,
             chosenTokenCode,
-            dest_puzzle_hash,
+            destPuzzleHash,
             address = address,
-            getDoubleValueFromEdt(binding.edtEnterCommission),
+            viewModel.viewState.value.chosenFee,
             spentCoinsJson,
             spentConisToken
         )
@@ -653,7 +634,7 @@ class SendFragment : BaseFragment() {
             val amount = (Math.round(getDoubleValueFromEdt(binding.edtEnterAmount) * precision))
             val fee =
                 Math.round(
-                    getDoubleValueFromEdt(binding.edtEnterCommission) * if (isThisChivesNetwork(
+                    viewModel.viewState.value.chosenFee * if (isThisChivesNetwork(
                             wallet.networkType
                         )
                     ) Math.pow(
@@ -716,7 +697,7 @@ class SendFragment : BaseFragment() {
         return "Chives"
     }
 
-    private suspend fun listenToCreatingSpendBundleRes(
+    private fun listenToCreatingSpendBundleRes(
         url: String,
         amount: Double,
         networkType: String,
@@ -900,21 +881,8 @@ class SendFragment : BaseFragment() {
         }
 
         edtEnterAmount.addTextChangedListener {
-            kotlin.runCatching {
-                initAmountNotEnoughWarnings()
-            }.onFailure {
-                VLog.d("Excepting entering amount into amount edts : ${it}")
-            }
+
         }
-
-        edtEnterCommission.addTextChangedListener {
-            kotlin.runCatching {
-                initAmountNotEnoughWarnings()
-            }.onFailure {
-
-            }
-        }
-
 
         btnContinue.setOnClickListener {
             if (sendingBtnWaitingJob != null && sendingBtnWaitingJob!!.isActive)
@@ -1020,58 +988,6 @@ class SendFragment : BaseFragment() {
         }
     }
 
-    private fun initAmountNotEnoughWarnings() {
-        val amountSending = binding.edtEnterAmount.text.toString().toDoubleOrNull()
-        if (amountSending == null || amountSending == 0.0) {
-            threeEdtsFilled.remove(2)
-            hideNotEnoughAmountWarningSending()
-            hideAmountNotEnoughWarning()
-            convertAmountToUSDGAD(0.0)
-        }
-        val amountFee = binding.edtEnterCommission.text.toString().toDoubleOrNull()
-        if (amountFee == null || amountFee == 0.0) {
-            hideNotEnoughAmountWarningFee()
-            hideAmountNotEnoughWarning()
-            hideNotEnoughAmountFee()
-        }
-        var isSendingAmountEnough = true
-        if (amountSending != null && amountSending != 0.0) {
-            convertAmountToUSDGAD(amountSending)
-            val total =
-                amountSending + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountFee ?: 0.0)
-            if (total > spendableAmountToken) {
-                threeEdtsFilled.remove(2)
-                showNotEnoughAmountWarning()
-                notEnoughAmountWarningSending()
-                isSendingAmountEnough = false
-            } else {
-                threeEdtsFilled.add(2)
-                hideAmountNotEnoughWarning()
-                hideNotEnoughAmountWarningSending()
-            }
-        }
-        if (amountFee != null && amountFee != 0.0) {
-            val total =
-                amountFee + if (tokenAdapter.selectedPosition != 0) 0.0 else (amountSending ?: 0.0)
-            if (total > spendableAmountFee) {
-                threeEdtsFilled.remove(2)
-                notEnoughAmountWarningTextFee()
-                showNotEnoughAmountFee()
-                if (tokenAdapter.selectedPosition == 0) {
-                    showNotEnoughAmountWarning()
-                    notEnoughAmountWarningSending()
-                }
-            } else {
-                if (isSendingAmountEnough)
-                    hideAmountNotEnoughWarning()
-                hideNotEnoughAmountWarningFee()
-                hideNotEnoughAmountFee()
-            }
-        }
-
-        enableBtnContinueTwoEdtsFilled()
-    }
-
     private fun showNotEnoughAmountWarning() {
         binding.apply {
             val token = getTokenTypeThatIsNotEnough()
@@ -1089,14 +1005,6 @@ class SendFragment : BaseFragment() {
         }
     }
 
-    private fun notEnoughAmountWarningTextFee() {
-        binding.apply {
-            edtEnterCommission.setTextColor(curActivity().getColorResource(R.color.red_mnemonic))
-            txtEnterCommission.setTextColor(curActivity().getColorResource(R.color.red_mnemonic))
-        }
-    }
-
-
     private fun hideNotEnoughAmountWarningSending() {
         binding.apply {
             edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
@@ -1104,28 +1012,9 @@ class SendFragment : BaseFragment() {
         }
     }
 
-    private fun hideNotEnoughAmountWarningFee() {
-        binding.apply {
-            edtEnterCommission.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-            txtEnterCommission.setTextColor(curActivity().getColorResource(R.color.green))
-        }
-    }
-
-    private fun showNotEnoughAmountFee() {
-        if (!this@SendFragment::tokenAdapter.isInitialized)
-            return
-        binding.apply {
-            val token = tokenAdapter.dataOptions[0]
-            val text =
-                curActivity().getStringResource(R.string.send_token_insufficient_funds_error) + " $token"
-        }
-    }
-
     private fun getTokenTypeThatIsNotEnough(): String {
         binding.apply {
             val enteredAmount = edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
-            var commissionAmount =
-                edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
             //check only token first
             if (tokenAdapter.selectedPosition != 0) {
                 if (enteredAmount > spendableAmountToken && this@SendFragment::tokenAdapter.isInitialized)
@@ -1140,16 +1029,6 @@ class SendFragment : BaseFragment() {
             edtEnterAmount.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
             txtEnterAmount.setTextColor(curActivity().getColorResource(R.color.green))
             txtNotEnoughMoneyWarning.visibility = View.GONE
-        }
-    }
-
-
-    private fun getCommissionOfCurChosenCoin() {
-        commissionJob?.cancel()
-        commissionJob = lifecycleScope.launch(handler) {
-            val commission = binding.edtEnterCommission.text.toString().toDoubleOrNull()
-            if (commission == null)
-                binding.edtEnterCommission.setText("0.00")
         }
     }
 
@@ -1191,7 +1070,7 @@ class SendFragment : BaseFragment() {
             findViewById<TextView>(R.id.edtConfirmToken).setText(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
             findViewById<TextView>(R.id.edtConfirmNetwork).setText(walletAdapter.walletList[walletAdapter.selectedPosition].networkType)
             findViewById<TextView>(R.id.edtConfirmWalletAmount).setText(binding.edtEnterAmount.text.toString())
-            var commissionText = binding.edtEnterCommission.text.toString()
+            var commissionText = viewModel.viewState.value.chosenFee.toString()
             if (commissionText.isEmpty())
                 commissionText = "0"
             findViewById<TextView>(R.id.edtConfirmWalletCommision).setText("$commissionText")
