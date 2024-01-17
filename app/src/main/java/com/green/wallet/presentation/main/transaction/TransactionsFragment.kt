@@ -640,10 +640,12 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         viewModel.handleIntent(TransactionIntent.OnDeleteTransaction(transaction))
     }
 
-    override fun collectFlowOnStarted(scope: CoroutineScope) {
+    override fun collectFlowOnCreated(scope: CoroutineScope) {
+        VLog.d("Speedy Btm Dialog is going to be shown before collecting flow")
         viewModel.event.collectFlow(scope) {
             when (it) {
                 is TransactionEvent.SpeedyBtmDialog -> {
+                    VLog.d("Speedy Btm Dialog is going to be shown")
                     SpeedyBtmDialog.build(it.transaction).show(childFragmentManager, "")
                 }
 

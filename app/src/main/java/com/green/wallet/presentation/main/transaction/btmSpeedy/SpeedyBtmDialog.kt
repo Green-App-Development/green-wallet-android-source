@@ -43,6 +43,7 @@ class SpeedyBtmDialog :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.AppBottomSheetDialogTheme)
+        VLog.d("SpeedyBtmDialog : on Create got called  : $this")
     }
 
     val methodChannel by lazy {

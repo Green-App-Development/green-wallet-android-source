@@ -45,7 +45,8 @@ val OnDarkCustomColorsPalette = CustomColorsPalette(
     feeBackground = Color(0xff363636),
     feeBackgroundChoosen = Color(0xff444444),
     dividerColor = Color(0xFF4A4A4A),
-    secondPrimaryTextColor = Color(0xFFFFFFFF)
+    secondPrimaryTextColor = Color(0xFFFFFFFF),
+    btnInActive = Color(0xFF444444)
 )
 
 val Provider = staticCompositionLocalOf { CustomColorsPalette() }

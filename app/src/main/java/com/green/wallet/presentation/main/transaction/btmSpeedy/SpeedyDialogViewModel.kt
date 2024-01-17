@@ -41,7 +41,7 @@ class SpeedyDialogViewModel @Inject constructor(
     private val transactionInteract: TransactionInteract,
     private val prefs: PrefsInteract,
     private val dexieInteract: DexieInteract,
-    val passCodeCommunicator: PassCodeCommunicator,
+    passCodeCommunicator: PassCodeCommunicator
 ) : BaseViewModel<SpeedyTokenState, SpeedyTokenEvent>(SpeedyTokenState()) {
 
     private lateinit var transaction: Transaction
@@ -65,9 +65,12 @@ class SpeedyDialogViewModel @Inject constructor(
 
     private fun getDexieFeeInteract() {
         viewModelScope.launch {
+            val dexieRecommendedFee = dexieInteract.getDexieMinFee().recommended
             _viewState.update {
-                it.copy(normalFeeDexie = dexieInteract.getDexieMinFee().recommended)
+                it.copy(normalFeeDexie = dexieRecommendedFee, fee = dexieRecommendedFee)
             }
+            validateEnoughFee()
+            VLog.d("Validating amount after dexie : ${viewState.value}")
         }
     }
 
@@ -89,6 +92,7 @@ class SpeedyDialogViewModel @Inject constructor(
         when (event) {
             is SpeedyTokenEvent.OnFeeChosen -> {
                 _viewState.update { it.copy(fee = event.fee) }
+                validateEnoughFee()
             }
 
             else -> Unit
@@ -157,7 +161,12 @@ class SpeedyDialogViewModel @Inject constructor(
                 .collectLatest { it ->
                     val feeSpendable = wallet.balance - it
                     VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
-                    _viewState.update { it.copy(spendableBalance = feeSpendable) }
+                    _viewState.update {
+                        it.copy(
+                            spendableBalance = feeSpendable
+                        )
+                    }
+                    validateEnoughFee()
                 }
         }
     }
@@ -228,6 +237,10 @@ class SpeedyDialogViewModel @Inject constructor(
                 else -> Unit
             }
         }
+    }
+
+    private fun validateEnoughFee() {
+        _viewState.update { it.copy(isChosenFeeEnough = it.fee <= it.spendableBalance) }
     }
 
     fun setLoading(isLoading: Boolean) {

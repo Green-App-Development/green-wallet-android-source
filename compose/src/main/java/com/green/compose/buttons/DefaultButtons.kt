@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.green.compose.dimens.size_30
 import com.green.compose.dimens.size_50
+import java.time.chrono.IsoEra
 
 
 @Composable
@@ -25,6 +26,7 @@ fun DefaultButton(
     modifier: Modifier = Modifier,
     bcgColor: Color = Color.Blue,
     onClick: () -> Unit,
+    isEnabled: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     Button(
@@ -38,7 +40,8 @@ fun DefaultButton(
         colors = ButtonDefaults.buttonColors(bcgColor),
         onClick = {
             onClick()
-        }
+        },
+        enabled = isEnabled
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),

@@ -185,7 +185,7 @@ fun SpeedyTransactionBtmScreen(
             FixedSpacer(height = size_9)
 
             FeeContainer(normal = state.normalFeeDexie,
-                isEnough = false,
+                isEnough = state.isChosenFeeEnough,
                 fee = {
                     onEvent(SpeedyTokenEvent.OnFeeChosen(it))
                 }
@@ -194,10 +194,11 @@ fun SpeedyTransactionBtmScreen(
         }
         FixedSpacer(height = size_20)
 
-        DefaultButton(bcgColor = if (state.fee <= state.spendableBalance) Provider.current.green
-        else Provider.current.btnInActive, onClick = {
-            onEvent(SpeedyTokenEvent.OnSign)
-        }) {
+        DefaultButton(
+            bcgColor = if (state.isChosenFeeEnough) Provider.current.green else Provider.current.btnInActive,
+            onClick = {
+                onEvent(SpeedyTokenEvent.OnSign)
+            }) {
             DefaultText(
                 text = "Sign", size = text_15, color = Provider.current.txtPrimaryColor
             )

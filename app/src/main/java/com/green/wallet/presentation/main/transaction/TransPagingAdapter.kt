@@ -54,6 +54,7 @@ class TransPagingAdapter(
         private val imgSpeedUp: ImageView = v.findViewById(R.id.img_speed_up)
         private val deleteContainer: RelativeLayout = v.findViewById(R.id.container_delete)
         private val imgDelete: ImageView = v.findViewById(R.id.ic_delete)
+        private val rootRelative: RelativeLayout = v.findViewById(R.id.root_relative)
 
 
         @SuppressLint("SetTextI18n")
@@ -95,7 +96,7 @@ class TransPagingAdapter(
 //                    )
 //                }"
 
-            rootLayout.setOnClickListener {
+            rootRelative.setOnClickListener {
                 transactionItemListener.onTransactionItemClicked(transaction = transaction)
             }
 
@@ -124,7 +125,7 @@ class TransPagingAdapter(
             centerLayout.setOnClickListener {
                 it.startAnimation(animManager.getBtnEffectAnimation())
                 VLog.d("Clicked transaction from rec view : $transaction")
-                if (transaction.confirmedAtHeight == 0L || true) {
+                if (transaction.confirmedAtHeight == 0L) {
                     transactionItemListener.onTransactionSpeedUpClick(transaction = transaction)
                 } else {
                     transactionItemListener.onTransactionItemClicked(transaction = transaction)

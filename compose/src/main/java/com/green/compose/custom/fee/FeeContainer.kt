@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.compose.utils.PRECISION_XCH
+import kotlinx.coroutines.delay
 
 
 @Composable

@@ -30,6 +30,7 @@ import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.compose.utils.doubleCeilString
 import com.green.compose.utils.formattedDoubleAmountWithPrecision
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -45,14 +46,6 @@ fun FeeChoices(
     val feeAmount1 = formattedDoubleAmountWithPrecision(normal, 6)
     val feeAmount2 = formattedDoubleAmountWithPrecision(normal * 2, 6)
     val feeAmount3 = formattedDoubleAmountWithPrecision(normal * 3, 6)
-
-    LaunchedEffect(true) {
-        when (chosen) {
-            0 -> fee(feeAmount1.toDouble())
-            1 -> fee(feeAmount2.toDouble())
-            2 -> fee(feeAmount3.toDouble())
-        }
-    }
 
     Row(
         modifier = modifier
