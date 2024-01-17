@@ -63,7 +63,6 @@ abstract class ViewModelsModule {
     @IntoMap
     @Binds
     @ViewModelKey(SendFragmentViewModel::class)
-    @AppScope
     abstract fun bindsSendFragmentViewModel(sendFragmentViewModel: SendFragmentViewModel): ViewModel
 
 

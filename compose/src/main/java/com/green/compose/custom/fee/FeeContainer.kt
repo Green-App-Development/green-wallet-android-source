@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,6 +28,9 @@ fun FeeContainer(
     isEnough: Boolean = false,
     fee: (Double) -> Unit = {}
 ) {
+
+    var chosenPos by remember { mutableIntStateOf(0) }
+
     Column(modifier = Modifier.fillMaxWidth()) {
         var customShown by remember { mutableStateOf(false) }
         if (customShown) {
@@ -43,7 +47,11 @@ fun FeeContainer(
             FeeChoices(
                 normal = normal,
                 fee = fee,
-                isEnough = isEnough
+                isEnough = isEnough,
+                onChosen = {
+                    chosenPos = it
+                },
+                chosen = chosenPos
             )
             DefaultText(
                 text = "Custom",

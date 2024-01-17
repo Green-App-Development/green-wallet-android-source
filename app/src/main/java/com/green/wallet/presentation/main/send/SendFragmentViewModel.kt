@@ -8,6 +8,7 @@ import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,6 +24,7 @@ class SendFragmentViewModel @Inject constructor(
 ) : BaseViewModel<TransferState, TransferEvent>(TransferState()) {
 
     init {
+        VLog.d("SendFragmentViewModel memory location :  $this")
         getDexieFee()
     }
 
@@ -110,10 +112,11 @@ class SendFragmentViewModel @Inject constructor(
                     dexieFee = dexie.recommended
                 )
             }
+            validatingEnoughAmounts()
         }
     }
 
-    private fun setLoading(loading: Boolean) {
+    fun setLoading(loading: Boolean) {
         _viewState.update { it.copy(isLoading = loading) }
     }
 
@@ -121,7 +124,9 @@ class SendFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
                 .collect { amount ->
+                    VLog.d("Wallet's With Amount : ${wallet.tokenWalletList[0].amount} on update spendable balance")
                     _viewState.update { it.copy(xchSpendableBalance = wallet.tokenWalletList[0].amount - amount) }
+                    validatingEnoughAmounts()
                 }
         }
     }
@@ -135,16 +140,23 @@ class SendFragmentViewModel @Inject constructor(
 
     fun updateSendingToken(posAdapter: Int) {
         _viewState.update { it.copy(xchSending = posAdapter == 0) }
+        validatingEnoughAmounts()
     }
 
     fun updateSendingAmount(amountStr: String) {
-        //1.
         val amount = amountStr.toDoubleOrNull()
-        if (amount == null) {
-            _viewState.update { it.copy(amountValid = false) }
+        VLog.d("Amount String Sending : $amount")
+        validatingEnoughAmounts()
+        if (amount == 0.0 || amount == null) {
+            _viewState.update { it.copy(sendingAmount = 0.0, amountValid = false) }
         } else {
             _viewState.update { it.copy(sendingAmount = amount, amountValid = true) }
         }
+    }
+
+    fun updateSendingAddress(address: String) {
+        _viewState.update { it.copy(destAddress = address) }
+        validatingEnoughAmounts()
     }
 
     private fun validatingEnoughAmounts() {
@@ -163,6 +175,11 @@ class SendFragmentViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun onCleared() {
+        VLog.d("On Cleared on send view model : ${viewState.value}")
+        super.onCleared()
     }
 
 }

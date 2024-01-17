@@ -29,20 +29,29 @@ import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.compose.utils.doubleCeilString
+import com.green.compose.utils.formattedDoubleAmountWithPrecision
 
 
 @Composable
 fun FeeChoices(
     modifier: Modifier = Modifier,
     normal: Double = 0.001,
+    chosen: Int = 0,
     isEnough: Boolean = false,
-    fee: (Double) -> Unit = {}
+    fee: (Double) -> Unit = {},
+    onChosen: (Int) -> Unit = {}
 ) {
-    var chosen by remember { mutableIntStateOf(1) }
 
-    LaunchedEffect(chosen) {
-        val chosenFee = getFeeOnChoosePos(chosen)
-        fee(chosenFee)
+    val feeAmount1 = formattedDoubleAmountWithPrecision(normal, 6)
+    val feeAmount2 = formattedDoubleAmountWithPrecision(normal * 2, 6)
+    val feeAmount3 = formattedDoubleAmountWithPrecision(normal * 3, 6)
+
+    LaunchedEffect(true) {
+        when (chosen) {
+            0 -> fee(feeAmount1.toDouble())
+            1 -> fee(feeAmount2.toDouble())
+            2 -> fee(feeAmount3.toDouble())
+        }
     }
 
     Row(
@@ -61,13 +70,12 @@ fun FeeChoices(
                 .customFeeChosenBackground(0, chosen)
                 .weight(0.33f)
                 .clickable {
-                    chosen = 0
+                    onChosen(0)
+                    fee(feeAmount1.toDouble())
                 },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            val feeAmount = doubleCeilString(normal)
 
             DefaultText(
                 text = "Normal",
@@ -78,7 +86,7 @@ fun FeeChoices(
                 )
             )
             DefaultText(
-                text = "$feeAmount XCH",
+                text = "$feeAmount1 XCH",
                 size = text_15,
                 color = getColorFeeAmount(
                     chosen = 0 == chosen,
@@ -92,12 +100,12 @@ fun FeeChoices(
                 .customFeeChosenBackground(1, chosen)
                 .weight(0.33f)
                 .clickable {
-                    chosen = 1
+                    onChosen(1)
+                    fee(feeAmount2.toDouble())
                 },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val feeAmount = doubleCeilString(normal * 1.5)
             DefaultText(
                 text = "Medium",
                 size = text_14,
@@ -107,7 +115,7 @@ fun FeeChoices(
                 )
             )
             DefaultText(
-                text = "$feeAmount XCH",
+                text = "$feeAmount2 XCH",
                 size = text_15,
                 color = getColorFeeAmount(
                     chosen = 1 == chosen,
@@ -121,12 +129,12 @@ fun FeeChoices(
                 .customFeeChosenBackground(2, chosen)
                 .weight(0.33f)
                 .clickable {
-                    chosen = 2
+                    onChosen(2)
+                    fee(feeAmount3.toDouble())
                 },
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val feeAmount = doubleCeilString(normal * 2)
             DefaultText(
                 text = "Fast",
                 size = text_14,
@@ -136,7 +144,7 @@ fun FeeChoices(
                 )
             )
             DefaultText(
-                text = "$feeAmount XCH",
+                text = "$feeAmount3 XCH",
                 size = text_15,
                 color = getColorFeeAmount(
                     chosen = 2 == chosen,
@@ -170,16 +178,6 @@ internal fun getColorFeeAmount(chosen: Boolean, isEnough: Boolean): Color {
         return if (isEnough) Color.White else Provider.current.errorColor
     return Provider.current.greyText
 }
-
-private fun getFeeOnChoosePos(pos: Int): Double {
-    return when (pos) {
-        0 -> 0.0
-        1 -> 0.00005
-        2 -> 0.0006
-        else -> 0.0
-    }
-}
-
 
 @Preview(showBackground = true)
 @Composable

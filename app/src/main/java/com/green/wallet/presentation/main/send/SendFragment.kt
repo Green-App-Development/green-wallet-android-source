@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -30,8 +31,10 @@ import com.example.common.tools.*
 import com.google.gson.Gson
 import com.green.compose.custom.fee.FeeContainer
 import com.green.compose.dimens.size_10
+import com.green.compose.dimens.size_16
 import com.green.compose.dimens.size_20
 import com.green.compose.dimens.text_12
+import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
@@ -176,7 +179,7 @@ class SendFragment : BaseFragment() {
                 ) {
 
                     DefaultText(
-                        text = "Spendable Balance: ${state.xchSpendableBalance}",
+                        text = "Spendable Balance: ${formattedDoubleAmountWithPrecision(state.xchSpendableBalance)}",
                         size = text_12,
                         color = Provider.current.greyText,
                         modifier = Modifier.padding(
@@ -191,6 +194,15 @@ class SendFragment : BaseFragment() {
                             viewModel.updateChosenFee(it)
                         }
                     )
+
+                    if (!state.isFeeEnough) {
+                        DefaultText(
+                            text = stringResource(id = R.string.send_token_insufficient_funds_error) + " XCH",
+                            size = text_16,
+                            color = Provider.current.errorColor,
+                            modifier = Modifier.padding(top = size_10)
+                        )
+                    }
                 }
             }
         }
@@ -587,6 +599,7 @@ class SendFragment : BaseFragment() {
                     VLog.d("Success entering the passcode : $it")
                     delay(500)
                     initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+                    viewModel.setLoading(true)
                     curActivity().mainViewModel.send_money_false()
                 }
             }
@@ -737,6 +750,7 @@ class SendFragment : BaseFragment() {
                     spentTokensJson.toString()
                 )
             } else if (method.method == "exception") {
+                viewModel.setLoading(false)
                 showFailedSendingTransaction()
                 Toast.makeText(
                     curActivity(),
@@ -874,17 +888,12 @@ class SendFragment : BaseFragment() {
 
 
         edtAddressWallet.addTextChangedListener {
-            if (it.isNullOrEmpty()) {
-                threeEdtsFilled.remove(1)
-            } else {
-                threeEdtsFilled.add(1)
-                txtEnterAddressWallet.visibility = View.VISIBLE
-                edtAddressWallet.hint = ""
-                line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
-                edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
-                txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
-            }
-            enableBtnContinueTwoEdtsFilled()
+            txtEnterAddressWallet.visibility = View.VISIBLE
+            edtAddressWallet.hint = ""
+            line2.setBackgroundColor(curActivity().getColorResource(R.color.green))
+            edtAddressWallet.setTextColor(curActivity().getColorResource(R.color.secondary_text_color))
+            txtEnterAddressWallet.setTextColor(curActivity().getColorResource(R.color.green))
+            viewModel.updateSendingAddress(it.toString())
         }
 
         edtEnterAmount.addTextChangedListener {
@@ -1023,8 +1032,8 @@ class SendFragment : BaseFragment() {
         binding.apply {
             val enteredAmount = edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
             //check only token first
-            if (tokenAdapter.selectedPosition != 0) {
-                if (enteredAmount > spendableAmountToken && this@SendFragment::tokenAdapter.isInitialized)
+            if (this@SendFragment::tokenAdapter.isInitialized && tokenAdapter.selectedPosition != 0) {
+                if (enteredAmount > spendableAmountToken)
                     return tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
             }
         }
@@ -1178,7 +1187,8 @@ class SendFragment : BaseFragment() {
     }
 
     private fun initAmountNotEnoughState(it: TransferState) {
-        binding.btnContinue.isEnabled = it.isFeeEnough && it.isSendingAmountEnough && it.amountValid
+        binding.btnContinue.isEnabled =
+            it.isFeeEnough && it.isSendingAmountEnough && it.amountValid && it.destAddress.isNotEmpty()
         if (it.isSendingAmountEnough) {
             hideAmountNotEnoughWarning()
             hideNotEnoughAmountWarningSending()
@@ -1192,12 +1202,14 @@ class SendFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         curActivity().sendCoinsFragmentView = null
+        VLog.d("On Destroy View on Send VM", javaClass.name)
         updateJob?.cancel()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         dialogManager.dismissAllPrevDialogs()
+        VLog.d("On Destroy on Send VM", javaClass.name)
     }
 
     private fun curActivity() = requireActivity() as MainActivity
