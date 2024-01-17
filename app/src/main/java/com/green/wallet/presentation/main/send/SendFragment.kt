@@ -125,7 +125,6 @@ class SendFragment : BaseFragment() {
     }
 
     private var curTokenWalletList = listOf<TokenWallet>()
-    private val threeEdtsFilled = mutableSetOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -288,6 +287,7 @@ class SendFragment : BaseFragment() {
                         val txtSpendableBalance =
                             curActivity().getStringResource(R.string.spendable_balance)
                         spendableAmountToken = initialAmountToken - sentTokenMempoolAmounts[0]
+                        viewModel.updateCATSpendableBalance(spendableAmountToken)
                         if (spendableAmountToken < 0.0)
                             spendableAmountToken = 0.0
                         spendableAmountFee =
@@ -437,10 +437,14 @@ class SendFragment : BaseFragment() {
         binding.icTokenDownward.setOnClickListener {
             binding.tokenSpinner.performClick()
         }
+
         if (tokendAdapterPosition < tokenWalletList.size) {
+            VLog.d("Set select ion for tokenSpinner : $tokendAdapterPosition")
             binding.tokenSpinner.setSelection(tokendAdapterPosition)
             tokenAdapter.selectedPosition = tokendAdapterPosition
+            viewModel.updateSendingToken(tokendAdapterPosition)
         }
+
         binding.tokenSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -487,7 +491,7 @@ class SendFragment : BaseFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun updateAmounts(tokenWallet: TokenWallet) {
-        txtWalletAmount.text =
+        binding.txtWalletAmount.text =
             formattedDoubleAmountWithPrecision(tokenWallet.amount) + " ${tokenWallet.code}"
         lastTokenBalanceText = txtWalletAmount.text.toString()
         val formattedBalance = String.format("%.2f", tokenWallet.amountInUSD).replace(",", ".")
@@ -1055,11 +1059,6 @@ class SendFragment : BaseFragment() {
             txtChosenNetwork.text = coinType
         }
     }
-
-    private fun enableBtnContinueTwoEdtsFilled() {
-        binding.btnContinue.isEnabled = threeEdtsFilled.size >= 2
-    }
-
 
     private fun showConfirmTransactionDialog() {
         val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)

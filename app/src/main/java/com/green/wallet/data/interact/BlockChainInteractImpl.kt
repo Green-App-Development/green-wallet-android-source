@@ -419,7 +419,7 @@ class BlockChainInteractImpl @Inject constructor(
                     }
 
                 } else {
-                    val unSpentCoinRecordHeight = checkingUnSpentCoinHeightByTran(tran)
+                    val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
                     VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
                     if (unSpentCoinRecordHeight != -1L) {
                         transactionDao.updateTransactionStatusHeight(

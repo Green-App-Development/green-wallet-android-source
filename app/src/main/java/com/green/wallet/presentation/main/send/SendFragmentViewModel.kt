@@ -159,6 +159,11 @@ class SendFragmentViewModel @Inject constructor(
         validatingEnoughAmounts()
     }
 
+    fun updateCATSpendableBalance(amount: Double) {
+        _viewState.update { it.copy(catSpendableAmount = amount) }
+        validatingEnoughAmounts()
+    }
+
     private fun validatingEnoughAmounts() {
         val value = viewState.value
         if (viewState.value.xchSending) {
