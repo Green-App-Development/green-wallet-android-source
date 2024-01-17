@@ -21,6 +21,7 @@ import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.PRECISION_XCH
+import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
@@ -66,15 +67,9 @@ class SpeedyBtmDialog :
             vm.event.collectFlow(this) {
                 when (it) {
                     SpeedyTokenEvent.OnSign -> {
-                        when (state.token) {
-                            is NftToken -> {
-                                nftTokenRePush()
-                            }
-
-                            is CatToken -> {
-                                catTokenRePush(state.token as CatToken)
-                            }
-                        }
+                        getMainActivity().showEnterPasswordFragment(
+                            reason = ReasonEnterCode.SEND_MONEY
+                        )
                     }
 
                     SpeedyTokenEvent.OnSpeedError -> {
@@ -83,6 +78,19 @@ class SpeedyBtmDialog :
 
                     SpeedyTokenEvent.OnSpeedSuccess -> {
                         showSuccessSendMoneyDialog()
+                    }
+
+                    SpeedyTokenEvent.SuccessPinCode -> {
+                        when (state.token) {
+                            is NftToken -> {
+                                nftTokenRePush()
+                            }
+
+                            is CatToken -> {
+                                catTokenRePush()
+                            }
+                        }
+                        vm.setLoading(true)
                     }
 
                     else -> Unit
@@ -145,7 +153,8 @@ class SpeedyBtmDialog :
         initListeningMethod(url)
     }
 
-    private suspend fun catTokenRePush(catToken: CatToken) {
+    private suspend fun catTokenRePush() {
+        val catToken = vm.viewState.value.token as CatToken
         val url = vm.getNetworkItemFromPrefs(vm.wallet.networkType)!!.full_node
         val argSpendBundle = hashMapOf<String, Any>()
         argSpendBundle["fee"] = (vm.viewState.value.fee * PRECISION_XCH).toLong()

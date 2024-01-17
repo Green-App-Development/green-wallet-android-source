@@ -10,4 +10,6 @@ sealed interface SpeedyTokenEvent {
 
     object OnSpeedSuccess : SpeedyTokenEvent
 
+    object SuccessPinCode : SpeedyTokenEvent
+
 }

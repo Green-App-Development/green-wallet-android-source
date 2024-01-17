@@ -53,7 +53,8 @@ import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 
 @Composable
 fun SpeedyTransactionBtmScreen(
-    state: SpeedyTokenState = SpeedyTokenState(), onEvent: (SpeedyTokenEvent) -> Unit = {}
+    state: SpeedyTokenState = SpeedyTokenState(),
+    onEvent: (SpeedyTokenEvent) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -184,7 +185,7 @@ fun SpeedyTransactionBtmScreen(
             FixedSpacer(height = size_9)
 
             FeeContainer(normal = state.normalFeeDexie,
-                false,
+                isEnough = false,
                 fee = {
                     onEvent(SpeedyTokenEvent.OnFeeChosen(it))
                 }

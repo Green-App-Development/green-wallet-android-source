@@ -7,5 +7,6 @@ data class SpeedyTokenState(
     val token: Token? = null,
     val fee: Double = 0.0,
     val spendableBalance: Double = 0.0,
-    val normalFeeDexie: Double = 0.0
+    val normalFeeDexie: Double = 0.0,
+    val isChosenFeeEnough: Boolean = false
 )
