@@ -180,7 +180,7 @@ class SendFragment : BaseFragment() {
                     DefaultText(
                         text = "Spendable Balance: ${formattedDoubleAmountWithPrecision(state.xchSpendableBalance)}",
                         size = text_12,
-                        color = Provider.current.greyText,
+                        color = if (state.isFeeEnough) Provider.current.greyText else Provider.current.errorColor,
                         modifier = Modifier.padding(
                             bottom = size_10
                         )

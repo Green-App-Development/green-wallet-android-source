@@ -10,6 +10,7 @@ import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.tools.Resource
+import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,7 @@ class NFTSendViewModel @Inject constructor(
     private val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
     private val addressInteract: AddressInteract,
+    private val dexieInteract: DexieInteract
 ) : BaseViewModel<NftSendViewState, Unit>(NftSendViewState()) {
 
     lateinit var wallet: Wallet
@@ -35,6 +37,21 @@ class NFTSendViewModel @Inject constructor(
     lateinit var base_url: String
     private val _spendableBalance = MutableStateFlow("0")
     val spendableBalance = _spendableBalance.asStateFlow()
+
+    init {
+        getDexieFee()
+    }
+
+    private fun getDexieFee() {
+        viewModelScope.launch {
+            val dexie = dexieInteract.getDexieMinFee()
+            _viewState.update {
+                it.copy(
+                    dexieFee = dexie.recommended
+                )
+            }
+        }
+    }
 
     fun initNFTCoin(nftInfo: NFTInfo) {
         viewModelScope.launch {
@@ -106,5 +123,12 @@ class NFTSendViewModel @Inject constructor(
         }
     }
 
+    fun updateDestAddress(destAddress: String) {
+        _viewState.update { it.copy(destAddress = destAddress) }
+    }
+
+    fun updateChosenFee(fee: Double) {
+        _viewState.update { it.copy(fee = fee, feeEnough = it.spendableBalance >= fee) }
+    }
 
 }

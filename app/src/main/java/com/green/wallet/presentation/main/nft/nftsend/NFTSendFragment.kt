@@ -18,6 +18,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -33,6 +40,13 @@ import com.bumptech.glide.request.target.Target
 import com.example.common.tools.addingDoubleDotsTxt
 import com.example.common.tools.formatString
 import com.google.gson.Gson
+import com.green.compose.custom.fee.FeeContainer
+import com.green.compose.dimens.size_10
+import com.green.compose.dimens.text_12
+import com.green.compose.dimens.text_16
+import com.green.compose.text.DefaultText
+import com.green.compose.theme.GreenWalletTheme
+import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.data.network.dto.coins.CoinRecord
 import com.green.wallet.databinding.FragmentSendNftBinding
@@ -40,15 +54,18 @@ import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
+import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.tools.Resource.Companion.error
+import com.greenwallet.core.ext.collectFlow
 import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.dialog_confirm_send_nft.*
 import kotlinx.android.synthetic.main.fragment_send.txtAddressAlredyExistWarning
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -59,7 +76,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-class NFTSendFragment : DaggerFragment() {
+class NFTSendFragment : BaseFragment() {
 
     private lateinit var binding: FragmentSendNftBinding
 
@@ -77,7 +94,6 @@ class NFTSendFragment : DaggerFragment() {
 
     @Inject
     lateinit var dialogManager: DialogManager
-    private var spendableAmount = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +126,31 @@ class NFTSendFragment : DaggerFragment() {
     private fun initFeeBlock() {
         binding.composeFeeBlock.setContent {
 
+            val state by vm.viewState.collectAsState()
+
+            GreenWalletTheme {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    DefaultText(
+                        text = "Spendable Balance: ${formattedDoubleAmountWithPrecision(state.spendableBalance)}",
+                        size = text_12,
+                        color = if (state.feeEnough) Provider.current.greyText else Provider.current.errorColor,
+                        modifier = Modifier.padding(
+                            bottom = size_10
+                        )
+                    )
+
+                    FeeContainer(
+                        normal = state.dexieFee,
+                        isEnough = state.feeEnough,
+                        fee = {
+                            vm.updateChosenFee(it)
+                        }
+                    )
+                }
+            }
         }
     }
 
@@ -220,7 +261,7 @@ class NFTSendFragment : DaggerFragment() {
                 edtAddressWallet.setTextColor(getMainActivity().getColorResource(R.color.secondary_text_color))
                 txtEnterAddressWallet.setTextColor(getMainActivity().getColorResource(R.color.green))
             }
-            enableBtnContinueTwoEdtsFilled()
+            vm.updateDestAddress(it.toString())
         }
 
         edtAddressWallet.setOnFocusChangeListener { view, focus ->
@@ -255,7 +296,7 @@ class NFTSendFragment : DaggerFragment() {
 
     }
 
-    fun FragmentSendNftBinding.updateViews() {
+    private fun FragmentSendNftBinding.updateViews() {
         edtNFTName.text = nftInfo.name
         edtNFTCollection.text = nftInfo.collection
         edtNftID.text = formatString(15, nftInfo.nft_id, 4)
@@ -290,19 +331,6 @@ class NFTSendFragment : DaggerFragment() {
 
             })
             .into(imgNft)
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.spendableBalance.collectLatest {
-                    val txtSpendableBalance =
-                        getMainActivity().getStringResource(R.string.spendable_balance)
-                    spendableAmount = it.toDouble()
-                    binding.txtSpendableBalanceCommission.setText(
-                        "$txtSpendableBalance: $it"
-                    )
-                }
-            }
-        }
 
     }
 
@@ -578,6 +606,16 @@ class NFTSendFragment : DaggerFragment() {
                 }
             }
         }
+    }
+
+    override fun collectFlowOnStarted(scope: CoroutineScope) {
+        vm.viewState.collectFlow(scope) {
+            initButtonState(it)
+        }
+    }
+
+    private fun initButtonState(it: NftSendViewState) {
+        binding.btnContinue.isEnabled = it.feeEnough && it.destAddress.isNotEmpty()
     }
 
     override fun onDestroyView() {
