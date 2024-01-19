@@ -555,7 +555,7 @@ class BlockChainInteractImpl @Inject constructor(
         spentCoinsToken: String
     ): Resource<String> {
         try {
-            val serverTime = greenAppInteract.getServerTime()
+            val serverTime = greenAppInteract.getServerTime() - 1000 * 60 * 2
             if (serverTime == -1L)
                 throw ServerMaintenanceExceptions()
             VLog.d("Push method got called in data layer code : $networkType")

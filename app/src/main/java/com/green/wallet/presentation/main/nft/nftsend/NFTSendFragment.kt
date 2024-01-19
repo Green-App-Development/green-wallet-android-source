@@ -24,6 +24,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -101,8 +102,15 @@ class NFTSendFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.registerClicks()
         binding.updateViews()
+        initFeeBlock()
         getQrCodeDecoded()
         vm.initNFTCoin(nftInfo)
+    }
+
+    private fun initFeeBlock() {
+        binding.composeFeeBlock.setContent {
+
+        }
     }
 
     var sendJobState: Job? = null
@@ -215,34 +223,6 @@ class NFTSendFragment : DaggerFragment() {
             enableBtnContinueTwoEdtsFilled()
         }
 
-
-        edtEnterCommission.setOnFocusChangeListener { view, focus ->
-            if (focus) {
-                txtEnterCommission.visibility = View.VISIBLE
-                txtSpendableBalanceCommission.visibility = View.VISIBLE
-                edtEnterCommission.hint = ""
-                view3.setBackgroundColor(getMainActivity().getColorResource(R.color.green))
-                enterCommissionToken.apply {
-                    setTextColor(getMainActivity().getColorResource(R.color.green))
-                    text = "XCH"
-                }
-                txtRecommendedCommission.visibility = View.VISIBLE
-            } else if (edtEnterCommission.text.toString().isEmpty()) {
-                txtEnterCommission.visibility = View.INVISIBLE
-                edtEnterCommission.hint =
-                    getMainActivity().getString(R.string.send_token_commission_amount)
-                enterCommissionToken.apply {
-                    text = "-"
-                    setTextColor(getMainActivity().getColorResource(R.color.txtShortNetworkType))
-                }
-                txtRecommendedCommission.visibility = View.INVISIBLE
-                txtSpendableBalanceCommission.visibility = View.GONE
-            }
-            if (!focus) {
-                view3.setBackgroundColor(getMainActivity().getColorResource(R.color.edt_divider))
-            }
-        }
-
         edtAddressWallet.setOnFocusChangeListener { view, focus ->
             if (focus) {
                 txtEnterAddressWallet.visibility = View.VISIBLE
@@ -271,10 +251,6 @@ class NFTSendFragment : DaggerFragment() {
 
         imgCopyNftId.setOnClickListener {
             copyToClipBoardShowCopied(nftInfo.nft_id)
-        }
-
-        edtEnterCommission.addTextChangedListener {
-            enableBtnContinueTwoEdtsFilled()
         }
 
     }
@@ -328,20 +304,6 @@ class NFTSendFragment : DaggerFragment() {
             }
         }
 
-    }
-
-    private fun notEnoughAmountWarningTextFee() {
-        binding.apply {
-            edtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.red_mnemonic))
-            txtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.red_mnemonic))
-        }
-    }
-
-    private fun hideNotEnoughAmountWarningFee() {
-        binding.apply {
-            edtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.secondary_text_color))
-            txtEnterCommission.setTextColor(getMainActivity().getColorResource(R.color.green))
-        }
     }
 
     private var addressAlreadyExist: Job? = null
@@ -490,7 +452,7 @@ class NFTSendFragment : DaggerFragment() {
                 timestamp = nftCoin.timeStamp,
                 coinbase = false
             )
-            val enteredFee = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
+            val enteredFee = vm.viewState.value.fee
             VLog.d("Entered Fee NFT Send Fragment : $enteredFee")
             val fee = (Math.round(
                 enteredFee * if (isThisChivesNetwork(wallet.networkType)) Math.pow(
@@ -561,7 +523,7 @@ class NFTSendFragment : DaggerFragment() {
 
     private fun initConfirmDialogDetails(dialog: Dialog) {
         dialog.apply {
-            var commissionText = binding.edtEnterCommission.text.toString()
+            var commissionText = vm.viewState.value.fee.toString()
             if (commissionText.isEmpty())
                 commissionText = "0"
             findViewById<TextView>(R.id.edtConfirmSendNftAddress).text =
@@ -617,21 +579,6 @@ class NFTSendFragment : DaggerFragment() {
             }
         }
     }
-
-
-    private fun enableBtnContinueTwoEdtsFilled() {
-        val amount = binding.edtEnterCommission.text.toString().toDoubleOrNull() ?: 0.0
-        var enabled = true
-        if (amount > spendableAmount) {
-            notEnoughAmountWarningTextFee()
-            enabled = false
-        } else {
-            hideNotEnoughAmountWarningFee()
-        }
-        VLog.d("After checking to send Amount : $amount Enabled : $enabled and Spendable : $spendableAmount")
-        binding.btnContinue.isEnabled = twoEdtsFilled.size >= 1 && enabled
-    }
-
 
     override fun onDestroyView() {
         getMainActivity().sendNftFragmentView = null

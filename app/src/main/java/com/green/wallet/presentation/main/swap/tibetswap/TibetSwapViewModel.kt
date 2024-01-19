@@ -1,6 +1,5 @@
 package com.green.wallet.presentation.main.swap.tibetswap
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.TibetLiquidity
@@ -8,16 +7,17 @@ import com.green.wallet.domain.domainmodel.TibetLiquidityExchange
 import com.green.wallet.domain.domainmodel.TibetSwapResponse
 import com.green.wallet.domain.domainmodel.Token
 import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.domain.interact.DexieInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.domain.usecases.tibet.CheckingCATOnHome
-import com.green.wallet.domain.usecases.tibet.TibetAddLiquidity
 import com.green.wallet.domain.usecases.tibet.TibetSwapUseCases
 import com.green.wallet.presentation.tools.INPUT_DEBOUNCE_VALUE
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
+import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +30,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import javax.inject.Inject
 
 class TibetSwapViewModel @Inject constructor(
@@ -41,8 +42,9 @@ class TibetSwapViewModel @Inject constructor(
     val prefsManager: PrefsManager,
     private val spentCoinsInteract: SpentCoinsInteract,
     val checkingCATHome: CheckingCATOnHome,
-    private val tibetInteract: TibetInteract
-) : ViewModel() {
+    private val tibetInteract: TibetInteract,
+    private val dexieInteract: DexieInteract
+) : BaseViewModel<TibetSwapState, Unit>(TibetSwapState()) {
 
     var isShowingSwap = true
 
@@ -97,6 +99,14 @@ class TibetSwapViewModel @Inject constructor(
 
     init {
         VLog.d("On create tibet vm swap : $this")
+        getDexie()
+    }
+
+    private fun getDexie() {
+        viewModelScope.launch {
+            val dexie = dexieInteract.getDexieMinFee().recommended
+            _viewState.update { it.copy(dexieFee = dexie) }
+        }
     }
 
     fun getContainerBiggerSize(): Int {
@@ -144,7 +154,7 @@ class TibetSwapViewModel @Inject constructor(
     var swapMainScope: CoroutineScope? = null
     fun startDebounceValueSwap() {
         swapMainScope?.cancel()
-        swapMainScope = CoroutineScope(Dispatchers.Main)
+        swapMainScope = CoroutineScope(Dispatchers.Main.immediate)
         val debouncedFlow = userSwapInputChannel.receiveAsFlow().debounce(INPUT_DEBOUNCE_VALUE)
         swapMainScope?.launch(handler) {
             debouncedFlow.collectLatest { input ->
@@ -161,7 +171,7 @@ class TibetSwapViewModel @Inject constructor(
         _tibetSwap.value = null
     }
 
-    suspend fun calculateAmountOut(amountIn: Double, pairID: String, isXCH: Boolean) {
+    private suspend fun calculateAmountOut(amountIn: Double, pairID: String, isXCH: Boolean) {
         val res = tibetSwapUseCases.calculateAmountOut(amountIn, isXCH, pairID)
         VLog.d("Making API request : $amountIn PairID : $pairID  isXCH : $isXCH with Request : ${res.state}")
         _tibetSwap.emit(res)
@@ -286,15 +296,7 @@ class TibetSwapViewModel @Inject constructor(
             tibetLiquidity = tibetLiquid
         )
 
-
     suspend fun getTibetLiquidity(pairID: String) = tibetInteract.getTibetLiquidity(pairID)
-
-    override fun onCleared() {
-        super.onCleared()
-        VLog.d("On cleared tibet vm and cancelled scope : $this")
-        prevWalletListJob?.cancel()
-    }
-
 
     suspend fun getSpentCoinsToPushTrans(networkType: String, address: String, tokenCode: String) =
         spentCoinsInteract.getSpentCoinsToPushTrans(networkType, address, tokenCode)
@@ -304,6 +306,28 @@ class TibetSwapViewModel @Inject constructor(
             tibetInteract.saveTokensPairID()
             delay(5000L)
         }
+    }
+
+    fun calculateSpendableBalance(scope: CoroutineScope) {
+        scope.launch {
+            spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(
+                curWallet?.address.orEmpty(),
+                "XCH"
+            ).collectLatest { amount ->
+                val spendableBalance = (curWallet?.balance ?: 0.0) - amount
+                VLog.d("Spendable Balance for wallet : $curWallet, Amount : $spendableBalance")
+                _viewState.update { it.copy(spendableBalance = spendableBalance) }
+            }
+        }
+    }
+
+    fun updateFeeChosen(fee: Double) {
+        _viewState.update { it.copy(feeEnough = it.spendableBalance >= fee, fee = fee) }
+    }
+
+    override fun onCleared() {
+        VLog.d("On cleared tibet vm and cancelled scope : $this")
+        prevWalletListJob?.cancel()
     }
 
 }

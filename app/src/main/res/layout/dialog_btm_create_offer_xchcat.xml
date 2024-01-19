@@ -177,182 +177,21 @@
 					app:layout_constraintStart_toStartOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmount" />
 
-			<androidx.constraintlayout.widget.ConstraintLayout
-					android:id="@+id/constraintLayout3"
+			<androidx.compose.ui.platform.ComposeView
+					android:id="@+id/composeFeeBlock"
 					android:layout_width="match_parent"
-					android:layout_height="60dp"
+					android:layout_height="wrap_content"
 					android:layout_marginStart="10dp"
 					android:layout_marginTop="10dp"
 					android:layout_marginEnd="10dp"
-					android:background="@drawable/bcg_fee_rectangle"
 					android:paddingStart="2dp"
 					android:paddingEnd="2dp"
 					app:layout_constraintEnd_toEndOf="parent"
 					app:layout_constraintTop_toBottomOf="@+id/textView24">
 
-				<androidx.constraintlayout.widget.Guideline
-						android:id="@+id/guideline65"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:orientation="vertical"
-						app:layout_constraintGuide_percent="0.33" />
-
-				<androidx.constraintlayout.widget.Guideline
-						android:id="@+id/guideline68"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:orientation="vertical"
-						app:layout_constraintGuide_percent="0.66" />
-
-				<RelativeLayout
-						android:id="@+id/rel_chosen_medium"
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						android:background="@drawable/bcg_fee_choosen"
-						android:visibility="visible"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toStartOf="@+id/guideline68"
-						app:layout_constraintStart_toStartOf="@+id/guideline65"
-						app:layout_constraintTop_toTopOf="parent" />
 
 
-				<RelativeLayout
-						android:id="@+id/rel_chosen_medium_click"
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						android:visibility="visible"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toStartOf="@+id/guideline68"
-						app:layout_constraintStart_toStartOf="@+id/guideline65"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<RelativeLayout
-						android:id="@+id/rel_chosen_long"
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						android:background="@drawable/bcg_fee_choosen"
-						android:visibility="gone"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toStartOf="@+id/guideline65"
-						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<RelativeLayout
-						android:id="@+id/rel_chosen_long_click"
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						android:visibility="visible"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toStartOf="@+id/guideline65"
-						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<RelativeLayout
-						android:id="@+id/rel_chosen_short"
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						android:background="@drawable/bcg_fee_choosen"
-						android:visibility="gone"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintStart_toStartOf="@+id/guideline68"
-						app:layout_constraintTop_toTopOf="parent" />
-
-
-				<RelativeLayout
-						android:id="@+id/rel_chosen_short_click"
-						android:layout_width="0dp"
-						android:layout_height="0dp"
-						android:layout_marginTop="4dp"
-						android:layout_marginBottom="4dp"
-						android:visibility="visible"
-						app:layout_constraintBottom_toBottomOf="parent"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintStart_toStartOf="@+id/guideline68"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<TextView
-						android:id="@+id/txtLong"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:text="Long"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toStartOf="@+id/guideline65"
-						app:layout_constraintStart_toStartOf="parent"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<TextView
-						android:id="@+id/textView28"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="0 XCH"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="@+id/txtLong"
-						app:layout_constraintStart_toStartOf="@+id/txtLong"
-						app:layout_constraintTop_toBottomOf="@+id/txtLong" />
-
-				<TextView
-						android:id="@+id/txtMedium"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:text="Medium"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toStartOf="@+id/guideline68"
-						app:layout_constraintStart_toStartOf="@+id/guideline65"
-						app:layout_constraintTop_toTopOf="parent"
-						tools:layout_editor_absoluteY="6dp" />
-
-				<TextView
-						android:id="@+id/textView29"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="0.00005 XCH"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="@+id/txtMedium"
-						app:layout_constraintStart_toStartOf="@+id/txtMedium"
-						app:layout_constraintTop_toBottomOf="@+id/txtMedium" />
-
-				<TextView
-						android:id="@+id/txtShort"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="10dp"
-						android:text="Short"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="parent"
-						app:layout_constraintStart_toStartOf="@+id/guideline68"
-						app:layout_constraintTop_toTopOf="parent" />
-
-				<TextView
-						android:id="@+id/txtAmountFeeShort"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:text="0.0005 XCH"
-						android:textColor="@color/greey"
-						android:textFontWeight="500"
-						app:layout_constraintEnd_toEndOf="@+id/txtShort"
-						app:layout_constraintStart_toStartOf="@+id/txtShort"
-						app:layout_constraintTop_toBottomOf="@+id/txtShort" />
-
-
-			</androidx.constraintlayout.widget.ConstraintLayout>
+			</androidx.compose.ui.platform.ComposeView>
 
 			<TextView
 					android:id="@+id/textView25"
@@ -365,7 +204,7 @@
 					android:textFontWeight="500"
 					android:textSize="14sp"
 					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
+					app:layout_constraintTop_toBottomOf="@+id/composeFeeBlock" />
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -10,9 +10,11 @@ import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.tools.Resource
+import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
@@ -25,7 +27,7 @@ class NFTSendViewModel @Inject constructor(
     private val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
     private val addressInteract: AddressInteract,
-) : ViewModel() {
+) : BaseViewModel<NftSendViewState, Unit>(NftSendViewState()) {
 
     lateinit var wallet: Wallet
     lateinit var nftCoin: NFTCoin
@@ -67,6 +69,7 @@ class NFTSendViewModel @Inject constructor(
             )
                 spendableAmountString = "${Math.round(bigDecimalSpendableAmount)}"
             _spendableBalance.emit(spendableAmountString)
+            _viewState.update { it.copy(spendableBalance = bigDecimalSpendableAmount) }
         }
     }
 
@@ -77,6 +80,7 @@ class NFTSendViewModel @Inject constructor(
         addressInteract.checkIfAddressAlreadyExist(address = address)
 
     suspend fun insertAddressEntity(address: Address) = addressInteract.insertAddressEntity(address)
+
 
     fun sendNFTBundle(
         spendBundleJson: String,
