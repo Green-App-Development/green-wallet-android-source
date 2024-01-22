@@ -21,7 +21,7 @@ import com.green.wallet.presentation.main.nft.nftsend.NFTSendViewModel
 import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensViewModel
 import com.green.wallet.presentation.main.notification.NotifViewModel
 import com.green.wallet.presentation.main.receive.ReceiveViewModel
-import com.green.wallet.presentation.main.send.SendFragmentViewModel
+import com.green.wallet.presentation.main.send.SendViewModel
 import com.green.wallet.presentation.main.support.SupportViewModel
 import com.green.wallet.presentation.main.swap.exchange.ExchangeViewModel
 import com.green.wallet.presentation.main.swap.main.SwapMainViewModel
@@ -62,8 +62,8 @@ abstract class ViewModelsModule {
 
     @IntoMap
     @Binds
-    @ViewModelKey(SendFragmentViewModel::class)
-    abstract fun bindsSendFragmentViewModel(sendFragmentViewModel: SendFragmentViewModel): ViewModel
+    @ViewModelKey(SendViewModel::class)
+    abstract fun bindsSendFragmentViewModel(sendFragmentViewModel: SendViewModel): ViewModel
 
 
     @IntoMap

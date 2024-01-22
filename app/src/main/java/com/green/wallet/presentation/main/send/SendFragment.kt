@@ -31,8 +31,6 @@ import com.example.common.tools.*
 import com.google.gson.Gson
 import com.green.compose.custom.fee.FeeContainer
 import com.green.compose.dimens.size_10
-import com.green.compose.dimens.size_16
-import com.green.compose.dimens.size_20
 import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
@@ -90,7 +88,7 @@ class SendFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: SendFragmentViewModel by viewModels { viewModelFactory }
+    private val viewModel: SendViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var anim: AnimationManager

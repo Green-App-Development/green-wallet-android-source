@@ -8,12 +8,11 @@ import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class SendFragmentViewModel @Inject constructor(
+class SendViewModel @Inject constructor(
     private val walletInteract: WalletInteract,
     private val blockChainInteract: BlockChainInteract,
     private val addressInteract: AddressInteract,
