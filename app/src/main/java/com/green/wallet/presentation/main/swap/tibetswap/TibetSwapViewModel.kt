@@ -46,6 +46,9 @@ class TibetSwapViewModel @Inject constructor(
     private val dexieInteract: DexieInteract
 ) : BaseViewModel<TibetSwapState, Unit>(TibetSwapState()) {
 
+    private val _viewStateLiquidity = MutableStateFlow(TibetLiquidityViewState())
+    val viewStateLiquidity = _viewStateLiquidity.asStateFlow()
+
     var isShowingSwap = true
 
     var xchToCAT = true
@@ -106,6 +109,7 @@ class TibetSwapViewModel @Inject constructor(
         viewModelScope.launch {
             val dexie = dexieInteract.getDexieMinFee().recommended
             _viewState.update { it.copy(dexieFee = dexie) }
+            _viewStateLiquidity.update { it.copy(dexieFee = dexie) }
         }
     }
 
@@ -317,12 +321,17 @@ class TibetSwapViewModel @Inject constructor(
                 val spendableBalance = (curWallet?.balance ?: 0.0) - amount
                 VLog.d("Spendable Balance for wallet : $curWallet, Amount : $spendableBalance")
                 _viewState.update { it.copy(spendableBalance = spendableBalance) }
+                _viewStateLiquidity.update { it.copy(spendableBalance = spendableBalance) }
             }
         }
     }
 
     fun updateFeeChosen(fee: Double) {
         _viewState.update { it.copy(feeEnough = it.spendableBalance >= fee, fee = fee) }
+    }
+
+    fun updateFeeChosenLiquidity(fee: Double) {
+        _viewStateLiquidity.update { it.copy(fee = fee, feeEnough = it.spendableBalance >= fee) }
     }
 
     override fun onCleared() {

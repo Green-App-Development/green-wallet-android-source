@@ -58,8 +58,6 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
     @Inject
     lateinit var dialogManager: DialogManager
 
-    private var feePosition = 1
-
     private val handler = CoroutineExceptionHandler { _, ex ->
         VLog.d("Exception caught on btn create offer dialog  : ${ex.message} ")
     }
