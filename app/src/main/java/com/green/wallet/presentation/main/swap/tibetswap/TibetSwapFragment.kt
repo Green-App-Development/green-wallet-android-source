@@ -746,6 +746,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 setTextColor(requireActivity().getColorResource(R.color.red_mnemonic))
             }
         }
+        vm.validateFeeEnoughAmountsLiquidity()
     }
 
     private fun FragmentTibetswapBinding.listenersForSwapDest(width: Int) {

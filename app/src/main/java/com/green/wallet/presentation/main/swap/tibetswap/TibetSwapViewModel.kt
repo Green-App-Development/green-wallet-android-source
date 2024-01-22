@@ -331,7 +331,16 @@ class TibetSwapViewModel @Inject constructor(
     }
 
     fun updateFeeChosenLiquidity(fee: Double) {
-        _viewStateLiquidity.update { it.copy(fee = fee, feeEnough = it.spendableBalance >= fee) }
+        _viewStateLiquidity.update { it.copy(fee = fee) }
+        validateFeeEnoughAmountsLiquidity()
+    }
+
+    fun validateFeeEnoughAmountsLiquidity() {
+        var needXCH = _viewStateLiquidity.value.fee
+        if (toTibet) {
+            needXCH += xchDeposit
+        }
+        _viewStateLiquidity.update { it.copy(feeEnough = needXCH <= it.spendableBalance) }
     }
 
     override fun onCleared() {
