@@ -44,7 +44,6 @@ import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
-import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_tibetswap.containerSwap
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -299,6 +298,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 binding.changeSwapAdapter(ad2Swap, ad1Swap)
                 choosingXCHToCAT(false)
             }
+            vm.validateFeeEnoughXCHCAT()
         }
 
     }
@@ -422,7 +422,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         }
 
         if (vm.swapInputState.isNotEmpty()) edtAmountFrom.setText(vm.swapInputState)
-
 
     }
 

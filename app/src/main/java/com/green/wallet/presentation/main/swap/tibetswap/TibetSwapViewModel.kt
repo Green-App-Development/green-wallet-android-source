@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -328,6 +327,15 @@ class TibetSwapViewModel @Inject constructor(
 
     fun updateFeeChosen(fee: Double) {
         _viewState.update { it.copy(feeEnough = it.spendableBalance >= fee, fee = fee) }
+        validateFeeEnoughXCHCAT()
+    }
+
+    fun validateFeeEnoughXCHCAT() {
+        var neededXCH = _viewState.value.fee
+        if (xchToCAT) {
+            neededXCH += swapInputState.toDoubleOrNull() ?: 0.0
+        }
+        _viewState.update { it.copy(feeEnough = neededXCH <= it.spendableBalance) }
     }
 
     fun updateFeeChosenLiquidity(fee: Double) {
