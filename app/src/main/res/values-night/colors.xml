@@ -127,5 +127,7 @@
     <color name="bcg_center_offer_dialog_tibet">#1C1C1C</color>
     <color name="bcg_fee_rectangle_tibet">#363636</color>
     <color name="bcg_chosen_tibet_fee">#444444</color>
+    <color name="bcg_btm_sheet_edge">#303030</color>
+
 
 </resources>

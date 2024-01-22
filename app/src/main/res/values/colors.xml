@@ -136,5 +136,7 @@
     <color name="bcg_fee_rectangle_tibet">#F4F4F4</color>
     <color name="bcg_chosen_tibet_fee">#FFFFFF</color>
 
+    <color name="bcg_btm_sheet_edge">#F4F4F4</color>
+
 
 </resources>
