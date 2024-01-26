@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
+import com.green.wallet.domain.interact.DexieInteract
+import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
@@ -33,7 +35,9 @@ class TraderViewModel @Inject constructor(
     private val walletInteract: WalletInteract,
     private val spentCoinsInteract: SpentCoinsInteract,
     val prefsManager: PrefsManager,
-    private val blockChainInteract: BlockChainInteract
+    private val blockChainInteract: BlockChainInteract,
+    private val dexieInteract: DexieInteract,
+    private val nftInfo: NFTInteract
 ) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
 
     var wallet: Wallet? = null
@@ -74,7 +78,13 @@ class TraderViewModel @Inject constructor(
         viewModelScope.launch {
             wallet = walletInteract.getHomeFirstWallet()
             VLog.d("onFirstWallet received : $wallet")
+            initDexieFee()
         }
+    }
+
+    private suspend fun initDexieFee() {
+        val dexieFee = dexieInteract.getDexieMinFee().recommended
+        _offerViewState.update { it.copy(dexieFee = dexieFee) }
     }
 
     fun handleEvent(event: TraderEvent) {
@@ -119,6 +129,14 @@ class TraderViewModel @Inject constructor(
                     spentCoinsInteract.insertSpentCoinsJson(
                         value.toString(), timeCreated, code, wallet?.address.orEmpty()
                     )
+                }
+            }
+            if (offerViewState.value.acceptOffer) {
+                val requested = offerViewState.value.requested
+                for (req in requested) {
+                    if (req is NftToken) {
+                        nftInfo.updateNftInfoPending(true, req.nftId)
+                    }
                 }
             }
         }

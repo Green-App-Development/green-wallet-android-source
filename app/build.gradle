@@ -262,6 +262,7 @@ dependencies {
     releaseImplementation("com.readystatesoftware.chuck:library-no-op:1.1.0")
 
     implementation("com.github.andycandy-de:simple-android-bridge:1.0.2")
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
 
 }

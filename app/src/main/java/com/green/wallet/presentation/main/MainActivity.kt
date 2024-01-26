@@ -525,7 +525,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
                     fragmentQrCodeSend,
                     fragmentSwapSend,
                     fragmentTibetSwapDetail,
-                ).contains(destination.id)
+                ).contains(destination.id) || true
             ) {
                 binding.mainBottomNav.visibility = View.GONE
             } else {

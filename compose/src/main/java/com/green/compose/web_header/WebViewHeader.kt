@@ -28,7 +28,6 @@ import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun WebViewHeader(
     modifier: Modifier = Modifier,

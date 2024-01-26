@@ -15,8 +15,6 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -24,33 +22,31 @@ import androidx.compose.ui.unit.dp
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_12
 import com.green.compose.dimens.size_15
-import com.green.compose.dimens.size_200
 import com.green.compose.dimens.size_218
 import com.green.compose.dimens.size_40
 import com.green.compose.dimens.text_12
-import com.green.compose.extension.pxToDp
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.presentation.main.dapp.trade.TraderEvent
-import com.rd.utils.DensityUtils.pxToDp
 
 
 @Composable
 fun DropDownWebViewHeader(
+    modifier: Modifier = Modifier,
     expanded: Boolean = false,
     onEvent: (TraderEvent) -> Unit = {},
     close: () -> Unit = {}
 ) {
     DropdownMenu(
         expanded = expanded,
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = Provider.current.iconGrey
             )
             .width(size_218),
-        offset = DpOffset(250.dp, (-718).dp),
+        offset = DpOffset(300.dp, 0.dp),
         onDismissRequest = {
             close()
         }) {

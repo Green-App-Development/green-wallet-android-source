@@ -70,6 +70,7 @@ import com.green.wallet.R
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
 import com.green.compose.custom.fee.ChooseFeeProgressValue
+import com.green.compose.custom.fee.FeeContainer
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
@@ -86,13 +87,12 @@ fun ModelBottomSheetOffer(
     state: OfferViewState = OfferViewState(),
     sheetState: ModalBottomSheetState = ModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded),
     sign: () -> Unit = {},
+    choseFee: (Double) -> Unit = {}
 ) {
 
     var spendableExpanded by remember { mutableStateOf(false) }
     val modifierLazy = remember { Modifier }
     var heightOfLazyColumn by remember { mutableStateOf(-1) }
-
-    var feeCommission by remember { mutableStateOf(0) }
 
     LaunchedEffect(heightOfLazyColumn) {
         if (heightOfLazyColumn != -1)
@@ -249,18 +249,10 @@ fun ModelBottomSheetOffer(
                     )
                     FixedSpacer(height = size_9)
 
-                    ChooseFeeProgressValue(
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    FixedSpacer(height = size_14)
-
-                    DefaultText(
-                        text = "Custom",
-                        size = text_14,
-                        color = Provider.current.green,
-                        fontWeight = FontWeight.W500,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Start
+                    FeeContainer(
+                        normal = state.dexieFee,
+                        isEnough = state.feeEnough,
+                        fee = choseFee
                     )
                     FixedSpacer(height = size_20)
                 }
@@ -456,22 +448,12 @@ fun ModelBottomSheetAcceptOfferPreview() {
                 acceptOffer = true,
                 offered = listOf(
                     CatToken("XCH", "", 0.00003),
-                    CatToken("GAD", "", 0.00003),
-                    NftToken(
-                        "alsdjasl;dka;",
-                        "saldjasldak;ldal;sd",
-                        "https://nftstorage.link/ipfs/bafybeiee256ja5xiyrec53geiyuaz352rh2422y3zr37t3dj2xca7stixe/9766.png"
-                    ),
+                    CatToken("GAD", "", 0.00003)
                 ),
                 requested = listOf(
                     CatToken("XCC", "", 0.0013),
                     CatToken("GWT", "", 0.11),
-                    CatToken("CHIA", "", 0.456),
-                    NftToken(
-                        "alsdjasl;dka;",
-                        "saldjasldak;ldal;sd",
-                        "https://nftstorage.link/ipfs/bafybeiee256ja5xiyrec53geiyuaz352rh2422y3zr37t3dj2xca7stixe/9766.png"
-                    )
+                    CatToken("CHIA", "", 0.456)
                 )
             )
         )

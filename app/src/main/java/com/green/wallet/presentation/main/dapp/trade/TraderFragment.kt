@@ -19,7 +19,6 @@ import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -73,7 +72,7 @@ class TraderFragment : BaseComposeFragment() {
                                 callFlutterToCreateOffer(it.params)
                             }
 
-                            is TraderEvent.SendOffer -> {
+                            is TraderEvent.SignOffer -> {
                                 callFlutterToPushTakeOffer(
                                     viewModel.offerViewState.value.offer,
                                     it.fee

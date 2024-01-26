@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.dapp.trade.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,26 +10,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.green.compose.R
 import com.green.compose.custom.fee.FixedSpacer
+import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_12
 import com.green.compose.dimens.size_15
+import com.green.compose.dimens.size_218
 import com.green.compose.dimens.size_24
+import com.green.compose.dimens.size_40
 import com.green.compose.dimens.size_44
+import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_20
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
+import com.green.wallet.R
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun WebViewHeader(
     modifier: Modifier = Modifier,
@@ -36,6 +47,9 @@ fun WebViewHeader(
     threeDots: () -> Unit = {},
     closeX: () -> Unit = {}
 ) {
+
+    var dropDownVisible by remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -77,7 +91,7 @@ fun WebViewHeader(
                 tint = Provider.current.txtPrimaryColor,
                 modifier = Modifier
                     .clickable {
-                        threeDots()
+                        dropDownVisible = true
                     }
             )
             FixedSpacer(width = size_12)
@@ -88,6 +102,127 @@ fun WebViewHeader(
                 modifier = Modifier.size(size_24),
                 tint = Provider.current.txtPrimaryColor
             )
+        }
+
+    }
+    DropdownMenu(
+        expanded = dropDownVisible,
+        modifier = Modifier
+            .background(
+                color = Provider.current.iconGrey
+            )
+            .width(size_218),
+        onDismissRequest = {
+        }) {
+        DropdownMenuItem(
+            modifier = Modifier
+                .height(size_40),
+            onClick = {
+            }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_turn_off),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = size_15)
+                )
+                DefaultText(
+                    text = "Обновить",
+                    size = text_12,
+                    color = Provider.current.txtPrimaryColor,
+                    modifier = Modifier.padding(start = size_12)
+                )
+            }
+        }
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(size_1)
+                .background(Provider.current.dividerColor)
+        )
+        DropdownMenuItem(
+            modifier = Modifier.height(size_40),
+            onClick = {
+
+            }) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_share),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = size_15)
+                )
+                DefaultText(
+                    text = "Поделиться",
+                    size = text_12,
+                    color = Provider.current.txtPrimaryColor,
+                    modifier = Modifier.padding(start = size_12)
+                )
+            }
+        }
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(size_1)
+                .background(Provider.current.dividerColor)
+        )
+        DropdownMenuItem(
+            modifier = Modifier.height(size_40),
+            onClick = {
+
+            }) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_copy_green),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = size_15)
+                )
+                DefaultText(
+                    text = "Поделиться",
+                    size = text_12,
+                    color = Provider.current.txtPrimaryColor,
+                    modifier = Modifier.padding(start = size_12)
+                )
+            }
+        }
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(size_1)
+                .background(Provider.current.dividerColor)
+        )
+
+        DropdownMenuItem(
+            modifier = Modifier.height(size_40),
+            onClick = {
+
+            }) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_turn_off),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(start = size_15)
+                )
+                DefaultText(
+                    text = "Поделиться",
+                    size = text_12,
+                    color = Provider.current.txtPrimaryColor,
+                    modifier = Modifier.padding(start = size_12)
+                )
+            }
         }
     }
 }

@@ -12,5 +12,6 @@ interface NFTInteract {
 
 	suspend fun getNftINFOByHash(nftCoinHash: String): NFTInfo
 
+	suspend fun updateNftInfoPending(pending:Boolean,nftHash:String)
 
 }
