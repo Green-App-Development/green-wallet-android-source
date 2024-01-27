@@ -1,5 +1,7 @@
 package com.green.wallet.presentation.main.dapp.trade
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -7,8 +9,10 @@ import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
 import com.google.gson.Gson
 import com.green.compose.theme.GreenWalletTheme
+import com.green.wallet.R
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.base.BaseComposeFragment
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.di.factory.ViewModelFactory
@@ -17,6 +21,8 @@ import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getMainActivity
+import com.green.wallet.presentation.tools.getStringResource
+import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -27,6 +33,9 @@ class TraderFragment : BaseComposeFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: TraderViewModel by viewModels { viewModelFactory }
+
+    @Inject
+    lateinit var dialogManager: DialogManager
 
     val methodChannel by lazy {
         MethodChannel(
@@ -79,6 +88,14 @@ class TraderFragment : BaseComposeFragment() {
                                 )
                             }
 
+                            is TraderEvent.ShowTakeOfferDialog -> {
+                                showSuccessSendMoneyDialog()
+                            }
+
+                            is TraderEvent.FailureTakingOffer -> {
+                                showFailedSendingTransaction()
+                            }
+
                             else -> Unit
                         }
                     }
@@ -112,6 +129,12 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
                     viewModel.saveSpentCoins(spentCoins)
+                }
+
+                "ErrorPushingOffer" -> {
+                    JavaJSThreadCommunicator.resultTakeOffer = ""
+                    JavaJSThreadCommunicator.wait = false
+                    viewModel.handleEvent(TraderEvent.FailureTakingOffer)
                 }
             }
         }
@@ -163,7 +186,48 @@ class TraderFragment : BaseComposeFragment() {
     }
 
     override fun collectFlowOnStart(scope: CoroutineScope) {
+        viewModel.viewState.collectFlow(scope) {
+            if (it.isLoading) {
+                dialogManager.showProgress(requireActivity())
+            } else {
+                dialogManager.hidePrevDialogs()
+            }
+        }
+    }
 
+    private fun showSuccessSendMoneyDialog() {
+        getMainActivity().apply {
+            if (!this.isDestroyed) {
+                dialogManager.showSuccessDialog(
+                    this,
+                    getStringResource(R.string.send_token_pop_up_succsess_title),
+                    getStringResource(R.string.send_token_pop_up_succsess_description),
+                    getStringResource(R.string.ready_btn),
+                    isDialogOutsideTouchable = false
+                ) {
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        popBackStackOnce()
+                    }, 500)
+                }
+            }
+        }
+
+    }
+
+    private fun showFailedSendingTransaction() {
+        dialogManager.hidePrevDialogs()
+        getMainActivity().apply {
+            if (!this.isFinishing) {
+                dialogManager.showFailureDialog(
+                    this,
+                    getStringResource(R.string.pop_up_failed_error_title),
+                    getStringResource(R.string.send_token_pop_up_transaction_fail_error_description),
+                    getStringResource(R.string.pop_up_failed_error_return_btn)
+                ) {
+
+                }
+            }
+        }
     }
 
 

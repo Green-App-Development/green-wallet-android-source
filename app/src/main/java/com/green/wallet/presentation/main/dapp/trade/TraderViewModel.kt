@@ -139,6 +139,9 @@ class TraderViewModel @Inject constructor(
                     }
                 }
             }
+            JavaJSThreadCommunicator.resultTakeOffer = "SUCCESS"
+            JavaJSThreadCommunicator.wait = false
+            setEvent(TraderEvent.SuccessTakingOffer)
         }
     }
 

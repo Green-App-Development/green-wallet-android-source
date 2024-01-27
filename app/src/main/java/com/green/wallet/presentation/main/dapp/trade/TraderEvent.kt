@@ -16,4 +16,7 @@ sealed interface TraderEvent {
 
     data class ShowCreateOfferDialog(val params: CreateOfferParams) : TraderEvent
 
+    object SuccessTakingOffer : TraderEvent
+
+    object FailureTakingOffer : TraderEvent
 }

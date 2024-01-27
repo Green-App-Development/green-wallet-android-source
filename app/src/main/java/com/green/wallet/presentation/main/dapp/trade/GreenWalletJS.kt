@@ -30,12 +30,13 @@ class GreenWalletJS(
         }
         onEvent(TraderEvent.ParseTakeOffer(params.offer.orEmpty()))
         JavaJSThreadCommunicator.wait = true
+        JavaJSThreadCommunicator.resultTakeOffer = ""
         while (JavaJSThreadCommunicator.wait) {
             Thread.sleep(1000L)
             VLog.d("Waiting for takeOffer : Name Thread: ${Thread.currentThread().name}")
         }
         if (JavaJSThreadCommunicator.resultTakeOffer.isEmpty())
-            promise.reject(Throwable("Can't take offer"))
+            promise.reject(Throwable("ERROR"))
         else
             promise.resolve(JavaJSThreadCommunicator.resultTakeOffer)
     }
