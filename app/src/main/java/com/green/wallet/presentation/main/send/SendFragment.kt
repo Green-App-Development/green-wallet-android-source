@@ -142,7 +142,7 @@ class SendFragment : BaseFragment() {
     ): View {
         binding = FragmentSendBinding.inflate(layoutInflater)
         VLog.d("OnCreateView on send Fragment")
-        curActivity().sendCoinsFragmentView = view
+        curActivity().sendCoinsFragmentView = binding.root
         return binding.root
     }
 

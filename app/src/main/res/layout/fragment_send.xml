@@ -272,12 +272,12 @@
                     android:id="@+id/send_views_constraint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp">
+                    android:layout_marginTop="10dp">
 
                     <View
                         android:id="@+id/dummy_view1"
                         android:layout_width="0dp"
-                        android:layout_height="10dp"
+                        android:layout_height="2dp"
                         android:background="@android:color/transparent"
                         app:layout_constraintEnd_toEndOf="@+id/guideline16"
                         app:layout_constraintStart_toStartOf="@+id/guideline15"
