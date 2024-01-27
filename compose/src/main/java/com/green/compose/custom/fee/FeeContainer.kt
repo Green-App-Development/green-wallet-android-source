@@ -32,11 +32,7 @@ fun FeeContainer(
 ) {
 
     var chosenPos by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(true) {
-        fee(normal)
-    }
-
+    
     Column(modifier = Modifier.fillMaxWidth()) {
         var customShown by remember { mutableStateOf(false) }
         if (customShown) {

@@ -954,20 +954,18 @@ class SendFragment : BaseFragment() {
         lifecycleScope.launch(handler) {
             val amountInUSD =
                 amount * viewModel.getTokenPriceByCode(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
-            binding.txtAmountInUSD.setText("⁓${formattedDollarWithPrecision(amountInUSD, 3)}")
+            binding.txtAmountInUSD.text = "⁓${formattedDollarWithPrecision(amountInUSD, 3)}"
             val gadPrice = viewModel.getTokenPriceByCode(binding.txtGAD.text.toString())
             var convertedAmountGAD = 0.0
             if (gadPrice != 0.0) {
                 convertedAmountGAD = amountInUSD / gadPrice
             }
-            binding.txtAmountInGAD.setText(
-                "~${
-                    formattedDollarWithPrecision(
-                        convertedAmountGAD,
-                        3
-                    )
-                }"
-            )
+            binding.txtAmountInGAD.text = "~${
+                formattedDollarWithPrecision(
+                    convertedAmountGAD,
+                    3
+                )
+            }"
         }
     }
 
@@ -1080,14 +1078,21 @@ class SendFragment : BaseFragment() {
 
     private fun initConfirmDialogDetails(dialog: Dialog) {
         dialog.apply {
-            findViewById<TextView>(R.id.edtConfirmToken).setText(tokenAdapter.dataOptions[tokenAdapter.selectedPosition])
-            findViewById<TextView>(R.id.edtConfirmNetwork).setText(walletAdapter.walletList[walletAdapter.selectedPosition].networkType)
-            findViewById<TextView>(R.id.edtConfirmWalletAmount).setText(binding.edtEnterAmount.text.toString())
-            var commissionText = viewModel.viewState.value.chosenFee.toString()
+            findViewById<TextView>(R.id.edtConfirmToken).text =
+                tokenAdapter.dataOptions[tokenAdapter.selectedPosition]
+            findViewById<TextView>(R.id.edtConfirmNetwork).text =
+                walletAdapter.walletList[walletAdapter.selectedPosition].networkType
+            findViewById<TextView>(R.id.edtConfirmWalletAmount).text =
+                formattedDoubleAmountWithPrecision(
+                    binding.edtEnterAmount.text.toString().toDoubleOrNull() ?: 0.0
+                )
+            var commissionText =
+                formattedDoubleAmountWithPrecision(viewModel.viewState.value.chosenFee)
             if (commissionText.isEmpty())
                 commissionText = "0"
-            findViewById<TextView>(R.id.edtConfirmWalletCommision).setText("$commissionText")
-            findViewById<TextView>(R.id.edtConfirmAddressWallet).setText(binding.edtAddressWallet.text.toString())
+            findViewById<TextView>(R.id.edtConfirmWalletCommision).text = commissionText
+            findViewById<TextView>(R.id.edtConfirmAddressWallet).text =
+                binding.edtAddressWallet.text.toString()
         }
     }
 

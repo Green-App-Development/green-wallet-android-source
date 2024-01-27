@@ -105,7 +105,6 @@ class SendViewModel @Inject constructor(
     private fun getDexieFee() {
         viewModelScope.launch {
             val dexie = dexieInteract.getDexieMinFee()
-            VLog.d("Dexie Recommended Fee : $dexie")
             _viewState.update {
                 it.copy(
                     dexieFee = dexie.recommended
@@ -131,6 +130,7 @@ class SendViewModel @Inject constructor(
     }
 
     fun updateChosenFee(fee: Double) {
+        VLog.d("Chosen Fee on Send VM : $fee")
         viewModelScope.launch {
             _viewState.update { it.copy(chosenFee = fee) }
             validatingEnoughAmounts()

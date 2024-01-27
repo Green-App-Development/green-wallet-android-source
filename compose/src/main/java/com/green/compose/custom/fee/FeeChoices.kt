@@ -11,16 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.green.compose.dimens.size_2
+import com.green.compose.dimens.size_4
 import com.green.compose.dimens.size_5
 import com.green.compose.dimens.size_54
 import com.green.compose.dimens.text_14
@@ -28,7 +24,6 @@ import com.green.compose.dimens.text_15
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
-import com.green.compose.utils.doubleCeilString
 import com.green.compose.utils.formattedDoubleAmountWithPrecision
 import kotlinx.coroutines.delay
 
@@ -47,15 +42,19 @@ fun FeeChoices(
     val feeAmount2 = formattedDoubleAmountWithPrecision(normal * 2, 6)
     val feeAmount3 = formattedDoubleAmountWithPrecision(normal * 3, 6)
 
+    LaunchedEffect(normal) {
+        fee(feeAmount1.toDouble())
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(size_54)
             .background(color = Provider.current.feeBackground, shape = RoundedCornerShape(size_5))
             .padding(
-                vertical = size_5,
-                horizontal = size_2
-            )
+                horizontal = size_4
+            ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
         Column(
@@ -150,7 +149,7 @@ fun FeeChoices(
 
 @Composable
 internal fun Modifier.customFeeChosenBackground(pos: Int, curPos: Int): Modifier {
-    val color = if (pos == curPos) Provider.current.feeBackgroundChoosen else Color.Unspecified
+    val color = if (pos == curPos) Provider.current.feeBackgroundChosen else Color.Unspecified
     return background(
         color = color,
         shape = RoundedCornerShape(size_5)
