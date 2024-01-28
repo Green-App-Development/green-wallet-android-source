@@ -46,6 +46,7 @@ import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.tools.*
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
@@ -1109,8 +1110,8 @@ class SendFragment : BaseFragment() {
         dialog.findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             it.startAnimation(anim.getBtnEffectAnimation())
             dialog.dismiss()
-            curActivity().showEnterPasswordFragment(reason = ReasonEnterCode.SEND_MONEY)
-            waitingResponseEntPassCodeFragment()
+            PinCodeFragment.build(reason = ReasonEnterCode.SEND_TRANSACTION)
+                .show(childFragmentManager, "")
         }
         dialog.findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
             dialog.dismiss()
@@ -1172,6 +1173,11 @@ class SendFragment : BaseFragment() {
 
                 TransferEvent.OnErrorTransfer -> {
                     showFailedSendingTransaction()
+                }
+
+                TransferEvent.OnPinConfirmed -> {
+                    initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+                    viewModel.setLoading(true)
                 }
             }
         }

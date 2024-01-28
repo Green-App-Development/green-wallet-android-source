@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.WalletWithTokens
 import com.green.wallet.domain.interact.*
+import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
+import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
@@ -19,12 +21,23 @@ class SendViewModel @Inject constructor(
     private val greenAppInteract: GreenAppInteract,
     private val tokenInteract: TokenInteract,
     private val spentCoinsInteract: SpentCoinsInteract,
-    private val dexieInteract: DexieInteract
+    private val dexieInteract: DexieInteract,
+    private val pinCodeCommunicator: PinCodeCommunicator
 ) : BaseViewModel<TransferState, TransferEvent>(TransferState()) {
 
     init {
         VLog.d("SendFragmentViewModel memory location :  $this")
         getDexieFee()
+
+        pinCodeCommunicator.onSuccessPassCode = {
+            when (it) {
+                ReasonEnterCode.SEND_TRANSACTION -> {
+                    setEvent(TransferEvent.OnPinConfirmed)
+                }
+
+                else -> Unit
+            }
+        }
     }
 
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()

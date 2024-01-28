@@ -6,4 +6,6 @@ sealed interface TransferEvent {
 
     object OnErrorTransfer : TransferEvent
 
+    object OnPinConfirmed : TransferEvent
+
 }

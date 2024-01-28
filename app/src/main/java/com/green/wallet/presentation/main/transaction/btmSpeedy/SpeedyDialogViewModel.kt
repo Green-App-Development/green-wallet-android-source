@@ -20,6 +20,7 @@ import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
+import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
@@ -41,7 +42,7 @@ class SpeedyDialogViewModel @Inject constructor(
     private val transactionInteract: TransactionInteract,
     private val prefs: PrefsInteract,
     private val dexieInteract: DexieInteract,
-    passCodeCommunicator: PassCodeCommunicator
+    pinCodeCommunicator: PinCodeCommunicator
 ) : BaseViewModel<SpeedyTokenState, SpeedyTokenEvent>(SpeedyTokenState()) {
 
     private lateinit var transaction: Transaction
@@ -52,10 +53,10 @@ class SpeedyDialogViewModel @Inject constructor(
     init {
         getDexieFeeInteract()
 
-        passCodeCommunicator.onSuccessPassCode = {
+        pinCodeCommunicator.onSuccessPassCode = {
             when (it) {
-                ReasonEnterCode.SEND_MONEY -> {
-                    setEvent(SpeedyTokenEvent.SuccessPinCode)
+                ReasonEnterCode.SPEEDY_TRAN -> {
+                    setEvent(SpeedyTokenEvent.ConfirmedPinCode)
                 }
 
                 else -> Unit

@@ -20,6 +20,7 @@ import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsViewModel
 import com.green.wallet.presentation.main.nft.nftsend.NFTSendViewModel
 import com.green.wallet.presentation.main.nft.usernfts.UserNFTTokensViewModel
 import com.green.wallet.presentation.main.notification.NotifViewModel
+import com.green.wallet.presentation.main.pincode.PinCodeViewModel
 import com.green.wallet.presentation.main.receive.ReceiveViewModel
 import com.green.wallet.presentation.main.send.SendViewModel
 import com.green.wallet.presentation.main.support.SupportViewModel
@@ -224,5 +225,9 @@ abstract class ViewModelsModule {
     @ViewModelKey(SpeedyDialogViewModel::class)
     abstract fun bindingCatDialogViewModel(viewModel: SpeedyDialogViewModel): ViewModel
 
+    @IntoMap
+    @Binds
+    @ViewModelKey(PinCodeViewModel::class)
+    abstract fun bindingPinCodeViewModel(viewModel: PinCodeViewModel): ViewModel
 
 }

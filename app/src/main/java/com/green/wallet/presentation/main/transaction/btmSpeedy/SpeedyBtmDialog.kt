@@ -4,10 +4,16 @@ import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.common.tools.convertNetworkTypeForFlutter
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
@@ -19,6 +25,7 @@ import com.green.wallet.presentation.custom.base.BaseBottomSheetDialogFragment
 import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
@@ -27,6 +34,8 @@ import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.HashMap
 import javax.inject.Inject
 
@@ -68,9 +77,8 @@ class SpeedyBtmDialog :
             vm.event.collectFlow(this) {
                 when (it) {
                     SpeedyTokenEvent.OnSign -> {
-                        getMainActivity().showEnterPasswordFragment(
-                            reason = ReasonEnterCode.SEND_MONEY
-                        )
+                        PinCodeFragment.build(reason = ReasonEnterCode.SPEEDY_TRAN)
+                            .show(childFragmentManager, "")
                     }
 
                     SpeedyTokenEvent.OnSpeedError -> {
@@ -81,7 +89,8 @@ class SpeedyBtmDialog :
                         showSuccessSendMoneyDialog()
                     }
 
-                    SpeedyTokenEvent.SuccessPinCode -> {
+                    SpeedyTokenEvent.ConfirmedPinCode -> {
+                        VLog.d("ConfirmedPinCode on speedy dialog fragment")
                         when (state.token) {
                             is NftToken -> {
                                 nftTokenRePush()
@@ -110,14 +119,37 @@ class SpeedyBtmDialog :
                     getStringResource(R.string.ready_btn),
                     isDialogOutsideTouchable = false
                 ) {
-                    Handler(Looper.myLooper()!!).postDelayed({
-                        popBackStackOnce()
-                    }, 500)
                     dismiss()
                 }
             }
         }
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        initViewState()
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    private fun initViewState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.viewState.collectFlow(this@launch) {
+                    initLoadingState(it)
+                }
+            }
+        }
+    }
+
+    private fun initLoadingState(it: SpeedyTokenState) {
+        if (it.isLoading) {
+            dialogManager.showProgress(requireActivity())
+        } else {
+            dialogManager.hidePrevDialogs()
+        }
     }
 
     private fun showFailedSendingTransaction() {
@@ -209,6 +241,26 @@ class SpeedyBtmDialog :
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        VLog.d("onStart on speedy btm dialog")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        VLog.d("onResume on speedy btm dialog")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        VLog.d("onDestroy on speedy btm dialog")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        VLog.d("onDestroyView on speedy btm dialog")
     }
 
     companion object {
