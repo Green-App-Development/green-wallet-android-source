@@ -525,6 +525,13 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
         return R.style.AppBottomSheetDialogTheme
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (dialogManager.isProgressDialogShowing() == true) {
+            dialogManager.hidePrevDialogs()
+            dialogManager.showProgress(requireActivity())
+        }
+    }
 
     interface OnXCHCATListener {
         fun onSuccessClearFields()

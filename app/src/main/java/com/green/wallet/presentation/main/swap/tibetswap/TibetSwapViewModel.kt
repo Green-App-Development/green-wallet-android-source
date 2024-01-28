@@ -43,7 +43,7 @@ class TibetSwapViewModel @Inject constructor(
     val checkingCATHome: CheckingCATOnHome,
     private val tibetInteract: TibetInteract,
     private val dexieInteract: DexieInteract
-) : BaseViewModel<TibetSwapState, Unit>(TibetSwapState()) {
+) : BaseViewModel<TibetSwapState, TibetSwapEvent>(TibetSwapState()) {
 
     private val _viewStateLiquidity = MutableStateFlow(TibetLiquidityViewState())
     val viewStateLiquidity = _viewStateLiquidity.asStateFlow()

@@ -518,6 +518,14 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         return Gson().fromJson(item, NetworkItem::class.java)
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (dialogManager.isProgressDialogShowing() == true) {
+            dialogManager.hidePrevDialogs()
+            dialogManager.showProgress(requireActivity())
+        }
+    }
+
     override fun getTheme(): Int {
         return R.style.AppBottomSheetDialogTheme
     }
