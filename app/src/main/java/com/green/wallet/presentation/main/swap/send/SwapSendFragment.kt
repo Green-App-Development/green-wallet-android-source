@@ -49,6 +49,7 @@ import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.main.send.WalletListAdapter
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
@@ -457,24 +458,6 @@ class SwapSendFragment : BaseFragment() {
     }
 
     private var passcodeJob: Job? = null
-
-    private fun waitingResponseEntPassCodeFragment() {
-        passcodeJob?.cancel()
-        passcodeJob = lifecycleScope.launch {
-            curActivity().mainViewModel.money_send_success.collect {
-                if (it) {
-                    VLog.d("Success entering the passcode : $it")
-                    delay(500)
-                    dialogManager.showProgress(curActivity())
-                    initFlutterToGenerateSpendBundle(
-                        binding.edtAddressWallet.text.toString().lowercase()
-                    )
-                    curActivity().mainViewModel.send_money_false()
-                }
-            }
-        }
-    }
-
 
     private fun sendTransaction(
         spendBundleJSON: String,
@@ -969,8 +952,8 @@ class SwapSendFragment : BaseFragment() {
         dialog.findViewById<Button>(R.id.btnConfirm).setOnClickListener {
             it.startAnimation(anim.getBtnEffectAnimation())
             dialog.dismiss()
-            curActivity().showEnterPasswordFragment(reason = ReasonEnterCode.SEND_MONEY)
-            waitingResponseEntPassCodeFragment()
+            PinCodeFragment.build(reason = ReasonEnterCode.SEND_TRANSACTION)
+                .show(childFragmentManager, "")
         }
         dialog.findViewById<LinearLayout>(R.id.back_layout).setOnClickListener {
             dialog.dismiss()
@@ -980,6 +963,16 @@ class SwapSendFragment : BaseFragment() {
     override fun collectFlowOnStarted(scope: CoroutineScope) {
         viewModel.viewState.collectFlow(scope) {
             initBtnState(it)
+        }
+        viewModel.event.collectFlow(scope) {
+            when (it) {
+                SwapSendEvent.PinConfirmed -> {
+                    dialogManager.showProgress(requireActivity())
+                    initFlutterToGenerateSpendBundle(
+                        binding.edtAddressWallet.text.toString().lowercase()
+                    )
+                }
+            }
         }
     }
 

@@ -12,6 +12,8 @@ import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
+import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +29,21 @@ class SwapSendViewModel @Inject constructor(
     private val greenAppInteract: GreenAppInteract,
     private val tokenInteract: TokenInteract,
     private val spentCoinsInteract: SpentCoinsInteract,
-    private val dexieInteract: DexieInteract
-) : BaseViewModel<SwapSendViewState, Unit>(SwapSendViewState()) {
+    private val dexieInteract: DexieInteract,
+    private val pinCodeCommunicator: PinCodeCommunicator
+) : BaseViewModel<SwapSendViewState, SwapSendEvent>(SwapSendViewState()) {
 
     init {
         getDexieFee()
+        pinCodeCommunicator.onSuccessPassCode = {
+            when (it) {
+                ReasonEnterCode.SEND_TRANSACTION -> {
+                    setEvent(SwapSendEvent.PinConfirmed)
+                }
+
+                else -> Unit
+            }
+        }
     }
 
     fun queryWalletWithTokensList(type: String, fingerPrint: Long?) =
