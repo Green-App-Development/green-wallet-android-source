@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
+import com.green.wallet.presentation.tools.ReasonEnterCode
+import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,25 +16,42 @@ import javax.inject.Inject
 
 
 class ManageWalletViewModel @Inject constructor(
-	private val walletInteract: WalletInteract,
-	private val blockChainInteract: BlockChainInteract
+    private val walletInteract: WalletInteract,
+    private val blockChainInteract: BlockChainInteract,
+    private val pinCodeCommunicator: PinCodeCommunicator
 ) :
-	ViewModel() {
+    BaseViewModel<Unit, ManageWalletEvent>(Unit) {
 
-	fun getFlowAllWalletListFirstHomeIsAddedThenRemain() =
-		walletInteract.getAllWalletListFirstHomeIsAddedThenRemainFlow()
+    init {
+        pinCodeCommunicator.onSuccessPassCode = {
+            when (it) {
+                ReasonEnterCode.SHOW_DETAILS -> {
+                    setEvent(ManageWalletEvent.ShowData(true))
+                }
 
-	suspend fun getAllWalletList() = walletInteract.getAllWalletList()
+                else -> Unit
+            }
+        }
+    }
 
-	private val _walletList = MutableStateFlow<List<Wallet>?>(null)
-	val walletList = _walletList.asStateFlow()
+    fun handleEvent(event: ManageWalletEvent) {
+        setEvent(event)
+    }
 
-	private var job: Job? = null
+    fun getFlowAllWalletListFirstHomeIsAddedThenRemain() =
+        walletInteract.getAllWalletListFirstHomeIsAddedThenRemainFlow()
 
-	fun deleteWallet(wallet: Wallet) {
-		viewModelScope.launch {
-			walletInteract.deleteWallet(wallet)
-		}
-	}
+    suspend fun getAllWalletList() = walletInteract.getAllWalletList()
+
+    private val _walletList = MutableStateFlow<List<Wallet>?>(null)
+    val walletList = _walletList.asStateFlow()
+
+    private var job: Job? = null
+
+    fun deleteWallet(wallet: Wallet) {
+        viewModelScope.launch {
+            walletInteract.deleteWallet(wallet)
+        }
+    }
 
 }
