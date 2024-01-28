@@ -502,7 +502,7 @@ class SendFragment : BaseFragment() {
         if (tokenAdapter.selectedPosition != 0) {
             binding.txtGAD.text = "XCH"
         } else {
-            binding.txtGAD.text = "GAD"
+            binding.txtGAD.text = "GWT"
         }
         if (binding.edtEnterAmount.text.toString().isNotEmpty()) {
             val amount = binding.edtEnterAmount.text.toString().toDouble()
@@ -900,6 +900,7 @@ class SendFragment : BaseFragment() {
 
         edtEnterAmount.addTextChangedListener {
             viewModel.updateSendingAmount(it.toString())
+            convertAmountToUSDGAD(it.toString().toDoubleOrNull() ?: 0.0)
         }
 
         btnContinue.setOnClickListener {

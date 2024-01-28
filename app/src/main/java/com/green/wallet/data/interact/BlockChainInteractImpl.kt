@@ -75,6 +75,7 @@ class BlockChainInteractImpl @Inject constructor(
         var savedTime = greenAppInteract.getServerTime()
         if (savedTime == -1L) savedTime = System.currentTimeMillis()
         val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
+        VLog.d("Inserting wallet Entity mnemonics : ${walletEntity.encMnemonics}")
         walletDao.insertWallet(walletEntity = walletEntity)
         if (imported) {
             CoroutineScope(Dispatchers.IO + handler).launch {

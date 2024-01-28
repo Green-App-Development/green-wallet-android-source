@@ -827,7 +827,6 @@ class MainActivity : BaseActivity(), ComposeProvider {
     private var prevSoftKeyboardValue = false
 
     private fun changeVisibilityOfViewsDuringSoftKeyBoardOpen(visibility: Boolean) {
-		VLog.d("Soft key board is open : $visibility")
 
         prevSoftKeyboardValue = visibility
 
@@ -845,9 +844,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
                 tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
                 sendCoinsFragmentView!!.findViewById<OnlyVerticalSwipeRefreshLayout>(swipeRefresh).isEnabled =
                     !visibility
-                VLog.d("TempLinear Visibility for send : ${tempLinear.visibility}")
             }
-            VLog.d("TempLinear View SendFragmentView : ${this.sendCoinsFragmentView}")
 
             if (listingFragmentView != null) {
                 val linearAgree = listingFragmentView!!.findViewById<LinearLayout>(linearAgree)
