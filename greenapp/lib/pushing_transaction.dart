@@ -366,13 +366,13 @@ class PushingTransaction {
             try {
               var args = call.arguments;
               debugPrint("PushingOffer args got called : ${call.arguments}");
-              var offer = args["offer"];
+              var offer = args["offer"].toString();
               var mnemonics = args["mnemonics"].toString().split(' ');
               var url = args["url"].toString();
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
-              var spentCoins = args["spentCoins"];
+              var spentCoins = args["spentCoins"].toString();
               pushingOfferWithCAT(
                   offerString: offer,
                   mnemonics: mnemonics,
@@ -1090,7 +1090,8 @@ class PushingTransaction {
 
       final offerFrom32 = Offer.fromBench32(offerString);
 
-      debugPrint("Json Encode before responseOffer : ${jsonEncode(spentCoinsMap)}");
+      debugPrint("Json Encode before responseOffer TargetPh: $targePh");
+      debugPrint("ChangePh before responseOffer: $changePh");
 
       final responseResult = await offerService.responseOffer(
           fee: fee,

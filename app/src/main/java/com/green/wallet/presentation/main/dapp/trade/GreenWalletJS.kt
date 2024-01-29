@@ -16,7 +16,7 @@ class GreenWalletJS(
         onEvent(TraderEvent.ShowConnectionDialog)
         JavaJSThreadCommunicator.wait = true
         while (JavaJSThreadCommunicator.wait) {
-            Thread.sleep(1000L)
+            Thread.sleep(5000L)
             VLog.d("Waiting for waitingConnection : Name Thread :${Thread.currentThread().name}")
         }
         promise.resolve(JavaJSThreadCommunicator.connected)
@@ -32,7 +32,7 @@ class GreenWalletJS(
         JavaJSThreadCommunicator.wait = true
         JavaJSThreadCommunicator.resultTakeOffer = ""
         while (JavaJSThreadCommunicator.wait) {
-            Thread.sleep(1000L)
+            Thread.sleep(5000L)
             VLog.d("Waiting for takeOffer : Name Thread: ${Thread.currentThread().name}")
         }
         if (JavaJSThreadCommunicator.resultTakeOffer.isEmpty())

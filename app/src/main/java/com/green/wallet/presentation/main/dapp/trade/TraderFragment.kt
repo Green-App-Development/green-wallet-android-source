@@ -71,8 +71,8 @@ class TraderFragment : BaseComposeFragment() {
                             }
 
                             is TraderEvent.ParseTakeOffer -> {
-                                callFlutterTakeOffer(it.offer)
                                 viewModel.updateOfferDialogState(it.offer)
+                                callFlutterTakeOffer(it.offer)
                                 viewModel.handleEvent(TraderEvent.ShowTakeOfferDialog)
                             }
 
