@@ -13,6 +13,7 @@ import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
+import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.system.measureTimeMillis
 
 
@@ -37,10 +39,13 @@ class TraderViewModel @Inject constructor(
     val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
     private val dexieInteract: DexieInteract,
-    private val nftInfo: NFTInteract
+    private val nftInfo: NFTInteract,
+    private val pinCodeCommunicator: PinCodeCommunicator
 ) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
 
     var wallet: Wallet? = null
+
+    private var requestedXCHAmount: Double = 0.0
 
     private val _offerViewState = MutableStateFlow(
         OfferViewState()
@@ -71,13 +76,29 @@ class TraderViewModel @Inject constructor(
             }
         }
 
+        pinCodeCommunicator.onSuccessPassCode = {
+            when (it) {
+                ReasonEnterCode.CONNECTION_REQUEST -> {
+                    _viewState.update { it.copy(isConnected = true) }
+                    JavaJSThreadCommunicator.connected = true
+                    JavaJSThreadCommunicator.wait = false
+                }
+
+                ReasonEnterCode.ACCEPT_OFFER -> {
+                    setEvent(TraderEvent.PinConfirmAcceptOffer)
+                }
+
+                else -> Unit
+            }
+        }
+
         initFirstWallet()
     }
 
     private fun initFirstWallet() {
         viewModelScope.launch {
             wallet = walletInteract.getHomeFirstWallet()
-            VLog.d("onFirstWallet received : $wallet")
+            VLog.d("onFirstWallet received Spendable Balance for trader : ${wallet?.balance}")
             initDexieFee()
         }
     }
@@ -89,6 +110,19 @@ class TraderViewModel @Inject constructor(
 
     fun handleEvent(event: TraderEvent) {
         setEvent(event)
+        when (event) {
+            is TraderEvent.ChoseFee -> {
+                val total = requestedXCHAmount + event.fee
+                _offerViewState.update {
+                    it.copy(
+                        feeEnough = total <= (wallet?.balance ?: 0.0),
+                        chosenFee = event.fee
+                    )
+                }
+            }
+
+            else -> Unit
+        }
     }
 
     fun updateOfferDialogState(offer: String) {
@@ -99,6 +133,7 @@ class TraderViewModel @Inject constructor(
         requestedJson: String,
         offeredJson: String
     ) {
+        requestedXCHAmount = 0.0
         viewModelScope.launch {
             _offerViewState.update {
                 it.copy(
@@ -141,6 +176,7 @@ class TraderViewModel @Inject constructor(
             }
             JavaJSThreadCommunicator.resultTakeOffer = "SUCCESS"
             JavaJSThreadCommunicator.wait = false
+            setLoading(false)
             setEvent(TraderEvent.SuccessTakingOffer)
         }
     }
@@ -185,7 +221,7 @@ class TraderViewModel @Inject constructor(
                     assetAmount / if (assetID.isEmpty()) PRECISION_XCH else PRECISION_CAT
 
                 var spendableBalance = 0.0
-                if (needSpendableBalance && false) {
+                if (needSpendableBalance) {
                     spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
                         assetID,
                         code,
@@ -193,9 +229,13 @@ class TraderViewModel @Inject constructor(
                     ).first()
                 }
 
+                if (code == "XCH") {
+                    requestedXCHAmount = abs(dividedAmount)
+                }
+
                 token = CatToken(
                     assetID = assetID,
-                    amount = dividedAmount,
+                    amount = abs(dividedAmount),
                     code = code,
                     spendableBalance = spendableBalance
                 )
@@ -207,6 +247,10 @@ class TraderViewModel @Inject constructor(
         }
 
         return list
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _viewState.update { it.copy(isLoading = isLoading) }
     }
 
 }

@@ -10,5 +10,6 @@ enum class ReasonEnterCode {
     SPEEDY_TRAN,
     SEND_TRANSACTION,
     SHOW_DETAILS,
-    REMOVE_WALLET
+    REMOVE_WALLET,
+    ACCEPT_OFFER
 }

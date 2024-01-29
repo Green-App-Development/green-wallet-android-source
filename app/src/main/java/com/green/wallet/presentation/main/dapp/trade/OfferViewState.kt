@@ -9,6 +9,5 @@ data class OfferViewState(
     val offer: String = "",
     val chosenFee: Double = 0.0,
     val feeEnough: Boolean = false,
-    val spendableBalance: Double = 0.0,
     val dexieFee: Double = 0.0,
 )

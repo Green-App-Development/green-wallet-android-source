@@ -1,7 +1,5 @@
 package com.green.wallet.presentation.main.dapp.trade
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,8 +13,10 @@ import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.base.BaseComposeFragment
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
+import com.green.wallet.presentation.custom.isThisChivesNetwork
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.dapp.trade.params.CreateOfferParams
+import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
@@ -66,9 +66,8 @@ class TraderFragment : BaseComposeFragment() {
                         VLog.d("TraderEvent received : $it")
                         when (it) {
                             TraderEvent.ShowPinCode -> {
-                                getMainActivity().showEnterPasswordFragment(
-                                    reason = ReasonEnterCode.CONNECTION_REQUEST
-                                )
+                                PinCodeFragment.build(reason = ReasonEnterCode.CONNECTION_REQUEST)
+                                    .show(childFragmentManager, "")
                             }
 
                             is TraderEvent.ParseTakeOffer -> {
@@ -82,18 +81,25 @@ class TraderFragment : BaseComposeFragment() {
                             }
 
                             is TraderEvent.SignOffer -> {
-                                callFlutterToPushTakeOffer(
-                                    viewModel.offerViewState.value.offer,
-                                    it.fee
-                                )
+                                PinCodeFragment.build(reason = ReasonEnterCode.ACCEPT_OFFER)
+                                    .show(childFragmentManager, "")
+
                             }
 
-                            is TraderEvent.ShowTakeOfferDialog -> {
-                                showSuccessSendMoneyDialog()
+                            is TraderEvent.PinConfirmAcceptOffer -> {
+                                viewModel.setLoading(true)
+                                callFlutterToPushTakeOffer(
+                                    viewModel.offerViewState.value.offer,
+                                    viewModel.offerViewState.value.chosenFee
+                                )
                             }
 
                             is TraderEvent.FailureTakingOffer -> {
                                 showFailedSendingTransaction()
+                            }
+
+                            is TraderEvent.SuccessTakingOffer -> {
+                                showSuccessSendMoneyDialog()
                             }
 
                             else -> Unit
@@ -148,7 +154,7 @@ class TraderFragment : BaseComposeFragment() {
         initListeningMethod()
     }
 
-    private suspend fun callFlutterToPushTakeOffer(offer: String, fee: Int) {
+    private suspend fun callFlutterToPushTakeOffer(offer: String, fee: Double) {
         val map = hashMapOf<String, Any>()
         map["offer"] = offer
         val wallet = viewModel.wallet ?: return
@@ -156,7 +162,16 @@ class TraderFragment : BaseComposeFragment() {
         map["observer"] = wallet.observerHash
         map["nonObserver"] = wallet.nonObserverHash
         map["url"] = url
-        map["fee"] = fee
+        map["fee"] = Math.round(
+            fee * if (isThisChivesNetwork(wallet.networkType)) Math.pow(
+                10.0,
+                8.0
+            )
+            else Math.pow(
+                10.0,
+                12.0
+            )
+        )
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
         map["spentCoins"] = ""
         methodChannel.invokeMethod("PushingOffer", map)
@@ -205,9 +220,7 @@ class TraderFragment : BaseComposeFragment() {
                     getStringResource(R.string.ready_btn),
                     isDialogOutsideTouchable = false
                 ) {
-                    Handler(Looper.myLooper()!!).postDelayed({
-                        popBackStackOnce()
-                    }, 500)
+
                 }
             }
         }

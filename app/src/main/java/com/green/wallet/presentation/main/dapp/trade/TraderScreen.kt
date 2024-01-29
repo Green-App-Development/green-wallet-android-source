@@ -154,7 +154,10 @@ fun TraderScreen(
             state = offerViewState,
             modifier = Modifier,
             sign = {
-                onEvent(TraderEvent.SignOffer(offerViewState.offer, 311))
+                onEvent(TraderEvent.SignOffer(offerViewState.offer))
+            },
+            choseFee = {
+                onEvent(TraderEvent.ChoseFee(it))
             }
         )
     }

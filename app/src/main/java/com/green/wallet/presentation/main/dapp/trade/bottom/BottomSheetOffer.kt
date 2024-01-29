@@ -41,13 +41,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.green.compose.buttons.DefaultButton
+import com.green.compose.custom.fee.FeeContainer
 import com.green.compose.custom.fee.FixedSpacer
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_100
 import com.green.compose.dimens.size_12
 import com.green.compose.dimens.size_130
-import com.green.compose.dimens.size_14
 import com.green.compose.dimens.size_15
 import com.green.compose.dimens.size_16
 import com.green.compose.dimens.size_18
@@ -69,11 +69,8 @@ import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
-import com.green.compose.custom.fee.ChooseFeeProgressValue
-import com.green.compose.custom.fee.FeeContainer
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
-import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.VLog
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -194,11 +191,11 @@ fun ModelBottomSheetOffer(
                         items(items = state.offered) { item ->
                             when (item) {
                                 is CatToken -> {
-                                    CatTokenItem(item, state.acceptOffer)
+                                    CatTokenItem(item, !state.acceptOffer)
                                 }
 
                                 is NftToken -> {
-                                    NftItem(item, state.acceptOffer)
+                                    NftItem(item, !state.acceptOffer)
                                 }
                             }
                             FixedSpacer(height = size_10)
@@ -206,11 +203,11 @@ fun ModelBottomSheetOffer(
                         items(items = state.requested) { item ->
                             when (item) {
                                 is CatToken -> {
-                                    CatTokenItem(item, !state.acceptOffer)
+                                    CatTokenItem(item, state.acceptOffer)
                                 }
 
                                 is NftToken -> {
-                                    NftItem(item, !state.acceptOffer)
+                                    NftItem(item, state.acceptOffer)
                                 }
                             }
                             FixedSpacer(height = size_10)
@@ -228,7 +225,7 @@ fun ModelBottomSheetOffer(
 
                     if (state.requested.isNotEmpty())
                         SpendableBalance(
-                            requested = state.requested,
+                            state = state,
                             expanded = spendableExpanded,
                             expand = {
                                 VLog.d("Height of lazy column : $heightOfLazyColumn")
@@ -279,77 +276,109 @@ fun ModelBottomSheetOffer(
 
 @Composable
 fun SpendableBalance(
-    requested: List<Token>,
+    state: OfferViewState,
     expanded: Boolean = false,
     expand: (Int) -> Unit
 ) {
+    val requested = state.requested
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (requested.size > 1 && !expanded) {
-            var firstValue = when (requested[0]) {
-                is CatToken -> (requested[0] as CatToken).spendableBalance
-                is NftToken -> (requested[0] as NftToken).collection
+        if (requested.size == 1) {
+            val str = when (val item = requested[0]) {
+                is CatToken -> {
+                    "${item.code} ${item.spendableBalance}"
+                }
+
                 else -> ""
             }
-            if (expanded) {
-                firstValue = ""
+
+            if (str.isNotEmpty()) {
+                val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
+                DefaultText(
+                    text = "Spendable Balance: $str",
+                    size = text_12,
+                    color = clr
+                )
             }
-            DefaultText(
-                text = "Spendable Balance: $firstValue",
-                size = text_12,
-                color = Provider.current.greyText
-            )
-            Image(
-                painter = painterResource(id = R.drawable.ic_arrow_downword),
-                contentDescription = null,
-                modifier = Modifier
-                    .width(size_15)
-                    .clickable {
-                        expand(requested.size * 10)
-                    }
-            )
-        } else if (requested.size > 1) {
-            Column {
+        } else {
+            if (!expanded) {
                 DefaultText(
                     text = "Spendable Balance:",
                     size = text_12,
                     color = Provider.current.greyText
                 )
-                repeat(requested.size) {
-                    val str = when (val item = requested[it]) {
-                        is CatToken -> {
-                            "${item.code} ${item.spendableBalance}"
+                Image(
+                    painter = painterResource(id = R.drawable.ic_arrow_downword),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(size_15)
+                        .clickable {
+                            expand(requested.size * 10)
                         }
-
-                        is NftToken -> {
-                            item.collection
-                        }
-
-                        else -> ""
-                    }
+                )
+            } else {
+                Column {
                     DefaultText(
-                        text = str,
+                        text = "Spendable Balance:",
                         size = text_12,
                         color = Provider.current.greyText
                     )
-                }
 
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_upward),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .width(size_15)
-                            .clickable {
-                                expand(0)
+                    for (i in requested.indices) {
+                        val str = when (val item = requested[i]) {
+                            is CatToken -> {
+                                "${item.code} ${item.spendableBalance}"
                             }
-                            .align(Alignment.BottomEnd)
-                    )
+
+                            else -> continue
+                        }
+
+                        val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
+
+                        DefaultText(
+                            text = str,
+                            size = text_12,
+                            color = clr
+                        )
+                    }
+
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_arrow_upward),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(size_15)
+                                .clickable {
+                                    expand(0)
+                                }
+                                .align(Alignment.BottomEnd)
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun getColorOfSpendableBalanceCAT(state: OfferViewState, catToken: CatToken): Color {
+    return when (catToken.code) {
+        "XCH" -> {
+            val total = catToken.amount + state.chosenFee
+            if (total <= catToken.spendableBalance) {
+                Provider.current.greyText
+            } else
+                Provider.current.errorColor
+        }
+
+        else -> {
+            if (catToken.amount <= catToken.spendableBalance) {
+                Provider.current.greyText
+            } else
+                Provider.current.errorColor
         }
     }
 }
@@ -429,7 +458,7 @@ fun CatTokenItem(item: CatToken, acceptOffer: Boolean) {
             if (acceptOffer) Provider.current.errorColor else Provider.current.green
         val sign = if (acceptOffer) "-" else "+"
         DefaultText(
-            text = "$sign${formattedDoubleAmountWithPrecision(item.amount)} ${item.code}",
+            text = "$sign ${formattedDoubleAmountWithPrecision(item.amount)} ${item.code}",
             size = text_14,
             color = fromTokenClr,
             fontWeight = FontWeight.W500,

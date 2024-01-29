@@ -68,7 +68,6 @@ class OffersService {
     if (completedOffer.isValid()) {
       final spendBundle =
           completedOffer.toValidSpend(arbitragePh: changePuzzlehash);
-      print('Spend Bundle Request Body : ${spendBundle.toJson()}');
       final chiaResponse = await fullNode.pushTransaction(spendBundle);
       print('Spend Bundle Response Body : $chiaResponse');
       return Tuple2(chiaResponse, completedOffer);
