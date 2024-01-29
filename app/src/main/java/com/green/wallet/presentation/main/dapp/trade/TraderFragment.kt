@@ -76,10 +76,6 @@ class TraderFragment : BaseComposeFragment() {
                                 viewModel.handleEvent(TraderEvent.ShowTakeOfferDialog)
                             }
 
-                            is TraderEvent.ShowCreateOfferDialog -> {
-                                callFlutterToCreateOffer(it.params)
-                            }
-
                             is TraderEvent.SignOffer -> {
                                 PinCodeFragment.build(reason = ReasonEnterCode.ACCEPT_OFFER)
                                     .show(childFragmentManager, "")
@@ -100,6 +96,10 @@ class TraderFragment : BaseComposeFragment() {
 
                             is TraderEvent.SuccessTakingOffer -> {
                                 showSuccessSendMoneyDialog()
+                            }
+
+                            is TraderEvent.CreateOfferFlutter -> {
+
                             }
 
                             else -> Unit

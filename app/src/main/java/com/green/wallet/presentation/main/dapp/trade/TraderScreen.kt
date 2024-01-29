@@ -87,6 +87,10 @@ fun TraderScreen(
                     offerDialog.show()
                 }
 
+                is TraderEvent.ShowCreateOfferDialog -> {
+                    offerDialog.show()
+                }
+
                 else -> Unit
             }
         }
@@ -154,7 +158,11 @@ fun TraderScreen(
             state = offerViewState,
             modifier = Modifier,
             sign = {
-                onEvent(TraderEvent.SignOffer(offerViewState.offer))
+                if (offerViewState.acceptOffer) {
+                    onEvent(TraderEvent.SignOffer(offerViewState.offer))
+                } else {
+                    onEvent(TraderEvent.SignOffer(offerViewState.offer))
+                }
             },
             choseFee = {
                 onEvent(TraderEvent.ChoseFee(it))

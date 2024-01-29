@@ -223,7 +223,10 @@ fun ModelBottomSheetOffer(
                     )
                     FixedSpacer(height = size_18)
 
-                    if (state.requested.isNotEmpty())
+                    val spendableBalanceTokens =
+                        if (state.acceptOffer) state.requested else state.offered
+
+                    if (spendableBalanceTokens.isNotEmpty())
                         SpendableBalance(
                             state = state,
                             expanded = spendableExpanded,
@@ -280,7 +283,7 @@ fun SpendableBalance(
     expanded: Boolean = false,
     expand: (Int) -> Unit
 ) {
-    val requested = state.requested
+    val requested = if (state.acceptOffer) state.requested else state.offered
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -333,16 +336,18 @@ fun SpendableBalance(
                                 "${item.code} ${item.spendableBalance}"
                             }
 
-                            else -> continue
+                            else -> ""
                         }
 
-                        val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
+                        if (str.isNotEmpty()) {
+                            val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
 
-                        DefaultText(
-                            text = str,
-                            size = text_12,
-                            color = clr
-                        )
+                            DefaultText(
+                                text = str,
+                                size = text_12,
+                                color = clr
+                            )
+                        }
                     }
 
                     Box(modifier = Modifier.fillMaxWidth()) {

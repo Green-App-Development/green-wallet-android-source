@@ -12,6 +12,8 @@ import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
+import com.green.wallet.presentation.main.dapp.trade.params.AssetAmount
+import com.green.wallet.presentation.main.dapp.trade.params.CreateOfferParams
 import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
 import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.tools.PRECISION_CAT
@@ -19,6 +21,7 @@ import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -99,6 +102,7 @@ class TraderViewModel @Inject constructor(
         viewModelScope.launch {
             wallet = walletInteract.getHomeFirstWallet()
             VLog.d("onFirstWallet received Spendable Balance for trader : ${wallet?.balance}")
+            VLog.d("onFirstWallet trader: $wallet")
             initDexieFee()
         }
     }
@@ -121,7 +125,38 @@ class TraderViewModel @Inject constructor(
                 }
             }
 
+            is TraderEvent.ShowCreateOfferDialog -> {
+                _offerViewState.update { OfferViewState() }
+                initCreateOfferUpdateParams(event.params)
+            }
+
             else -> Unit
+        }
+    }
+
+    private fun initCreateOfferUpdateParams(params: CreateOfferParams) {
+        viewModelScope.launch {
+            requestedXCHAmount = .0
+            val requestJob = async {
+                parseCreateOfferParams(
+                    params = params.requestAssets ?: listOf()
+                )
+            }
+            val offerJob = async {
+                parseCreateOfferParams(
+                    params = params.offerAssets ?: listOf(),
+                    needSpendableBalance = true,
+                    needXCH = true
+                )
+            }
+
+            _offerViewState.update {
+                it.copy(
+                    offered = offerJob.await(),
+                    requested = requestJob.await(),
+                    acceptOffer = false
+                )
+            }
         }
     }
 
@@ -139,7 +174,11 @@ class TraderViewModel @Inject constructor(
                 it.copy(
                     acceptOffer = true,
                     offered = parseTokenJson(offeredJson),
-                    requested = parseTokenJson(requestedJson, true)
+                    requested = parseTokenJson(
+                        requestedJson,
+                        needSpendableBalance = true,
+                        needXCH = true
+                    )
                 )
             }
             VLog.d("OfferViewState update : ${_offerViewState.value}")
@@ -183,7 +222,8 @@ class TraderViewModel @Inject constructor(
 
     private suspend fun parseTokenJson(
         json: String,
-        needSpendableBalance: Boolean = false
+        needSpendableBalance: Boolean = false,
+        needXCH: Boolean = false
     ): List<Token> {
         val list = mutableListOf<Token>()
         val jsonArr = JSONArray(json)
@@ -229,7 +269,7 @@ class TraderViewModel @Inject constructor(
                     ).first()
                 }
 
-                if (code == "XCH") {
+                if (code == "XCH" && needXCH) {
                     requestedXCHAmount = abs(dividedAmount)
                 }
 
@@ -244,6 +284,48 @@ class TraderViewModel @Inject constructor(
             VLog.d("Adding Token Abstract : $token")
             list.add(token)
 
+        }
+
+        return list
+    }
+
+    private suspend fun parseCreateOfferParams(
+        params: List<AssetAmount>,
+        needSpendableBalance: Boolean = false,
+        needXCH: Boolean = false
+    ): List<Token> {
+        val list = mutableListOf<Token>()
+
+        for (par in params) {
+            if (par.assetId == null)
+                continue
+            var code = "XCH"
+            if (par.assetId != "null") {
+                code = tokenInteract.getTokenCodeByHash(par.assetId)
+            }
+
+            val amount = par.amount?.toDoubleOrNull() ?: 0.0
+
+            var spendableBalance = 0.0
+            if (needSpendableBalance) {
+                spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
+                    par.assetId,
+                    code,
+                    wallet?.address ?: ""
+                ).first()
+            }
+            if (code == "XCH" && needXCH) {
+                requestedXCHAmount = amount
+            }
+
+            list.add(
+                CatToken(
+                    assetID = par.assetId,
+                    amount = amount,
+                    code = code,
+                    spendableBalance = spendableBalance
+                )
+            )
         }
 
         return list

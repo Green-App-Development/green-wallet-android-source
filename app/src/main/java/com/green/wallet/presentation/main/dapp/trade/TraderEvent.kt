@@ -24,4 +24,6 @@ sealed interface TraderEvent {
 
     object PinConfirmAcceptOffer : TraderEvent
 
+    data class CreateOfferFlutter(val params: CreateOfferParams, val fee: Double) : TraderEvent
+
 }

@@ -19,19 +19,21 @@ function helperFunction(){
 //          console.log(ans,' Ans from method transfer')
 //    });
 //
-//    Bridge.interfaces.GreenWallet.createOffer({'offerAssets':[{'assetId':'I asset id','amount':'amount offer'}],
-//                                               'requestAssets': [{'assetId':'I asset id','amount':'amount offer'}]
-//    }).then((ans) => {
-//     let id=ans['id']
-//     let offer =ans['offer']
-//    console.log(id,"id from create offer method ")
-//    console.log(offer,"offer from create offer method")
-//    });
 
 }
 
 function helperFunction2(){
-    console.log('HelperFunction 2')
+    Bridge.interfaces.GreenWallet.createOffer({'offerAssets': [{'assetId':'7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02','amount':'1.12'}],
+//        {'assetId':'6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589','amount':'1.12'}],
+       'requestAssets': [{'assetId':'8ebf855de6eb146db5602f0456d2f0cbe750d57f821b6f91a8592ee9f1d4cf31','amount':'1.31'},
+           {'assetId':'6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589','amount':'1.41'}
+        ]
+    }).then((ans) => {
+     let id=ans['id']
+     let offer =ans['offer']
+    console.log(id,"id from create offer method ")
+    console.log(offer,"offer from create offer method")
+    });
 }
 
 function helperFunction3() {
