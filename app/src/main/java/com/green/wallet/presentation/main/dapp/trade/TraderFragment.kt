@@ -106,12 +106,13 @@ class TraderFragment : BaseComposeFragment() {
                             }
 
                             is TraderEvent.ShowPinCreateOffer -> {
-                                PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
-                                    .show(childFragmentManager, "")
+                                callFlutterToCreateOffer()
+//                                PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
+//                                    .show(childFragmentManager, "")
                             }
 
                             is TraderEvent.PinnedCreateOffer -> {
-                                callFlutterToCreateOffer()
+
                             }
 
                             else -> Unit
@@ -201,8 +202,8 @@ class TraderFragment : BaseComposeFragment() {
         map["fee"] = (value.chosenFee * PRECISION_XCH).toLong()
         map["spentCoins"] = value.spendCoins
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
-        map["request"] = Gson().toJson(convertToTokenFlutter(value.requested))
-        map["offer"] = Gson().toJson(convertToTokenFlutter(value.offered))
+        map["requested"] = Gson().toJson(convertToTokenFlutter(value.requested))
+        map["offered"] = Gson().toJson(convertToTokenFlutter(value.offered))
         methodChannel.invokeMethod("CreateOffer", map)
         initListeningMethod()
     }
@@ -263,7 +264,7 @@ class TraderFragment : BaseComposeFragment() {
         for (i in list) {
             val token = when (i) {
                 is NftToken -> {
-                    FlutterToken("", 0L, "NFT")
+                    FlutterToken(i.nftId, 0L, "NFT")
                 }
 
                 is CatToken -> {
@@ -272,7 +273,9 @@ class TraderFragment : BaseComposeFragment() {
                     } else {
                         PRECISION_CAT
                     }
-                    FlutterToken(i.assetID, amount.toLong(), "CAT")
+                    val type = if (i.assetID.isNotEmpty())
+                        "CAT" else "XCH"
+                    FlutterToken(i.assetID, amount.toLong(), type)
                 }
 
                 else -> FlutterToken("", 0L, "CAT")

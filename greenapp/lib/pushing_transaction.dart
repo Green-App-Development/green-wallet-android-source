@@ -4,6 +4,8 @@ import 'package:chia_crypto_utils/chia_crypto_utils.dart' hide Client;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splash_screen_module/SpeedyTransaction.dart';
+import 'package:flutter_splash_screen_module/flutter_token.dart';
+import 'package:flutter_splash_screen_module/save_full_coins_create_offer.dart';
 import 'package:http/http.dart';
 import 'dart:math';
 
@@ -488,10 +490,10 @@ class PushingTransaction {
               debugPrint("SpeedyTransferNFT got called with args : $args");
               var mnemonics = args["mnemonics"].toString().split(' ');
               var observer = int.parse(args["observer"].toString());
-              var nonObserver = int.parse(args["non_observer"].toString());
+              var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args['fee'].toString());
-              var spentCoins = args['spentCoins'];
-              var baseUrl = args["base_url"];
+              var spentCoins = args['spentCoins'].toString();
+              var baseUrl = args['url'].toString();
               var requested = args["requested"].toString();
               var offered = args["offered"].toString();
               creatingOffer(
@@ -501,8 +503,8 @@ class PushingTransaction {
                   nonObserver: nonObserver,
                   fee: fee,
                   spentCoins: spentCoins,
-                  offered: offered,
-                  requested: requested);
+                  offeredStr: offered,
+                  requestedStr: requested);
             } catch (ex) {
               debugPrint("Exception in getting params from CreateOffer : $ex");
               _channel.invokeMethod("exception");
@@ -526,14 +528,18 @@ class PushingTransaction {
       required int nonObserver,
       required int fee,
       required String spentCoins,
-      required String offered,
-      required String requested}) async {
+      required String offeredStr,
+      required String requestedStr}) async {
     try {
       NetworkContext()
           .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
       final fullNodeRpc = FullNodeHttpRpc(url);
-      
+      var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+
+      final keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, nonObserver);
+
       final fullNode = ChiaFullNodeInterface(fullNodeRpc);
       final offerService =
           OffersService(fullNode: fullNode, keychain: keychain);
@@ -547,64 +553,37 @@ class PushingTransaction {
       });
 
       List<String> spentCoinsParents = [];
-      if (spentXCHCoinsJson.isNotEmpty) {
-        List<dynamic> spentCoinsJsonDecoded = json.decode(spentXCHCoinsJson);
+      if (spentCoins.isNotEmpty) {
+        List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoins);
         for (var item in spentCoinsJsonDecoded) {
           var parentCoinInfo = item["parent_coin_info"].toString();
           spentCoinsParents.add(parentCoinInfo);
         }
       }
 
-      var curAmount = 0;
-      final totalAmount = xchAmount + fee;
-      List<Coin> neededCoins = [];
-      List<Coin> totalCoins =
-          await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
-      for (var coin in totalCoins) {
-        var isCoinSpent =
-            spentCoinsParents.contains(coin.parentCoinInfo.toString());
-        debugPrint(
-            "Found spent coins for xch parent coin info $isCoinSpent : Parent Coin Info : ${coin.parentCoinInfo.toString()}");
-        debugPrint("Searching in already spent coins : $spentCoinsParents");
-        if (!isCoinSpent) {
-          curAmount += coin.amount;
-          neededCoins.add(coin);
-          if (curAmount >= totalAmount) {
-            break;
+      var offered = parseFlutterTokenJsonString(offeredStr);
+      var requested = parseFlutterTokenJsonString(requestedStr);
+
+      debugPrint("OfferedStr : $offered");
+      debugPrint("RequestedStr : $requested");
+
+      List<FullCoin> fullCoins = [];
+
+      List<Coin> usedXCHCoins  = [];
+      List<Coin> usedCoins  = [];
+
+      for(var token in offered){
+          if(token.type=="XCH"){
+            saveFullCoinsXCH(fee, url, token, spentCoinsParents, fullCoins, usedXCHCoins, fullNode, keychain);
+          }else if(token.type=="CAT"){
+            saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins, usedCoins, fullNode, keychain);
+          }else {
+
           }
-        }
       }
 
-      List<FullCoin>? xchFullCoins;
-
-      xchFullCoins = standartWalletService.convertXchCoinsToFull(neededCoins);
-
-      final changePh = keychain.puzzlehashes[0];
-      final targePh = keychain.puzzlehashes[1];
-
-      final assetHash = Bytes.fromHex(
-        assetId,
-      );
-
-      final offer = await offerService.createOffer(
-          requesteAmounts: {
-            OfferAssetData.cat(
-              tailHash: assetHash,
-            ): [catAmount]
-          },
-          offerredAmounts: {
-            null: -xchAmount
-          },
-          coins: xchFullCoins,
-          changePuzzlehash: changePh,
-          targetPuzzleHash: targePh,
-          fee: fee);
-      final str = offer.toBench32();
-      debugPrint("Offering xch for cat : $str");
-
-      _channel.invokeMethod(
-          "XCHToCAT", {"offer": str, "spentXCHCoins": jsonEncode(neededCoins)});
     } catch (ex) {
+      debugPrint("Exception in creating an offer : $ex");
       _channel.invokeMethod("exception");
     }
   }

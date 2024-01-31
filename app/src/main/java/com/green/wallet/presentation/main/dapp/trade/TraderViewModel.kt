@@ -131,7 +131,7 @@ class TraderViewModel @Inject constructor(
             }
 
             is TraderEvent.ShowCreateOfferDialog -> {
-                _offerViewState.update { OfferViewState(dexieFee = it.dexieFee) }
+                _offerViewState.update { OfferViewState(dexieFee = it.dexieFee, offer = it.offer) }
                 initCreateOfferUpdateParams(event.params)
             }
 
@@ -193,7 +193,7 @@ class TraderViewModel @Inject constructor(
         requestedJson: String,
         offeredJson: String
     ) {
-        _offerViewState.update { OfferViewState(dexieFee = it.dexieFee) }
+        _offerViewState.update { OfferViewState(dexieFee = it.dexieFee, offer = it.offer) }
         requestedXCHAmount = 0.0
         viewModelScope.launch {
             _offerViewState.update {
