@@ -2,6 +2,7 @@ package com.green.wallet.presentation.main.dapp.trade
 
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DexieInteract
@@ -91,6 +92,10 @@ class TraderViewModel @Inject constructor(
                     setEvent(TraderEvent.PinConfirmAcceptOffer)
                 }
 
+                ReasonEnterCode.CREATE_OFFER -> {
+                    setEvent(TraderEvent.PinnedCreateOffer)
+                }
+
                 else -> Unit
             }
         }
@@ -103,6 +108,7 @@ class TraderViewModel @Inject constructor(
             wallet = walletInteract.getHomeFirstWallet()
             VLog.d("onFirstWallet received Spendable Balance for trader : ${wallet?.balance}")
             VLog.d("onFirstWallet trader: $wallet")
+            validateFeeEnough()
             initDexieFee()
         }
     }
@@ -116,17 +122,16 @@ class TraderViewModel @Inject constructor(
         setEvent(event)
         when (event) {
             is TraderEvent.ChoseFee -> {
-                val total = requestedXCHAmount + event.fee
                 _offerViewState.update {
                     it.copy(
-                        feeEnough = total <= (wallet?.balance ?: 0.0),
                         chosenFee = event.fee
                     )
                 }
+                validateFeeEnough()
             }
 
             is TraderEvent.ShowCreateOfferDialog -> {
-                _offerViewState.update { OfferViewState() }
+                _offerViewState.update { OfferViewState(dexieFee = it.dexieFee) }
                 initCreateOfferUpdateParams(event.params)
             }
 
@@ -157,7 +162,27 @@ class TraderViewModel @Inject constructor(
                     acceptOffer = false
                 )
             }
+
+            saveSaveCoinsToCreateOffer(params.offerAssets)
         }
+    }
+
+    private suspend fun saveSaveCoinsToCreateOffer(offerAssets: List<AssetAmount>?) {
+        if (wallet == null || offerAssets == null) return
+        val spentCoins = mutableListOf<SpentCoin>()
+        for (asset in offerAssets) {
+            var tokenCode = "XCH"
+            if (asset.assetId != "")
+                tokenCode = tokenInteract.getTokenCodeByHash(asset.assetId ?: "")
+
+            val coin = spentCoinsInteract.getSpentCoinsToPushTrans(
+                wallet!!.networkType,
+                wallet!!.address,
+                tokenCode
+            )
+            spentCoins.addAll(coin)
+        }
+        _offerViewState.update { it.copy(spendCoins = spentCoins) }
     }
 
     fun updateOfferDialogState(offer: String) {
@@ -168,6 +193,7 @@ class TraderViewModel @Inject constructor(
         requestedJson: String,
         offeredJson: String
     ) {
+        _offerViewState.update { OfferViewState(dexieFee = it.dexieFee) }
         requestedXCHAmount = 0.0
         viewModelScope.launch {
             _offerViewState.update {
@@ -300,7 +326,7 @@ class TraderViewModel @Inject constructor(
             if (par.assetId == null)
                 continue
             var code = "XCH"
-            if (par.assetId != "null") {
+            if (par.assetId != "") {
                 code = tokenInteract.getTokenCodeByHash(par.assetId)
             }
 
@@ -333,6 +359,11 @@ class TraderViewModel @Inject constructor(
 
     fun setLoading(isLoading: Boolean) {
         _viewState.update { it.copy(isLoading = isLoading) }
+    }
+
+    private fun validateFeeEnough() {
+        val total = requestedXCHAmount + offerViewState.value.chosenFee
+        _offerViewState.update { it.copy(feeEnough = total <= (wallet?.balance ?: 0.0)) }
     }
 
 }

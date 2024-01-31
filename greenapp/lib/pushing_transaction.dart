@@ -26,15 +26,14 @@ class PushingTransaction {
             var mnemonic =
                 call.arguments['mnemonic'].toString().split(' ').toList();
             var prefix = call.arguments['prefix'].toString();
-            var def_tokens =
+            var defTokens =
                 call.arguments['tokens'].toString().split(' ').toList();
             var observer = call.arguments['observer'];
-            var non_observer = call.arguments['non_observer'];
+            var nonObserver = call.arguments['non_observer'];
             print(
                 'Generated Keys got called on flutter from android : with argument : ${call.arguments}');
             try {
-              generateKeys(
-                  mnemonic, prefix, def_tokens, observer, non_observer);
+              generateKeys(mnemonic, prefix, defTokens, observer, nonObserver);
             } catch (ex) {
               _channel.invokeMethod("exception", ex.toString());
             }
@@ -45,15 +44,15 @@ class PushingTransaction {
             var mnemonic =
                 call.arguments['mnemonic'].toString().split(' ').toList();
             var prefix = call.arguments['prefix'].toString();
-            var def_tokens =
+            var defTokens =
                 call.arguments['tokens'].toString().split(' ').toList();
             var observer = call.arguments['observer'];
-            var non_observer = call.arguments['non_observer'];
+            var nonObserver = call.arguments['non_observer'];
             print(
                 'Generated Keys got called on flutter from android : with argument : ${call.arguments}');
             try {
               generateKeysImport(
-                  mnemonic, prefix, def_tokens, observer, non_observer);
+                  mnemonic, prefix, defTokens, observer, nonObserver);
             } catch (ex) {
               _channel.invokeMethod("exception", ex.toString());
             }
@@ -123,8 +122,8 @@ class PushingTransaction {
                 mnemonics:
                     args['mnemonicString'].toString().split(' ').toList(),
                 observer: int.parse(args['observer'].toString()),
-                non_observer: int.parse(args['non_observer'].toString()),
-                asset_ids: args['asset_ids'].toString().split(' ').toList());
+                nonObserver: int.parse(args['non_observer'].toString()),
+                assetIds: args['asset_ids'].toString().split(' ').toList());
           }
           break;
         case "asyncCatPuzzle":
@@ -141,9 +140,9 @@ class PushingTransaction {
             var args = call.arguments;
             var mnemonics = args["mnemonics"].toString().split(' ');
             var observer = int.parse(args["observer"].toString());
-            var non_observer = int.parse(args["non_observer"].toString());
+            var nonObserver = int.parse(args["non_observer"].toString());
             debugPrint("Caching Wallet KeyChain First Time With args : $args");
-            cachedWalletKeyChain(mnemonics, observer, non_observer);
+            cachedWalletKeyChain(mnemonics, observer, nonObserver);
           }
           break;
         case "unCurryNft":
@@ -190,21 +189,21 @@ class PushingTransaction {
           {
             var args = call.arguments;
             debugPrint("unCurryNFTSecond got called with args : $args");
-            var parent_coin_info = args["parent_coin_info"].toString();
-            var puzzle_hash = args["puzzle_hash"].toString();
-            var start_height = int.parse(args["start_height"].toString());
+            var parentCoinInfo = args["parent_coin_info"].toString();
+            var puzzleHash = args["puzzle_hash"].toString();
+            var startHeight = int.parse(args["start_height"].toString());
             var mnemonics = args["mnemonics"].toString().split(' ');
             var observer = int.parse(args["observer"].toString());
-            var non_observer = int.parse(args["non_observer"].toString());
-            var base_url = args["base_url"];
+            var nonObserver = int.parse(args["non_observer"].toString());
+            var baseUrl = args["base_url"];
             unCurryNFTCoinSecond(
                 mnemonics: mnemonics,
                 observer: observer,
-                non_observer: non_observer,
-                start_height: start_height,
-                parent_coin_info: parent_coin_info,
-                puzzle_hash: puzzle_hash,
-                base_url: base_url);
+                nonObserver: nonObserver,
+                startHeight: startHeight,
+                parentCoinInfo: parentCoinInfo,
+                puzzleHash: puzzleHash,
+                baseUrl: baseUrl);
           }
           break;
         case "puzzle_hash_to_address":
@@ -482,6 +481,34 @@ class PushingTransaction {
             }
           }
           break;
+        case "CreateOffer":
+          {
+            try {
+              var args = call.arguments;
+              debugPrint("SpeedyTransferNFT got called with args : $args");
+              var mnemonics = args["mnemonics"].toString().split(' ');
+              var observer = int.parse(args["observer"].toString());
+              var nonObserver = int.parse(args["non_observer"].toString());
+              var fee = int.parse(args['fee'].toString());
+              var spentCoins = args['spentCoins'];
+              var baseUrl = args["base_url"];
+              var requested = args["requested"].toString();
+              var offered = args["offered"].toString();
+              creatingOffer(
+                  mnemonics: mnemonics,
+                  url: baseUrl,
+                  observer: observer,
+                  nonObserver: nonObserver,
+                  fee: fee,
+                  spentCoins: spentCoins,
+                  offered: offered,
+                  requested: requested);
+            } catch (ex) {
+              debugPrint("Exception in getting params from CreateOffer : $ex");
+              _channel.invokeMethod("exception");
+            }
+          }
+          break;
       }
     });
     // offeringXCHForCat();
@@ -490,6 +517,96 @@ class PushingTransaction {
     analyzeOffer(
         offerStr:
             "offer1qqr83wcuu2rykcmqvpsxygqqa6wdw7l95dk68vl9mr2dkvl98r6g76an3qez5ppgyh00jfdqw4uy5w2vrk7f6wj6lw8adl4rkhlk3mflttacl4h7lur64as8zlhqhn8h04883476dz7x6mny6jzdcga33n4s8n884cxcekcemz6mk3jk4v925trha2kuwcv0k59xl377mx32g5h2c52wfycczdlns04vgl4cx77f6d8xs4f3m23zpghmeuyfzktsvljul5lf6fragjk9qdl5ewns7nam4t68j7e4se98ynkx67tjl3kfx0zse96wllnt0ahda2x20ymlh3pwqaeu7fue4anp5hn74af8dwvdt9aatrhf5pqzt2qgvnwecw8nkvmr8mqw9r83t77l05j0slhyegkjhfnvd024xtj0mxwjthmj3zgpnyqx33cqwjsnvcuzl5crrw7xrqakw6lww0c47699l82mgktl765h0rw823r3g908whmwmlhz8lkmp7lujr0jhnt4zljde56xa8uaqm9h9vxkqey94lalur70u7m0vd7pdhdnuhl24v8nknmlvy3t60ve083dajur3elel5lc49ulsv7kqnzy9smsndcr2hd07has6sjax77tmkm59e2vyce5g7revgd8a8jh6jg3zwaz9pujzh3gdlwkjjqc9xh8jw707rsde2utp3xzxks44axmempy2wmr2622mtjk0658jlkha7j3yhswmx0dxwnjg0h7zfujf64czed7mdz67lx60hsav0u2z783f2akdkcaduyavkdpjfynttzeqlul0kh68gltqcpfpfdkcgepjqhv0tdapgq8wtt37y4534ts");
+  }
+
+  Future<void> creatingOffer(
+      {required List<String> mnemonics,
+      required String url,
+      required int observer,
+      required int nonObserver,
+      required int fee,
+      required String spentCoins,
+      required String offered,
+      required String requested}) async {
+    try {
+      NetworkContext()
+          .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+
+      final fullNodeRpc = FullNodeHttpRpc(url);
+      
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+      final offerService =
+          OffersService(fullNode: fullNode, keychain: keychain);
+
+      final standartWalletService = StandardWalletService();
+
+      final puzzleHashes =
+          keychain.hardenedMap.entries.map((e) => e.key).toList();
+      keychain.unhardenedMap.entries.forEach((element) {
+        puzzleHashes.add(element.key);
+      });
+
+      List<String> spentCoinsParents = [];
+      if (spentXCHCoinsJson.isNotEmpty) {
+        List<dynamic> spentCoinsJsonDecoded = json.decode(spentXCHCoinsJson);
+        for (var item in spentCoinsJsonDecoded) {
+          var parentCoinInfo = item["parent_coin_info"].toString();
+          spentCoinsParents.add(parentCoinInfo);
+        }
+      }
+
+      var curAmount = 0;
+      final totalAmount = xchAmount + fee;
+      List<Coin> neededCoins = [];
+      List<Coin> totalCoins =
+          await fullNode.getCoinsByPuzzleHashes(puzzleHashes);
+      for (var coin in totalCoins) {
+        var isCoinSpent =
+            spentCoinsParents.contains(coin.parentCoinInfo.toString());
+        debugPrint(
+            "Found spent coins for xch parent coin info $isCoinSpent : Parent Coin Info : ${coin.parentCoinInfo.toString()}");
+        debugPrint("Searching in already spent coins : $spentCoinsParents");
+        if (!isCoinSpent) {
+          curAmount += coin.amount;
+          neededCoins.add(coin);
+          if (curAmount >= totalAmount) {
+            break;
+          }
+        }
+      }
+
+      List<FullCoin>? xchFullCoins;
+
+      xchFullCoins = standartWalletService.convertXchCoinsToFull(neededCoins);
+
+      final changePh = keychain.puzzlehashes[0];
+      final targePh = keychain.puzzlehashes[1];
+
+      final assetHash = Bytes.fromHex(
+        assetId,
+      );
+
+      final offer = await offerService.createOffer(
+          requesteAmounts: {
+            OfferAssetData.cat(
+              tailHash: assetHash,
+            ): [catAmount]
+          },
+          offerredAmounts: {
+            null: -xchAmount
+          },
+          coins: xchFullCoins,
+          changePuzzlehash: changePh,
+          targetPuzzleHash: targePh,
+          fee: fee);
+      final str = offer.toBench32();
+      debugPrint("Offering xch for cat : $str");
+
+      _channel.invokeMethod(
+          "XCHToCAT", {"offer": str, "spentXCHCoins": jsonEncode(neededCoins)});
+    } catch (ex) {
+      _channel.invokeMethod("exception");
+    }
   }
 
   Future<void> speedyTransferNFT(
@@ -1009,7 +1126,8 @@ class PushingTransaction {
       required String spentCoins,
       required int fee}) async {
     try {
-      debugPrint("Fee : $fee Mnemonics : $mnemonics on pushingOfferWithCAT");
+      debugPrint(
+          "Fee : $fee Mnemonics : $mnemonics on pushingOfferWithCAT, url : $url observer : $observer nonObserver : $nonObserver fee: $fee");
       var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
       var keychain = cachedWalletChains[key] ??
           generateKeyChain(mnemonics, observer, nonObserver);
@@ -1053,8 +1171,10 @@ class PushingTransaction {
       for (var entry in analized!.requested.entries) {
         OfferAssetData? key = entry.key;
         final amountReq = entry.value[0].abs();
-        debugPrint("Amount CAT for pushing transaction : $amountReq, Key : $key");
-        if (key!=null && key.assetId != null &&
+        debugPrint(
+            "Amount CAT for pushing transaction : $amountReq, Key : $key");
+        if (key != null &&
+            key.assetId != null &&
             (key.type == SpendType.cat2 || key.type == SpendType.cat1)) {
           futures.add(getFullCoinsByAssetId(
               url: url,
@@ -1100,7 +1220,8 @@ class PushingTransaction {
           changePuzzlehash: changePh,
           coinsToUse: allFullCoins);
 
-      debugPrint("Json Encode after responseOffer : ${jsonEncode(spentCoinsMap)}");
+      debugPrint(
+          "Json Encode after responseOffer : ${jsonEncode(spentCoinsMap)}");
 
       debugPrint(
           "Result from pushing xch offer to cat : ${responseResult.item1.success}");
@@ -1352,8 +1473,8 @@ class PushingTransaction {
     if (spentCoinsJson.isNotEmpty) {
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       for (var item in spentCoinsJsonDecoded) {
-        var parent_coin_info = item["parent_coin_info"].toString();
-        spentCoinsParents.add(parent_coin_info);
+        var parentCoinInfo = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parentCoinInfo);
       }
     }
     List<CatCoin> catCoins = [];
@@ -1497,8 +1618,8 @@ class PushingTransaction {
     if (spentCoinsJson.isNotEmpty) {
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       for (var item in spentCoinsJsonDecoded) {
-        var parent_coin_info = item["parent_coin_info"].toString();
-        spentCoinsParents.add(parent_coin_info);
+        var parentCoinInfo = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parentCoinInfo);
       }
     }
     List<CatCoin> catCoins = [];
@@ -1610,15 +1731,9 @@ class PushingTransaction {
 
       final fullNodeRpc = FullNodeHttpRpc(url);
 
-      KeychainCoreSecret keychainSecret =
-          KeychainCoreSecret.fromMnemonic(mnemonics);
-      final walletsSetList = <WalletSet>[];
-      for (var i = 0; i < 5; i++) {
-        final set1 =
-            WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
-        walletsSetList.add(set1);
-      }
-      final keychain = WalletKeychain.fromWalletSets(walletsSetList);
+      var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+      var keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, nonObserver);
 
       final fullNode = ChiaFullNodeInterface(fullNodeRpc);
       final offerService =
@@ -1636,8 +1751,8 @@ class PushingTransaction {
       if (spentXCHCoinsJson.isNotEmpty) {
         List<dynamic> spentCoinsJsonDecoded = json.decode(spentXCHCoinsJson);
         for (var item in spentCoinsJsonDecoded) {
-          var parent_coin_info = item["parent_coin_info"].toString();
-          spentCoinsParents.add(parent_coin_info);
+          var parentCoinInfo = item["parent_coin_info"].toString();
+          spentCoinsParents.add(parentCoinInfo);
         }
       }
 
@@ -1728,7 +1843,7 @@ class PushingTransaction {
       final offerService =
           OffersService(fullNode: fullNode, keychain: keyChainCAT);
 
-      var myOuterPuzzlehashes =
+      var myOuterPuzzleHashes =
           keychain.getOuterPuzzleHashesForAssetId(catHash);
 
       for (var element in keychain.hardenedMap.keys) {
@@ -1736,23 +1851,23 @@ class PushingTransaction {
           element,
           catHash,
         );
-        myOuterPuzzlehashes.add(outer);
+        myOuterPuzzleHashes.add(outer);
       }
 
       // remove duplicate puzzlehashes
-      myOuterPuzzlehashes = myOuterPuzzlehashes.toSet().toList();
+      myOuterPuzzleHashes = myOuterPuzzleHashes.toSet().toList();
 
       /// Search for the cat coins for offered
       final responseDataCAT = await fullNode.getCoinsByPuzzleHashes(
-        myOuterPuzzlehashes,
+        myOuterPuzzleHashes,
       );
 
       List<String> spentCoinsParents = [];
       if (spentCoinsJson.isNotEmpty) {
         List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
         for (var item in spentCoinsJsonDecoded) {
-          var parent_coin_info = item["parent_coin_info"].toString();
-          spentCoinsParents.add(parent_coin_info);
+          var parentCoinInfo = item["parent_coin_info"].toString();
+          spentCoinsParents.add(parentCoinInfo);
         }
       }
 
@@ -1825,7 +1940,7 @@ class PushingTransaction {
       // debugPrint(" Cat Coins : $fullCatCoins  XCH Coins : $xchFullCoins ");
 
       final changePh = keychain.puzzlehashes[0];
-      final targePh = keychain.puzzlehashes[1];
+      final targetPh = keychain.puzzlehashes[1];
 
       final offer = await offerService.createOffer(
         offerredAmounts: {
@@ -1842,7 +1957,7 @@ class PushingTransaction {
         },
         coins: allCoins,
         changePuzzlehash: changePh,
-        targetPuzzleHash: targePh,
+        targetPuzzleHash: targetPh,
         fee: fee,
       );
       final str = offer.toBench32();
@@ -1885,7 +2000,7 @@ class PushingTransaction {
       await fullNode.getCoinsByPuzzleHashes(puzzleHashes),
     );
     final changePh = keyChain.puzzlehashes[0];
-    final targePh = keyChain.puzzlehashes[1];
+    final targetPh = keyChain.puzzlehashes[1];
     final assetIdHash = Bytes.fromHex(
       assetId,
     );
@@ -1898,7 +2013,7 @@ class PushingTransaction {
       offerredAmounts: {null: xchAmount * (-1)},
       coins: xchCoins,
       changePuzzlehash: changePh,
-      targetPuzzleHash: targePh,
+      targetPuzzleHash: targetPh,
     );
     final str = offer.toBench32();
     debugPrint("Offering xch for cat : $str");
@@ -1928,12 +2043,12 @@ class PushingTransaction {
   void changeSettingsWalletPuzzleHashes(
       {required List<String> mnemonics,
       required int observer,
-      required int non_observer,
-      required List<String> asset_ids}) {
+      required int nonObserver,
+      required List<String> assetIds}) {
     try {
       KeychainCoreSecret keychainSecret =
           KeychainCoreSecret.fromMnemonic(mnemonics);
-      final maxNum = max(observer, non_observer);
+      final maxNum = max(observer, nonObserver);
       final walletsSetList = <WalletSet>[];
       for (var i = 0; i < maxNum; i++) {
         final set1 =
@@ -1941,28 +2056,28 @@ class PushingTransaction {
         walletsSetList.add(set1);
       }
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
-      var key = "${mnemonics.join(' ')}_${observer}_$non_observer";
+      var key = "${mnemonics.join(' ')}_${observer}_$nonObserver";
       cachedWalletChains[key] = keychain;
-      final main_puzzle_hashes = keychain.puzzlehashes.sublist(0, observer);
-      main_puzzle_hashes
-          .addAll(keychain.walletPuzzlehashes.sublist(0, non_observer));
+      final mainPuzzleHashes = keychain.puzzlehashes.sublist(0, observer);
+      mainPuzzleHashes
+          .addAll(keychain.walletPuzzlehashes.sublist(0, nonObserver));
 
       Map<String, List<String>> mapToAndroid = {};
 
       mapToAndroid["main_puzzle_hashes"] =
-          main_puzzle_hashes.map((e) => e.toHex()).toList();
+          mainPuzzleHashes.map((e) => e.toHex()).toList();
 
-      asset_ids.forEach((asset_id) {
-        List<String> outer_hashes = [];
-        main_puzzle_hashes.forEach((main_hash) {
-          if (asset_id.isNotEmpty) {
-            outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                    Puzzlehash.fromHex(main_hash.toHex()),
-                    Puzzlehash.fromHex(asset_id))
+      assetIds.forEach((assetId) {
+        List<String> outerHashes = [];
+        mainPuzzleHashes.forEach((mainHash) {
+          if (assetId.isNotEmpty) {
+            outerHashes.add(WalletKeychain.makeOuterPuzzleHash(
+                    Puzzlehash.fromHex(mainHash.toHex()),
+                    Puzzlehash.fromHex(assetId))
                 .toHex());
           }
         });
-        mapToAndroid[asset_id] = outer_hashes;
+        mapToAndroid[assetId] = outerHashes;
       });
 
       _channel.invokeMethod("changeSettings", mapToAndroid);
@@ -2038,8 +2153,8 @@ class PushingTransaction {
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];
       for (var item in spentCoinsJsonDecoded) {
-        var parent_coin_info = item["parent_coin_info"].toString();
-        spentCoinsParents.add(parent_coin_info);
+        var parentCoinInfo = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parentCoinInfo);
       }
       List<Future<void>> futures = [];
       List<Coin> standardCoinsForFee = [];
@@ -2099,14 +2214,14 @@ class PushingTransaction {
           fee: fee,
           standardCoinsForFee: standardCoinsForFee);
 
-      var dest_puzzle_has = Address(destAddress).toPuzzlehash();
-      var outer_dest_puzzle_hash = WalletKeychain.makeOuterPuzzleHash(
-              dest_puzzle_has, Puzzlehash.fromHex(asset_id))
+      var destPuzzleHas = Address(destAddress).toPuzzlehash();
+      var outerDestPuzzleHash = WalletKeychain.makeOuterPuzzleHash(
+              destPuzzleHas, Puzzlehash.fromHex(asset_id))
           .toHex();
 
       _channel.invokeMethod('getSpendBundle', {
         "spendBundle": spendBundle.toJson(),
-        "dest_puzzle_hash": dest_puzzle_has.toHex(),
+        "dest_puzzle_hash": destPuzzleHas.toHex(),
         "spentCoins": jsonEncode(standardCoinsForFee),
         "spentTokens": jsonEncode(filteredCoins)
       });
@@ -2138,12 +2253,12 @@ class PushingTransaction {
       required List<Coin> standardCoinsForFee,
       required int fee,
       required ChiaFullNodeInterface fullNode}) async {
-    var main_puzzle_hashes =
+    var mainPuzzleHashes =
         keyChain.hardenedMap.keys.toList().sublist(0, non_observer);
-    main_puzzle_hashes
+    mainPuzzleHashes
         .addAll(keyChain.unhardenedMap.keys.toList().sublist(0, observer));
     List<Coin> feeStandardCoinsTotal =
-        await fullNode.getCoinsByPuzzleHashes(main_puzzle_hashes);
+        await fullNode.getCoinsByPuzzleHashes(mainPuzzleHashes);
     var feeSum = 0;
     feeStandardCoinsTotal.sort((a, b) {
       return b.amount.compareTo(a.amount);
@@ -2222,8 +2337,8 @@ class PushingTransaction {
       List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoinsJson);
       List<String> spentCoinsParents = [];
       for (var item in spentCoinsJsonDecoded) {
-        var parent_coin_info = item["parent_coin_info"].toString();
-        spentCoinsParents.add(parent_coin_info);
+        var parentCoinInfo = item["parent_coin_info"].toString();
+        spentCoinsParents.add(parentCoinInfo);
       }
 
       debugPrint("SpentCoinsPrototypes on sending xch : $spentCoinsParents");
@@ -2281,19 +2396,19 @@ class PushingTransaction {
   }
 
   void generateKeys(List<String> mnemonic, String prefix,
-      List<String> def_tokens, int observer, int non_observer) {
+      List<String> defTokens, int observer, int nonObserver) {
     try {
       KeychainCoreSecret keychainSecret =
           KeychainCoreSecret.fromMnemonic(mnemonic);
-      var max_hash = max(observer, non_observer);
+      var maxHash = max(observer, nonObserver);
       final walletsSetList = <WalletSet>[];
-      for (var i = 0; i < max_hash; i++) {
+      for (var i = 0; i < maxHash; i++) {
         final set1 =
             WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
         walletsSetList.add(set1);
       }
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
-      var key = "${mnemonic.join(" ")}_${observer}_$non_observer";
+      var key = "${mnemonic.join(" ")}_${observer}_$nonObserver";
       cachedWalletChains[key] = keychain;
       final fingerPrint = keychainSecret.masterPublicKey.getFingerprint();
       final address = Address.fromPuzzlehash(
@@ -2303,12 +2418,12 @@ class PushingTransaction {
 
       var mapToAndroid = {"address": "$address", "fingerPrint": fingerPrint};
 
-      final main_puzzle_hashes = keychain.puzzlehashes.sublist(0, observer);
-      main_puzzle_hashes
-          .addAll(keychain.walletPuzzlehashes.sublist(0, non_observer));
+      final mainPuzzleHashes = keychain.puzzlehashes.sublist(0, observer);
+      mainPuzzleHashes
+          .addAll(keychain.walletPuzzlehashes.sublist(0, nonObserver));
 
       mapToAndroid["main_puzzle_hashes"] =
-          main_puzzle_hashes.map((e) => e.toHex()).toList();
+          mainPuzzleHashes.map((e) => e.toHex()).toList();
 
       debugPrint("Map to Android : $mapToAndroid");
 
@@ -2331,14 +2446,14 @@ class PushingTransaction {
   }
 
   void generateKeysImport(List<String> mnemonic, String prefix,
-      List<String> def_tokens, int observer, int non_observer) {
+      List<String> defTokens, int observer, int nonObserver) {
     try {
       KeychainCoreSecret keychainSecret =
           KeychainCoreSecret.fromMnemonic(mnemonic);
-      var max_hash = max(observer, non_observer);
+      var maxHash = max(observer, nonObserver);
       final walletsSetList = <WalletSet>[];
       var stopwatch = Stopwatch()..start();
-      for (var i = 0; i < max_hash; i++) {
+      for (var i = 0; i < maxHash; i++) {
         final set1 =
             WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
         walletsSetList.add(set1);
@@ -2347,7 +2462,7 @@ class PushingTransaction {
       debugPrint(
           'Time taken: ${stopwatch.elapsedMilliseconds / 1000}s to initialize walletSetList');
       final keychain = WalletKeychain.fromWalletSets(walletsSetList);
-      var key = "${mnemonic.join(' ')}_${observer}_$non_observer";
+      var key = "${mnemonic.join(' ')}_${observer}_$nonObserver";
       cachedWalletChains[key] = keychain;
       final fingerPrint = keychainSecret.masterPublicKey.getFingerprint();
       final address = Address.fromPuzzlehash(
@@ -2357,25 +2472,25 @@ class PushingTransaction {
 
       var mapToAndroid = {"address": "$address", "fingerPrint": fingerPrint};
 
-      final main_puzzle_hashes = keychain.puzzlehashes.sublist(0, observer);
-      main_puzzle_hashes
-          .addAll(keychain.walletPuzzlehashes.sublist(0, non_observer));
+      final mainPuzzleHashes = keychain.puzzlehashes.sublist(0, observer);
+      mainPuzzleHashes
+          .addAll(keychain.walletPuzzlehashes.sublist(0, nonObserver));
 
       mapToAndroid["main_puzzle_hashes"] =
-          main_puzzle_hashes.map((e) => e.toHex()).toList();
+          mainPuzzleHashes.map((e) => e.toHex()).toList();
 
       debugPrint("Map to Android : $mapToAndroid");
       stopwatch = Stopwatch()..start();
-      def_tokens.forEach((asset_id) {
-        List<String> outer_hashes = [];
-        main_puzzle_hashes.forEach((main_hash) {
-          if (asset_id.isNotEmpty)
-            outer_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                    Puzzlehash.fromHex(main_hash.toHex()),
-                    Puzzlehash.fromHex(asset_id))
+      defTokens.forEach((assetId) {
+        List<String> outerHashes = [];
+        mainPuzzleHashes.forEach((mainHash) {
+          if (assetId.isNotEmpty)
+            outerHashes.add(WalletKeychain.makeOuterPuzzleHash(
+                    Puzzlehash.fromHex(mainHash.toHex()),
+                    Puzzlehash.fromHex(assetId))
                 .toHex());
         });
-        mapToAndroid[asset_id] = outer_hashes;
+        mapToAndroid[assetId] = outerHashes;
       });
       stopwatch.stop();
       debugPrint(
@@ -2388,17 +2503,17 @@ class PushingTransaction {
   }
 
   WalletKeychain generateKeyChain(
-      List<String> mnemonic, int observer, int non_observer) {
+      List<String> mnemonic, int observer, int nonObserver) {
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
-    var counter = max(observer, non_observer);
+    var counter = max(observer, nonObserver);
     final walletsSetList = <WalletSet>[];
     for (var i = 0; i < counter; i++) {
       final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
       walletsSetList.add(set1);
     }
     final keychain = WalletKeychain.fromWalletSets(walletsSetList);
-    var key = "${mnemonic.join(" ")}_${observer}_$non_observer";
+    var key = "${mnemonic.join(" ")}_${observer}_$nonObserver";
     cachedWalletChains[key] = keychain;
     return keychain;
   }
@@ -2449,18 +2564,18 @@ class PushingTransaction {
   }
 
   WalletKeychain generateKeyChainForAssets(
-      List<String> mnemonic, String asset_id, int hash_counter) {
+      List<String> mnemonic, String assetId, int hashCounter) {
     KeychainCoreSecret keychainSecret =
         KeychainCoreSecret.fromMnemonic(mnemonic);
 
     final walletsSetList = <WalletSet>[];
-    for (var i = 0; i < hash_counter; i++) {
+    for (var i = 0; i < hashCounter; i++) {
       final set1 = WalletSet.fromPrivateKey(keychainSecret.masterPrivateKey, i);
       walletsSetList.add(set1);
     }
 
     final keychain = WalletKeychain.fromWalletSets(walletsSetList)
-      ..addOuterPuzzleHashesForAssetId(Puzzlehash.fromHex(asset_id));
+      ..addOuterPuzzleHashesForAssetId(Puzzlehash.fromHex(assetId));
 
     return keychain;
   }
@@ -2784,30 +2899,29 @@ class PushingTransaction {
     _channel.invokeMethod("offer", {"offer cat for xch : ": str});
   }
 
-  void generateCATPuzzleHash(List<String> main_puzzle_hashes, String asset_id) {
-    final List<String> outer_puzzle_hashes = [];
-    main_puzzle_hashes.forEach((element) {
+  void generateCATPuzzleHash(List<String> mainPuzzleHashes, String assetId) {
+    final List<String> outerPuzzleHashes = [];
+    mainPuzzleHashes.forEach((element) {
       if (element.isNotEmpty) {
-        outer_puzzle_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                Puzzlehash.fromHex(element), Puzzlehash.fromHex(asset_id))
+        outerPuzzleHashes.add(WalletKeychain.makeOuterPuzzleHash(
+                Puzzlehash.fromHex(element), Puzzlehash.fromHex(assetId))
             .toHex());
       }
     });
-    _channel
-        .invokeMethod('generate_outer_hash', {asset_id: outer_puzzle_hashes});
+    _channel.invokeMethod('generate_outer_hash', {assetId: outerPuzzleHashes});
   }
 
   Future<void> asyncCATPuzzleHash(
-      List<String> main_puzzle_hashes, String asset_id) async {
-    final List<String> outer_puzzle_hashes = [];
-    main_puzzle_hashes.forEach((element) {
+      List<String> mainPuzzleHashes, String assetId) async {
+    final List<String> outerPuzzleHashes = [];
+    mainPuzzleHashes.forEach((element) {
       if (element.isNotEmpty) {
-        outer_puzzle_hashes.add(WalletKeychain.makeOuterPuzzleHash(
-                Puzzlehash.fromHex(element), Puzzlehash.fromHex(asset_id))
+        outerPuzzleHashes.add(WalletKeychain.makeOuterPuzzleHash(
+                Puzzlehash.fromHex(element), Puzzlehash.fromHex(assetId))
             .toHex());
       }
     });
-    _channel.invokeMethod('$asset_id', {asset_id: outer_puzzle_hashes});
+    _channel.invokeMethod('$assetId', {assetId: outerPuzzleHashes});
   }
 
   void unCurryNFTCoin(
@@ -3055,27 +3169,27 @@ class PushingTransaction {
   Future<void> unCurryNFTCoinSecond({
     required List<String> mnemonics,
     required int observer,
-    required int non_observer,
-    required int start_height,
-    required String parent_coin_info,
-    required String puzzle_hash,
-    required String base_url,
+    required int nonObserver,
+    required int startHeight,
+    required String parentCoinInfo,
+    required String puzzleHash,
+    required String baseUrl,
   }) async {
     try {
-      var key = "${mnemonics.join(" ")}_${observer}_$non_observer";
+      var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
 
       final keychain = cachedWalletChains[key] ??
-          generateKeyChain(mnemonics, observer, non_observer);
+          generateKeyChain(mnemonics, observer, nonObserver);
 
       ChiaNetworkContextWrapper().registerNetworkContext(Network.mainnet);
-      final fullNodeRpc = FullNodeHttpRpc(base_url);
+      final fullNodeRpc = FullNodeHttpRpc(baseUrl);
       final fullNode = ChiaFullNodeInterface(fullNodeRpc);
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-          parent_coin_info: Bytes.fromHex(parent_coin_info),
-          puzzle_hash: Puzzlehash.fromHex(puzzle_hash),
-          startHeight: start_height);
+          parent_coin_info: Bytes.fromHex(parentCoinInfo),
+          puzzle_hash: Puzzlehash.fromHex(puzzleHash),
+          startHeight: startHeight);
       if (nftCoins.isEmpty) {
         debugPrint("NFtCoins to uncurry is empty");
       }

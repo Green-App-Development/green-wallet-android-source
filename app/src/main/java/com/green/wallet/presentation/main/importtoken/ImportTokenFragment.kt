@@ -64,7 +64,7 @@ class ImportTokenFragment : DaggerFragment(), TokenAdapter.TokenAdapterListener 
 		const val ADDRESS_KEY = "address_key"
 	}
 
-	var curFingerPrint: Long? = null
+	private var curFingerPrint: Long? = null
 	var curNetworkType: String = ""
 	var address: String = ""
 

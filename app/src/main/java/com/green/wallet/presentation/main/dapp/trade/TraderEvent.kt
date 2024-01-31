@@ -12,7 +12,7 @@ sealed interface TraderEvent {
 
     data class ParseTakeOffer(val offer: String) : TraderEvent
 
-    data class SignOffer(val offer: String) : TraderEvent
+    data class TakeOffer(val offer: String) : TraderEvent
 
     data class ShowCreateOfferDialog(val params: CreateOfferParams) : TraderEvent
 
@@ -25,5 +25,8 @@ sealed interface TraderEvent {
     object PinConfirmAcceptOffer : TraderEvent
 
     data class CreateOfferFlutter(val params: CreateOfferParams, val fee: Double) : TraderEvent
+
+    object PinnedCreateOffer : TraderEvent
+    object ShowPinCreateOffer : TraderEvent
 
 }

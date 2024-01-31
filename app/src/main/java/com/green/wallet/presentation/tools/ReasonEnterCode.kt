@@ -11,5 +11,6 @@ enum class ReasonEnterCode {
     SEND_TRANSACTION,
     SHOW_DETAILS,
     REMOVE_WALLET,
-    ACCEPT_OFFER
+    ACCEPT_OFFER,
+    CREATE_OFFER
 }

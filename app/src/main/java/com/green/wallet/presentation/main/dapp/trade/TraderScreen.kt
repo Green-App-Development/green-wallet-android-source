@@ -159,9 +159,9 @@ fun TraderScreen(
             modifier = Modifier,
             sign = {
                 if (offerViewState.acceptOffer) {
-                    onEvent(TraderEvent.SignOffer(offerViewState.offer))
+                    onEvent(TraderEvent.TakeOffer(offerViewState.offer))
                 } else {
-                    onEvent(TraderEvent.SignOffer(offerViewState.offer))
+                    onEvent(TraderEvent.ShowPinCreateOffer)
                 }
             },
             choseFee = {
