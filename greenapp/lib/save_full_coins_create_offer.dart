@@ -62,7 +62,6 @@ Future<void> saveFullCoinsXCH(
     List<Coin> usedXCHCoins,
     ChiaFullNodeInterface fullNode,
     WalletKeychain keychain) async {
-
   final puzzleHashes = keychain.hardenedMap.entries.map((e) => e.key).toList();
   for (var element in keychain.unhardenedMap.entries) {
     puzzleHashes.add(element.key);
@@ -77,7 +76,7 @@ Future<void> saveFullCoinsXCH(
   var curXCHAmount = 0;
   for (var coin in totalXCHCoins) {
     var isCoinSpent =
-    spentCoinsParents.contains(coin.parentCoinInfo.toString());
+        spentCoinsParents.contains(coin.parentCoinInfo.toString());
     if (!isCoinSpent) {
       curXCHAmount += coin.amount;
       neededXCHCoins.add(coin);
@@ -88,10 +87,10 @@ Future<void> saveFullCoinsXCH(
     }
   }
   final standartWalletService = StandardWalletService();
-  final xchFullCoins = standartWalletService.convertXchCoinsToFull(neededXCHCoins);
+  final xchFullCoins =
+      standartWalletService.convertXchCoinsToFull(neededXCHCoins);
 
   fullCoins.addAll(xchFullCoins);
-
 }
 
 Future<void> getCatCoinsDetail(
@@ -105,4 +104,13 @@ Future<void> getCatCoinsDetail(
     parentCoinSpend: parentCoinSpend!,
     coin: coin,
   ));
+}
+
+Map<OfferAssetData, List<int>> offerAssetDataParams(
+    List<FlutterToken> list, bool isOffered) {
+  Map<OfferAssetData, List<int>> param = <OfferAssetData, List<int>>{};
+
+  
+
+  return param;
 }

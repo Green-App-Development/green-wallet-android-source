@@ -582,6 +582,25 @@ class PushingTransaction {
           }
       }
 
+      final tibetTokenHash = Puzzlehash.fromHex("");
+      final changePh = keychain.puzzlehashes[2];
+      final targetPh = keychain.puzzlehashes[3];
+
+      // final offer = await offerService.createOffer(
+      //     requesteAmounts: {
+      //       OfferAssetData.cat(
+      //         tailHash: assetHash,
+      //       ): [catAmount]
+      //     },
+      //     offerredAmounts: {
+      //       null: -xchAmount
+      //     },
+      //     coins: fullCoins,
+      //     changePuzzlehash: changePh,
+      //     targetPuzzleHash: targePh,
+      //     fee: fee);
+
+
     } catch (ex) {
       debugPrint("Exception in creating an offer : $ex");
       _channel.invokeMethod("exception");
