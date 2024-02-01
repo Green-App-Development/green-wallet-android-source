@@ -1,4 +1,5 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_splash_screen_module/flutter_token.dart';
 import 'package:flutter_splash_screen_module/pushing_transaction.dart';
 
@@ -7,10 +8,12 @@ Future<void> saveFullCoinsCAT(
     FlutterToken token,
     List<String> spentCoinsParents,
     List<FullCoin> fullCoins,
-    List<Coin> usedCoins,
+    Map<String?, List<Coin>> spentCoinsMap,
     ChiaFullNodeInterface fullNode,
     WalletKeychain keychain) async {
   var catHash = Puzzlehash.fromHex(token.assetID);
+
+  keychain.addOuterPuzzleHashesForAssetId(catHash);
 
   var myOuterPuzzleHashes = keychain.getOuterPuzzleHashesForAssetId(catHash);
 
@@ -31,15 +34,15 @@ Future<void> saveFullCoinsCAT(
   );
 
   List<CatCoin> catCoins = [];
+  List<Coin> neededCoins = [];
 
   // hydrate cat coins
   var curCATAmount = 0;
   for (final coin in responseDataCAT) {
-    var isCoinSpent =
-        spentCoinsParents.contains(coin.parentCoinInfo.toString());
+    var isCoinSpent = spentCoinsParents.contains("0x${coin.parentCoinInfo}");
     if (!isCoinSpent) {
       curCATAmount += coin.amount;
-      usedCoins.add(coin);
+      neededCoins.add(coin);
       await getCatCoinsDetail(
         coin: coin,
         httpUrl: url,
@@ -51,6 +54,27 @@ Future<void> saveFullCoinsCAT(
       }
     }
   }
+
+  // hydrate full coins
+  List<FullCoin>? fullCatCoins = catCoins.map((e) {
+    //Search for the Coin
+    final coinFounded = responseDataCAT
+        .where(
+          (coin_) => coin_.id == e.id,
+        )
+        .toList();
+
+    final coin = coinFounded.first;
+
+    return FullCoin.fromCoin(
+      coin,
+      e.parentCoinSpend,
+    );
+  }).toList();
+
+  fullCoins.addAll(fullCatCoins);
+
+  spentCoinsMap[token.assetID] = neededCoins;
 }
 
 Future<void> saveFullCoinsXCH(
@@ -59,7 +83,7 @@ Future<void> saveFullCoinsXCH(
     FlutterToken token,
     List<String> spentCoinsParents,
     List<FullCoin> fullCoins,
-    List<Coin> usedXCHCoins,
+    Map<String, List<Coin>> spentCoinsMap,
     ChiaFullNodeInterface fullNode,
     WalletKeychain keychain) async {
   final puzzleHashes = keychain.hardenedMap.entries.map((e) => e.key).toList();
@@ -75,12 +99,10 @@ Future<void> saveFullCoinsXCH(
   //search for xch full coins
   var curXCHAmount = 0;
   for (var coin in totalXCHCoins) {
-    var isCoinSpent =
-        spentCoinsParents.contains(coin.parentCoinInfo.toString());
+    var isCoinSpent = spentCoinsParents.contains("0x${coin.parentCoinInfo}");
     if (!isCoinSpent) {
       curXCHAmount += coin.amount;
       neededXCHCoins.add(coin);
-      usedXCHCoins.add(coin);
       if (curXCHAmount >= token.amount + fee) {
         break;
       }
@@ -91,6 +113,8 @@ Future<void> saveFullCoinsXCH(
       standartWalletService.convertXchCoinsToFull(neededXCHCoins);
 
   fullCoins.addAll(xchFullCoins);
+
+  spentCoinsMap["null"] = neededXCHCoins;
 }
 
 Future<void> getCatCoinsDetail(
@@ -106,11 +130,35 @@ Future<void> getCatCoinsDetail(
   ));
 }
 
-Map<OfferAssetData, List<int>> offerAssetDataParams(
-    List<FlutterToken> list, bool isOffered) {
-  Map<OfferAssetData, List<int>> param = <OfferAssetData, List<int>>{};
+Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
+    List<FlutterToken> list) {
+  Map<OfferAssetData?, List<int>> param = <OfferAssetData?, List<int>>{};
 
-  
+  for (var item in list) {
+    var amount = item.amount;
+    if (item.type == "CAT") {
+      final tokenHash = Puzzlehash.fromHex(item.assetID);
+      param[OfferAssetData.cat(tailHash: tokenHash)] = [amount];
+    } else if (item.type == 'XCH') {
+      param[null] = [amount];
+    } else {}
+  }
+  return param;
+}
+
+Map<OfferAssetData?, int> offerAssetDataParamsOffered(List<FlutterToken> list) {
+  Map<OfferAssetData?, int> param = <OfferAssetData?, int>{};
+
+  for (var item in list) {
+    var amount = item.amount;
+    debugPrint("Item on offerAssetDataParamsOffered : $item");
+    if (item.type == "CAT") {
+      final tokenHash = Puzzlehash.fromHex(item.assetID);
+      param[OfferAssetData.cat(tailHash: tokenHash)] = -amount;
+    } else if (item.type == 'XCH') {
+      param[null] = amount;
+    } else {}
+  }
 
   return param;
 }

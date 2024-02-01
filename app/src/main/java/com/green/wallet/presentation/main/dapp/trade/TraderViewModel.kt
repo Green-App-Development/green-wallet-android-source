@@ -135,6 +135,20 @@ class TraderViewModel @Inject constructor(
                 initCreateOfferUpdateParams(event.params)
             }
 
+            is TraderEvent.SendTakeOfferResult -> {
+                JavaJSThreadCommunicator.resultTakeOffer = "SUCCESS"
+                JavaJSThreadCommunicator.wait = false
+                setLoading(false)
+                setEvent(TraderEvent.SuccessTakingOffer)
+            }
+
+            is TraderEvent.SendCreateOfferResult -> {
+                JavaJSThreadCommunicator.resultCreateOffer = hashMapOf()
+                JavaJSThreadCommunicator.resultCreateOffer["offer"] = event.offer
+                JavaJSThreadCommunicator.wait = false
+                setEvent(TraderEvent.SuccessTakingOffer)
+            }
+
             else -> Unit
         }
     }
@@ -217,7 +231,7 @@ class TraderViewModel @Inject constructor(
             val jsonObject = JSONObject(spentCoins)
             for (key in jsonObject.keys()) {
                 val value = jsonObject[key]
-                if (value == "null") {
+                if (key == "null") {
                     spentCoinsInteract.insertSpentCoinsJson(
                         value.toString(),
                         timeCreated,
@@ -239,10 +253,6 @@ class TraderViewModel @Inject constructor(
                     }
                 }
             }
-            JavaJSThreadCommunicator.resultTakeOffer = "SUCCESS"
-            JavaJSThreadCommunicator.wait = false
-            setLoading(false)
-            setEvent(TraderEvent.SuccessTakingOffer)
         }
     }
 

@@ -18,13 +18,15 @@ sealed interface TraderEvent {
 
     object SuccessTakingOffer : TraderEvent
 
+    object SendTakeOfferResult : TraderEvent
+
+    data class SendCreateOfferResult(val offer: String) : TraderEvent
+
     object FailureTakingOffer : TraderEvent
 
     data class ChoseFee(val fee: Double) : TraderEvent
 
     object PinConfirmAcceptOffer : TraderEvent
-
-    data class CreateOfferFlutter(val params: CreateOfferParams, val fee: Double) : TraderEvent
 
     object PinnedCreateOffer : TraderEvent
     object ShowPinCreateOffer : TraderEvent

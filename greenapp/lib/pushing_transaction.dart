@@ -544,8 +544,6 @@ class PushingTransaction {
       final offerService =
           OffersService(fullNode: fullNode, keychain: keychain);
 
-      final standartWalletService = StandardWalletService();
-
       final puzzleHashes =
           keychain.hardenedMap.entries.map((e) => e.key).toList();
       keychain.unhardenedMap.entries.forEach((element) {
@@ -564,43 +562,39 @@ class PushingTransaction {
       var offered = parseFlutterTokenJsonString(offeredStr);
       var requested = parseFlutterTokenJsonString(requestedStr);
 
-      debugPrint("OfferedStr : $offered");
-      debugPrint("RequestedStr : $requested");
-
       List<FullCoin> fullCoins = [];
 
-      List<Coin> usedXCHCoins  = [];
-      List<Coin> usedCoins  = [];
+      Map<String, List<Coin>> spentCoinsMap = {};
 
-      for(var token in offered){
-          if(token.type=="XCH"){
-            saveFullCoinsXCH(fee, url, token, spentCoinsParents, fullCoins, usedXCHCoins, fullNode, keychain);
-          }else if(token.type=="CAT"){
-            saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins, usedCoins, fullNode, keychain);
-          }else {
-
-          }
+      for (var token in offered) {
+        if (token.type == "XCH") {
+          await saveFullCoinsXCH(fee, url, token, spentCoinsParents, fullCoins,
+              spentCoinsMap, fullNode, keychain);
+        } else if (token.type == "CAT") {
+          await saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins,
+              spentCoinsMap, fullNode, keychain);
+        } else {}
       }
 
-      final tibetTokenHash = Puzzlehash.fromHex("");
       final changePh = keychain.puzzlehashes[2];
       final targetPh = keychain.puzzlehashes[3];
 
-      // final offer = await offerService.createOffer(
-      //     requesteAmounts: {
-      //       OfferAssetData.cat(
-      //         tailHash: assetHash,
-      //       ): [catAmount]
-      //     },
-      //     offerredAmounts: {
-      //       null: -xchAmount
-      //     },
-      //     coins: fullCoins,
-      //     changePuzzlehash: changePh,
-      //     targetPuzzleHash: targePh,
-      //     fee: fee);
+      debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
 
+      var requestMap = offerAssetDataParamsRequested(requested);
+      var offerMap = offerAssetDataParamsOffered(offered);
 
+      final offer = await offerService.createOffer(
+          requesteAmounts: requestMap,
+          offerredAmounts: offerMap,
+          coins: fullCoins.toSet().toList(),
+          changePuzzlehash: changePh,
+          targetPuzzleHash: targetPh,
+          fee: fee);
+
+      final str = offer.toBench32();
+      _channel.invokeMethod("CreateOffer",
+          {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
     } catch (ex) {
       debugPrint("Exception in creating an offer : $ex");
       _channel.invokeMethod("exception");

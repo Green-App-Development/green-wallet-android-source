@@ -92,8 +92,7 @@ class TraderFragment : BaseComposeFragment() {
                                 viewModel.setLoading(true)
                                 val value = viewModel.offerViewState.value
                                 callFlutterToPushTakeOffer(
-                                    value.offer,
-                                    value.chosenFee
+                                    value.offer, value.chosenFee
                                 )
                             }
 
@@ -133,14 +132,17 @@ class TraderFragment : BaseComposeFragment() {
                     val requested = arguments["requested"]?.toString().orEmpty()
                     val offered = arguments["offered"]?.toString().orEmpty()
                     viewModel.updateTakingOffer(
-                        requestedJson = requested,
-                        offeredJson = offered
+                        requestedJson = requested, offeredJson = offered
                     )
                 }
 
                 "CreateOffer" -> {
                     val args = (call.arguments as HashMap<*, *>)
-
+                    VLog.d("Creating offer from flutter ${call.arguments}")
+                    val spentCoins = args["spentCoins"].toString()
+                    val offer = args["offer"].toString()
+                    viewModel.saveSpentCoins(spentCoins)
+                    viewModel.handleEvent(TraderEvent.SendCreateOfferResult(offer))
                 }
 
                 "PushingOffer" -> {
@@ -148,6 +150,7 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
                     viewModel.saveSpentCoins(spentCoins)
+                    viewModel.handleEvent(TraderEvent.SendTakeOfferResult)
                 }
 
                 "ErrorPushingOffer" -> {
@@ -177,12 +180,10 @@ class TraderFragment : BaseComposeFragment() {
         map["url"] = url
         map["fee"] = Math.round(
             fee * if (isThisChivesNetwork(wallet.networkType)) Math.pow(
-                10.0,
-                8.0
+                10.0, 8.0
             )
             else Math.pow(
-                10.0,
-                12.0
+                10.0, 12.0
             )
         )
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
@@ -200,7 +201,7 @@ class TraderFragment : BaseComposeFragment() {
         map["nonObserver"] = wallet.nonObserverHash
         map["url"] = url
         map["fee"] = (value.chosenFee * PRECISION_XCH).toLong()
-        map["spentCoins"] = value.spendCoins
+        map["spentCoins"] = Gson().toJson(value.spendCoins)
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
         map["requested"] = Gson().toJson(convertToTokenFlutter(value.requested))
         map["offered"] = Gson().toJson(convertToTokenFlutter(value.offered))
@@ -273,8 +274,7 @@ class TraderFragment : BaseComposeFragment() {
                     } else {
                         PRECISION_CAT
                     }
-                    val type = if (i.assetID.isNotEmpty())
-                        "CAT" else "XCH"
+                    val type = if (i.assetID.isNotEmpty()) "CAT" else "XCH"
                     FlutterToken(i.assetID, amount.toLong(), type)
                 }
 
