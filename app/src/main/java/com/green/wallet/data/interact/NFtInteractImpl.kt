@@ -45,9 +45,11 @@ class NFtInteractImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNFTCoinByHash(coinHash: String): NFTCoin {
+    override suspend fun getNFTCoinByHash(coinHash: String): NFTCoin? {
         val nftCoin = nftCoinDao.getNFTCoinByParentCoinInfo(coinHash)
-        return nftCoin.get().toNftCoin()
+        if(nftCoin.isPresent)
+            return nftCoin.get().toNftCoin()
+        return null
     }
 
     override suspend fun getNftINFOByHash(nftCoinHash: String): NFTInfo {

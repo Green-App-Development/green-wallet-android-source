@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface NFTInteract {
 
 	fun getHomeAddedWalletWithNFTTokensFlow(): Flow<List<WalletWithNFTInfo>>
-	suspend fun getNFTCoinByHash(coinHash: String): NFTCoin
+	suspend fun getNFTCoinByHash(coinHash: String): NFTCoin?
 
 	suspend fun getNftINFOByHash(nftCoinHash: String): NFTInfo
 

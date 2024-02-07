@@ -23,14 +23,18 @@ data class CustomColorsPalette(
     val feeBackgroundChosen: Color = Color.Unspecified,
     val dividerColor: Color = Color.Unspecified,
     val secondPrimaryTextColor: Color = Color.Unspecified,
-    val btnInActive: Color = Color.Unspecified
+    val btnInActive: Color = Color.Unspecified,
+    val secondaryTextColor: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
     txtPrimaryColor = txtPrimaryColorsLight,
     primaryAppBackground = Color(0xFFF4F4F4),
     dividerColor = Color(0xFFF2F2F2),
-    btnInActive = Color(0xFFDADADA)
+    btnInActive = Color(0xFFDADADA),
+    blackAppBackground = Color(0xFFffffff),
+    greyText = Color(0xFFC9C9C9),
+    secondaryTextColor = Color(0xFF202020),
 )
 
 val OnDarkCustomColorsPalette = CustomColorsPalette(
@@ -46,7 +50,9 @@ val OnDarkCustomColorsPalette = CustomColorsPalette(
     feeBackgroundChosen = Color(0xFF444444),
     dividerColor = Color(0xFF4A4A4A),
     secondPrimaryTextColor = Color(0xFFFFFFFF),
-    btnInActive = Color(0xFF444444)
+    btnInActive = Color(0xFF444444),
+    greyText = Color(0xFF949494),
+    secondaryTextColor = Color(0xFFFFFFFF),
 )
 
 val Provider = staticCompositionLocalOf { CustomColorsPalette() }

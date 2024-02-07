@@ -79,6 +79,7 @@ class SpeedyDialogViewModel @Inject constructor(
         VLog.d("Setting up transaction property : $tran")
         tran?.let {
             this.transaction = tran
+            _viewState.update { it.copy(address = tran.fkAddress) }
             viewModelScope.launch(Dispatchers.IO) {
                 getInfoAboutTransaction()
                 wallet =
@@ -103,7 +104,7 @@ class SpeedyDialogViewModel @Inject constructor(
     private suspend fun getInfoAboutTransaction() {
         if (transaction.code == "NFT") {
             this.nftInfo = nftInteract.getNftINFOByHash(transaction.nftCoinHash)
-            this.nftCoin = nftInteract.getNFTCoinByHash(nftInfo.nft_coin_hash)
+            this.nftCoin = nftInteract.getNFTCoinByHash(nftInfo.nft_coin_hash) ?: return
             VLog.d("NftInfo Entity from DB : $nftInfo")
             _viewState.update {
                 it.copy(

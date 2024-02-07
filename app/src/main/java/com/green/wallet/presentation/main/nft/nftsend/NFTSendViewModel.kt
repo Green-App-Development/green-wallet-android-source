@@ -1,6 +1,5 @@
 package com.green.wallet.presentation.main.nft.nftsend
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
@@ -10,7 +9,6 @@ import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.tools.Resource
-import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,10 +29,10 @@ class NFTSendViewModel @Inject constructor(
     private val dexieInteract: DexieInteract
 ) : BaseViewModel<NftSendViewState, Unit>(NftSendViewState()) {
 
-    lateinit var wallet: Wallet
-    lateinit var nftCoin: NFTCoin
+    var wallet: Wallet? = null
+    var nftCoin: NFTCoin? = null
     var alreadySpentCoins = listOf<SpentCoin>()
-    lateinit var base_url: String
+    var baseUrl: String? = null
     private val _spendableBalance = MutableStateFlow("0")
     val spendableBalance = _spendableBalance.asStateFlow()
 
@@ -58,14 +56,18 @@ class NFTSendViewModel @Inject constructor(
             wallet = walletInteract.getWalletByAddress(nftInfo.fk_address)
             nftCoin = nftInteract.getNFTCoinByHash(nftInfo.nft_coin_hash)
             alreadySpentCoins = spentCoinsInteract.getSpentCoinsToPushTrans(
-                wallet.networkType,
-                wallet.address,
+                wallet?.networkType ?: return@launch,
+                wallet?.address ?: return@launch,
                 "XCH"
             )
             val item =
-                prefsManager.getObjectString(getPreferenceKeyForNetworkItem(wallet.networkType))
-            base_url = Gson().fromJson(item, NetworkItem::class.java).full_node
-            initCalculateSpendableBalance(wallet)
+                prefsManager.getObjectString(
+                    getPreferenceKeyForNetworkItem(
+                        wallet?.networkType ?: return@launch
+                    )
+                )
+            baseUrl = Gson().fromJson(item, NetworkItem::class.java).full_node
+            initCalculateSpendableBalance(wallet ?: return@launch)
         }
     }
 
@@ -111,7 +113,7 @@ class NFTSendViewModel @Inject constructor(
         viewModelScope.launch {
             val res = blockChainInteract.push_tx_nft(
                 spendBundleJson,
-                base_url,
+                baseUrl ?: return@launch,
                 destPuzzleHash,
                 nftInfo,
                 spentCoinsJson,

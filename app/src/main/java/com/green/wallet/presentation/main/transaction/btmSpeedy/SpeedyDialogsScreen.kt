@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.common.tools.formatString
 import com.green.compose.buttons.DefaultButton
 import com.green.compose.custom.fee.FeeContainer
 import com.green.compose.custom.fee.FixedSpacer
@@ -111,9 +112,9 @@ fun SpeedyTransactionBtmScreen(
                     fontWeight = FontWeight.W500
                 )
                 DefaultText(
-                    text = "xch1jihbwkl...4ciyc",
+                    text = formatString(10, state.address, 6),
                     size = text_16,
-                    color = Color.White,
+                    color = Provider.current.secondaryTextColor,
                     fontWeight = FontWeight.W500
                 )
             }
@@ -200,7 +201,7 @@ fun SpeedyTransactionBtmScreen(
                 onEvent(SpeedyTokenEvent.OnSign)
             }) {
             DefaultText(
-                text = "Sign", size = text_15, color = Provider.current.txtPrimaryColor
+                text = "Sign", size = text_15, color = Provider.current.secondaryTextColor
             )
         }
         FixedSpacer(height = size_10)

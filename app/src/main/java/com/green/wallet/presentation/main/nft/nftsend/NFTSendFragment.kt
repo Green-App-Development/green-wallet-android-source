@@ -24,14 +24,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -43,7 +41,6 @@ import com.google.gson.Gson
 import com.green.compose.custom.fee.FeeContainer
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.text_12
-import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
@@ -58,9 +55,7 @@ import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
 import com.green.wallet.presentation.tools.*
-import com.green.wallet.presentation.tools.Resource.Companion.error
 import com.greenwallet.core.ext.collectFlow
-import dagger.android.support.DaggerFragment
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.android.synthetic.main.dialog_confirm_send_nft.*
 import kotlinx.android.synthetic.main.fragment_send.txtAddressAlredyExistWarning
@@ -465,8 +460,8 @@ class NFTSendFragment : BaseFragment() {
             )
 
             val argsFlut = hashMapOf<String, Any>()
-            val wallet = vm.wallet
-            val nftCoin = vm.nftCoin
+            val wallet = vm.wallet ?: return@launch
+            val nftCoin = vm.nftCoin ?: return@launch
             val alreadySpentCoins = vm.alreadySpentCoins
             val coin = CoinRecord(
                 coin = com.green.wallet.data.network.dto.coins.Coin(
@@ -494,7 +489,7 @@ class NFTSendFragment : BaseFragment() {
             argsFlut["destAddress"] = toAddress
             argsFlut["mnemonics"] = convertListToStringWithSpace(wallet.mnemonics)
             argsFlut["coin"] = gson.toJson(coin)
-            argsFlut["base_url"] = vm.base_url
+            argsFlut["base_url"] = vm.baseUrl ?: return@launch
             argsFlut["spentCoins"] = Gson().toJson(alreadySpentCoins)
             argsFlut["fromAddress"] = nftCoin.puzzleHash
             argsFlut["fee"] = fee
@@ -551,7 +546,7 @@ class NFTSendFragment : BaseFragment() {
 
     private fun initConfirmDialogDetails(dialog: Dialog) {
         dialog.apply {
-            var commissionText = vm.viewState.value.fee.toString()
+            var commissionText = formattedDoubleAmountWithPrecision(vm.viewState.value.fee)
             if (commissionText.isEmpty())
                 commissionText = "0"
             findViewById<TextView>(R.id.edtConfirmSendNftAddress).text =

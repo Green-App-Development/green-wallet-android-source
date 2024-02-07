@@ -220,7 +220,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
     override fun onStart() {
         super.onStart()
         VLog.d("OnStart on MainActivity")
-//        checkUserLastVisitTime()
+        checkUserLastVisitTime()
     }
 
     private fun checkUserLastVisitTime() {
