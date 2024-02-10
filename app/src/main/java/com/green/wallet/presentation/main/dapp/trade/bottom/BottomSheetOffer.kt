@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.common.tools.formatString
 import com.green.compose.buttons.DefaultButton
 import com.green.compose.custom.fee.FeeContainer
 import com.green.compose.custom.fee.FixedSpacer
@@ -167,7 +168,7 @@ fun ModelBottomSheetOffer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(size_1)
-                            .background(color = Provider.current.secondGrey),
+                            .background(color = Provider.current.dividerOffer),
                     )
                     FixedSpacer(height = size_12)
                     DefaultText(
@@ -219,7 +220,7 @@ fun ModelBottomSheetOffer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(size_1)
-                            .background(color = Provider.current.secondGrey),
+                            .background(color = Provider.current.dividerOffer),
                     )
                     FixedSpacer(height = size_18)
 
@@ -265,7 +266,7 @@ fun ModelBottomSheetOffer(
                     DefaultText(
                         text = "Sign",
                         size = text_15,
-                        color = Provider.current.txtPrimaryColor
+                        color = Provider.current.txtSecondaryColor
                     )
                 }
                 FixedSpacer(height = size_10)
@@ -426,7 +427,7 @@ fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
                 )
                 FixedSpacer(height = size_4)
                 DefaultText(
-                    text = "nft1qxasgvsg7jbd...ne84",
+                    text = formatString(10, nftToken.nftId, 6),
                     size = text_14,
                     color = Provider.current.secondPrimaryTextColor,
                     fontWeight = FontWeight.W500
@@ -456,7 +457,6 @@ fun CatTokenItem(item: CatToken, acceptOffer: Boolean) {
             text = item.code,
             size = text_14,
             color = Provider.current.txtPrimaryColor,
-            fontWeight = FontWeight.W500,
             textAlign = TextAlign.Start
         )
         val fromTokenClr =

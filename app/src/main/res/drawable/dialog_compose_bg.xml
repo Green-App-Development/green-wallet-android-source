@@ -7,6 +7,6 @@
 
     <padding android:top="10dp" />
 
-
+    <solid android:color="@color/bcg_btm_sheet_edge" />
 
 </shape>

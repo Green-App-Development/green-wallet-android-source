@@ -1,5 +1,6 @@
 package com.green.compose.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -11,6 +12,7 @@ import com.green.compose.colors.txtPrimaryColorsLight
 @Immutable
 data class CustomColorsPalette(
     val txtPrimaryColor: Color = Color.Unspecified,
+    val txtSecondaryColor: Color = Color.Unspecified,
     val background: Color = Color.Unspecified,
     val iconGrey: Color = Color.Unspecified,
     val green: Color = Color(0xFF3AAC59),
@@ -24,21 +26,30 @@ data class CustomColorsPalette(
     val dividerColor: Color = Color.Unspecified,
     val secondPrimaryTextColor: Color = Color.Unspecified,
     val btnInActive: Color = Color.Unspecified,
-    val secondaryTextColor: Color = Color.Unspecified
+    val secondaryTextColor: Color = Color.Unspecified,
+    val dividerOffer: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
-    txtPrimaryColor = txtPrimaryColorsLight,
+    txtPrimaryColor = Color.Black,
+    txtSecondaryColor = Color.White,
     primaryAppBackground = Color(0xFFF4F4F4),
     dividerColor = Color(0xFFF2F2F2),
     btnInActive = Color(0xFFDADADA),
     blackAppBackground = Color(0xFFffffff),
     greyText = Color(0xFFC9C9C9),
     secondaryTextColor = Color(0xFF202020),
+    secondGrey = Color(0xFF757575),
+    errorColor = Color(0xFFFF2222),
+    dividerOffer = Color(0xFFF2F2F2),
+    feeBackgroundChosen = Color.White,
+    feeBackground = Color(0xFFf4f4f4),
+    iconGrey = Color(0xFFC9C9C9),
 )
 
 val OnDarkCustomColorsPalette = CustomColorsPalette(
-    txtPrimaryColor = txtPrimaryColorsDark,
+    txtPrimaryColor = Color(0xFFFFFFFF),
+    txtSecondaryColor = Color.White,
     background = Color(0xFF303030),
     iconGrey = Color(0xFF4A4A4A),
     green = Color(0xFF3AAC59),
@@ -53,13 +64,14 @@ val OnDarkCustomColorsPalette = CustomColorsPalette(
     btnInActive = Color(0xFF444444),
     greyText = Color(0xFF949494),
     secondaryTextColor = Color(0xFFFFFFFF),
+    dividerOffer = Color(0xFF494949)
 )
 
 val Provider = staticCompositionLocalOf { CustomColorsPalette() }
 
 @Composable
 fun GreenWalletTheme(
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val customColorsPalette =

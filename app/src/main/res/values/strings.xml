@@ -426,5 +426,8 @@
     <string name="address_paying_swap" />
     <string name="service_is_unavailable" />
     <string name="failed" />
+    <string name="speed_up_dialog_title" />
+    <string name="transaction_acceleration" />
+
 
 </resources>

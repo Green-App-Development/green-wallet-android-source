@@ -707,7 +707,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
     }
 
     fun move2DAppFragment() {
-        navController.navigate(fragmentTrader)
+        navController.navigate(fragmentDApp)
     }
 
     fun move2SwapFragment() {

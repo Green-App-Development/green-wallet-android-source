@@ -35,7 +35,6 @@ class DAppFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.registerListeners()
         binding.initChoicesDEXNftMarkets()
         underlineTxt()
     }
@@ -52,10 +51,6 @@ class DAppFragment : DaggerFragment() {
         }
     }
 
-
-    fun FragmentDAppBinding.registerListeners() {
-
-    }
 
     private var dexIsClicked = true
 

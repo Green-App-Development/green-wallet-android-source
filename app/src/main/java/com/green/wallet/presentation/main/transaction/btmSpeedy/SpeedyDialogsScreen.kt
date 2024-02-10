@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.transaction.btmSpeedy
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,7 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +42,7 @@ import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
 import com.green.compose.dimens.text_16
+import com.green.compose.extension.getActivity
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
@@ -50,13 +52,15 @@ import com.green.wallet.presentation.main.dapp.trade.bottom.CatTokenItem
 import com.green.wallet.presentation.main.dapp.trade.bottom.NftItem
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.tools.getStringResource
 
 
 @Composable
 fun SpeedyTransactionBtmScreen(
-    state: SpeedyTokenState = SpeedyTokenState(),
+    state: SpeedyTokenState = SpeedyTokenState(address = "asdlsjadljsaldfjsakldfa"),
     onEvent: (SpeedyTokenEvent) -> Unit = {}
 ) {
+    val activity = LocalContext.current.getActivity()!!
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,7 +93,7 @@ fun SpeedyTransactionBtmScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DefaultText(
-                    text = "Speed up",
+                    text = activity.getStringResource(R.string.speed_up_dialog_title),
                     size = text_16,
                     color = Provider.current.green,
                     fontWeight = FontWeight.W500
@@ -106,16 +110,14 @@ fun SpeedyTransactionBtmScreen(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DefaultText(
-                    text = "Current account",
+                    text = activity.getStringResource(R.string.current_account),
                     size = text_14,
-                    color = Provider.current.green,
-                    fontWeight = FontWeight.W500
+                    color = Provider.current.green
                 )
                 DefaultText(
                     text = formatString(10, state.address, 6),
                     size = text_16,
-                    color = Provider.current.secondaryTextColor,
-                    fontWeight = FontWeight.W500
+                    color = Provider.current.secondaryTextColor
                 )
             }
             FixedSpacer(height = size_12)
@@ -123,11 +125,11 @@ fun SpeedyTransactionBtmScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(size_1)
-                    .background(color = Provider.current.secondGrey),
+                    .background(color = Provider.current.dividerOffer),
             )
             FixedSpacer(height = size_12)
             DefaultText(
-                text = "Transaction acceleration",
+                text = activity.getStringResource(R.string.transaction_acceleration),
                 size = text_14,
                 color = Provider.current.green,
                 fontWeight = FontWeight.W500,
@@ -153,7 +155,7 @@ fun SpeedyTransactionBtmScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(size_1)
-                    .background(color = Provider.current.secondGrey),
+                    .background(color = Provider.current.dividerOffer),
             )
 
             FixedSpacer(height = size_14)
@@ -168,7 +170,7 @@ fun SpeedyTransactionBtmScreen(
                 horizontalAlignment = Alignment.Start
             ) {
                 DefaultText(
-                    text = "Spendable Balance: $amount",
+                    text = "${activity.getStringResource(R.string.spendable_balance)}: $amount",
                     size = text_12,
                     color = if (feeEnough) Provider.current.greyText
                     else Provider.current.errorColor
@@ -176,7 +178,7 @@ fun SpeedyTransactionBtmScreen(
             }
 
             DefaultText(
-                text = "Комиссия сети",
+                text = activity.getStringResource(R.string.network_commission_fee),
                 size = text_14,
                 color = Provider.current.green,
                 fontWeight = FontWeight.W500,
@@ -193,6 +195,7 @@ fun SpeedyTransactionBtmScreen(
             )
             FixedSpacer(height = size_20)
         }
+
         FixedSpacer(height = size_20)
 
         DefaultButton(
@@ -201,7 +204,9 @@ fun SpeedyTransactionBtmScreen(
                 onEvent(SpeedyTokenEvent.OnSign)
             }) {
             DefaultText(
-                text = "Sign", size = text_15, color = Provider.current.secondaryTextColor
+                text = activity.getStringResource(R.string.sign),
+                size = text_15,
+                color = Provider.current.txtSecondaryColor
             )
         }
         FixedSpacer(height = size_10)

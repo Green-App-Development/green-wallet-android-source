@@ -167,7 +167,7 @@ internal fun getColorFeeText(chosen: Boolean, enough: Boolean): Color {
 @Composable
 internal fun getColorFeeAmount(chosen: Boolean, isEnough: Boolean): Color {
     if (chosen)
-        return if (isEnough) Color.White else Provider.current.errorColor
+        return if (isEnough) Provider.current.txtPrimaryColor else Provider.current.errorColor
     return Provider.current.greyText
 }
 

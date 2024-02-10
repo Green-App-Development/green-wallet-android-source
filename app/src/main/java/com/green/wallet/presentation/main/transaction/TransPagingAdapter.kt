@@ -84,10 +84,9 @@ class TransPagingAdapter(
             txtHeightTransaction.text = "${transaction.confirmedAtHeight}"
             imgSpeedUp.visibility = View.GONE
             txtHeightTransaction.setTextColor(curActivity.getColorResource(R.color.txt_trans_property))
-            txtToken.text =
-                "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
-                    transaction.code
-                }"
+            txtToken.text = "${formattedDoubleAmountWithPrecision(transaction.amount)} ${
+                transaction.code
+            }"
 
 //            txtToken.text =
 //                "0.00000000000 ${
@@ -124,7 +123,6 @@ class TransPagingAdapter(
 
             centerLayout.setOnClickListener {
                 it.startAnimation(animManager.getBtnEffectAnimation())
-                VLog.d("Clicked transaction from rec view : $transaction")
                 if (transaction.confirmedAtHeight == 0L) {
                     transactionItemListener.onTransactionSpeedUpClick(transaction = transaction)
                 } else {
@@ -148,8 +146,7 @@ class TransPagingAdapter(
             holder.onBindTransaction(item)
             viewBinderHelper.setOpenOnlyOne(true)
             viewBinderHelper.bind(holder.rootLayout, "$position")
-        } else
-            holder.onBindEmptyPlaceHolder()
+        } else holder.onBindEmptyPlaceHolder()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
