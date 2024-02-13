@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "dapp" ]
+    branches: [ "trader" ]
 
 jobs:
   build:

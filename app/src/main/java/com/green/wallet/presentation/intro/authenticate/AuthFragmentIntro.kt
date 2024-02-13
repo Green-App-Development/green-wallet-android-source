@@ -78,10 +78,10 @@ class AuthFragmentIntro : DaggerFragment() {
         registerBtnClicks()
         fixTxtViewLateValue()
         //TODO: Need to delete before prod
-//        lifecycleScope.launch {
-//            delay(500)
-//            determineDestination()
-//        }
+        lifecycleScope.launch {
+            delay(500)
+            determineDestination()
+        }
     }
 
     private fun fixTxtViewLateValue() {
