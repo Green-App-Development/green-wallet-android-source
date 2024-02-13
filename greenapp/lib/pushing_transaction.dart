@@ -573,7 +573,9 @@ class PushingTransaction {
         } else if (token.type == "CAT") {
           await saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins,
               spentCoinsMap, fullNode, keychain);
-        } else {}
+        } else {
+
+        }
       }
 
       final changePh = keychain.puzzlehashes[2];

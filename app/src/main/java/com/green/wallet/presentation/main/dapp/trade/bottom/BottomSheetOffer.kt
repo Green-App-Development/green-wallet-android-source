@@ -196,7 +196,7 @@ fun ModelBottomSheetOffer(
                                 }
 
                                 is NftToken -> {
-                                    NftItem(item, !state.acceptOffer)
+                                    NFTTokenDApp(item, !state.acceptOffer)
                                 }
                             }
                             FixedSpacer(height = size_10)
@@ -208,7 +208,7 @@ fun ModelBottomSheetOffer(
                                 }
 
                                 is NftToken -> {
-                                    NftItem(item, state.acceptOffer)
+                                    NFTTokenDApp(item, state.acceptOffer)
                                 }
                             }
                             FixedSpacer(height = size_10)
@@ -429,8 +429,7 @@ fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
                 DefaultText(
                     text = formatString(10, nftToken.nftId, 6),
                     size = text_14,
-                    color = Provider.current.secondPrimaryTextColor,
-                    fontWeight = FontWeight.W500
+                    color = Provider.current.secondPrimaryTextColor
                 )
             }
 
@@ -444,6 +443,31 @@ fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
                 modifier = Modifier.align(Alignment.BottomEnd)
             )
         }
+    }
+}
+
+@Composable
+fun NFTTokenDApp(item: NftToken, acceptOffer: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        DefaultText(
+            text = item.collection,
+            size = text_14,
+            color = Provider.current.txtPrimaryColor,
+            textAlign = TextAlign.Start
+        )
+        val nftText = if (acceptOffer) "-1 NFT" else "+1 NFT"
+        val nftColor =
+            if (acceptOffer) Provider.current.errorColor else Provider.current.green
+        DefaultText(
+            text = nftText,
+            size = text_14,
+            color = nftColor,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Start
+        )
     }
 }
 
