@@ -603,7 +603,7 @@ class SendFragment : BaseFragment() {
                     delay(500)
                     initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
                     viewModel.setLoading(true)
-                    curActivity().mainViewModel.send_money_false()
+                    curActivity().mainViewModel.sendMoneyFalse()
                 }
             }
         }
@@ -932,7 +932,7 @@ class SendFragment : BaseFragment() {
             binding.networkSpinner.performClick()
         }
 
-        curActivity().mainViewModel.send_money_false()
+        curActivity().mainViewModel.sendMoneyFalse()
 
         anim.animateArrowIconCustomSpinner(
             binding.tokenSpinner,

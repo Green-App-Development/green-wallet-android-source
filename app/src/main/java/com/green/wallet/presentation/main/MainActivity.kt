@@ -226,7 +226,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
     private fun checkUserLastVisitTime() {
         lifecycleScope.launch {
             val lastTimeVisited = mainViewModel.getLastVisitedValue()
-            if (System.currentTimeMillis() - lastTimeVisited >= 180 * 1000) {
+            if (System.currentTimeMillis() - lastTimeVisited >= 3 * 1000) {
                 (application as App).applicationIsAlive = false
                 Intent(this@MainActivity, IntroActivity::class.java).apply {
                     this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -645,14 +645,14 @@ class MainActivity : BaseActivity(), ComposeProvider {
 
     fun move2FragmentImportToken(
         fingerPrint: Long,
-        main_puzzle_hash: String,
+        mainPuzzleHash: String,
         networkType: String = "Chia Network",
         address: String
     ) {
         val bundle = bundleOf(
             ImportTokenFragment.FINGER_PRINT_KEY to fingerPrint,
             ImportTokenFragment.NETWORK_TYPE_KEY to networkType,
-            ImportTokenFragment.MAIN_PUZZLE_HASH to main_puzzle_hash,
+            ImportTokenFragment.MAIN_PUZZLE_HASH to mainPuzzleHash,
             ImportTokenFragment.ADDRESS_KEY to address
         )
         navController.navigate(action_walletFragment_to_importTokenFragment2, bundle)

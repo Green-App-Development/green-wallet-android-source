@@ -203,11 +203,11 @@ class PinCodeFragment : BottomSheetDialogFragment() {
     }
 
     private fun sendMoneySuccess() {
-        curActivity().mainViewModel.send_money_success()
+        curActivity().mainViewModel.sendMoneySuccess()
     }
 
     private fun showWalletData() {
-        curActivity().mainViewModel.show_data_wallet_visible()
+        curActivity().mainViewModel.showDataWalletVisible()
     }
 
     private fun showSuccessDeletedDialog() {

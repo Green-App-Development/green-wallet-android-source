@@ -98,23 +98,23 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun show_data_wallet_invisible() {
+	fun showDataWalletInvisible() {
 		viewModelScope.launch {
 			_show_data_wallet.emit(value = false)
 		}
 	}
 
-	fun send_money_false() {
+	fun sendMoneyFalse() {
 		viewModelScope.launch {
 			_money_send.value = false
 		}
 	}
 
-	fun send_money_success() {
+	fun sendMoneySuccess() {
 		_money_send.value = true
 	}
 
-	fun show_data_wallet_visible() {
+	fun showDataWalletVisible() {
 		viewModelScope.launch {
 			delay(500)
 			_show_data_wallet.emit(value = true)

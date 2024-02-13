@@ -19,7 +19,6 @@ import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_enter_passcode_main.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -157,11 +156,11 @@ class EnterPasscodeFragment : DaggerFragment() {
     }
 
     private fun sendMoneySuccess() {
-        curActivity().mainViewModel.send_money_success()
+        curActivity().mainViewModel.sendMoneySuccess()
     }
 
     private fun showWalletData() {
-        curActivity().mainViewModel.show_data_wallet_visible()
+        curActivity().mainViewModel.showDataWalletVisible()
     }
 
     private fun showSuccessDeletedDialog() {

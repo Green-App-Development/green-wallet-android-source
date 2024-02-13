@@ -16,7 +16,6 @@ import androidx.viewpager.widget.ViewPager
 import com.green.wallet.R
 import com.green.wallet.databinding.FragmentManageWalletBetaBinding
 import com.example.common.tools.*
-import dagger.android.support.DaggerFragment
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.DialogManager
@@ -90,7 +89,7 @@ class ManageWalletFragment : BaseFragment(),
         VLog.d("On view crated view on manage wallet")
         initViewPagerWithAdapter()
         registerBtnClicks()
-        curActivity().mainViewModel.show_data_wallet_invisible()
+        curActivity().mainViewModel.showDataWalletInvisible()
     }
 
     private var job30s: Job? = null
@@ -198,7 +197,7 @@ class ManageWalletFragment : BaseFragment(),
                             override fun onPageSelected(position: Int) {
                                 if (position <= 10)
                                     binding.pageIndicator.setSelected(position)
-                                curActivity().mainViewModel.show_data_wallet_invisible()
+                                curActivity().mainViewModel.showDataWalletInvisible()
                                 manageWalletAdapter.changeToShowData(
                                     curChosenWalletPosition,
                                     show_data_visible = false
@@ -234,7 +233,7 @@ class ManageWalletFragment : BaseFragment(),
                 if (it) {
                     job30s = lifecycleScope.launch {
                         delay(30000)
-                        curActivity().mainViewModel.show_data_wallet_invisible()
+                        curActivity().mainViewModel.showDataWalletInvisible()
                     }
                 }
             }
