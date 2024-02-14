@@ -516,6 +516,9 @@ class PushingTransaction {
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
+    final nftId = NftAddress(
+        "nft1j7hsh8uwg2ce0s8xagrcm6m5uzqjr3qdm4y45zwprddfyna80srq8y9q86");
+    debugPrint("NftId Address on Flutter : ${nftId.toPuzzlehash()}");
     analyzeOffer(
         offerStr:
             "offer1qqr83wcuu2rykcmqvpsxygqqa6wdw7l95dk68vl9mr2dkvl98r6g76an3qez5ppgyh00jfdqw4uy5w2vrk7f6wj6lw8adl4rkhlk3mflttacl4h7lur64as8zlhqhn8h04883476dz7x6mny6jzdcga33n4s8n884cxcekcemz6mk3jk4v925trha2kuwcv0k59xl377mx32g5h2c52wfycczdlns04vgl4cx77f6d8xs4f3m23zpghmeuyfzktsvljul5lf6fragjk9qdl5ewns7nam4t68j7e4se98ynkx67tjl3kfx0zse96wllnt0ahda2x20ymlh3pwqaeu7fue4anp5hn74af8dwvdt9aatrhf5pqzt2qgvnwecw8nkvmr8mqw9r83t77l05j0slhyegkjhfnvd024xtj0mxwjthmj3zgpnyqx33cqwjsnvcuzl5crrw7xrqakw6lww0c47699l82mgktl765h0rw823r3g908whmwmlhz8lkmp7lujr0jhnt4zljde56xa8uaqm9h9vxkqey94lalur70u7m0vd7pdhdnuhl24v8nknmlvy3t60ve083dajur3elel5lc49ulsv7kqnzy9smsndcr2hd07has6sjax77tmkm59e2vyce5g7revgd8a8jh6jg3zwaz9pujzh3gdlwkjjqc9xh8jw707rsde2utp3xzxks44axmempy2wmr2622mtjk0658jlkha7j3yhswmx0dxwnjg0h7zfujf64czed7mdz67lx60hsav0u2z783f2akdkcaduyavkdpjfynttzeqlul0kh68gltqcpfpfdkcgepjqhv0tdapgq8wtt37y4534ts");
@@ -565,6 +568,10 @@ class PushingTransaction {
       List<FullCoin> fullCoins = [];
 
       Map<String, List<Coin>> spentCoinsMap = {};
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+
+      var offerMap = offerAssetDataParamsOffered(offered);
 
       for (var token in offered) {
         if (token.type == "XCH") {
@@ -574,7 +581,15 @@ class PushingTransaction {
           await saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins,
               spentCoinsMap, fullNode, keychain);
         } else {
-
+          var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+              parent_coin_info: Bytes.fromHex(token.assetID),
+              puzzle_hash: Puzzlehash.fromHex(token.fromAddress));
+          final nftCoin = nftCoins[0];
+          debugPrint("Found NFTCoin to offer: $nftCoin");
+          final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+          fullCoins.add(nftFullCoin);
+          offerMap[OfferAssetData.singletonNft(
+              launcherPuzhash: nftFullCoin.launcherId)] = -1;
         }
       }
 
@@ -584,7 +599,6 @@ class PushingTransaction {
       debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
 
       var requestMap = offerAssetDataParamsRequested(requested);
-      var offerMap = offerAssetDataParamsOffered(offered);
 
       final offer = await offerService.createOffer(
           requesteAmounts: requestMap,

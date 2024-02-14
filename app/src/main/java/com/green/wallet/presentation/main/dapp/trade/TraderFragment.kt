@@ -259,13 +259,19 @@ class TraderFragment : BaseComposeFragment() {
         }
     }
 
-    private fun convertToTokenFlutter(list: List<Token>): List<FlutterToken> {
+    private suspend fun convertToTokenFlutter(list: List<Token>): List<FlutterToken> {
         val converted = mutableListOf<FlutterToken>()
 
         for (i in list) {
             val token = when (i) {
                 is NftToken -> {
-                    FlutterToken(i.nftId, 0L, "NFT")
+                    val nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+                    FlutterToken(
+                        assetID = nftCoin?.coinInfo ?: i.nftId,
+                        amount = 1L,
+                        type = "NFT",
+                        fromAddress = nftCoin?.coinHash ?: ""
+                    )
                 }
 
                 is CatToken -> {

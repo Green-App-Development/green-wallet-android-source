@@ -1,7 +1,10 @@
 package com.green.wallet.presentation.main.dapp.trade
 
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.NFTCoin
 import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
@@ -10,6 +13,7 @@ import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
@@ -43,7 +47,7 @@ class TraderViewModel @Inject constructor(
     val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
     private val dexieInteract: DexieInteract,
-    private val nftInfo: NFTInteract,
+    private val nftInteractor: NFTInteract,
     private val pinCodeCommunicator: PinCodeCommunicator
 ) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
 
@@ -157,15 +161,13 @@ class TraderViewModel @Inject constructor(
         viewModelScope.launch {
             requestedXCHAmount = .0
             val requestJob = async {
-                parseCreateOfferParams(
+                parseCreateOfferParamsRequested(
                     params = params.requestAssets ?: listOf()
                 )
             }
             val offerJob = async {
-                parseCreateOfferParams(
-                    params = params.offerAssets ?: listOf(),
-                    needSpendableBalance = true,
-                    needXCH = true
+                parseCreateOfferParamsOffered(
+                    params = params.offerAssets ?: listOf()
                 )
             }
 
@@ -249,7 +251,7 @@ class TraderViewModel @Inject constructor(
                 val requested = offerViewState.value.requested
                 for (req in requested) {
                     if (req is NftToken) {
-                        nftInfo.updateNftInfoPending(true, req.nftId)
+                        nftInteractor.updateNftInfoPending(true, req.nftId)
                     }
                 }
             }
@@ -325,7 +327,64 @@ class TraderViewModel @Inject constructor(
         return list
     }
 
-    private suspend fun parseCreateOfferParams(
+
+    private suspend fun parseCreateOfferParamsOffered(
+        params: List<AssetAmount>
+    ): List<Token> {
+        val list = mutableListOf<Token>()
+
+        for (par in params) {
+            if (par.assetId == null)
+                continue
+            if (par.assetId.startsWith("nft")) {
+                val collectionName =
+                    nftInteractor.getCollectionNameByNFTID(
+                        getNetworkItemFromPrefs(wallet!!.networkType) ?: continue,
+                        par.assetId
+                    )
+                list.add(
+                    NftToken(
+                        collection = collectionName,
+                        nftId = par.assetId,
+                        "",
+                        ""
+                    )
+                )
+            } else {
+                var code = "XCH"
+                if (par.assetId != "") {
+                    code = tokenInteract.getTokenCodeByHash(par.assetId)
+                }
+
+                val amount = par.amount?.toDoubleOrNull() ?: 0.0
+
+                var spendableBalance = 0.0
+                spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
+                    par.assetId,
+                    code,
+                    wallet?.address ?: ""
+                ).first()
+
+                if (code == "XCH") {
+                    requestedXCHAmount = amount
+                }
+
+                list.add(
+                    CatToken(
+                        assetID = par.assetId,
+                        amount = amount,
+                        code = code,
+                        spendableBalance = spendableBalance
+                    )
+                )
+            }
+        }
+
+        return list
+    }
+
+
+    private suspend fun parseCreateOfferParamsRequested(
         params: List<AssetAmount>,
         needSpendableBalance: Boolean = false,
         needXCH: Boolean = false
@@ -335,36 +394,59 @@ class TraderViewModel @Inject constructor(
         for (par in params) {
             if (par.assetId == null)
                 continue
-            var code = "XCH"
-            if (par.assetId != "") {
-                code = tokenInteract.getTokenCodeByHash(par.assetId)
-            }
-
-            val amount = par.amount?.toDoubleOrNull() ?: 0.0
-
-            var spendableBalance = 0.0
-            if (needSpendableBalance) {
-                spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
-                    par.assetId,
-                    code,
-                    wallet?.address ?: ""
-                ).first()
-            }
-            if (code == "XCH" && needXCH) {
-                requestedXCHAmount = amount
-            }
-
-            list.add(
-                CatToken(
-                    assetID = par.assetId,
-                    amount = amount,
-                    code = code,
-                    spendableBalance = spendableBalance
+            if (par.assetId.startsWith("nft")) {
+                val collectionName =
+                    nftInteractor.getCollectionNameByNFTID(
+                        getNetworkItemFromPrefs(wallet!!.networkType) ?: continue,
+                        par.assetId
+                    )
+                list.add(
+                    NftToken(
+                        collection = collectionName,
+                        nftId = par.assetId,
+                        "",
+                        ""
+                    )
                 )
-            )
+            } else {
+                var code = "XCH"
+                if (par.assetId != "") {
+                    code = tokenInteract.getTokenCodeByHash(par.assetId)
+                }
+
+                val amount = par.amount?.toDoubleOrNull() ?: 0.0
+
+                var spendableBalance = 0.0
+                if (needSpendableBalance) {
+                    spendableBalance = spentCoinsInteract.getSpendableBalanceByTokenCode(
+                        par.assetId,
+                        code,
+                        wallet?.address ?: ""
+                    ).first()
+                }
+                if (code == "XCH" && needXCH) {
+                    requestedXCHAmount = amount
+                }
+
+                list.add(
+                    CatToken(
+                        assetID = par.assetId,
+                        amount = amount,
+                        code = code,
+                        spendableBalance = spendableBalance
+                    )
+                )
+            }
         }
 
         return list
+    }
+
+    private suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {
+        val item =
+            prefsManager.getObjectString(getPreferenceKeyForNetworkItem(networkType))
+        if (item.isEmpty()) return null
+        return Gson().fromJson(item, NetworkItem::class.java)
     }
 
     fun setLoading(isLoading: Boolean) {
@@ -374,6 +456,10 @@ class TraderViewModel @Inject constructor(
     private fun validateFeeEnough() {
         val total = requestedXCHAmount + offerViewState.value.chosenFee
         _offerViewState.update { it.copy(feeEnough = total <= (wallet?.balance ?: 0.0)) }
+    }
+
+    suspend fun getNftCoinById(coinHash: String): NFTCoin? {
+        return nftInteractor.getNFTCoinByHash(coinHash)
     }
 
 }

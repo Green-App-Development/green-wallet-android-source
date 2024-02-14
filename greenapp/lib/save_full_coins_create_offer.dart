@@ -141,7 +141,9 @@ Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
       param[OfferAssetData.cat(tailHash: tokenHash)] = [amount];
     } else if (item.type == 'XCH') {
       param[null] = [amount];
-    } else {}
+    } else {
+
+    }
   }
   return param;
 }

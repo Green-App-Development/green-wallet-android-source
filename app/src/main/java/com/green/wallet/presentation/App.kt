@@ -31,7 +31,6 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-
 class App : DaggerApplication() {
 
 
@@ -66,7 +65,6 @@ class App : DaggerApplication() {
 	lateinit var tibetInteract: TibetInteract
 
 	lateinit var appComponent: AppComponent
-	lateinit var swapNavController: NavController
 
 	var applicationIsAlive = false
 	var isUserUnBoardDed = false

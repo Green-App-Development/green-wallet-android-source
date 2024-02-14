@@ -206,7 +206,9 @@ class BlockChainInteractImpl @Inject constructor(
                         coin.timestamp,
                         hash
                     )
-                    VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+//                    VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+//                    VLog.d("NFTCoinEntity parent coin info : ${coin.coin.parent_coin_info}")
+
                     val nftInfoEntity = getNFTINfoFromWalletApi(
                         networkItem,
                         coin.coin.parent_coin_info,
@@ -242,7 +244,7 @@ class BlockChainInteractImpl @Inject constructor(
                         )
                         transactionDao.insertTransaction(tran)
                         notificationHelper.callGreenAppNotificationMessages(
-                            "$incomingTransaction : 1 NFT",
+                            "$incomingTransaction : +1 NFT",
                             System.currentTimeMillis()
                         )
                     }
