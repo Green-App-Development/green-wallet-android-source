@@ -159,7 +159,9 @@ Map<OfferAssetData?, int> offerAssetDataParamsOffered(List<FlutterToken> list) {
       param[OfferAssetData.cat(tailHash: tokenHash)] = -amount;
     } else if (item.type == 'XCH') {
       param[null] = amount;
-    } else {}
+    } else {
+
+    }
   }
 
   return param;

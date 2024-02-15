@@ -102,6 +102,13 @@ class NFtInteractImpl @Inject constructor(
         return ""
     }
 
+    override suspend fun getNFTCoinHashByNFTID(nftID: String): String {
+        val nftInfo=nftInfoDao.getNftInfoEntityByNftID(nftID)
+        if(nftInfo.isPresent)
+            return nftInfo.get().nft_coin_hash
+        return ""
+    }
+
     private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any>? {
         try {
             val res = retrofitBuilder.build().create(BlockChainService::class.java)

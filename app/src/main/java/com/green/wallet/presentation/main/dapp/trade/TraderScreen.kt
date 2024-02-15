@@ -161,6 +161,7 @@ fun TraderScreen(
                 if (offerViewState.acceptOffer) {
                     onEvent(TraderEvent.TakeOffer(offerViewState.offer))
                 } else {
+                    VLog.d("ShowPinCreateOffer on sign modalBottomSheetOffer")
                     onEvent(TraderEvent.ShowPinCreateOffer)
                 }
             },

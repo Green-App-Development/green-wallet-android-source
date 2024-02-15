@@ -55,6 +55,7 @@ import com.green.compose.dimens.size_18
 import com.green.compose.dimens.size_20
 import com.green.compose.dimens.size_26
 import com.green.compose.dimens.size_300
+import com.green.compose.dimens.size_36
 import com.green.compose.dimens.size_4
 import com.green.compose.dimens.size_6
 import com.green.compose.dimens.size_80
@@ -64,6 +65,7 @@ import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
 import com.green.compose.dimens.text_16
 import com.green.compose.extension.pxToDp
+import com.green.compose.progress.CircularProgressBar
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
@@ -181,40 +183,43 @@ fun ModelBottomSheetOffer(
                     )
                     FixedSpacer(height = size_12)
 
-                    LazyColumn(
-                        modifier = modifierLazy
-                            .fillMaxWidth()
-                            .heightIn(0.dp, size_300)
-                            .onGloballyPositioned {
-                                heightOfLazyColumn = pxToDp(it.size.height)
-                            }
-                    ) {
-                        items(items = state.offered) { item ->
-                            when (item) {
-                                is CatToken -> {
-                                    CatTokenItem(item, !state.acceptOffer)
+                    if (state.offered.isNotEmpty() && state.requested.isNotEmpty()) {
+                        LazyColumn(
+                            modifier = modifierLazy
+                                .fillMaxWidth()
+                                .heightIn(0.dp, size_300)
+                                .onGloballyPositioned {
+                                    heightOfLazyColumn = pxToDp(it.size.height)
                                 }
+                        ) {
+                            items(items = state.offered) { item ->
+                                when (item) {
+                                    is CatToken -> {
+                                        CatTokenItem(item, !state.acceptOffer)
+                                    }
 
-                                is NftToken -> {
-                                    NFTTokenDApp(item, !state.acceptOffer)
+                                    is NftToken -> {
+                                        NFTTokenDApp(item, !state.acceptOffer)
+                                    }
                                 }
+                                FixedSpacer(height = size_10)
                             }
-                            FixedSpacer(height = size_10)
-                        }
-                        items(items = state.requested) { item ->
-                            when (item) {
-                                is CatToken -> {
-                                    CatTokenItem(item, state.acceptOffer)
-                                }
+                            items(items = state.requested) { item ->
+                                when (item) {
+                                    is CatToken -> {
+                                        CatTokenItem(item, state.acceptOffer)
+                                    }
 
-                                is NftToken -> {
-                                    NFTTokenDApp(item, state.acceptOffer)
+                                    is NftToken -> {
+                                        NFTTokenDApp(item, state.acceptOffer)
+                                    }
                                 }
+                                FixedSpacer(height = size_10)
                             }
-                            FixedSpacer(height = size_10)
                         }
+                    } else {
+                        CircularProgressBar(size = size_36)
                     }
-
                     FixedSpacer(height = size_15)
                     Box(
                         modifier = Modifier
@@ -259,7 +264,9 @@ fun ModelBottomSheetOffer(
                 }
                 FixedSpacer(height = size_20)
                 DefaultButton(
-                    bcgColor = Provider.current.green,
+                    isEnabled = state.btnEnabled,
+                    bcgColor = if (state.btnEnabled) Provider.current.green
+                    else Provider.current.btnInActive,
                     onClick = {
                         sign()
                     }) {
@@ -341,7 +348,7 @@ fun SpendableBalance(
                         }
 
                         if (str.isNotEmpty()) {
-                            val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
+                            val clr = getColorOfSpendableBalanceCAT(state, requested[i] as CatToken)
 
                             DefaultText(
                                 text = str,

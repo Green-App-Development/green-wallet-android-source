@@ -24,4 +24,7 @@ interface NftInfoDao {
 	@Query("UPDATE NFTInfoEntity SET isPending=:isPending WHERE nft_coin_hash=:nft_coin_hash")
 	suspend fun updateIsPendingNFTInfoByNFTCoinHash(isPending: Boolean, nft_coin_hash: String): Int
 
+	@Query("SELECT * FROM NFTInfoEntity WHERE nft_id=:nftId")
+	suspend fun getNftInfoEntityByNftID(nftId: String): Optional<NFTInfoEntity>
+
 }

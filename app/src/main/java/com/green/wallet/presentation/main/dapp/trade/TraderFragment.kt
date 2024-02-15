@@ -193,6 +193,7 @@ class TraderFragment : BaseComposeFragment() {
     }
 
     private suspend fun callFlutterToCreateOffer() {
+        VLog.d("callFlutterToCreateOffer got called")
         val map = hashMapOf<String, Any>()
         val wallet = viewModel.wallet ?: return
         val value = viewModel.offerViewState.value
@@ -266,11 +267,12 @@ class TraderFragment : BaseComposeFragment() {
             val token = when (i) {
                 is NftToken -> {
                     val nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+                    VLog.d("NFT Coin convertToTokenFlutter : $nftCoin, NFTCoinHash : ${i.nftCoinHash}")
                     FlutterToken(
                         assetID = nftCoin?.coinInfo ?: i.nftId,
                         amount = 1L,
                         type = "NFT",
-                        fromAddress = nftCoin?.coinHash ?: ""
+                        fromAddress = nftCoin?.puzzleHash ?: ""
                     )
                 }
 

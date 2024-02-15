@@ -487,7 +487,7 @@ class PushingTransaction {
           {
             try {
               var args = call.arguments;
-              debugPrint("SpeedyTransferNFT got called with args : $args");
+              debugPrint("CreateOffer got called with args : $args");
               var mnemonics = args["mnemonics"].toString().split(' ');
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
@@ -609,6 +609,7 @@ class PushingTransaction {
           fee: fee);
 
       final str = offer.toBench32();
+      debugPrint("Offer String creating an offer: $str");
       _channel.invokeMethod("CreateOffer",
           {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
     } catch (ex) {

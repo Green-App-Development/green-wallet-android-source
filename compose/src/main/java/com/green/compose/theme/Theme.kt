@@ -27,7 +27,8 @@ data class CustomColorsPalette(
     val secondPrimaryTextColor: Color = Color.Unspecified,
     val btnInActive: Color = Color.Unspecified,
     val secondaryTextColor: Color = Color.Unspecified,
-    val dividerOffer: Color = Color.Unspecified
+    val dividerOffer: Color = Color.Unspecified,
+    val progressTrackColor: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
@@ -45,6 +46,7 @@ val OnLightCustomColorsPalette = CustomColorsPalette(
     feeBackgroundChosen = Color.White,
     feeBackground = Color(0xFFf4f4f4),
     iconGrey = Color(0xFFC9C9C9),
+    progressTrackColor = Color(0xFFC9C9C9)
 )
 
 val OnDarkCustomColorsPalette = CustomColorsPalette(
@@ -64,7 +66,8 @@ val OnDarkCustomColorsPalette = CustomColorsPalette(
     btnInActive = Color(0xFF444444),
     greyText = Color(0xFF949494),
     secondaryTextColor = Color(0xFFFFFFFF),
-    dividerOffer = Color(0xFF494949)
+    dividerOffer = Color(0xFF494949),
+    progressTrackColor = Color(0xFF494949)
 )
 
 val Provider = staticCompositionLocalOf { CustomColorsPalette() }
