@@ -585,7 +585,6 @@ class PushingTransaction {
               parent_coin_info: Bytes.fromHex(token.assetID),
               puzzle_hash: Puzzlehash.fromHex(token.fromAddress));
           final nftCoin = nftCoins[0];
-          debugPrint("Found NFTCoin to offer: $nftCoin");
           final nftFullCoin = await nftService.convertFullCoin(nftCoin);
           fullCoins.add(nftFullCoin);
           offerMap[OfferAssetData.singletonNft(
@@ -609,7 +608,6 @@ class PushingTransaction {
           fee: fee);
 
       final str = offer.toBench32();
-      debugPrint("Offer String creating an offer: $str");
       _channel.invokeMethod("CreateOffer",
           {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
     } catch (ex) {
