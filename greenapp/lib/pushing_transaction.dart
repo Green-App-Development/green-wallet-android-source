@@ -374,14 +374,17 @@ class PushingTransaction {
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
               var spentCoins = args["spentCoins"].toString();
-              pushingOfferWithCAT(
+              var requestedNFT = args["requestedNFT"].toString();
+              debugPrint("RequestedNFT on PushingOffer : ${call.arguments["requestedNFT"].toString()}");
+              takingAnOffer(
                   offerString: offer,
                   mnemonics: mnemonics,
                   url: url,
                   observer: observer,
                   nonObserver: nonObserver,
                   spentCoins: spentCoins,
-                  fee: fee);
+                  fee: fee,
+                  requestedNFT: requestedNFT);
             } catch (ex) {
               debugPrint(
                   "Exception in getting params from pushing offer : $ex");
@@ -1124,14 +1127,15 @@ class PushingTransaction {
     }
   }
 
-  Future<void> pushingOfferWithCAT(
+  Future<void> takingAnOffer(
       {required String offerString,
       required List<String> mnemonics,
       required String url,
       required int observer,
       required int nonObserver,
       required String spentCoins,
-      required int fee}) async {
+      required int fee,
+      required String requestedNFT}) async {
     try {
       debugPrint(
           "Fee : $fee Mnemonics : $mnemonics on pushingOfferWithCAT, url : $url observer : $observer nonObserver : $nonObserver fee: $fee");
@@ -1171,9 +1175,21 @@ class PushingTransaction {
       List<FullCoin> allFullCoins = [];
 
       Map<String, List<Coin>> spentCoinsMap = {};
+      List<FlutterToken> reqNFTList = parseFlutterTokenJsonString(requestedNFT);
 
-      debugPrint(
-          "Fee : $fee Mnemonics : $mnemonics on pushingOfferWithCAT : Analyzed : ${analized?.requested}");
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+
+      for (var nft in reqNFTList) {
+        var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+            parent_coin_info: Bytes.fromHex(nft.assetID),
+            puzzle_hash: Puzzlehash.fromHex(nft.fromAddress));
+        final nftCoin = nftCoins[0];
+        final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+        allFullCoins.add(nftFullCoin);
+      }
+
+      debugPrint("NFT Coins if requested : $allFullCoins");
 
       for (var entry in analized!.requested.entries) {
         OfferAssetData? key = entry.key;
@@ -1192,7 +1208,7 @@ class PushingTransaction {
               spentCoinsParents: spentCoinsParents,
               spentCoinsMap: spentCoinsMap,
               reqAmount: amountReq));
-        } else {
+        } else if (key?.type != SpendType.nft) {
           futures.add(getFullXCHCoinsByAssetId(
               url: url,
               fullNode: fullNode,

@@ -234,7 +234,9 @@ class TraderViewModel @Inject constructor(
                     offered = parseTokenJson(offeredJson),
                     requested = parseTokenJson(
                         requestedJson, needSpendableBalance = true, needXCH = true
-                    )
+                    ),
+                    btnEnabled = true,
+                    isLoading = false
                 )
             }
             VLog.d("OfferViewState update : ${_offerViewState.value}")
@@ -283,18 +285,16 @@ class TraderViewModel @Inject constructor(
             VLog.d("SpentType : $spentType, AssetID : $assetID, AssetAmount : $assetAmount")
             var token: Token
             if (spentType == "nft") {
-                val timeTaken = measureTimeMillis {
-                    val nftInfo = blockChainInteract.getNftInfoByCoinID(
-                        "Chia Network", coinID = assetID
-                    )
-                    token = NftToken(
-                        collection = nftInfo?.collection ?: "",
-                        nftId = nftInfo?.nftID ?: "",
-                        imgUrl = nftInfo?.imageUrl ?: ""
-                    )
-                }
-                VLog.d("TimeTaken to know about nft : ${timeTaken / 1000}")
-
+                val nftInfo = blockChainInteract.getNftInfoByCoinID(
+                    "Chia Network", coinID = assetID
+                ) ?: continue
+                val nftCoin = nftInteractor.getNFTCoinHashByNFTID(nftInfo.nftID)
+                token = NftToken(
+                    collection = nftInfo.collection,
+                    nftId = nftInfo.nftID,
+                    imgUrl = nftInfo.imageUrl,
+                    nftCoinHash = nftCoin
+                )
             } else {
                 var code = "XCH"
                 if (assetID != "null") {
@@ -326,7 +326,6 @@ class TraderViewModel @Inject constructor(
 
             VLog.d("Adding Token Abstract : $token")
             list.add(token)
-
         }
 
         return list

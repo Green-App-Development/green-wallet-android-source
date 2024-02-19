@@ -19,7 +19,6 @@ import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.FlutterToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
-import com.green.wallet.presentation.main.dapp.trade.params.CreateOfferParams
 import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.PRECISION_CAT
@@ -186,8 +185,9 @@ class TraderFragment : BaseComposeFragment() {
                 10.0, 12.0
             )
         )
+        map["requestedNFT"] = Gson().toJson(convertToTokenFlutterNFTOnly(viewModel.offerViewState.value.requested))
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
-        map["spentCoins"] = ""
+        map["spentCoins"] = Gson().toJson(viewModel.offerViewState.value.spendCoins)
         methodChannel.invokeMethod("PushingOffer", map)
         initListeningMethod()
     }
@@ -258,6 +258,24 @@ class TraderFragment : BaseComposeFragment() {
                 }
             }
         }
+    }
+
+    private suspend fun convertToTokenFlutterNFTOnly(list: List<Token>): List<FlutterToken> {
+        val converted = mutableListOf<FlutterToken>()
+        for (i in list) {
+            if (i is NftToken) {
+                val nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+                converted.add(
+                    FlutterToken(
+                        assetID = nftCoin?.coinInfo ?: i.nftId,
+                        amount = 1L,
+                        type = "NFT",
+                        fromAddress = nftCoin?.puzzleHash ?: ""
+                    )
+                )
+            }
+        }
+        return converted
     }
 
     private suspend fun convertToTokenFlutter(list: List<Token>): List<FlutterToken> {
