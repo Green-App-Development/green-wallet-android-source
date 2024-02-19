@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +58,7 @@ fun TraderScreen(
         initialValue = ModalBottomSheetValue.Hidden
     )
 
-    val offerDialog = rememberModalBottomSheetState(
+    val offerDialogState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
@@ -84,11 +85,11 @@ fun TraderScreen(
                 }
 
                 TraderEvent.ShowTakeOfferDialog -> {
-                    offerDialog.show()
+                    offerDialogState.show()
                 }
 
                 is TraderEvent.ShowCreateOfferDialog -> {
-                    offerDialog.show()
+                    offerDialogState.show()
                 }
 
                 else -> Unit
@@ -154,7 +155,7 @@ fun TraderScreen(
         }
 
         ModelBottomSheetOffer(
-            sheetState = offerDialog,
+            sheetState = offerDialogState,
             state = offerViewState,
             modifier = Modifier,
             sign = {
@@ -169,6 +170,14 @@ fun TraderScreen(
                 onEvent(TraderEvent.ChoseFee(it))
             }
         )
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { offerDialogState.currentValue }.collect {
+                if (it == ModalBottomSheetValue.Hidden) {
+                    JavaJSThreadCommunicator.wait = false
+                }
+            }
+        }
     }
 }
 

@@ -642,11 +642,9 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
     }
 
     override fun collectFlowOnCreated(scope: CoroutineScope) {
-        VLog.d("Speedy Btm Dialog is going to be shown before collecting flow")
         viewModel.event.collectFlow(scope) {
             when (it) {
                 is TransactionEvent.SpeedyBtmDialog -> {
-                    VLog.d("Speedy Btm Dialog is going to be shown")
                     SpeedyBtmDialog.build(it.transaction).show(childFragmentManager, "")
                 }
 
@@ -655,7 +653,8 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
                     dialogManager.showWarningDeleteTransaction(
                         requireActivity(),
                         "Warning!",
-                        "This action will unlock the coins, but will not remove the transaction from the mempool. If you are not sure of your actions, use the Speed up function",
+                        "This action will unlock the coins, but will not remove the transaction from the mempool." +
+                                " If you are not sure of your actions, use the Speed up function",
                         "Cancel",
                         "Delete",
                         onDelete = {

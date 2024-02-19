@@ -148,7 +148,7 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-//                updateWalletNFTBalance(wallet)
+                updateWalletNFTBalance(wallet)
             }
         }
     }
@@ -194,7 +194,7 @@ class BlockChainInteractImpl @Inject constructor(
                 val coinRecords = res.body()!!.coin_records.filter { it.coin.amount == 1L }
                 for (coin in coinRecords) {
                     val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-                    if (nftCoin.isPresent) continue
+                    if (nftCoin.isPresent && false) continue
 
                     val nftCoinEntity = NFTCoinEntity(
                         coin.coin.parent_coin_info,
@@ -206,8 +206,12 @@ class BlockChainInteractImpl @Inject constructor(
                         coin.timestamp,
                         hash
                     )
-//                    VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
-//                    VLog.d("NFTCoinEntity parent coin info : ${coin.coin.parent_coin_info}")
+                    VLog.d("NFTCoinEntity Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+                    VLog.d("NFTCoinEntity CoinName : ${coin.coin.parent_coin_info} Height : ${coin.confirmed_block_index}")
+
+                    //4942127
+                    //nftCoinName : 4a4bfcc0dcd992564fa5615f0cb4d46189c0afab352ebca463820f98f8c22fef
+                    //nftHash: 974b8fd6fcd9d87a6cee9bc8ba403749e469ea9931d3ef2476d386032baab897
 
                     val nftInfoEntity = getNFTINfoFromWalletApi(
                         networkItem,

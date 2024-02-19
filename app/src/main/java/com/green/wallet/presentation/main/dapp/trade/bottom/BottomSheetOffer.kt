@@ -74,6 +74,7 @@ import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.VLog
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -303,17 +304,19 @@ fun SpendableBalance(
                     "${item.code} ${item.spendableBalance}"
                 }
 
+                is NftToken -> {
+                    item.collection
+                }
+
                 else -> ""
             }
 
-            if (str.isNotEmpty()) {
-                val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
-                DefaultText(
-                    text = "Spendable Balance: $str",
-                    size = text_12,
-                    color = clr
-                )
-            }
+            val clr = getColorOfSpendableBalance(state, requested[0])
+            DefaultText(
+                text = "Spendable Balance: $str",
+                size = text_12,
+                color = clr
+            )
         } else {
             if (!expanded) {
                 DefaultText(
@@ -344,18 +347,20 @@ fun SpendableBalance(
                                 "${item.code} ${item.spendableBalance}"
                             }
 
+                            is NftToken -> {
+                                item.collection
+                            }
+
                             else -> ""
                         }
 
-                        if (str.isNotEmpty()) {
-                            val clr = getColorOfSpendableBalanceCAT(state, requested[i] as CatToken)
+                        val clr = getColorOfSpendableBalance(state, requested[i])
 
-                            DefaultText(
-                                text = str,
-                                size = text_12,
-                                color = clr
-                            )
-                        }
+                        DefaultText(
+                            text = str,
+                            size = text_12,
+                            color = clr
+                        )
                     }
 
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -377,21 +382,36 @@ fun SpendableBalance(
 }
 
 @Composable
-fun getColorOfSpendableBalanceCAT(state: OfferViewState, catToken: CatToken): Color {
-    return when (catToken.code) {
-        "XCH" -> {
-            val total = catToken.amount + state.chosenFee
-            if (total <= catToken.spendableBalance) {
-                Provider.current.greyText
-            } else
+fun getColorOfSpendableBalance(state: OfferViewState, token: Token): Color {
+    return when (token) {
+        is NftToken -> {
+            if (token.nftCoinHash.isEmpty())
                 Provider.current.errorColor
+            else
+                Provider.current.greyText
+        }
+
+        is CatToken -> {
+            when (token.code) {
+                "XCH" -> {
+                    val total = token.amount + state.chosenFee
+                    if (total <= token.spendableBalance) {
+                        Provider.current.greyText
+                    } else
+                        Provider.current.errorColor
+                }
+
+                else -> {
+                    if (token.amount <= token.spendableBalance) {
+                        Provider.current.greyText
+                    } else
+                        Provider.current.errorColor
+                }
+            }
         }
 
         else -> {
-            if (catToken.amount <= catToken.spendableBalance) {
-                Provider.current.greyText
-            } else
-                Provider.current.errorColor
+            Provider.current.greyText
         }
     }
 }

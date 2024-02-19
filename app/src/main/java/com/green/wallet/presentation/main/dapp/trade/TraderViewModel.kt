@@ -228,14 +228,37 @@ class TraderViewModel @Inject constructor(
         }
         requestedXCHAmount = 0.0
         viewModelScope.launch {
+            val offeredJob = async { parseTokenJson(offeredJson) }
+            val requestedJob = async {
+                parseTokenJson(
+                    requestedJson, needSpendableBalance = true, needXCH = true
+                )
+            }
+
+            val offered = offeredJob.await()
+            val requested = requestedJob.await()
+            var isEnough = true
+
+            for (req in requested) {
+                when (req) {
+                    is NftToken -> {
+                        isEnough = false
+                        break
+                    }
+
+                    is CatToken -> {
+                        isEnough = false
+                        break
+                    }
+                }
+            }
+
             _offerViewState.update {
                 it.copy(
                     acceptOffer = true,
-                    offered = parseTokenJson(offeredJson),
-                    requested = parseTokenJson(
-                        requestedJson, needSpendableBalance = true, needXCH = true
-                    ),
-                    btnEnabled = true,
+                    offered = offered,
+                    requested = requested,
+                    btnEnabled = isEnough,
                     isLoading = false
                 )
             }
