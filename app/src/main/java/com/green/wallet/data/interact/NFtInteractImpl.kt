@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken
 import com.green.wallet.data.local.NftCoinsDao
 import com.green.wallet.data.local.NftInfoDao
 import com.green.wallet.data.local.WalletDao
-import com.green.wallet.data.local.entity.NFTInfoEntity
 import com.green.wallet.data.network.BlockChainService
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
@@ -15,12 +14,8 @@ import com.green.wallet.domain.domainmodel.WalletWithNFTInfo
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.presentation.tools.VLog
-import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import javax.inject.Inject
 
@@ -103,10 +98,64 @@ class NFtInteractImpl @Inject constructor(
     }
 
     override suspend fun getNFTCoinHashByNFTID(nftID: String): String {
-        val nftInfo=nftInfoDao.getNftInfoEntityByNftID(nftID)
-        if(nftInfo.isPresent)
+        val nftInfo = nftInfoDao.getNftInfoEntityByNftID(nftID)
+        if (nftInfo.isPresent)
             return nftInfo.get().nft_coin_hash
         return ""
+    }
+
+    override suspend fun getNFTCoinByNFTIDFromWallet(
+        networkItem: NetworkItem,
+        nftID: String
+    ): NFTCoin? {
+        try {
+            val walletService = retrofitBuilder.baseUrl(networkItem.wallet + '/').build()
+                .create(BlockChainService::class.java)
+            val body = hashMapOf<String, Any>()
+            body["coin_id"] = nftID
+            body["latest"] = true
+            body["ignore_size_limit"] = false
+            body["reuse_puzhash"] = true
+            val reqNFTInfo = walletService.getNFTInfoByCoinId(body)
+            if (reqNFTInfo.isSuccessful) {
+                val nftInfo = reqNFTInfo.body()!!.nft_info
+                val puzzleHash = nftInfo.p2_address ?: return null
+                val nftCoinID = nftInfo.nft_coin_id ?: return null
+                val parentCoinInfo =
+                    getParentCoinInfoFromFullNode(nftCoinID, networkItem) ?: return null
+                return NFTCoin(
+                    coinInfo = parentCoinInfo,
+                    addressFk = "",
+                    coinHash = "",
+                    1, 0, 0, 0,
+                    puzzleHash
+                )
+            } else {
+                VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")
+            }
+        } catch (ex: Exception) {
+            VLog.d("Exception in getNFTCoinByNFTIDFromWallet : ${ex.message}")
+        }
+        return null
+    }
+
+    private suspend fun getParentCoinInfoFromFullNode(
+        nftCoinID: String,
+        networkItem: NetworkItem
+    ): String? {
+        val service = retrofitBuilder.baseUrl(networkItem.full_node + '/').build()
+            .create(BlockChainService::class.java)
+        val body = hashMapOf<String, Any>()
+        body["name"] = nftCoinID
+        body["include_spent_coins"] = true
+        val request = service.getCoinRecordByName(body)
+        if (request.isSuccessful) {
+            val coinRecordJson = request.body()!!["coin_record"].asJsonObject
+            return coinRecordJson.get("coin").asJsonObject.get("parent_coin_info").asString
+        } else {
+            VLog.d("Request in getting parent coin info is not success : ${request.body()}")
+        }
+        return null
     }
 
     private suspend fun getMetaDataNFT(metaDataUrlJson: String): HashMap<String, Any>? {

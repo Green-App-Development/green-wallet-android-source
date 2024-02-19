@@ -185,7 +185,8 @@ class TraderFragment : BaseComposeFragment() {
                 10.0, 12.0
             )
         )
-        map["requestedNFT"] = Gson().toJson(convertToTokenFlutterNFTOnly(viewModel.offerViewState.value.requested))
+        map["requestedNFT"] =
+            Gson().toJson(convertToTokenFlutterNFTOnly(viewModel.offerViewState.value.requested))
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
         map["spentCoins"] = Gson().toJson(viewModel.offerViewState.value.spendCoins)
         methodChannel.invokeMethod("PushingOffer", map)
@@ -284,8 +285,11 @@ class TraderFragment : BaseComposeFragment() {
         for (i in list) {
             val token = when (i) {
                 is NftToken -> {
-                    val nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+                    var nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
                     VLog.d("NFT Coin convertToTokenFlutter : $nftCoin, NFTCoinHash : ${i.nftCoinHash}")
+                    if (nftCoin == null) {
+                        nftCoin = viewModel.getNftCoinFromWallet(i.nftId)
+                    }
                     FlutterToken(
                         assetID = nftCoin?.coinInfo ?: i.nftId,
                         amount = 1L,

@@ -375,7 +375,8 @@ class PushingTransaction {
               var fee = int.parse(args["fee"].toString());
               var spentCoins = args["spentCoins"].toString();
               var requestedNFT = args["requestedNFT"].toString();
-              debugPrint("RequestedNFT on PushingOffer : ${call.arguments["requestedNFT"].toString()}");
+              debugPrint(
+                  "RequestedNFT on PushingOffer : ${call.arguments["requestedNFT"].toString()}");
               takingAnOffer(
                   offerString: offer,
                   mnemonics: mnemonics,
@@ -600,10 +601,11 @@ class PushingTransaction {
 
       debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
 
-      var requestMap = offerAssetDataParamsRequested(requested);
+      Map<OfferAssetData?, List<int>> param = <OfferAssetData?, List<int>>{};
+      await offerAssetDataParamsRequested(requested, nftService, param);
 
       final offer = await offerService.createOffer(
-          requesteAmounts: requestMap,
+          requesteAmounts: param,
           offerredAmounts: offerMap,
           coins: fullCoins.toSet().toList(),
           changePuzzlehash: changePh,

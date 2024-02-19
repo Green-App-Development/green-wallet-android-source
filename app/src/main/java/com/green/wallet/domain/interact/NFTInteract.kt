@@ -17,6 +17,8 @@ interface NFTInteract {
 
     suspend fun getCollectionNameByNFTID(networkItem: NetworkItem, nftID: String): String
 
-    suspend fun getNFTCoinHashByNFTID(nftID:String):String
+    suspend fun getNFTCoinHashByNFTID(nftID: String): String
+
+    suspend fun getNFTCoinByNFTIDFromWallet(networkItem: NetworkItem,nftID: String): NFTCoin?
 
 }

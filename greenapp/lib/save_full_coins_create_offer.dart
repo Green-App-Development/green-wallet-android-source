@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_splash_screen_module/flutter_token.dart';
 import 'package:flutter_splash_screen_module/pushing_transaction.dart';
 
+import 'nft_service.dart';
+
 Future<void> saveFullCoinsCAT(
     String url,
     FlutterToken token,
@@ -130,10 +132,10 @@ Future<void> getCatCoinsDetail(
   ));
 }
 
-Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
-    List<FlutterToken> list) {
-  Map<OfferAssetData?, List<int>> param = <OfferAssetData?, List<int>>{};
-
+Future<void> offerAssetDataParamsRequested(
+    List<FlutterToken> list,
+    NftNodeWalletService nftService,
+    Map<OfferAssetData?, List<int>> param) async {
   for (var item in list) {
     var amount = item.amount;
     if (item.type == "CAT") {
@@ -142,13 +144,18 @@ Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
     } else if (item.type == 'XCH') {
       param[null] = [amount];
     } else {
-      debugPrint("Launcher NFT ID to request : ${item.assetID}");
-      final nftAddress = NftAddress(item.assetID);
+      debugPrint(
+          "AssetID : ${item.assetID}, FromAddress : ${item.fromAddress}");
+      var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+          parent_coin_info: Bytes.fromHex(item.assetID),
+          puzzle_hash: Puzzlehash.fromHex(item.fromAddress));
+      debugPrint("Found NftCoins for requested : $nftCoins");
+      final nftCoin = nftCoins[0];
+      final nftFullCoin = await nftService.convertFullCoin(nftCoin);
       param[OfferAssetData.singletonNft(
-          launcherPuzhash: nftAddress.toPuzzlehash())] = [1];
+          launcherPuzhash: nftFullCoin.launcherId)] = [1];
     }
   }
-  return param;
 }
 
 Map<OfferAssetData?, int> offerAssetDataParamsOffered(List<FlutterToken> list) {

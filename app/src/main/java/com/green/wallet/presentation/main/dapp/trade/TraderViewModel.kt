@@ -475,4 +475,10 @@ class TraderViewModel @Inject constructor(
         return nftInteractor.getNFTCoinByHash(coinHash)
     }
 
+    suspend fun getNftCoinFromWallet(nftCoinID: String) =
+        nftInteractor.getNFTCoinByNFTIDFromWallet(
+            getNetworkItemFromPrefs(wallet!!.networkType)!!,
+            nftCoinID
+        )
+
 }
