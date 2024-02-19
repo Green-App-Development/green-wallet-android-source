@@ -140,6 +140,8 @@ class TransPagingAdapter(
 
     }
 
+
+
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val item = getItem(position)
         if (item != null) {

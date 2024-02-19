@@ -142,7 +142,10 @@ Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
     } else if (item.type == 'XCH') {
       param[null] = [amount];
     } else {
-
+      debugPrint("Launcher NFT ID to request : ${item.assetID}");
+      final nftAddress = NftAddress(item.assetID);
+      param[OfferAssetData.singletonNft(
+          launcherPuzhash: nftAddress.toPuzzlehash())] = [1];
     }
   }
   return param;
@@ -159,9 +162,7 @@ Map<OfferAssetData?, int> offerAssetDataParamsOffered(List<FlutterToken> list) {
       param[OfferAssetData.cat(tailHash: tokenHash)] = -amount;
     } else if (item.type == 'XCH') {
       param[null] = amount;
-    } else {
-
-    }
+    } else {}
   }
 
   return param;
