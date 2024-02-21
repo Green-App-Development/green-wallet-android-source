@@ -152,6 +152,7 @@ Future<void> offerAssetDataParamsRequested(
       debugPrint("Found NftCoins for requested : $nftCoins");
       final nftCoin = nftCoins[0];
       final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+      debugPrint("Found NFTCoins LauncherID : ${nftFullCoin.launcherId}");
       param[OfferAssetData.singletonNft(
           launcherPuzhash: nftFullCoin.launcherId)] = [1];
     }

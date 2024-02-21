@@ -537,7 +537,7 @@ class PushingTransaction {
       required String spentCoins,
       required String offeredStr,
       required String requestedStr}) async {
-    try {
+    // try {
       NetworkContext()
           .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
@@ -601,11 +601,11 @@ class PushingTransaction {
 
       debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
 
-      Map<OfferAssetData?, List<int>> param = <OfferAssetData?, List<int>>{};
-      await offerAssetDataParamsRequested(requested, nftService, param);
+      Map<OfferAssetData?, List<int>> requestMap = <OfferAssetData?, List<int>>{};
+      await offerAssetDataParamsRequested(requested, nftService, requestMap);
 
       final offer = await offerService.createOffer(
-          requesteAmounts: param,
+          requesteAmounts: requestMap,
           offerredAmounts: offerMap,
           coins: fullCoins.toSet().toList(),
           changePuzzlehash: changePh,
@@ -615,10 +615,10 @@ class PushingTransaction {
       debugPrint("Offer String to createOffer : $str");
       _channel.invokeMethod("CreateOffer",
           {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
-    } catch (ex) {
-      debugPrint("Exception in creating an offer : $ex");
-      _channel.invokeMethod("exception");
-    }
+    // } catch (ex) {
+    //   debugPrint("Exception in creating an offer : $ex");
+    //   _channel.invokeMethod("exception");
+    // }
   }
 
   Future<void> speedyTransferNFT(
