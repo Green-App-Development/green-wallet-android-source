@@ -13,15 +13,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.Status
-import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 
@@ -34,14 +35,20 @@ class TransPagingAdapter(
     private val viewBinderHelper = ViewBinderHelper()
 
     class TransDiffCallback : DiffUtil.ItemCallback<Transaction>() {
-
         override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
-            return oldItem.transactionId == newItem.transactionId
+            if (oldItem is TransferTransaction && newItem is TransferTransaction) {
+                return oldItem.transactionId == newItem.transactionId
+            }
+            return true
         }
 
         override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
-            return oldItem == newItem
+            if (oldItem is TransferTransaction && newItem is TransferTransaction) {
+                return oldItem == newItem
+            }
+            return true
         }
+
     }
 
 
@@ -58,7 +65,7 @@ class TransPagingAdapter(
 
 
         @SuppressLint("SetTextI18n")
-        fun onBindTransaction(transaction: Transaction) {
+        fun onBindTransaction(transaction: TransferTransaction) {
             rootLayout.background.setTint(curActivity.getColorResource(R.color.cardView_background))
             txtStatus.visibility = View.VISIBLE
             txtHeightTransaction.visibility = View.VISIBLE
@@ -100,7 +107,6 @@ class TransPagingAdapter(
             }
 
             imgDelete.setOnClickListener {
-                VLog.d("Delete container transaction clicked")
                 transactionItemListener.onTransactionDelete(transaction = transaction)
             }
 
@@ -140,11 +146,14 @@ class TransPagingAdapter(
 
     }
 
+    inner class TransactionOfferViewHolder(v: View) : ViewHolder(v) {
+
+    }
 
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val item = getItem(position)
-        if (item != null) {
+        if (item != null && item is TransferTransaction) {
             holder.onBindTransaction(item)
             viewBinderHelper.setOpenOnlyOne(true)
             viewBinderHelper.bind(holder.rootLayout, "$position")

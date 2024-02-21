@@ -1,9 +1,12 @@
 package com.green.wallet.data.interact
 
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.green.wallet.data.local.TransactionDao
 import com.green.wallet.data.preference.PrefsManager
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.TransactionInteract
 import com.green.wallet.presentation.custom.getShortNetworkType
@@ -16,8 +19,7 @@ import javax.inject.Inject
 class TransactionInteractImpl @Inject constructor(
     private val transactionDao: TransactionDao,
     private val prefs: PrefsInteract
-) :
-    TransactionInteract {
+) : TransactionInteract {
 
     override suspend fun getTransactionsByProvidedParameters(
         fkAddress: String?,
@@ -27,7 +29,7 @@ class TransactionInteractImpl @Inject constructor(
         at_least_created_at: Long?,
         yesterday: Long?,
         today: Long?
-    ): List<Transaction> {
+    ): List<TransferTransaction> {
         val timeDiff =
             prefs.getSettingLong(PrefsManager.TIME_DIFFERENCE, System.currentTimeMillis())
         val resTrans = transactionDao.getALlTransactionsByGivenParameters(
@@ -53,7 +55,7 @@ class TransactionInteractImpl @Inject constructor(
         yesterday: Long?,
         today: Long?,
         tokenCode: String?
-    ): Flow<List<Transaction>> {
+    ): Flow<List<TransferTransaction>> {
         val flowTransactionList = transactionDao.getALlTransactionsFlowByGivenParameters(
             fkAddress,
             amount,
@@ -113,7 +115,7 @@ class TransactionInteractImpl @Inject constructor(
         yesterday: Long?,
         today: Long?,
         tokenCode: String?
-    ): Flow<PagingData<Transaction>> {
+    ): Flow<PagingData<TransferTransaction>> {
         val pagingSourceFactory = {
             transactionDao.getALlTransactionsFlowByGivenParametersPagingSource(
                 fkAddress,

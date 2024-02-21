@@ -4,18 +4,16 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.green.wallet.R
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.tools.Status
-import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 
@@ -28,11 +26,11 @@ class TransactionItemAdapter(
     RecyclerView.Adapter<TransactionItemAdapter.TransactionViewHolder>() {
 
     var itemCountFitsScreen = 0
-    private var transactionList = mutableListOf<Transaction>()
+    private var transactionList = mutableListOf<TransferTransaction>()
     var curSortedStatus: Status? = null
     private val viewBinderHelper = ViewBinderHelper()
 
-    fun updateTransactionList(transactions: List<Transaction>) {
+    fun updateTransactionList(transactions: List<TransferTransaction>) {
         transactionList.clear()
         transactionList.addAll(transactions)
     }
@@ -63,7 +61,7 @@ class TransactionItemAdapter(
         private val txtToken: TextView = v.findViewById(R.id.txtToken)
 
         @SuppressLint("SetTextI18n")
-        fun onBindTransaction(transaction: Transaction) {
+        fun onBindTransaction(transaction: TransferTransaction) {
             rootLayout.background.setTint(curActivity.getColorResource(R.color.cardView_background))
             txtStatus.visibility = View.VISIBLE
             txtHeightTransaction.visibility = View.VISIBLE
@@ -114,11 +112,11 @@ class TransactionItemAdapter(
     }
 
     interface TransactionListener {
-        fun onTransactionItemClicked(transaction: Transaction)
+        fun onTransactionItemClicked(transaction: TransferTransaction)
 
-        fun onTransactionSpeedUpClick(transaction: Transaction)
+        fun onTransactionSpeedUpClick(transaction: TransferTransaction)
 
-        fun onTransactionDelete(transaction: Transaction)
+        fun onTransactionDelete(transaction: TransferTransaction)
 
     }
 

@@ -19,7 +19,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.example.common.tools.*
 import com.green.wallet.R
+import com.green.wallet.databinding.DialogTranNftDetailsBinding
 import com.green.wallet.databinding.FragmentNotificationBinding
 import com.green.wallet.domain.domainmodel.notification.NotificationItem
 import com.green.wallet.presentation.custom.CustomSpinner
@@ -29,11 +31,8 @@ import com.green.wallet.presentation.custom.getShortNetworkType
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
 import com.green.wallet.presentation.main.transaction.TransactionSortingAdapter
-import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.*
-import com.green.wallet.databinding.DialogTranNftDetailsBinding
-import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.presentation.tools.*
+import com.green.wallet.presentation.viewBinding
 import dagger.android.support.DaggerDialogFragment
 import kotlinx.android.synthetic.main.dialog_notification_detail.*
 import kotlinx.android.synthetic.main.fragment_notification.*

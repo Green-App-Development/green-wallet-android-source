@@ -12,7 +12,6 @@ import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -23,19 +22,18 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.common.tools.*
 import com.green.wallet.R
+import com.green.wallet.databinding.DialogTranNftDetailsBinding
 import com.green.wallet.databinding.FragmentTransactionsBinding
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.*
+import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.*
-import com.green.wallet.databinding.DialogTranNftDetailsBinding
-import com.green.wallet.presentation.custom.base.BaseFragment
-import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyBtmDialog
 import com.green.wallet.presentation.tools.*
+import com.green.wallet.presentation.viewBinding
 import com.greenwallet.core.ext.collectFlow
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.coroutines.CoroutineScope
@@ -245,7 +243,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         }
     }
 
-    private suspend fun updateTransactionItems(transList: List<Transaction>) {
+    private suspend fun updateTransactionItems(transList: List<TransferTransaction>) {
         delay(50)
         val recHeight = binding.recTransactionItems.height
         val dp = curActivity().pxToDp(recHeight)
@@ -489,7 +487,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 
     }
 
-    private fun showTransactionDetails(transaction: Transaction) {
+    private fun showTransactionDetails(transaction: TransferTransaction) {
         if (transaction.code == "NFT") {
             showTransactionsNFTDetails(transaction)
         } else {
@@ -514,7 +512,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         }
     }
 
-    private fun showTransactionsNFTDetails(transaction: Transaction) {
+    private fun showTransactionsNFTDetails(transaction: TransferTransaction) {
         val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
         val binding = DialogTranNftDetailsBinding.inflate(layoutInflater)
         dialog.setContentView(binding.root)
@@ -538,7 +536,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
     @SuppressLint("SetTextI18n")
     private fun initTransDetailsNFT(
         binding: DialogTranNftDetailsBinding,
-        transaction: Transaction
+        transaction: TransferTransaction
     ) {
         binding.apply {
             val formattedDate = formattedDateForTransaction(
@@ -579,7 +577,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 
 
     @SuppressLint("SetTextI18n")
-    private fun initTransDetails(dialog: Dialog, transaction: Transaction) {
+    private fun initTransDetails(dialog: Dialog, transaction: TransferTransaction) {
         VLog.d("Current Transaction Clicked -> : $transaction")
         dialog.apply {
 
@@ -629,15 +627,15 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 
     private fun curActivity() = requireActivity() as MainActivity
 
-    override fun onTransactionItemClicked(transaction: Transaction) {
+    override fun onTransactionItemClicked(transaction: TransferTransaction) {
         showTransactionDetails(transaction)
     }
 
-    override fun onTransactionSpeedUpClick(transaction: Transaction) {
+    override fun onTransactionSpeedUpClick(transaction: TransferTransaction) {
         viewModel.handleIntent(TransactionIntent.OnSpeedyTran(transaction))
     }
 
-    override fun onTransactionDelete(transaction: Transaction) {
+    override fun onTransactionDelete(transaction: TransferTransaction) {
         viewModel.handleIntent(TransactionIntent.OnDeleteTransaction(transaction))
     }
 
