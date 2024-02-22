@@ -11,12 +11,12 @@ import androidx.compose.ui.unit.TextUnit
 
 @Composable
 fun DefaultText(
+    modifier: Modifier = Modifier,
     text: String,
     size: TextUnit,
     color: Color,
     fontWeight: FontWeight = FontWeight(400),
     textAlign: TextAlign = TextAlign.Start,
-    modifier: Modifier = Modifier
 ) {
     Text(
         text = text,

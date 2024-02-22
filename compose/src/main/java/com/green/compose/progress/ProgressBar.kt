@@ -18,7 +18,10 @@ import com.green.compose.theme.Provider
 
 
 @Composable
-fun CircularProgressBar(size: Dp =50.dp) {
+fun CircularProgressBar(
+    modifier: Modifier = Modifier,
+    size: Dp = 50.dp
+) {
 
     CircularProgressIndicator(
         modifier = Modifier.size(size),

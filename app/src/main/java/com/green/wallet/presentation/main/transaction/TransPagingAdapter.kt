@@ -23,6 +23,8 @@ import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.transaction.offer.OfferTransactionItem
+import com.green.wallet.presentation.tools.DensityUtil
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
@@ -148,11 +150,19 @@ class TransPagingAdapter(
     }
 
     inner class OfferTransViewHolder(v: View) : ViewHolder(v) {
+
         private val composeView = v.findViewById<ComposeView>(R.id.compose_offer)
+        private var heightCompose: Int = 45
 
-        fun bindOfferTransaction(offerTran: OfferTransaction) {
+        fun bindOfferTransaction(offerTran: OfferTransaction?) {
             composeView.setContent {
-
+                OfferTransactionItem(heightCompose) {
+                    val params: ViewGroup.LayoutParams = composeView.layoutParams
+                    params.height = DensityUtil.dp2px(curActivity, heightCompose.toFloat())
+                    composeView.layoutParams = params
+                    heightCompose = it
+                    notifyItemChanged(absoluteAdapterPosition)
+                }
             }
         }
     }
@@ -163,8 +173,8 @@ class TransPagingAdapter(
             holder.onBindTransaction(item)
             viewBinderHelper.setOpenOnlyOne(true)
             viewBinderHelper.bind(holder.rootLayout, "$position")
-        } else if (item != null && item is OfferTransaction && holder is OfferTransViewHolder) {
-
+        } else if (item != null && holder is OfferTransViewHolder) {
+            holder.bindOfferTransaction(null)
         } else if (holder is TransferTransViewHolder)
             holder.onBindEmptyPlaceHolder()
     }
@@ -172,7 +182,7 @@ class TransPagingAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is OfferTransaction -> OFFER_TRANSACTION
-            else -> TRANSFER_TRANSACTION
+            else -> OFFER_TRANSACTION
         }
     }
 

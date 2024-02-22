@@ -27,7 +27,8 @@ data class CustomColorsPalette(
     val secondaryTextColor: Color = Color.Unspecified,
     val dividerOffer: Color = Color.Unspecified,
     val progressTrackColor: Color = Color.Unspecified,
-    val bcgTransactionItem: Color = Color.Unspecified
+    val bcgTransactionItem: Color = Color.Unspecified,
+    val blue: Color = Color(0xFF1E93FF)
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
@@ -78,7 +79,7 @@ fun GreenWalletTheme(
     content: @Composable () -> Unit
 ) {
     val customColorsPalette =
-        if (darkTheme) OnDarkCustomColorsPalette
+        if (darkTheme || true) OnDarkCustomColorsPalette
         else OnLightCustomColorsPalette
 
     // here is the important point, where you will expose custom objects
