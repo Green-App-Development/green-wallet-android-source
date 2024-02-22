@@ -1,7 +1,6 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_splash_screen_module/flutter_token.dart';
-import 'package:flutter_splash_screen_module/pushing_transaction.dart';
 
 import 'nft_service.dart';
 
@@ -144,17 +143,23 @@ Future<void> offerAssetDataParamsRequested(
     } else if (item.type == 'XCH') {
       param[null] = [amount];
     } else {
+      //with full coin
       debugPrint(
           "AssetID : ${item.assetID}, FromAddress : ${item.fromAddress}");
-      var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-          parent_coin_info: Bytes.fromHex(item.assetID),
-          puzzle_hash: Puzzlehash.fromHex(item.fromAddress));
-      debugPrint("Found NftCoins for requested : $nftCoins");
-      final nftCoin = nftCoins[0];
-      final nftFullCoin = await nftService.convertFullCoin(nftCoin);
-      debugPrint("Found NFTCoins LauncherID : ${nftFullCoin.launcherId}");
+      // var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+      //     parent_coin_info: Bytes.fromHex(item.assetID),
+      //     puzzle_hash: Puzzlehash.fromHex(item.fromAddress));
+      // debugPrint("Found NftCoins for requested : $nftCoins");
+      // final nftCoin = nftCoins[0];
+      // final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+      // debugPrint("Found NFTCoins LauncherID : ${nftFullCoin.launcherId}");
+      // param[OfferAssetData.singletonNft(
+      //     launcherPuzhash: nftFullCoin.launcherId)] = [1];
+
+      //with just nftID
+      final nftAddress = NftAddress(item.assetID);
       param[OfferAssetData.singletonNft(
-          launcherPuzhash: nftFullCoin.launcherId)] = [1];
+          launcherPuzhash: nftAddress.toPuzzlehash())] = [1];
     }
   }
 }

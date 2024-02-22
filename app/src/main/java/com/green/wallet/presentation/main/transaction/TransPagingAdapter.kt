@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
@@ -54,7 +53,7 @@ class TransPagingAdapter(
     }
 
 
-    inner class TransferTransViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    inner class TransferTransViewHolder(v: View) : ViewHolder(v) {
         val rootLayout: SwipeRevealLayout = v.findViewById(R.id.root_transaction_item)
         private val txtStatus: TextView = v.findViewById(R.id.txtStatus)
         private val txtHeightTransaction: TextView = v.findViewById(R.id.txtHeightTrans)

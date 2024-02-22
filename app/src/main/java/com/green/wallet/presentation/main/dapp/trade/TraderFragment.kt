@@ -287,7 +287,7 @@ class TraderFragment : BaseComposeFragment() {
                 is NftToken -> {
                     var nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
                     VLog.d("NFT Coin convertToTokenFlutter : $nftCoin, NFTCoinHash : ${i.nftCoinHash}")
-                    if (nftCoin == null) {
+                    if (nftCoin == null && false) {
                         nftCoin = viewModel.getNftCoinFromWallet(i.nftId)
                     }
                     FlutterToken(
