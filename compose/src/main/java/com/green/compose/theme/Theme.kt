@@ -6,8 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import com.green.compose.colors.txtPrimaryColorsDark
-import com.green.compose.colors.txtPrimaryColorsLight
 
 @Immutable
 data class CustomColorsPalette(
@@ -28,7 +26,8 @@ data class CustomColorsPalette(
     val btnInActive: Color = Color.Unspecified,
     val secondaryTextColor: Color = Color.Unspecified,
     val dividerOffer: Color = Color.Unspecified,
-    val progressTrackColor: Color = Color.Unspecified
+    val progressTrackColor: Color = Color.Unspecified,
+    val bcgTransactionItem: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
@@ -67,7 +66,8 @@ val OnDarkCustomColorsPalette = CustomColorsPalette(
     greyText = Color(0xFF949494),
     secondaryTextColor = Color(0xFFFFFFFF),
     dividerOffer = Color(0xFF494949),
-    progressTrackColor = Color(0xFF494949)
+    progressTrackColor = Color(0xFF494949),
+    bcgTransactionItem = Color(0xFF303030)
 )
 
 val Provider = staticCompositionLocalOf { CustomColorsPalette() }

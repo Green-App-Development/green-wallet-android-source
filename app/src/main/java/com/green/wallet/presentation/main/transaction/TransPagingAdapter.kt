@@ -150,6 +150,11 @@ class TransPagingAdapter(
     inner class OfferTransViewHolder(v: View) : ViewHolder(v) {
         private val composeView = v.findViewById<ComposeView>(R.id.compose_offer)
 
+        fun bindOfferTransaction(offerTran: OfferTransaction) {
+            composeView.setContent {
+
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

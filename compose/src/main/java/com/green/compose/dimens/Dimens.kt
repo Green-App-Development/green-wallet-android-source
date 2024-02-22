@@ -28,6 +28,7 @@ val size_34 = 34.dp
 val size_36 = 36.dp
 val size_40 = 40.dp
 val size_44 = 44.dp
+val size_45 = 45.dp
 val size_48 = 48.dp
 val size_50 = 50.dp
 val size_52 = 52.dp
