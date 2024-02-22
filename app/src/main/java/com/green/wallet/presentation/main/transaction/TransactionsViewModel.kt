@@ -132,7 +132,6 @@ class TransactionsViewModel @Inject constructor(
 //            }"
 //        )
 
-
         return transactionInteract.getTransactionsFlowByProvidedParametersPagingSource(
             fkAddress,
             amount,

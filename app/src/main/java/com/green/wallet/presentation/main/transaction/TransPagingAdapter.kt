@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.green.wallet.R
+import com.green.wallet.domain.domainmodel.OfferTransaction
 import com.green.wallet.domain.domainmodel.Transaction
 import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.AnimationManager
@@ -30,7 +32,7 @@ class TransPagingAdapter(
     private val curActivity: MainActivity,
     private val transactionItemListener: TransactionItemAdapter.TransactionListener,
     private val animManager: AnimationManager
-) : PagingDataAdapter<Transaction, TransPagingAdapter.TransactionViewHolder>(TransDiffCallback()) {
+) : PagingDataAdapter<Transaction, ViewHolder>(TransDiffCallback()) {
 
     private val viewBinderHelper = ViewBinderHelper()
 
@@ -52,7 +54,7 @@ class TransPagingAdapter(
     }
 
 
-    inner class TransactionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    inner class TransferTransViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val rootLayout: SwipeRevealLayout = v.findViewById(R.id.root_transaction_item)
         private val txtStatus: TextView = v.findViewById(R.id.txtStatus)
         private val txtHeightTransaction: TextView = v.findViewById(R.id.txtHeightTrans)
@@ -146,24 +148,49 @@ class TransPagingAdapter(
 
     }
 
-    inner class TransactionOfferViewHolder(v: View) : ViewHolder(v) {
+    inner class OfferTransViewHolder(v: View) : ViewHolder(v) {
+        private val composeView = v.findViewById<ComposeView>(R.id.compose_offer)
 
     }
 
-
-    override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        if (item != null && item is TransferTransaction) {
+        if (item != null && item is TransferTransaction && holder is TransferTransViewHolder) {
             holder.onBindTransaction(item)
             viewBinderHelper.setOpenOnlyOne(true)
             viewBinderHelper.bind(holder.rootLayout, "$position")
-        } else holder.onBindEmptyPlaceHolder()
+        } else if (item != null && item is OfferTransaction && holder is OfferTransViewHolder) {
+
+        } else if (holder is TransferTransViewHolder)
+            holder.onBindEmptyPlaceHolder()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_transaction, parent, false)
-        return TransactionViewHolder(itemView)
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is OfferTransaction -> OFFER_TRANSACTION
+            else -> TRANSFER_TRANSACTION
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            OFFER_TRANSACTION -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_offer_compose, parent, false)
+                OfferTransViewHolder(view)
+            }
+
+            else -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_transaction, parent, false)
+                TransferTransViewHolder(view)
+            }
+        }
+    }
+
+    companion object {
+        private const val TRANSFER_TRANSACTION = 0
+        private const val OFFER_TRANSACTION = 1
     }
 
 }
