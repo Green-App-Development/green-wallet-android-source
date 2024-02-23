@@ -24,7 +24,7 @@ fun CircularProgressBar(
 ) {
 
     CircularProgressIndicator(
-        modifier = Modifier.size(size),
+        modifier = modifier.size(size),
         color = Provider.current.green,
         strokeWidth = size_4,
         strokeCap = StrokeCap.Round,

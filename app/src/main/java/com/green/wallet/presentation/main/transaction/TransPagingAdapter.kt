@@ -156,7 +156,7 @@ class TransPagingAdapter(
 
         fun bindOfferTransaction(offerTran: OfferTransaction?) {
             composeView.setContent {
-                OfferTransactionItem(heightCompose) {
+                OfferTransactionItem {
                     val params: ViewGroup.LayoutParams = composeView.layoutParams
                     params.height = DensityUtil.dp2px(curActivity, heightCompose.toFloat())
                     composeView.layoutParams = params

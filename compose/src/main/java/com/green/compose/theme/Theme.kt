@@ -28,7 +28,8 @@ data class CustomColorsPalette(
     val dividerOffer: Color = Color.Unspecified,
     val progressTrackColor: Color = Color.Unspecified,
     val bcgTransactionItem: Color = Color.Unspecified,
-    val blue: Color = Color(0xFF1E93FF)
+    val blue: Color = Color(0xFF1E93FF),
+    val offerTransactionDetails: Color = Color.Unspecified
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(
@@ -68,7 +69,8 @@ val OnDarkCustomColorsPalette = CustomColorsPalette(
     secondaryTextColor = Color(0xFFFFFFFF),
     dividerOffer = Color(0xFF494949),
     progressTrackColor = Color(0xFF494949),
-    bcgTransactionItem = Color(0xFF303030)
+    bcgTransactionItem = Color(0xFF303030),
+    offerTransactionDetails = Color(0xFF262626)
 )
 
 val Provider = staticCompositionLocalOf { CustomColorsPalette() }

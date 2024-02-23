@@ -54,6 +54,7 @@ val size_120 = 120.dp
 val size_130 = 130.dp
 val size_132 = 132.dp
 val size_140 = 140.dp
+val size_150 = 150.dp
 val size_160 = 160.dp
 val size_200 = 200.dp
 val size_218= 210.dp
