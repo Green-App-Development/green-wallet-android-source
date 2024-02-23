@@ -52,172 +52,178 @@ fun OfferTransactionItem(
 
     val size by remember { mutableIntStateOf(heightCompose) }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(size.dp)
-            .background(color = Provider.current.bcgTransactionItem)
-            .padding(start = size_5)
-    ) {
-
-        DefaultText(
-            text = "Take offer",
-            size = text_15,
-            color = Provider.current.blue,
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1.2f)
-                .wrapContentHeight(),
-            textAlign = TextAlign.Start
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1.2f)
-        ) {
-            CircularProgressBar(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                size = size_30
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1.8f)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_downword),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(size = size_30)
-                    .padding(end = size_12),
-                tint = Provider.current.green
-            )
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .background(color = Provider.current.offerTransactionDetails)
-            .padding(
-                top = size_10,
-                start = size_8,
-                end = size_8,
-                bottom = size_10
-            )
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                DefaultText(
-                    text = "Дата",
-                    size = text_12,
-                    color = Provider.current.greyText
-                )
-
-                DefaultText(
-                    text = "23 января, 19:11",
-                    size = text_14,
-                    color = Provider.current.secondaryTextColor
-                )
-            }
-            Column {
-                state.offered.forEach { item ->
-                    when (item) {
-                        is CatToken -> {
-                            CatTokenItemOfferTran(item, !state.acceptOffer)
-                        }
-
-                        is NftToken -> {
-                            NFTTokenDAppOfferTrans(item, !state.acceptOffer)
-                        }
-                    }
-                }
-
-                state.requested.forEach { item ->
-                    when (item) {
-                        is CatToken -> {
-                            CatTokenItemOfferTran(item, state.acceptOffer)
-                        }
-
-                        is NftToken -> {
-                            NFTTokenDAppOfferTrans(item, state.acceptOffer)
-                        }
-                    }
-                }
-            }
-        }
-
+    Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = size_5),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .height(size.dp)
+                .background(color = Provider.current.bcgTransactionItem)
+                .padding(start = size_5)
         ) {
-            Column {
-                DefaultText(
-                    text = "Источник",
-                    size = text_12,
-                    color = Provider.current.greyText
-                )
 
-                DefaultText(
-                    text = "dexie.space",
-                    size = text_14,
-                    color = Provider.current.secondaryTextColor
-                )
+            DefaultText(
+                text = "Take offer",
+                size = text_15,
+                color = Provider.current.blue,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1.2f)
+                    .wrapContentHeight(),
+                textAlign = TextAlign.Start
+            )
 
-
-                DefaultText(
-                    text = "Комиссия",
-                    size = text_12,
-                    color = Provider.current.greyText,
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1.2f)
+            ) {
+                CircularProgressBar(
                     modifier = Modifier
-                        .padding(
-                            top = size_10
-                        )
+                        .align(Alignment.Center),
+                    size = size_30
                 )
-
-                DefaultText(
-                    text = "0 XCH",
-                    size = text_14,
-                    color = Provider.current.secondaryTextColor
-                )
-
-
             }
 
-            Column {
-                DefaultText(
-                    text = "Hash транзакции",
-                    size = text_12,
-                    color = Provider.current.greyText
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1.8f)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_downword),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(size = size_30)
+                        .padding(end = size_12),
+                    tint = Provider.current.green
                 )
+            }
+        }
 
-                Row {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(color = Provider.current.offerTransactionDetails)
+                .padding(
+                    top = size_10,
+                    start = size_8,
+                    end = size_8,
+                    bottom = size_10
+                )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
                     DefaultText(
-                        text = "0xb4b8...k486",
+                        text = "Дата",
+                        size = text_12,
+                        color = Provider.current.greyText
+                    )
+
+                    DefaultText(
+                        text = "23 января, 19:11",
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_copy_green),
-                        contentDescription = null,
-                        modifier = Modifier.padding(top = size_3, start = size_3)
+                }
+                Column {
+                    state.offered.forEach { item ->
+                        when (item) {
+                            is CatToken -> {
+                                CatTokenItemOfferTran(item, !state.acceptOffer)
+                            }
+
+                            is NftToken -> {
+                                NFTTokenDAppOfferTrans(item, !state.acceptOffer)
+                            }
+                        }
+                    }
+
+                    state.requested.forEach { item ->
+                        when (item) {
+                            is CatToken -> {
+                                CatTokenItemOfferTran(item, state.acceptOffer)
+                            }
+
+                            is NftToken -> {
+                                NFTTokenDAppOfferTrans(item, state.acceptOffer)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        end = size_5,
+                        top = size_10
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    DefaultText(
+                        text = "Источник",
+                        size = text_12,
+                        color = Provider.current.greyText
                     )
+
+                    DefaultText(
+                        text = "dexie.space",
+                        size = text_14,
+                        color = Provider.current.secondaryTextColor
+                    )
+
+
+                    DefaultText(
+                        text = "Комиссия",
+                        size = text_12,
+                        color = Provider.current.greyText,
+                        modifier = Modifier
+                            .padding(
+                                top = size_10
+                            )
+                    )
+
+                    DefaultText(
+                        text = "0 XCH",
+                        size = text_14,
+                        color = Provider.current.secondaryTextColor
+                    )
+
+
+                }
+
+                Column {
+                    DefaultText(
+                        text = "Hash транзакции",
+                        size = text_12,
+                        color = Provider.current.greyText
+                    )
+
+                    Row {
+                        DefaultText(
+                            text = "0xb4b8...k486",
+                            size = text_14,
+                            color = Provider.current.secondaryTextColor
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_copy_green),
+                            contentDescription = null,
+                            modifier = Modifier.padding(top = size_3, start = size_3)
+                        )
+                    }
                 }
             }
         }
+
+
     }
 }
 
