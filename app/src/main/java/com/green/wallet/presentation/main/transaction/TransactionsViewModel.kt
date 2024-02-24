@@ -16,10 +16,13 @@ import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseIntentViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -75,6 +78,7 @@ class TransactionsViewModel @Inject constructor(
         )
     }
 
+    var transactionJob: Job? = null
 
     fun getAllQueriedFlowTransactionList(
         fkAddress: String?,
@@ -85,28 +89,22 @@ class TransactionsViewModel @Inject constructor(
         yesterdayStart: Long?,
         yesterdayEnd: Long?,
         tokenCode: String?
-    ): Flow<List<TransferTransaction>> {
-        VLog.d(
-            "FingerPrint : $fkAddress  Amount : $amount and networktype : $networkType and status : $status at_least_created_time : ${
-                formattedTime(
-                    at_least_created_at ?: 0
-                )
-            }  yesterdayStart : ${formattedTime(yesterdayStart ?: 0)}  : yesterdayEnd : ${
-                formattedTime(
-                    yesterdayEnd ?: 0
-                )
-            }"
-        )
-        return transactionInteract.getTransactionsFlowByProvidedParameters(
-            fkAddress,
-            amount,
-            networkType,
-            status,
-            at_least_created_at,
-            yesterdayStart,
-            yesterdayEnd,
-            tokenCode
-        )
+    ) {
+        transactionJob?.cancel()
+        transactionJob = viewModelScope.launch {
+            transactionInteract.getTransactionsFlowByProvidedParameters(
+                fkAddress,
+                amount,
+                networkType,
+                status,
+                at_least_created_at,
+                yesterdayStart,
+                yesterdayEnd,
+                tokenCode
+            ).collectLatest { list ->
+                _viewState.update { it.copy(transactionList = list) }
+            }
+        }
     }
 
 
@@ -177,6 +175,10 @@ class TransactionsViewModel @Inject constructor(
                 viewModelScope.launch {
                     transactionInteract.deleteTransByID(intent.tran.transactionId)
                 }
+            }
+
+            is TransactionIntent.OnShowTransactionDetails -> {
+                setEvent(TransactionEvent.ShowTransactionDetails(intent.tran))
             }
         }
     }

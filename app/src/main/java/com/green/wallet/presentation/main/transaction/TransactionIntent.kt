@@ -10,4 +10,6 @@ sealed interface TransactionIntent {
 
     data class DeleteTransaction(val tran: TransferTransaction) : TransactionIntent
 
+    data class OnShowTransactionDetails(val tran: TransferTransaction) : TransactionIntent
+
 }

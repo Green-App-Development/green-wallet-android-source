@@ -43,6 +43,7 @@ val size_76 = 76.dp
 val size_80 = 80.dp
 val size_84 = 84.dp
 val size_88 = 88.dp
+val size_90 = 90.dp
 val size_92 = 92.dp
 val size_96 = 96.dp
 val size_100 = 100.dp

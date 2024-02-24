@@ -14,6 +14,7 @@ data class CustomColorsPalette(
     val background: Color = Color.Unspecified,
     val iconGrey: Color = Color.Unspecified,
     val green: Color = Color(0xFF3AAC59),
+    val red: Color = Color(0xFFFF2222),
     val greyText: Color = Color(0xFF949494),
     val primaryAppBackground: Color = Color.Unspecified,
     val blackAppBackground: Color = Color.Unspecified,

@@ -23,9 +23,8 @@ import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.main.transaction.offer.OfferTransactionItem
-import com.green.wallet.presentation.tools.DensityUtil
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.VLog
 import com.green.wallet.presentation.tools.getColorResource
 import com.green.wallet.presentation.tools.getStringResource
 
@@ -152,19 +151,14 @@ class TransPagingAdapter(
     inner class OfferTransViewHolder(v: View) : ViewHolder(v) {
 
         private val composeView = v.findViewById<ComposeView>(R.id.compose_offer)
-        private var heightCompose: Int = 45
+        private var heightLayout: Int = 45
+        private var open: Boolean = false
+        private var alreadyBind: Boolean = false
 
-        fun bindOfferTransaction(offerTran: OfferTransaction?) {
-            composeView.setContent {
-                OfferTransactionItem {
-                    val params: ViewGroup.LayoutParams = composeView.layoutParams
-                    params.height = DensityUtil.dp2px(curActivity, heightCompose.toFloat())
-                    composeView.layoutParams = params
-                    heightCompose = it
-                    notifyItemChanged(absoluteAdapterPosition)
-                }
-            }
+        init {
+            VLog.d("OfferTransViewHolder initialized : $this")
         }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -174,7 +168,6 @@ class TransPagingAdapter(
             viewBinderHelper.setOpenOnlyOne(true)
             viewBinderHelper.bind(holder.rootLayout, "$position")
         } else if (item != null && holder is OfferTransViewHolder) {
-            holder.bindOfferTransaction(null)
         } else if (holder is TransferTransViewHolder)
             holder.onBindEmptyPlaceHolder()
     }

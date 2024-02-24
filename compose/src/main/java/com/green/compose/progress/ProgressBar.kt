@@ -20,13 +20,14 @@ import com.green.compose.theme.Provider
 @Composable
 fun CircularProgressBar(
     modifier: Modifier = Modifier,
-    size: Dp = 50.dp
+    size: Dp = 50.dp,
+    strokeWidth: Dp = size_4
 ) {
 
     CircularProgressIndicator(
         modifier = modifier.size(size),
         color = Provider.current.green,
-        strokeWidth = size_4,
+        strokeWidth = strokeWidth,
         strokeCap = StrokeCap.Round,
         trackColor = Provider.current.progressTrackColor
     )
