@@ -9,6 +9,7 @@ import com.green.wallet.data.interact.ExchangeInteractImpl
 import com.green.wallet.data.interact.GreenAppInteractImpl
 import com.green.wallet.data.interact.NFtInteractImpl
 import com.green.wallet.data.interact.NotifinteractImpl
+import com.green.wallet.data.interact.OfferTransactionInteractImpl
 import com.green.wallet.data.interact.SpentCoinsInteractImpl
 import com.green.wallet.data.interact.SupportInteractImpl
 import com.green.wallet.data.interact.TibetInteractImpl
@@ -25,6 +26,7 @@ import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.NotifInteract
+import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.SupportInteract
@@ -89,5 +91,7 @@ abstract class InteractModule {
     @Binds
     abstract fun bindDAppInteractImpl(dAppOfferInteract: DAppOfferInteractImpl): DAppOfferInteract
 
+    @Binds
+    abstract fun bindOfferTransactionImpl(offerTranImpl: OfferTransactionInteractImpl): OfferTransactionInteract
 
 }

@@ -7,12 +7,11 @@ import com.green.wallet.data.local.AppDatabase
 import com.green.wallet.data.local.AppDatabase.Companion.migration25To34
 import com.green.wallet.data.local.AppDatabase.Companion.migration34To35
 import com.green.wallet.data.local.AppDatabase.Companion.migration35To36
+import com.green.wallet.data.local.AppDatabase.Companion.migration37To38
 import com.green.wallet.data.local.AppDatabase.Companion.migration6To37
-import com.green.wallet.presentation.custom.encryptor.Encryptor
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl
 import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl.Companion.SECOND_STAGE
-import com.green.wallet.presentation.custom.encryptor.SecondStageEncryptor
 import com.green.wallet.presentation.tools.VLog
 import dagger.Module
 import dagger.Provides
@@ -30,7 +29,10 @@ class AppModule {
     @Provides
     fun provideAppDatabase(context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, AppDatabase.APP_DB_NAME)
-            .addMigrations(migration25To34, migration34To35, migration35To36, migration6To37)
+            .addMigrations(
+                migration25To34, migration34To35, migration35To36, migration6To37,
+                migration37To38
+            )
             .build()
     }
 
@@ -77,10 +79,12 @@ class AppModule {
 
     @Provides
     fun provideEncryptor(context: Context): EncryptorProvider {
-        val encryptor= EncryptorProviderImpl(context)
+        val encryptor = EncryptorProviderImpl(context)
         encryptor.setStage(SECOND_STAGE)
         return encryptor
     }
 
+    @Provides
+    fun provideOfferTransactionDao(appDatabase: AppDatabase) = appDatabase.offerTransDao
 
 }

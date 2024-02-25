@@ -5,11 +5,13 @@ import com.google.gson.Gson
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTCoin
+import com.green.wallet.domain.domainmodel.OfferTransaction
 import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DexieInteract
 import com.green.wallet.domain.interact.NFTInteract
+import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -47,7 +50,8 @@ class TraderViewModel @Inject constructor(
     private val blockChainInteract: BlockChainInteract,
     private val dexieInteract: DexieInteract,
     private val nftInteractor: NFTInteract,
-    private val pinCodeCommunicator: PinCodeCommunicator
+    private val pinCodeCommunicator: PinCodeCommunicator,
+    private val offerTransactionInteract: OfferTransactionInteract
 ) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
 
     var wallet: Wallet? = null
@@ -113,6 +117,17 @@ class TraderViewModel @Inject constructor(
             VLog.d("onFirstWallet trader: $wallet")
             validateFeeEnough()
             initDexieFee()
+            offerTransactionInteract.saveOfferTransaction(
+                wallet!!.address,
+                OfferTransaction(
+                    transId = "tran1",
+                    System.currentTimeMillis(),
+                    acceptOffer = true,
+                    fee = 0.0003,
+                    source = "dexie.space",
+                    height = 31131
+                )
+            )
         }
     }
 
@@ -293,8 +308,21 @@ class TraderViewModel @Inject constructor(
         }
     }
 
-    fun saveOfferTransaction() {
-
+    fun saveTakeOfferTransaction() {
+        val offerTran = OfferTransaction(
+            transId = UUID.randomUUID().toString(),
+            createAtTime = System.currentTimeMillis(),
+            requested = offerViewState.value.requested,
+            offered = offerViewState.value.offered,
+            source = "dexie.space",
+            hashTransaction = "",
+            fee = offerViewState.value.chosenFee,
+            height = 0L,
+            acceptOffer = true
+        )
+        viewModelScope.launch {
+            offerTransactionInteract.saveOfferTransaction(wallet!!.address, offerTran)
+        }
     }
 
     private suspend fun parseTokenJson(

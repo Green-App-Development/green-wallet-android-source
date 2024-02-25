@@ -150,7 +150,7 @@ class TraderFragment : BaseComposeFragment() {
                     val spentCoins = arguments["spentCoins"].toString()
                     with(viewModel) {
                         saveSpentCoins(spentCoins)
-                        saveOfferTransaction()
+                        saveTakeOfferTransaction()
                         handleEvent(TraderEvent.SendTakeOfferResult)
                     }
                 }

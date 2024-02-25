@@ -11,8 +11,10 @@ import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DAppOfferInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.NFTInteract
+import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.TransactionInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseIntentViewModel
@@ -22,6 +24,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,17 +37,15 @@ class TransactionsViewModel @Inject constructor(
     private val walletInteract: WalletInteract,
     private val greenAppInteract: GreenAppInteract,
     private val nftInteract: NFTInteract,
-    private val dAppOfferInteract: DAppOfferInteract
+    private val dAppOfferInteract: DAppOfferInteract,
+    private val offerTransactionInteract: OfferTransactionInteract
 ) : BaseIntentViewModel<TransactionState, TransactionEvent, TransactionIntent>(TransactionState()) {
 
     private val _nftInfoState = MutableStateFlow<NFTInfo?>(null)
     val nftInfoState = _nftInfoState.asStateFlow()
 
     init {
-//        viewModelScope.launch {
-//            delay(2000L)
-//            setEvent(TransactionEvent.BottomSheetCAT(null))
-//        }
+
     }
 
 
@@ -78,7 +80,7 @@ class TransactionsViewModel @Inject constructor(
         )
     }
 
-    var transactionJob: Job? = null
+    private var transactionJob: Job? = null
 
     fun getAllQueriedFlowTransactionList(
         fkAddress: String?,
@@ -92,7 +94,17 @@ class TransactionsViewModel @Inject constructor(
     ) {
         transactionJob?.cancel()
         transactionJob = viewModelScope.launch {
-            transactionInteract.getTransactionsFlowByProvidedParameters(
+
+            val flowOffer = offerTransactionInteract.getOfferTransactionListFlow(
+                fkAddress = fkAddress,
+                status = status,
+                at_least_created_at = at_least_created_at,
+                yesterday = yesterdayStart,
+                today = yesterdayEnd,
+                amount = null
+            )
+
+            val flowTransfer = transactionInteract.getTransactionsFlowByProvidedParameters(
                 fkAddress,
                 amount,
                 networkType,
@@ -101,8 +113,13 @@ class TransactionsViewModel @Inject constructor(
                 yesterdayStart,
                 yesterdayEnd,
                 tokenCode
-            ).collectLatest { list ->
-                _viewState.update { it.copy(transactionList = list) }
+            )
+
+            merge(
+                flowOffer.onEmpty { emptyList<Token>() },
+                flowTransfer.onEmpty { emptyList<Token>() }
+            ).collectLatest { flow ->
+                _viewState.update { it.copy(transactionList = flow) }
             }
         }
     }

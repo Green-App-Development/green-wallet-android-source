@@ -2,10 +2,8 @@ package com.green.wallet.data.local
 
 import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.DeleteColumn
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.green.wallet.data.local.entity.*
@@ -17,9 +15,10 @@ import com.green.wallet.data.local.entity.*
         SpentCoinsEntity::class, FaqItemEntity::class,
         NFTInfoEntity::class, NFTCoinEntity::class,
         OrderEntity::class, TibetSwapEntity::class,
-        TibetLiquidityEntity::class
+        TibetLiquidityEntity::class,
+        OfferTransactionEntity::class
     ],
-    version = 37,
+    version = 38,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 25, to = 34),
@@ -39,6 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val nftInfoDao: NftInfoDao
     abstract val orderExchangeDao: OrderExchangeDao
     abstract val tibetDao: TibetDao
+    abstract val offerTransDao: OfferTransactionDao
 
     companion object {
 
@@ -46,9 +46,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         val migration25To34 = object : Migration(25, 34) {
 
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
 
-                database.execSQL(
+                db.execSQL(
                     "CREATE TABLE IF NOT EXISTS `NFTInfoEntity` (" +
                             "`nft_coin_hash` TEXT NOT NULL, " +
                             "`nft_id` TEXT NOT NULL, " +
@@ -72,7 +72,7 @@ abstract class AppDatabase : RoomDatabase() {
                             "FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON DELETE CASCADE)"
                 )
 
-                database.execSQL(
+                db.execSQL(
                     "CREATE TABLE IF NOT EXISTS `NFTCoinEntity` (" +
                             "`coin_info` TEXT NOT NULL, " +
                             "`address_fk` TEXT NOT NULL, " +
@@ -86,11 +86,11 @@ abstract class AppDatabase : RoomDatabase() {
                             "FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON DELETE CASCADE)"
                 )
 
-                database.execSQL(
+                db.execSQL(
                     "ALTER TABLE `TransactionEntity` ADD COLUMN confirm_height INTEGER NOT NULL DEFAULT(0)"
                 )
 
-                database.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
+                db.execSQL("ALTER TABLE `TransactionEntity` ADD COLUMN nft_coin_hash TEXT NOT NULL DEFAULT('')")
 
             }
         }
@@ -98,7 +98,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         val migration34To35 = object : Migration(34, 35) {
 
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 val createTableQuery = """
             CREATE TABLE IF NOT EXISTS OrderEntity (
                 order_hash TEXT PRIMARY KEY NOT NULL,
@@ -118,18 +118,18 @@ abstract class AppDatabase : RoomDatabase() {
 				expired_cancelled_time INTEGER NOT NULL
             )
         """.trimIndent()
-                database.execSQL(createTableQuery)
+                db.execSQL(createTableQuery)
             }
 
         }
 
         val migration35To36 = object : Migration(35, 36) {
 
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 val addColumn = """
            ALTER TABLE TokenEntity ADD COLUMN pair_id TEXT NOT NULL DEFAULT ''
         """.trimIndent()
-                database.execSQL(addColumn)
+                db.execSQL(addColumn)
 
                 val createTableTibetSwap = """
             CREATE TABLE IF NOT EXISTS TibetSwapEntity (
@@ -145,7 +145,7 @@ abstract class AppDatabase : RoomDatabase() {
 				fk_address TEXT NOT NULL
             )
         """.trimIndent()
-                database.execSQL(createTableTibetSwap)
+                db.execSQL(createTableTibetSwap)
 
 
                 val createTableTibetLiquidity = """
@@ -164,19 +164,45 @@ abstract class AppDatabase : RoomDatabase() {
 				fk_address TEXT NOT NULL
             )
         """.trimIndent()
-                database.execSQL(createTableTibetLiquidity)
+                db.execSQL(createTableTibetLiquidity)
             }
 
         }
 
         val migration6To37 = object : Migration(36, 37) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 val addColumn = """
            ALTER TABLE WalletEntity ADD COLUMN encrypt_stage INTEGER NOT NULL DEFAULT 0
         """.trimIndent()
-                database.execSQL(addColumn)
+                db.execSQL(addColumn)
             }
         }
+
+
+        val migration37To38 = object : Migration(37, 38) {
+
+            override fun migrate(db: SupportSQLiteDatabase) {
+                val createTableQuery = """
+            CREATE TABLE IF NOT EXISTS OfferTransactionEntity (
+                tranId TEXT PRIMARY KEY NOT NULL,
+                status TEXT NOT NULL,
+                addressFk TEXT NOT NULL,
+                requested TEXT NOT NULL,
+                offered TEXT NOT NULL,
+                acceptOffer INTEGER NOT NULL,
+                source TEXT NOT NULL,
+                createdTime INTEGER NOT NULL,
+                hashTransaction TEXT NOT NULL,
+                fee REAL NOT NULL,
+                height INTEGER NOT NULL,
+                FOREIGN KEY(addressFk) REFERENCES WalletEntity(address) ON DELETE CASCADE
+            )
+        """.trimIndent()
+                db.execSQL(createTableQuery)
+            }
+
+        }
+
 
     }
 
