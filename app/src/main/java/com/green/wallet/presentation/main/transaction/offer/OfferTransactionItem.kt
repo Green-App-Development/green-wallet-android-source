@@ -74,7 +74,7 @@ fun OfferTransactionItem(
     var isDetailOpen by remember { mutableStateOf(initialOpen) }
 
     val additionalHeight = remember {
-        (if (state.height == 0L) 50 else 0) + 210 + ((state.offered.size + state.requested.size - 2) * 10)
+        (if (state.height == 0L) 68 else 0) + 210 + ((state.offered.size + state.requested.size - 2) * 10)
     }
 
     val heightParentColumn by animateDpAsState(

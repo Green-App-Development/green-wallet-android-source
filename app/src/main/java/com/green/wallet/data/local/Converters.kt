@@ -2,11 +2,12 @@ package com.green.wallet.data.local
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
+import com.green.wallet.presentation.main.dapp.trade.models.CatToken
+import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
+import org.json.JSONArray
+import org.json.JSONObject
 
 
 object Converters {
@@ -68,27 +69,23 @@ object Converters {
 
     @TypeConverter
     fun listOfTokenToString(list: List<Token>): String {
-        val jsonArray = JsonArray()
-        list.forEach { token ->
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("type", token.javaClass.canonicalName)
-            jsonObject.add("data", Gson().toJsonTree(token))
-            jsonArray.add(jsonObject)
-        }
-        return jsonArray.toString()
+        return Gson().toJson(list)
     }
 
     @TypeConverter
     fun stringToListOfToken(str: String): List<Token> {
-        val jsonArray = JsonParser.parseString(str).asJsonArray
-        val tokenList = mutableListOf<Token>()
-        jsonArray.forEach { jsonElement ->
-            val jsonObject = jsonElement.asJsonObject
-            val typeName = jsonObject.get("type").asString
-            val tokenData = jsonObject.get("data")
-            val token = Gson().fromJson(tokenData, Class.forName(typeName)) as Token
-            tokenList.add(token)
+        val list = mutableListOf<Token>()
+        val array = JSONArray(str)
+        for (i in 0 until array.length()) {
+            val json = JSONObject(array[i].toString())
+            if (json.has("code")) {
+                val obj = Gson().fromJson(array[i].toString(), CatToken::class.java)
+                list.add(obj)
+            } else {
+                val obj = Gson().fromJson(array[i].toString(), NftToken::class.java)
+                list.add(obj)
+            }
         }
-        return tokenList
+        return list
     }
 }
