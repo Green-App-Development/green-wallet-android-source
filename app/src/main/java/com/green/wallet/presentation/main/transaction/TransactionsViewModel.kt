@@ -14,7 +14,6 @@ import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.TransactionInteract
 import com.green.wallet.domain.interact.WalletInteract
-import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseIntentViewModel
@@ -22,10 +21,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -115,12 +113,9 @@ class TransactionsViewModel @Inject constructor(
                 tokenCode
             )
 
-            merge(
-                flowOffer.onEmpty { emptyList<Token>() },
-                flowTransfer.onEmpty { emptyList<Token>() }
-            ).collectLatest { flow ->
-                _viewState.update { it.copy(transactionList = flow) }
-            }
+            flowOffer.combine(flowTransfer) { offer, transfer ->
+                _viewState.update { it.copy(transactionList = offer + transfer) }
+            }.collect()
         }
     }
 

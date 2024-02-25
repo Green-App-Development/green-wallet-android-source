@@ -2,6 +2,7 @@ package com.green.wallet.domain.domainmodel
 
 import com.green.wallet.data.local.entity.OfferTransactionEntity
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
+import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.Status
 
@@ -14,7 +15,8 @@ data class OfferTransaction(
         CatToken("XCH", "", 0.00003),
     ),
     val offered: List<Token> = listOf(
-        CatToken("XCH", "", 0.00003),
+        CatToken("XCH", "", 0.003),
+        NftToken("Fucking fiends of friends", "nfatadlkasjdladadas", "alsdkjalsdas"),
     ),
     val source: String = "",
     val hashTransaction: String = " ",
