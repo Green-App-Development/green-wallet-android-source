@@ -36,7 +36,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlin.system.measureTimeMillis
 
 
 class TraderViewModel @Inject constructor(
@@ -292,6 +291,10 @@ class TraderViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun saveOfferTransaction() {
+
     }
 
     private suspend fun parseTokenJson(

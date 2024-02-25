@@ -148,8 +148,11 @@ class TraderFragment : BaseComposeFragment() {
                     val arguments = (call.arguments as HashMap<*, *>)
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
-                    viewModel.saveSpentCoins(spentCoins)
-                    viewModel.handleEvent(TraderEvent.SendTakeOfferResult)
+                    with(viewModel) {
+                        saveSpentCoins(spentCoins)
+                        saveOfferTransaction()
+                        handleEvent(TraderEvent.SendTakeOfferResult)
+                    }
                 }
 
                 "ErrorPushingOffer" -> {
