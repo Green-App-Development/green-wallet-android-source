@@ -120,15 +120,12 @@ class NFtInteractImpl @Inject constructor(
             if (reqNFTInfo.isSuccessful) {
                 val nftInfo = reqNFTInfo.body()!!.nft_info
                 val puzzleHash = nftInfo.p2_address ?: return null
-                val nftCoinID = nftInfo.nft_coin_id ?: return null
-                val parentCoinInfo =
-                    getParentCoinInfoFromFullNode(nftCoinID, networkItem) ?: return null
                 return NFTCoin(
-                    coinInfo = parentCoinInfo,
+                    coinInfo = nftInfo.launcher_id ?: return null,
                     addressFk = "",
                     coinHash = "",
                     1, 0, 0, 0,
-                    puzzleHash
+                    puzzleHash = puzzleHash
                 )
             } else {
                 VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")

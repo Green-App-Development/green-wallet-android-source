@@ -297,9 +297,13 @@ class TraderViewModel @Inject constructor(
                     )
                 }
             }
+
+            val acceptOffer = offerViewState.value.acceptOffer
             if (offerViewState.value.acceptOffer) {
-                val requested = offerViewState.value.requested
-                for (req in requested) {
+                val usedNFT =
+                    if (acceptOffer) offerViewState.value.requested
+                    else offerViewState.value.offered
+                for (req in usedNFT) {
                     if (req is NftToken) {
                         nftInteractor.updateNftInfoPending(true, req.nftId)
                     }
@@ -308,9 +312,10 @@ class TraderViewModel @Inject constructor(
         }
     }
 
-    fun saveTakeOfferTransaction() {
+    fun saveOfferTransaction(acceptOffer: Boolean): String {
+        val tranID = UUID.randomUUID().toString()
         val offerTran = OfferTransaction(
-            transId = UUID.randomUUID().toString(),
+            transId = tranID,
             createAtTime = System.currentTimeMillis(),
             requested = offerViewState.value.requested,
             offered = offerViewState.value.offered,
@@ -318,11 +323,12 @@ class TraderViewModel @Inject constructor(
             hashTransaction = "",
             fee = offerViewState.value.chosenFee,
             height = 0L,
-            acceptOffer = true
+            acceptOffer = acceptOffer
         )
         viewModelScope.launch {
             offerTransactionInteract.saveOfferTransaction(wallet!!.address, offerTran)
         }
+        return tranID
     }
 
     private suspend fun parseTokenJson(

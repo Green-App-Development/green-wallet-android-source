@@ -143,10 +143,20 @@ Future<void> offerAssetDataParamsRequested(
     } else if (item.type == 'XCH') {
       param[null] = [amount];
     } else {
-      //with just nftID
-      final nftAddress = NftAddress(item.assetID);
+      //with full coin
+      var nftCoin = await nftService
+          .getNftFullCoinWithLauncherId(Puzzlehash.fromHex(item.assetID));
+
+      final nftFullCoin = await nftService.convertFullCoin(nftCoin!);
+
+      debugPrint("Found NFTCoins LauncherID : ${nftFullCoin.launcherId}");
       param[OfferAssetData.singletonNft(
-          launcherPuzhash: nftAddress.toPuzzlehash())] = [1];
+          launcherPuzhash: nftFullCoin.launcherId)] = [1];
+
+      // //with just nftID
+      // final nftAddress = NftAddress(item.assetID);
+      // param[OfferAssetData.singletonNft(
+      //     launcherPuzhash: nftAddress.toPuzzlehash())] = [1];
     }
   }
 }

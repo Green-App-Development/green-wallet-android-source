@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
 import com.green.wallet.data.local.*
@@ -31,6 +30,7 @@ import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.VLog
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -39,7 +39,6 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 import kotlin.system.measureTimeMillis
 
 
@@ -148,7 +147,7 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-//                updateWalletNFTBalance(wallet)
+                updateWalletNFTBalance(wallet)
             }
         }
     }
@@ -194,7 +193,7 @@ class BlockChainInteractImpl @Inject constructor(
                 val coinRecords = res.body()!!.coin_records.filter { it.coin.amount == 1L }
                 for (coin in coinRecords) {
                     val nftCoin = nftCoinsDao.getNFTCoinByParentCoinInfo(coin.coin.parent_coin_info)
-                    if (nftCoin.isPresent && false) continue
+                    if (nftCoin.isPresent) continue
 
                     val nftCoinEntity = NFTCoinEntity(
                         coin.coin.parent_coin_info,
@@ -206,8 +205,8 @@ class BlockChainInteractImpl @Inject constructor(
                         coin.timestamp,
                         hash
                     )
-                    VLog.d("NFTCoinEntity Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
-                    VLog.d("NFTCoinEntity CoinName : ${coin.coin.parent_coin_info} Height : ${coin.confirmed_block_index}")
+//                    VLog.d("NFTCoinEntity Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+//                    VLog.d("NFTCoinEntity CoinName : ${coin.coin.parent_coin_info} Height : ${coin.confirmed_block_index}")
 
                     //4942127
                     //nftCoinName : 4a4bfcc0dcd992564fa5615f0cb4d46189c0afab352ebca463820f98f8c22fef

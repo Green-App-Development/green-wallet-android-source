@@ -140,8 +140,11 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("Creating offer from flutter ${call.arguments}")
                     val spentCoins = args["spentCoins"].toString()
                     val offer = args["offer"].toString()
-                    viewModel.saveSpentCoins(spentCoins)
-                    viewModel.handleEvent(TraderEvent.SendCreateOfferResult(offer))
+                    with(viewModel) {
+                        val tranID = saveOfferTransaction(false)
+                        saveSpentCoins(spentCoins)
+                        handleEvent(TraderEvent.SendCreateOfferResult(offer))
+                    }
                 }
 
                 "PushingOffer" -> {
@@ -149,8 +152,8 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
                     with(viewModel) {
+                        val tranID = saveOfferTransaction(true)
                         saveSpentCoins(spentCoins)
-                        saveTakeOfferTransaction()
                         handleEvent(TraderEvent.SendTakeOfferResult)
                     }
                 }
@@ -189,7 +192,7 @@ class TraderFragment : BaseComposeFragment() {
             )
         )
         map["requestedNFT"] =
-            Gson().toJson(convertToTokenFlutterNFTOnly(viewModel.offerViewState.value.requested))
+            Gson().toJson(convertToTokenFlutterNFTOnlyOffered(viewModel.offerViewState.value.requested))
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
         map["spentCoins"] = Gson().toJson(viewModel.offerViewState.value.spendCoins)
         methodChannel.invokeMethod("PushingOffer", map)
@@ -264,14 +267,14 @@ class TraderFragment : BaseComposeFragment() {
         }
     }
 
-    private suspend fun convertToTokenFlutterNFTOnly(list: List<Token>): List<FlutterToken> {
+    private suspend fun convertToTokenFlutterNFTOnlyOffered(list: List<Token>): List<FlutterToken> {
         val converted = mutableListOf<FlutterToken>()
         for (i in list) {
             if (i is NftToken) {
                 val nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
                 converted.add(
                     FlutterToken(
-                        assetID = nftCoin?.coinInfo ?: i.nftId,
+                        assetID = nftCoin?.coinInfo ?: throw Exception("No nft found locally"),
                         amount = 1L,
                         type = "NFT",
                         fromAddress = nftCoin?.puzzleHash ?: ""
@@ -289,15 +292,15 @@ class TraderFragment : BaseComposeFragment() {
             val token = when (i) {
                 is NftToken -> {
                     var nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
-                    VLog.d("NFT Coin convertToTokenFlutter : $nftCoin, NFTCoinHash : ${i.nftCoinHash}")
-                    if (nftCoin == null && false) {
+                    if (nftCoin == null) {
                         nftCoin = viewModel.getNftCoinFromWallet(i.nftId)
                     }
                     FlutterToken(
-                        assetID = nftCoin?.coinInfo ?: i.nftId,
+                        assetID = nftCoin?.coinInfo
+                            ?: throw Exception("No found nft locally and on the server"),
                         amount = 1L,
                         type = "NFT",
-                        fromAddress = nftCoin?.puzzleHash ?: ""
+                        fromAddress = nftCoin.puzzleHash ?: ""
                     )
                 }
 
