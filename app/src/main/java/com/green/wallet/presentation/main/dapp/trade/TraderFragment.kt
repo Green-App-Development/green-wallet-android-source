@@ -141,8 +141,8 @@ class TraderFragment : BaseComposeFragment() {
                     val spentCoins = args["spentCoins"].toString()
                     val offer = args["offer"].toString()
                     with(viewModel) {
-                        val tranID = saveOfferTransaction(false)
-                        saveSpentCoins(spentCoins)
+                        val timeCreated = saveOfferTransaction(false)
+                        saveSpentCoins(spentCoins, timeCreated)
                         handleEvent(TraderEvent.SendCreateOfferResult(offer))
                     }
                 }
@@ -152,8 +152,8 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
                     with(viewModel) {
-                        val tranID = saveOfferTransaction(true)
-                        saveSpentCoins(spentCoins)
+                        val timeCreated = saveOfferTransaction(true)
+                        saveSpentCoins(spentCoins, timeCreated)
                         handleEvent(TraderEvent.SendTakeOfferResult)
                     }
                 }

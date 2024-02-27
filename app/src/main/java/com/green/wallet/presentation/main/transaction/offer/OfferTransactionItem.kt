@@ -371,7 +371,7 @@ fun CatTokenItemOfferTran(item: CatToken, acceptOffer: Boolean) {
 fun NFTTokenDAppOfferTrans(item: NftToken, acceptOffer: Boolean) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.End
     ) {
         val nftText = if (acceptOffer) "-1 NFT" else "+1 NFT"
         val nftColor =

@@ -280,9 +280,8 @@ class TraderViewModel @Inject constructor(
         }
     }
 
-    fun saveSpentCoins(spentCoins: String) {
+    fun saveSpentCoins(spentCoins: String, timeCreated: Long) {
         viewModelScope.launch {
-            val timeCreated = System.currentTimeMillis()
             val jsonObject = JSONObject(spentCoins)
             for (key in jsonObject.keys()) {
                 val value = jsonObject[key]
@@ -312,11 +311,12 @@ class TraderViewModel @Inject constructor(
         }
     }
 
-    fun saveOfferTransaction(acceptOffer: Boolean): String {
+    fun saveOfferTransaction(acceptOffer: Boolean): Long {
         val tranID = UUID.randomUUID().toString()
+        val timeCreated = System.currentTimeMillis()
         val offerTran = OfferTransaction(
             transId = tranID,
-            createAtTime = System.currentTimeMillis(),
+            createAtTime = timeCreated,
             requested = offerViewState.value.requested,
             offered = offerViewState.value.offered,
             source = "dexie.space",
@@ -328,7 +328,7 @@ class TraderViewModel @Inject constructor(
         viewModelScope.launch {
             offerTransactionInteract.saveOfferTransaction(wallet!!.address, offerTran)
         }
-        return tranID
+        return timeCreated
     }
 
     private suspend fun parseTokenJson(
