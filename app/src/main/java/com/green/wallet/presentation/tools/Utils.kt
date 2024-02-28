@@ -40,6 +40,7 @@ fun Dialog.setDefaultParams(dialogAnim: Int) {
 }
 
 fun formattedTime(value: Long) = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Date(value))
+
 fun formattedTimeForOrderItem(value: Long) =
     SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
 
@@ -272,3 +273,16 @@ fun getNumberFromDouble(value: String): Double {
     val double = if (value[value.length - 1] == '.') value + "0" else value
     return double.toDoubleOrNull() ?: 0.0
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +52,7 @@ import com.green.compose.dimens.size_8
 import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
+import com.green.compose.extension.getActivity
 import com.green.compose.progress.CircularProgressBar
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
@@ -61,6 +63,7 @@ import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.transaction.TransactionIntent
+import com.green.wallet.presentation.tools.formatDateWithMonthInWord
 
 
 @Composable
@@ -128,6 +131,7 @@ fun OfferTransactionItem(
                 .background(color = Provider.current.bcgTransactionItem)
                 .padding(start = size_5)
         ) {
+            val ifTakeOffer = if (state.acceptOffer) "Take offer" else "Create offer"
             DefaultText(
                 text = "Take offer",
                 size = text_15,
@@ -199,8 +203,10 @@ fun OfferTransactionItem(
                         color = Provider.current.greyText
                     )
 
+                    val activity = LocalContext.current.getActivity()!!
+
                     DefaultText(
-                        text = "23 января, 19:11",
+                        text = activity.formatDateWithMonthInWord(state.createAtTime),
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )

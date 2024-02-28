@@ -22,9 +22,11 @@ function helperFunction(){
 
 }
 
+//nft1k7t35zy6kq4ss70jjf7h5kt6rydh9nk0yr8wfnyr0ugffg7j7m0s839gy4
+
 function helperFunction2(){
     Bridge.interfaces.GreenWallet.createOffer({'offerAssets': [
-//    {'assetId':'6d95dae356e32a71db5ddcb42224754a02524c615c5fc35f568c2af04774e589','amount':'0.05'},
+    {'assetId':'nft133fm6pgen3mmqpwz6xg577fnxrzuxcr4k5696c7vqq456mc5k9aqd87ns6','amount':'1'},
         {'assetId':'','amount':'0.0002'}],
        'requestAssets': [{'assetId':'8ebf855de6eb146db5602f0456d2f0cbe750d57f821b6f91a8592ee9f1d4cf31','amount':'1.31'},
            {'assetId':'nft1k7t35zy6kq4ss70jjf7h5kt6rydh9nk0yr8wfnyr0ugffg7j7m0s839gy4','amount':'1'}
