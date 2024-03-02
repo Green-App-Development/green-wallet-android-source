@@ -3,7 +3,13 @@ package com.green.wallet.presentation.main.send
 import androidx.lifecycle.viewModelScope
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.WalletWithTokens
-import com.green.wallet.domain.interact.*
+import com.green.wallet.domain.interact.AddressInteract
+import com.green.wallet.domain.interact.BlockChainInteract
+import com.green.wallet.domain.interact.DexieInteract
+import com.green.wallet.domain.interact.GreenAppInteract
+import com.green.wallet.domain.interact.SpentCoinsInteract
+import com.green.wallet.domain.interact.TokenInteract
+import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.Resource
@@ -135,7 +141,7 @@ class SendViewModel @Inject constructor(
         viewModelScope.launch {
             spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
                 .collect { amount ->
-                    VLog.d("Wallet's With Amount : ${wallet.tokenWalletList[0].amount} on update spendable balance")
+//                    VLog.d("Wallet's With Amount : ${wallet.tokenWalletList[0].amount} on update spendable balance")
                     _viewState.update { it.copy(xchSpendableBalance = wallet.tokenWalletList[0].amount - amount) }
                     validatingEnoughAmounts()
                 }
@@ -143,7 +149,7 @@ class SendViewModel @Inject constructor(
     }
 
     fun updateChosenFee(fee: Double) {
-        VLog.d("Chosen Fee on Send VM : $fee")
+//        VLog.d("Chosen Fee on Send VM : $fee")
         viewModelScope.launch {
             _viewState.update { it.copy(chosenFee = fee) }
             validatingEnoughAmounts()
@@ -157,7 +163,7 @@ class SendViewModel @Inject constructor(
 
     fun updateSendingAmount(amountStr: String) {
         val amount = amountStr.toDoubleOrNull()
-        VLog.d("Amount String Sending : $amount")
+//        VLog.d("Amount String Sending : $amount")
         validatingEnoughAmounts()
         if (amount == 0.0 || amount == null) {
             _viewState.update { it.copy(sendingAmount = 0.0, amountValid = false) }

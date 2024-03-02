@@ -655,8 +655,8 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
                             requireActivity(),
                             getStringResource(R.string.delete_tran_title),
                             getStringResource(R.string.delete_tran_sub_title),
-                            getStringResource(R.string.delete_tran_btn_cancel),
-                            getStringResource(R.string.delete_tran_btn_delete),
+                            getStringResource(R.string.delet_wallet_warning_cancel_btn),
+                            getStringResource(R.string.wallet_delete_wallet_btn),
                             onDelete = {
                                 viewModel.handleIntent(TransactionIntent.DeleteTransaction(it.transaction))
                             }
