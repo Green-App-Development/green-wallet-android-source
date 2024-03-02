@@ -569,17 +569,6 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         updateTransJob?.cancel()
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        VLog.d("TransactionFragment On DestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
     private fun curActivity() = requireActivity() as MainActivity
 
     override fun onTransactionItemClicked(transaction: TransferTransaction) {
@@ -602,18 +591,18 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
                 }
 
                 is TransactionEvent.ShowWarningDeletionDialog -> {
-                    VLog.d("Show Warning Deletion dialog got called")
-                    dialogManager.showWarningDeleteTransaction(
-                        requireActivity(),
-                        "Warning!",
-                        "This action will unlock the coins, but will not remove the transaction from the mempool." +
-                                " If you are not sure of your actions, use the Speed up function",
-                        "Cancel",
-                        "Delete",
-                        onDelete = {
-                            viewModel.handleIntent(TransactionIntent.DeleteTransaction(it.transaction))
-                        }
-                    )
+                    requireActivity().apply {
+                        dialogManager.showWarningDeleteTransaction(
+                            requireActivity(),
+                            getStringResource(R.string.delete_tran_title),
+                            getStringResource(R.string.delete_tran_sub_title),
+                            getStringResource(R.string.delete_tran_btn_cancel),
+                            getStringResource(R.string.delete_tran_btn_delete),
+                            onDelete = {
+                                viewModel.handleIntent(TransactionIntent.DeleteTransaction(it.transaction))
+                            }
+                        )
+                    }
                 }
 
                 is TransactionEvent.ShowTransactionDetails -> {

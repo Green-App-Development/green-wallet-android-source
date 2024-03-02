@@ -428,6 +428,9 @@
     <string name="failed" />
     <string name="speed_up_dialog_title" />
     <string name="transaction_acceleration" />
-
+    <string name="delete_tran_title"/> 
+    <string name="delete_tran_sub_title"/>
+    <string name="delete_tran_btn_cancel"/>
+    <string name="delete_tran_btn_delete"/>
 
 </resources>
