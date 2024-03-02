@@ -226,7 +226,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
     private fun checkUserLastVisitTime() {
         lifecycleScope.launch {
             val lastTimeVisited = mainViewModel.getLastVisitedValue()
-            if (System.currentTimeMillis() - lastTimeVisited >= 3 * 1000) {
+            if (System.currentTimeMillis() - lastTimeVisited >= 180 * 1000) {
                 (application as App).applicationIsAlive = false
                 Intent(this@MainActivity, IntroActivity::class.java).apply {
                     this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)

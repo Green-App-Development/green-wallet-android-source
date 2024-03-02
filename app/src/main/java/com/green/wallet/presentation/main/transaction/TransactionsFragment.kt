@@ -646,23 +646,24 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         viewModel.event.collectFlow(scope) {
             when (it) {
                 is TransactionEvent.SpeedyBtmDialog -> {
-                    VLog.d("Speedy Btm Dialog is going to be shown")
                     SpeedyBtmDialog.build(it.transaction).show(childFragmentManager, "")
                 }
 
                 is TransactionEvent.ShowWarningDeletionDialog -> {
-                    VLog.d("Show Warning Deletion dialog got called")
-                    dialogManager.showWarningDeleteTransaction(
-                        requireActivity(),
-                        "Warning!",
-                        "This action will unlock the coins, but will not remove the transaction from the mempool. If you are not sure of your actions, use the Speed up function",
-                        "Cancel",
-                        "Delete",
-                        onDelete = {
-                            viewModel.handleIntent(TransactionIntent.DeleteTransaction(it.transaction))
-                        }
-                    )
+                    requireActivity().apply {
+                        dialogManager.showWarningDeleteTransaction(
+                            requireActivity(),
+                            getStringResource(R.string.delete_tran_title),
+                            getStringResource(R.string.delete_tran_sub_title),
+                            getStringResource(R.string.delete_tran_btn_cancel),
+                            getStringResource(R.string.delete_tran_btn_delete),
+                            onDelete = {
+                                viewModel.handleIntent(TransactionIntent.DeleteTransaction(it.transaction))
+                            }
+                        )
+                    }
                 }
+
             }
         }
     }
