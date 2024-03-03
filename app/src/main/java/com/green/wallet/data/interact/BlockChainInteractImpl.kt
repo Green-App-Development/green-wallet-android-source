@@ -611,7 +611,8 @@ class BlockChainInteractImpl @Inject constructor(
                         0
                     )
                     VLog.d("Inserting transaction entity : $trans and coinJson $spentCoinsJson and coinToken : $spentCoinsToken")
-                    transactionDao.insertTransaction(trans)
+                    if (sendAmount != -1.0)
+                        transactionDao.insertTransaction(trans)
                     if (spentCoinsJson.isNotEmpty())
                         spentCoinsInteract.insertSpentCoinsJson(
                             spentCoinsJson,

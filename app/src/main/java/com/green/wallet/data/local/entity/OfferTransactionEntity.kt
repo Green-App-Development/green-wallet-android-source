@@ -48,7 +48,7 @@ data class OfferTransactionEntity(
         height,
         acceptOffer,
         cancelled,
-        addressFk = addressFk
+        addressFk
     )
 
 }

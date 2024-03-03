@@ -69,6 +69,10 @@ fun TransactionListScreen(
             itemsIndexed(state.transactionList) { index, item ->
                 when (item) {
                     is TransferTransaction -> {
+                        TransferTransactionItem(item, onIntent)
+                    }
+
+                    is OfferTransaction -> {
                         OfferTransactionItem(
                             state = OfferTransaction(
                                 transId = "$index"
@@ -82,10 +86,6 @@ fun TransactionListScreen(
                                     openedTrans.remove("$index")
                             }
                         )
-                    }
-
-                    is TransferTransaction -> {
-                        TransferTransactionItem(item, onIntent)
                     }
                 }
             }

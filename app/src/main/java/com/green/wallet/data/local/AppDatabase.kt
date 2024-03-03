@@ -195,6 +195,7 @@ abstract class AppDatabase : RoomDatabase() {
                 hashTransaction TEXT NOT NULL,
                 fee REAL NOT NULL,
                 height INTEGER NOT NULL,
+                cancelled INTEGER NOT NULL,
                 FOREIGN KEY(addressFk) REFERENCES WalletEntity(address) ON DELETE CASCADE
             )
         """.trimIndent()

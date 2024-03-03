@@ -146,7 +146,8 @@ fun OfferTransactionItem(
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .weight(1.2f)
+                    .weight(1.2f),
+                contentAlignment = Alignment.Center
             ) {
                 CircularProgressBar(
                     modifier = Modifier

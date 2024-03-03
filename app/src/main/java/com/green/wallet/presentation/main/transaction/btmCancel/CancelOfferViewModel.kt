@@ -1,35 +1,52 @@
 package com.green.wallet.presentation.main.transaction.btmCancel
 
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
+import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.OfferTransaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.domain.domainmodel.Wallet
+import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DexieInteract
 import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.WalletInteract
+import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
+import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyTokenEvent
+import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CancelOfferViewModel @Inject constructor(
     private val offerTransactionInteract: OfferTransactionInteract,
     private val dexieInteract: DexieInteract,
     private val walletInteract: WalletInteract,
-    private val coinsInteract: SpentCoinsInteract
+    private val coinsInteract: SpentCoinsInteract,
+    private val prefsManager: PrefsManager,
+    private val blockChainInteract: BlockChainInteract,
 ) : BaseViewModel<CancelOfferState, CancelOfferEvent>(CancelOfferState()) {
 
     private lateinit var offerTransaction: OfferTransaction
-    private lateinit var wallet: Wallet
+    lateinit var wallet: Wallet
+
+    private val handler = CoroutineExceptionHandler { _, ex ->
+        VLog.d("Handler on cancelOfferVM : ${ex.message}")
+    }
 
     fun initOfferTransaction(tranID: String) {
-        viewModelScope.launch {
-//            offerTransaction = offerTransactionInteract.getOfferTransactionByTranID(tranID)
-            _viewState.update { it.copy(addressFk = "xch1ja9cl4hum8v85m8wn0yt5sphf8jxn65ex8f77frk6wrqx2a2hzts60j58s") }
+        viewModelScope.launch(handler) {
+            offerTransaction = offerTransactionInteract.getOfferTransactionByTranID(tranID)
+            _viewState.update { it.copy(addressFk = offerTransaction.addressFk) }
 
-            initWallet("xch1ja9cl4hum8v85m8wn0yt5sphf8jxn65ex8f77frk6wrqx2a2hzts60j58s")
+            initWallet(offerTransaction.addressFk)
             getSpentCoinsSum()
         }
 
@@ -51,9 +68,64 @@ class CancelOfferViewModel @Inject constructor(
                 _viewState.update { it.copy(fee = event.amount) }
             }
 
-            else -> Unit
+            is CancelOfferEvent.OnSign -> {
+                _viewState.update { it.copy(isLoading = true) }
+            }
         }
     }
+
+    suspend fun getNetworkItemFromPrefs(networkType: String): NetworkItem? {
+        val item = prefsManager.getObjectString(getPreferenceKeyForNetworkItem(networkType))
+        if (item.isEmpty()) return null
+        return Gson().fromJson(item, NetworkItem::class.java)
+    }
+
+    fun getDestinationHash() = wallet.puzzle_hashes[1]
+
+    fun burstTransaction(
+        spendBundleJson: String,
+        spentCoinsJson: String,
+        spentTokensJson: String,
+        url: String
+    ) {
+        viewModelScope.launch {
+            val result = blockChainInteract.push_tx(
+                jsonSpendBundle = spendBundleJson,
+                url = url,
+                sendAmount = -1.0,
+                networkType = wallet.networkType,
+                fingerPrint = wallet.fingerPrint,
+                code = "XCH",
+                destPuzzleHash = "",
+                address = wallet.address,
+                fee = viewState.value.fee,
+                spentCoinsJson = spentCoinsJson,
+                spentCoinsToken = spentTokensJson
+            )
+            when (result.state) {
+                Resource.State.SUCCESS -> {
+                    setLoading(false)
+                }
+
+                Resource.State.ERROR -> {
+                    setLoading(false)
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
+    suspend fun getTranXCHCoins() = withContext(Dispatchers.IO) {
+        val tranCoins =
+            coinsInteract.getSpentCoinsByTransactionTimeCode(offerTransaction.createAtTime, "XCH")
+        tranCoins
+    }
+
+    suspend fun getSpentCoins() = withContext(Dispatchers.IO) {
+        coinsInteract.getSpentCoinsToPushTrans(wallet.networkType, wallet.address, "XCH")
+    }
+
 
     private fun getSpentCoinsSum() {
         viewModelScope.launch {
@@ -68,6 +140,10 @@ class CancelOfferViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        _viewState.update { it.copy(isLoading = isLoading) }
     }
 
 }

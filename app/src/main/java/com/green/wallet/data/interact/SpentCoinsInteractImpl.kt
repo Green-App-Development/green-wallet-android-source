@@ -112,6 +112,14 @@ class SpentCoinsInteractImpl @Inject constructor(
         return spentCoinsDao.getSpentCoinsByTranTimeCreated(timeCreated).map { it.toSpentCoin(0) }
     }
 
+    override suspend fun getSpentCoinsByTransactionTimeCode(
+        timeCreated: Long,
+        code: String
+    ): List<SpentCoin> {
+        return spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(timeCreated, code)
+            .map { it.toSpentCoin(0) }
+    }
+
     override suspend fun getSpentCoinsBalanceByAddressAndCode(
         address: String,
         code: String

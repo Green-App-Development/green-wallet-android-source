@@ -4,6 +4,7 @@ import com.green.wallet.data.local.OfferTransactionDao
 import com.green.wallet.domain.domainmodel.OfferTransaction
 import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.VLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -14,6 +15,7 @@ class OfferTransactionInteractImpl @Inject constructor(
 
     override suspend fun saveOfferTransaction(addressFk: String, offer: OfferTransaction) {
         val offerTranEntity = offer.toOfferTransactionEntity(addressFk)
+        VLog.d("Inserting offer Transaction : $offerTranEntity")
         offerTranDao.saveOfferTransactionEntity(offerTranEntity)
     }
 

@@ -117,17 +117,17 @@ class TraderViewModel @Inject constructor(
             VLog.d("onFirstWallet trader: $wallet")
             validateFeeEnough()
             initDexieFee()
-            offerTransactionInteract.saveOfferTransaction(
-                wallet!!.address,
-                OfferTransaction(
-                    transId = "tran1",
-                    System.currentTimeMillis(),
-                    acceptOffer = true,
-                    fee = 0.0003,
-                    source = "dexie.space",
-                    height = 31131
-                )
-            )
+//            offerTransactionInteract.saveOfferTransaction(
+//                wallet!!.address,
+//                OfferTransaction(
+//                    transId = "tran1",
+//                    System.currentTimeMillis(),
+//                    acceptOffer = true,
+//                    fee = 0.0003,
+//                    source = "dexie.space",
+//                    height = 31131
+//                )
+//            )
         }
     }
 

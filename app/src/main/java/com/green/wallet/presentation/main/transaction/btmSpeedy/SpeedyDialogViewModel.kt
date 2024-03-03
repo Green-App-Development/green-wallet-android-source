@@ -141,14 +141,6 @@ class SpeedyDialogViewModel @Inject constructor(
                 System.currentTimeMillis()
             )
         )
-        VLog.d(
-            "Transaction Coins for tran : $tranCoins time : ${
-                transaction.createdAtTime - prefs.getSettingLong(
-                    PrefsManager.TIME_DIFFERENCE,
-                    System.currentTimeMillis()
-                )
-            }"
-        )
         tranCoins
     }
 

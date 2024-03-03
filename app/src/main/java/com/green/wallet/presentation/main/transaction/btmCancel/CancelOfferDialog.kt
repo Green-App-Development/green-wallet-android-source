@@ -5,9 +5,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.common.tools.convertNetworkTypeForFlutter
+import com.example.common.tools.getTokenPrecisionByCode
+import com.google.gson.Gson
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.base.BaseBottomSheetDialogFragment
+import com.green.wallet.presentation.custom.convertListToStringWithSpace
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
@@ -44,8 +49,8 @@ class CancelOfferDialog :
             vm.event.collectFlow(this) {
                 when (it) {
                     is CancelOfferEvent.OnSign -> {
-                        
                         //need to call pin code
+                        sendingTransactionToItself()
                     }
 
                     else -> Unit
@@ -54,6 +59,43 @@ class CancelOfferDialog :
         }
     }
 
+    private suspend fun sendingTransactionToItself() {
+        val url = vm.getNetworkItemFromPrefs(vm.wallet.networkType)!!.full_node
+        val argSpendBundle = hashMapOf<String, Any>()
+        argSpendBundle["fee"] = (vm.viewState.value.fee * PRECISION_XCH).toLong()
+        argSpendBundle["mnemonic"] = convertListToStringWithSpace(vm.wallet.mnemonics)
+        argSpendBundle["url"] = url
+        argSpendBundle["dest"] = vm.getDestinationHash()
+        argSpendBundle["network_type"] = convertNetworkTypeForFlutter(vm.wallet.networkType)
+        argSpendBundle["observer"] = vm.wallet.observerHash
+        argSpendBundle["nonObserver"] = vm.wallet.nonObserverHash
+        argSpendBundle["tranCoins"] = Gson().toJson(vm.getTranXCHCoins())
+        argSpendBundle["spentCoins"] = Gson().toJson(vm.getSpentCoins())
+        argSpendBundle["amount"] = 0.0
+        methodChannel.invokeMethod("SpeedyTransferXCH", argSpendBundle)
+        initListeningMethod(url)
+    }
+
+    private fun initListeningMethod(url: String) {
+        methodChannel.setMethodCallHandler { method, callBack ->
+            when (method.method) {
+                "SpeedyTransfer" -> {
+                    val spendBundleJson =
+                        (method.arguments as HashMap<*, *>)["spendBundle"].toString()
+                    val spentCoinsJson =
+                        (method.arguments as HashMap<*, *>)["spentCoins"].toString()
+                    val spentTokensJson = (method.arguments as HashMap<*, *>)["spentTokens"] ?: ""
+//                    VLog.d("SpentCoins Json for sending trans : $spentCoinsJson")
+                    vm.burstTransaction(
+                        spendBundleJson,
+                        spentCoinsJson,
+                        spentTokensJson.toString(),
+                        url
+                    )
+                }
+            }
+        }
+    }
 
     companion object {
 
