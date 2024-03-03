@@ -2,18 +2,12 @@ package com.green.wallet.presentation.main.swap.send
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.InputFilter
-import android.text.SpannableString
 import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ForegroundColorSpan
-import android.text.style.UnderlineSpan
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.webkit.*
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,7 +32,6 @@ import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
-import dagger.android.support.DaggerFragment
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.databinding.FragmentSendSwapBinding
@@ -758,7 +751,7 @@ class SwapSendFragment : BaseFragment() {
             binding.networkSpinner.performClick()
         }
 
-        curActivity().mainViewModel.send_money_false()
+        curActivity().mainViewModel.sendMoneyFalse()
 
         anim.animateArrowIconCustomSpinner(
             binding.walletSpinner,

@@ -436,7 +436,7 @@ class NFTSendFragment : BaseFragment() {
                     delay(500)
                     dialogManager.showProgress(getMainActivity())
                     initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
-                    getMainActivity().mainViewModel.send_money_false()
+                    getMainActivity().mainViewModel.sendMoneyFalse()
                     pushTransactionState()
                 }
             }

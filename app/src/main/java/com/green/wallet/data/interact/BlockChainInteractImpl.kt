@@ -330,7 +330,8 @@ class BlockChainInteractImpl @Inject constructor(
                     name = name,
                     address_fk = address_fk,
                     spent = false,
-                    isPending = false
+                    isPending = false,
+                    timePending = 0L
                 )
             } else {
                 VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")

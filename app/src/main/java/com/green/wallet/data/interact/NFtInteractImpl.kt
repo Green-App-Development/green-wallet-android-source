@@ -66,6 +66,18 @@ class NFtInteractImpl @Inject constructor(
         nftInfoDao.updateIsPendingNFTInfoByNFTCoinHash(pending, nftHash)
     }
 
+    override suspend fun updateNftInfoPendingTime(
+        pending: Boolean,
+        pendingTime: Long,
+        nftHash: String
+    ) {
+        nftInfoDao.updateIsPendingTimeNFTInfoByNFTCoinHash(
+            isPending = pending,
+            timePending = pendingTime,
+            nft_coin_hash = nftHash
+        )
+    }
+
     override suspend fun getCollectionNameByNFTID(networkItem: NetworkItem, nftID: String): String {
         try {
             val walletService = retrofitBuilder.baseUrl(networkItem.wallet + '/').build()

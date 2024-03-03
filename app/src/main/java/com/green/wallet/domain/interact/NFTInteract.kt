@@ -14,11 +14,12 @@ interface NFTInteract {
     suspend fun getNftINFOByHash(nftCoinHash: String): NFTInfo
 
     suspend fun updateNftInfoPending(pending: Boolean, nftHash: String)
+    suspend fun updateNftInfoPendingTime(pending: Boolean, pendingTime: Long, nftHash: String)
 
     suspend fun getCollectionNameByNFTID(networkItem: NetworkItem, nftID: String): String
 
     suspend fun getNFTCoinHashByNFTID(nftID: String): String
 
-    suspend fun getNFTCoinByNFTIDFromWallet(networkItem: NetworkItem,nftID: String): NFTCoin?
+    suspend fun getNFTCoinByNFTIDFromWallet(networkItem: NetworkItem, nftID: String): NFTCoin?
 
 }

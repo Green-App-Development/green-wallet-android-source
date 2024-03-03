@@ -280,19 +280,19 @@ class TraderViewModel @Inject constructor(
         }
     }
 
-    fun saveSpentCoins(spentCoins: String, timeCreated: Long) {
+    fun saveSpentCoins(spentCoins: String, timePended: Long) {
         viewModelScope.launch {
             val jsonObject = JSONObject(spentCoins)
             for (key in jsonObject.keys()) {
                 val value = jsonObject[key]
                 if (key == "null") {
                     spentCoinsInteract.insertSpentCoinsJson(
-                        value.toString(), timeCreated, "XCH", wallet?.address.orEmpty()
+                        value.toString(), timePended, "XCH", wallet?.address.orEmpty()
                     )
                 } else {
                     val code = tokenInteract.getTokenCodeByHash(key)
                     spentCoinsInteract.insertSpentCoinsJson(
-                        value.toString(), timeCreated, code, wallet?.address.orEmpty()
+                        value.toString(), timePended, code, wallet?.address.orEmpty()
                     )
                 }
             }
@@ -304,7 +304,7 @@ class TraderViewModel @Inject constructor(
                     else offerViewState.value.offered
                 for (req in usedNFT) {
                     if (req is NftToken) {
-                        nftInteractor.updateNftInfoPending(true, req.nftId)
+                        nftInteractor.updateNftInfoPendingTime(true, timePended, req.nftId)
                     }
                 }
             }

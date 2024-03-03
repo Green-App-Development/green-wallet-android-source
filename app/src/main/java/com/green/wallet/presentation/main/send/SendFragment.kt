@@ -25,8 +25,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.green.wallet.R
-import com.green.wallet.databinding.FragmentSendBinding
 import com.example.common.tools.*
 import com.google.gson.Gson
 import com.green.compose.custom.fee.FeeContainer
@@ -36,8 +34,10 @@ import com.green.compose.dimens.text_16
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
+import com.green.wallet.R
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.databinding.FragmentSendBinding
 import com.green.wallet.domain.domainmodel.Address
 import com.green.wallet.domain.domainmodel.TokenWallet
 import com.green.wallet.domain.domainmodel.WalletWithTokens
@@ -133,7 +133,7 @@ class SendFragment : BaseFragment() {
                 curFingerPrint = it[FINGERPRINT_KEY] as Long
             }
         }
-        VLog.d("On Create SendFragment Params : FingerPrint  ${curFingerPrint}, NetworkType : $curNetworkType")
+//        VLog.d("On Create SendFragment Params : FingerPrint  ${curFingerPrint}, NetworkType : $curNetworkType")
     }
 
     override fun onCreateView(
@@ -143,7 +143,7 @@ class SendFragment : BaseFragment() {
     ): View {
         binding = FragmentSendBinding.inflate(layoutInflater)
         VLog.d("OnCreateView on send Fragment")
-        curActivity().sendCoinsFragmentView = binding.root
+        curActivity().sendCoinsFragmentView = view
         return binding.root
     }
 
@@ -603,7 +603,7 @@ class SendFragment : BaseFragment() {
                     delay(500)
                     initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
                     viewModel.setLoading(true)
-                    curActivity().mainViewModel.send_money_false()
+                    curActivity().mainViewModel.sendMoneyFalse()
                 }
             }
         }
@@ -932,7 +932,7 @@ class SendFragment : BaseFragment() {
             binding.networkSpinner.performClick()
         }
 
-        curActivity().mainViewModel.send_money_false()
+        curActivity().mainViewModel.sendMoneyFalse()
 
         anim.animateArrowIconCustomSpinner(
             binding.tokenSpinner,

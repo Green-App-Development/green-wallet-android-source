@@ -198,6 +198,11 @@ abstract class AppDatabase : RoomDatabase() {
                 FOREIGN KEY(addressFk) REFERENCES WalletEntity(address) ON DELETE CASCADE
             )
         """.trimIndent()
+
+                db.execSQL(
+                    "ALTER TABLE `NFTInfoEntity` ADD COLUMN timePending INTEGER NOT NULL DEFAULT(0)"
+                )
+
                 db.execSQL(createTableQuery)
             }
 
