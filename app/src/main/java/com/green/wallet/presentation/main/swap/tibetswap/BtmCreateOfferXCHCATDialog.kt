@@ -69,11 +69,6 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
         )
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (requireActivity().application as App).appComponent.inject(this)
@@ -93,6 +88,7 @@ class BtmCreateOfferXCHCATDialog : BottomSheetDialogFragment() {
         VLog.d("On View Created Create Offer with vm : $vm")
         binding.listeners()
         vm.calculateSpendableBalance(lifecycleScope)
+        vm.getDexieFee()
         initFeeBlock()
     }
 

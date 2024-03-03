@@ -1,6 +1,5 @@
 package com.green.wallet.presentation.main.swap.tibetswap
 
-import androidx.lifecycle.viewModelScope
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.TibetLiquidity
 import com.green.wallet.domain.domainmodel.TibetLiquidityExchange
@@ -22,7 +21,9 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -99,13 +100,14 @@ class TibetSwapViewModel @Inject constructor(
 
     var onSuccessTibetLiquidityClearingFields: () -> Unit = {}
 
+    private val customScope = CoroutineScope(Dispatchers.IO + handler + SupervisorJob())
+
     init {
         VLog.d("On create tibet vm swap : $this")
-        getDexie()
     }
 
-    private fun getDexie() {
-        viewModelScope.launch {
+    fun getDexieFee() {
+        customScope.launch {
             val dexie = dexieInteract.getDexieMinFee().recommended
             _viewState.update { it.copy(dexieFee = dexie) }
             _viewStateLiquidity.update { it.copy(dexieFee = dexie) }
@@ -125,7 +127,7 @@ class TibetSwapViewModel @Inject constructor(
     }
 
     fun retrieveTibetTokenList() {
-        viewModelScope.launch {
+        customScope.launch {
             val res = tokenInteract.getTibetTokenList()
             val newList = mutableListOf<Token>()
             var gwtToken: Token? = null
@@ -192,7 +194,7 @@ class TibetSwapViewModel @Inject constructor(
         )
 
     fun retrieveTokenList() {
-        viewModelScope.launch {
+        customScope.launch {
             val res = tokenInteract.getTokenListPairIDExist()
             val newList = mutableListOf<Token>()
             var gwtToken: Token? = null
@@ -354,6 +356,7 @@ class TibetSwapViewModel @Inject constructor(
     override fun onCleared() {
         VLog.d("On cleared tibet vm and cancelled scope : $this")
         prevWalletListJob?.cancel()
+        customScope.coroutineContext.cancelChildren()
     }
 
 }
