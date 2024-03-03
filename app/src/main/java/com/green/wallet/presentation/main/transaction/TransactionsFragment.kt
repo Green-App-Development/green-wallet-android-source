@@ -29,6 +29,7 @@ import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
+import com.green.wallet.presentation.main.transaction.btmCancel.CancelOfferDialog
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyBtmDialog
 import com.green.wallet.presentation.tools.*
 import com.green.wallet.presentation.viewBinding
@@ -607,6 +608,10 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 
                 is TransactionEvent.ShowTransactionDetails -> {
                     showTransactionDetails(it.transaction)
+                }
+
+                is TransactionEvent.ShowBtmDialogCancelOffer -> {
+                    CancelOfferDialog.build(it.transaction.transId).show(childFragmentManager, "")
                 }
             }
         }

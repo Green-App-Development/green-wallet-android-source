@@ -34,4 +34,8 @@ class OfferTransactionInteractImpl @Inject constructor(
         ).map { it -> it.map { it.toOfferTransaction() } }
     }
 
+    override suspend fun getOfferTransactionByTranID(tranID: String): OfferTransaction {
+        return offerTranDao.getOfferTransactionByTranID(tranID).get().toOfferTransaction()
+    }
+
 }

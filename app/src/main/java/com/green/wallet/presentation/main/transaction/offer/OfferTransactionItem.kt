@@ -319,7 +319,7 @@ fun OfferTransactionItem(
                 }
             }
 
-            if (state.height == 0L)
+            if (!state.acceptOffer && !state.cancelled || true)
                 Box(
                     modifier = Modifier
                         .padding(
@@ -338,7 +338,7 @@ fun OfferTransactionItem(
                             ),
                         modifier = Modifier.width(size_120),
                         onClick = {
-
+                            onIntent(TransactionIntent.OnCancelOfferBtmSheet(state))
                         },
                         shape = RoundedCornerShape(size_50)
                     ) {

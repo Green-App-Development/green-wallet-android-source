@@ -22,9 +22,10 @@ data class OfferTransaction(
     val hashTransaction: String = " ",
     val fee: Double = 0.0,
     val height: Long = 0L,
-    val acceptOffer: Boolean = true
+    val acceptOffer: Boolean = true,
+    val cancelled: Boolean = false,
+    val addressFk: String = ""
 ) : Transaction {
-
 
     fun toOfferTransactionEntity(addressFk: String) = OfferTransactionEntity(
         tranId = transId,

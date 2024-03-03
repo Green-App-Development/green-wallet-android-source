@@ -42,6 +42,7 @@ import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidi
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapFragment
 import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
+import com.green.wallet.presentation.main.transaction.btmCancel.CancelOfferDialog
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyBtmDialog
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -211,5 +212,7 @@ abstract class InjectorBuildersModule {
     @ContributesAndroidInjector
     abstract fun injectIntoCatBtmDialogFragment(): SpeedyBtmDialog
 
+    @ContributesAndroidInjector
+    abstract fun injectCancelOfferDialogFragment(): CancelOfferDialog
 
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 38,
-    "identityHash": "9be59ab46426a76663c3a06ef042243c",
+    "identityHash": "5be32409cfeb90f9c6ddbde67edd00fe",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -897,7 +897,7 @@
       },
       {
         "tableName": "OfferTransactionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tranId` TEXT NOT NULL, `status` TEXT NOT NULL, `addressFk` TEXT NOT NULL, `requested` TEXT NOT NULL, `offered` TEXT NOT NULL, `acceptOffer` INTEGER NOT NULL, `createdTime` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashTransaction` TEXT NOT NULL, `fee` REAL NOT NULL, `height` INTEGER NOT NULL, PRIMARY KEY(`tranId`), FOREIGN KEY(`addressFk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tranId` TEXT NOT NULL, `status` TEXT NOT NULL, `addressFk` TEXT NOT NULL, `requested` TEXT NOT NULL, `offered` TEXT NOT NULL, `acceptOffer` INTEGER NOT NULL, `createdTime` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashTransaction` TEXT NOT NULL, `fee` REAL NOT NULL, `height` INTEGER NOT NULL, `cancelled` INTEGER NOT NULL, PRIMARY KEY(`tranId`), FOREIGN KEY(`addressFk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "tranId",
@@ -964,6 +964,12 @@
             "columnName": "height",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "cancelled",
+            "columnName": "cancelled",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -991,7 +997,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9be59ab46426a76663c3a06ef042243c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5be32409cfeb90f9c6ddbde67edd00fe')"
     ]
   }
 }

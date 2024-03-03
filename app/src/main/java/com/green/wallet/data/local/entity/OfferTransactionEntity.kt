@@ -34,6 +34,7 @@ data class OfferTransactionEntity(
     val hashTransaction: String = " ",
     val fee: Double = 0.0,
     val height: Long = 0L,
+    val cancelled: Boolean = false
 ) {
 
     fun toOfferTransaction() = OfferTransaction(
@@ -45,7 +46,9 @@ data class OfferTransactionEntity(
         hashTransaction,
         fee,
         height,
-        acceptOffer
+        acceptOffer,
+        cancelled,
+        addressFk = addressFk
     )
 
 }

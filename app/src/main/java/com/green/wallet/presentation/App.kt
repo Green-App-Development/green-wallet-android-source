@@ -197,7 +197,7 @@ class App : DaggerApplication() {
         updateBalanceJob = CoroutineScope(Dispatchers.IO + handler).launch {
             while (true) {
                 delay(1000L * 60L * 5)
-                VLog.d("Start requesting Balance Each Wallets Periodically:")
+//                VLog.d("Start requesting Balance Each Wallets Periodically:")
                 blockChainInteract.updateBalanceAndTransactionsPeriodically()
                 exchangeInteract.updateOrderStatusPeriodically()
                 exchangeInteract.updateTibetSwapExchangeStatus()
@@ -208,7 +208,7 @@ class App : DaggerApplication() {
         updateCryptoJob = CoroutineScope(Dispatchers.IO + handler).launch {
             while (true) {
                 delay(1000L * 60 * 5)
-                VLog.d("Start updating CourseCrypto each Wallets :")
+//                VLog.d("Start updating CourseCrypto each Wallets :")
                 cryptocurrencyInteract.updateCourseCryptoInDb()
                 greenAppInteract.requestOtherNotifItems()
                 delay(1000L * 60 * 5)

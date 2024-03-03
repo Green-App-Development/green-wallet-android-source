@@ -5,8 +5,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import com.green.wallet.data.local.entity.OfferTransactionEntity
+import com.green.wallet.domain.domainmodel.OfferTransaction
 import com.green.wallet.presentation.tools.Status
 import kotlinx.coroutines.flow.Flow
+import java.util.Optional
 
 @Dao
 interface OfferTransactionDao {
@@ -29,5 +31,8 @@ interface OfferTransactionDao {
         yesterday: Long?,
         today: Long?,
     ): Flow<List<OfferTransactionEntity>>
+
+    @Query("SELECT * FROM OfferTransactionEntity WHERE tranId=:tranID")
+    suspend fun getOfferTransactionByTranID(tranID: String): Optional<OfferTransactionEntity>
 
 }

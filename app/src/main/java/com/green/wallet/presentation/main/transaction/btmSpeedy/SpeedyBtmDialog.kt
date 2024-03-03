@@ -86,7 +86,6 @@ class SpeedyBtmDialog :
                     }
 
                     SpeedyTokenEvent.ConfirmedPinCode -> {
-                        VLog.d("ConfirmedPinCode on speedy dialog fragment")
                         when (state.token) {
                             is NftToken -> {
                                 nftTokenRePush()
@@ -237,26 +236,6 @@ class SpeedyBtmDialog :
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        VLog.d("onStart on speedy btm dialog")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        VLog.d("onResume on speedy btm dialog")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        VLog.d("onDestroy on speedy btm dialog")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        VLog.d("onDestroyView on speedy btm dialog")
     }
 
     companion object {

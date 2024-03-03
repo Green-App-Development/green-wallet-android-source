@@ -192,6 +192,10 @@ class TransactionsViewModel @Inject constructor(
             is TransactionIntent.OnShowTransactionDetails -> {
                 setEvent(TransactionEvent.ShowTransactionDetails(intent.tran))
             }
+
+            is TransactionIntent.OnCancelOfferBtmSheet -> {
+                setEvent(TransactionEvent.ShowBtmDialogCancelOffer(intent.tran))
+            }
         }
     }
 
