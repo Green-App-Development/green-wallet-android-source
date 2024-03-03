@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <corners
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp" />
+
+    <padding android:top="10dp" />
+
+    <solid android:color="@color/bcg_btm_sheet_edge" />
+
+</shape>

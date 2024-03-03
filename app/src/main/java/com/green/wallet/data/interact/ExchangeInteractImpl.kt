@@ -201,6 +201,8 @@ class ExchangeInteractImpl @Inject constructor(
                                 System.currentTimeMillis() + TWENTY_MINUTES_MILLIS_SECONDS
                             )
                         }
+
+                        else -> Unit
                     }
                 }
             } else

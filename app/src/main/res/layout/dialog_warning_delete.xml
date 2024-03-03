@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rootRelative"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/cardView_background"
+        android:gravity="center_vertical"
+        android:paddingTop="15dp"
+        android:paddingBottom="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/img_ic_imported_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_failed" />
+
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/img_ic_imported_success"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Warning"
+            android:textColor="@color/red_mnemonic"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtStatus"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="30dp"
+            android:gravity="center_horizontal"
+            android:text="Транзакция не может быть осуществленна, проверьте адрес кошелька или выберите другой тип монеты"
+            android:textColor="@color/please_wait_text_color"
+            android:textFontWeight="500"
+            android:textSize="17sp" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btnLayoutCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtDescription"
+            android:layout_marginTop="25dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline39"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.90" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline41"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.10" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.AppTheme.MaterialButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/btn_background_draw"
+                android:text="@string/delet_wallet_warning_cancel_btn"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline39"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/guideline41"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnLayoutCancel"
+            android:layout_marginTop="10dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline56"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.90" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline57"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.10" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDelete"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="40dp"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/btn_confirm"
+                android:text="@string/wallet_delete_wallet_btn"
+                android:textAllCaps="false"
+                android:textColor="@color/red_mnemonic"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.03" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.97" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

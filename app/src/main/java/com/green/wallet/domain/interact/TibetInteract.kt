@@ -7,36 +7,33 @@ import com.green.wallet.presentation.tools.Resource
 
 interface TibetInteract {
 
-	suspend fun saveTokensPairID()
+    suspend fun saveTokensPairID()
 
-	suspend fun calculateAmountInAndOut(
-		amountIn: Long,
-		isXCH: Boolean,
-		pairId: String
-	): Resource<TibetSwapResponse>
+    suspend fun calculateAmountInAndOut(
+        amountIn: Long,
+        isXCH: Boolean,
+        pairId: String
+    ): Resource<TibetSwapResponse>
 
-	suspend fun pushOfferToTibetLiquidity(
-		pair: String,
-		offer: String,
-		action: String,
-		donationAmount: Double = 0.0
-	): Resource<String>
+    suspend fun pushOfferToTibetLiquidity(
+        pair: String,
+        offer: String,
+        action: String,
+        donationAmount: Double = 0.0
+    ): Resource<String>
 
-	suspend fun pushOfferToTibetCAT(
-		pair: String,
-		offer: String,
-		action: String,
-		donationAmount: Double = 0.0,
-		devFee:Int,
-		walletFee:Int
-	): Resource<String>
+    suspend fun pushOfferToTibetCAT(
+        pair: String,
+        offer: String,
+        action: String,
+        donationAmount: Double = 0.0,
+        devFee: Int,
+        walletFee: Int
+    ): Resource<String>
 
+    suspend fun getTibetLiquidity(pairId: String): TibetLiquidityExchange?
 
-
-
-	suspend fun getTibetLiquidity(pairId: String): TibetLiquidityExchange?
-
-	suspend fun insertTibetLiquidity(tibetLiquidity: TibetLiquidity)
+    suspend fun insertTibetLiquidity(tibetLiquidity: TibetLiquidity)
 
 
 }

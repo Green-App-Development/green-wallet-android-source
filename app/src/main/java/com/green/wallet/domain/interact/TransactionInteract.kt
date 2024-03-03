@@ -9,43 +9,44 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionInteract {
 
-	suspend fun getTransactionsByProvidedParameters(
-		fkAddress: String?,
-		amount: Double?,
-		networkType: String?,
-		status: Status?,
-		at_least_created_at: Long?,
-		yesterday: Long?,
-		today: Long?
-	): List<Transaction>
+    suspend fun getTransactionsByProvidedParameters(
+        fkAddress: String?,
+        amount: Double?,
+        networkType: String?,
+        status: Status?,
+        at_least_created_at: Long?,
+        yesterday: Long?,
+        today: Long?
+    ): List<Transaction>
 
-	fun getTransactionsFlowByProvidedParameters(
-		fkAddress: String?,
-		amount: Double?,
-		networkType: String?,
-		status: Status?,
-		at_least_created_at: Long?,
-		yesterday: Long?,
-		today: Long?,
-		tokenCode: String?
-	): kotlinx.coroutines.flow.Flow<List<Transaction>>
+    fun getTransactionsFlowByProvidedParameters(
+        fkAddress: String?,
+        amount: Double?,
+        networkType: String?,
+        status: Status?,
+        at_least_created_at: Long?,
+        yesterday: Long?,
+        today: Long?,
+        tokenCode: String?
+    ): kotlinx.coroutines.flow.Flow<List<Transaction>>
 
-	suspend fun getMempoolTransactionsAmountByAddressAndToken(
-		address: String,
-		token: String,
-		networkType: String
-	): DoubleArray
+    suspend fun getMempoolTransactionsAmountByAddressAndToken(
+        address: String,
+        token: String,
+        networkType: String
+    ): DoubleArray
 
-	fun getTransactionsFlowByProvidedParametersPagingSource(
-		fkAddress: String?,
-		amount: Double?,
-		networkType: String?,
-		status: Status?,
-		at_least_created_at: Long?,
-		yesterday: Long?,
-		today: Long?,
-		tokenCode: String?
-	): Flow<PagingData<Transaction>>
+    fun getTransactionsFlowByProvidedParametersPagingSource(
+        fkAddress: String?,
+        amount: Double?,
+        networkType: String?,
+        status: Status?,
+        at_least_created_at: Long?,
+        yesterday: Long?,
+        today: Long?,
+        tokenCode: String?
+    ): Flow<PagingData<Transaction>>
 
+    suspend fun deleteTransByID(tranID: String)
 
 }

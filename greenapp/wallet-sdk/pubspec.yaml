@@ -11,8 +11,11 @@ scripts:
 
 dependencies:
   args: ^2.3.1
-  bech32: ^0.2.1
-  bech32m: ^0.2.2
+  bech32: ^0.2.2
+  bech32m:
+    git:
+      url: https://github.com/MarvinQuevedo/bech32m
+      ref: 9862f20f356af305cf691d55225b4bb3fac4cab2
   bip39: ^1.0.6
   crypto: ^3.0.1
   equatable: ^2.0.3

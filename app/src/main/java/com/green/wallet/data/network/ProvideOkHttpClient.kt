@@ -51,8 +51,8 @@ fun getUnsafeOkHttpClient(
             .dispatcher(dispatcher)
             .addInterceptor(interceptor)
 
-        if (chuckerInterceptor != null)
-            builder.addInterceptor(chuckerInterceptor)
+//        if (chuckerInterceptor != null)
+//            builder.addInterceptor(chuckerInterceptor)
 
         builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
 

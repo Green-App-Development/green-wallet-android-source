@@ -7,7 +7,10 @@ import retrofit2.http.Path
 
 interface DexieService {
 
-	@GET("offers/{offer_id}")
-	suspend fun getTibetSwapOfferStatus(@Path(value = "offer_id") offer_id: String): Response<JsonObject>
-	
+    @GET("offers/{offer_id}")
+    suspend fun getTibetSwapOfferStatus(@Path(value = "offer_id") offer_id: String): Response<JsonObject>
+
+    @GET("status")
+    suspend fun getDexieStatus(): Response<JsonObject>
+
 }

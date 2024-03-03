@@ -170,6 +170,8 @@ class MainLanguageFragment : DaggerDialogFragment() {
 				Resource.State.SUCCESS -> {
 					updateView()
 				}
+
+				else -> Unit
 			}
 		}
 	}

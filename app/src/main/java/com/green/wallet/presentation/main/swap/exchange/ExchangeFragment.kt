@@ -606,6 +606,8 @@ class ExchangeFragment : DaggerFragment() {
                                     it.error
                                 )
                             }
+
+                            else -> Unit
                         }
                     }
                 }

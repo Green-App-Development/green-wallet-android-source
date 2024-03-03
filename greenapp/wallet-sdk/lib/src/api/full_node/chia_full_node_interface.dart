@@ -135,7 +135,7 @@ class ChiaFullNodeInterface {
       );
       for (final coin in coins) {
         // print(
-            // 'Checking for equality : ${coin.parentCoinInfo} and target coin_info : $parent_coin_info');
+        // 'Checking for equality : ${coin.parentCoinInfo} and target coin_info : $parent_coin_info');
         if (coin.parentCoinInfo == parent_coin_info) {
           allCoins.add(coin);
           break;
@@ -242,6 +242,7 @@ class ChiaFullNodeInterface {
 
   Future<ChiaBaseResponse> pushTransaction(SpendBundle spendBundle) async {
     final response = await fullNode.pushTransaction(spendBundle);
+    print('Response from push transaction: $response');
     mapResponseToError(response);
     return response;
   }

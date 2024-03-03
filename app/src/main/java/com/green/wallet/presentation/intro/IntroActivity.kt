@@ -152,6 +152,7 @@ class IntroActivity : BaseActivity() {
 
 
 	fun move2OnboardingActivity(reset_app_clicked: Boolean) {
+		VLog.d("Moving to onboarding activity")
 		Intent(this, OnBoardActivity::class.java).apply {
 			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 			putExtra(OnBoardActivity.RESET_APP_CLICKED, reset_app_clicked)

@@ -504,7 +504,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@color/send_fragment_card_view_bcg"
                             android:orientation="vertical"
@@ -513,98 +513,10 @@
                             android:paddingEnd="15dp"
                             android:paddingBottom="25dp">
 
-                            <TextView
-                                android:id="@+id/txtSpendableBalanceCommission"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="5dp"
-                                android:text="Spendable Balance"
-                                android:textColor="@color/greey"
-                                android:visibility="visible" />
-
-                            <TextView
-                                android:id="@+id/txtEnterCommission"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Комиссия сети"
-                                android:textColor="@color/greey"
-                                android:textFontWeight="400"
-                                android:textSize="15sp"
-                                android:visibility="invisible" />
-
-                            <RelativeLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-
-                                <TextView
-                                    android:id="@+id/edt_enter_commission"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:layout_marginTop="3dp"
-                                    android:layout_toLeftOf="@+id/enter_commission_token"
-                                    android:background="@android:color/transparent"
-                                    android:hint="@string/send_token_commission_amount"
-                                    android:inputType="numberDecimal"
-                                    android:maxLines="1"
-                                    android:text=""
-                                    android:textColor="@color/secondary_text_color"
-                                    android:textColorHint="@color/inactive_grey_txt"
-                                    android:textSize="16sp" />
-
-                                <TextView
-                                    android:id="@+id/enter_commission_token"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_centerVertical="true"
-                                    android:text="XCH"
-                                    android:textColor="@color/enter_commission_token"
-                                    android:textFontWeight="400"
-                                    android:textSize="16sp" />
-
-
-                            </RelativeLayout>
-
-                            <View
-                                android:id="@+id/view3"
+                            <androidx.compose.ui.platform.ComposeView
+                                android:id="@+id/composeFeeBlock"
                                 android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@color/line_divider" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/send_token_commission_recommended"
-                                    android:textFontWeight="400"
-                                    android:textSize="14sp" />
-
-                                <TextView
-                                    android:id="@+id/txtRecommendedCommission"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="5dp"
-                                    android:textColor="@color/greey"
-                                    android:visibility="visible" />
-
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/txtNotEnoughFeeWarning"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="@string/send_token_insufficient_funds_error"
-                                android:textColor="@color/red_mnemonic"
-                                android:textSize="16sp"
-                                android:visibility="gone" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 
@@ -618,7 +530,6 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guideline16"
                         app:layout_constraintStart_toStartOf="@id/guideline15" />
-
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/guideline15"

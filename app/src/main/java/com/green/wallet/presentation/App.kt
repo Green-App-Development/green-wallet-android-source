@@ -69,7 +69,7 @@ class App : DaggerApplication() {
 	lateinit var swapNavController: NavController
 
 	var applicationIsAlive = false
-	var isUserUnBoardDed = true
+	var isUserUnBoardDed = false
 
 	private val handler = CoroutineExceptionHandler { context, ex ->
 		VLog.d("Caught exception in coroutine scope : ${ex.message} for testing")
@@ -132,7 +132,7 @@ class App : DaggerApplication() {
 
 	private fun quickNavigationIfUserUnBoarded() {
 		CoroutineScope(Dispatchers.IO).launch {
-			isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, true)
+			isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, false)
 			val guid = prefs.getSettingString(PrefsManager.USER_GUID, "")
 			if (guid.isEmpty()) {
 				val generateGuid = UUID.randomUUID().toString().replace("-", "").uppercase()

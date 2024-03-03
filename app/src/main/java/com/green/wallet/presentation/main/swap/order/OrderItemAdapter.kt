@@ -179,6 +179,8 @@ class OrderItemAdapter(
 					dotStatus.setImageDrawable(activity.getDrawableResource(R.drawable.ic_dot_orange))
 					txtStatus.text = activity.getStringResource(R.string.status_in_process)
 				}
+
+				else -> Unit
 			}
 			changeAmountColor(txtSend, activity.getColorResource(R.color.red_mnemonic))
 			changeAmountColor(

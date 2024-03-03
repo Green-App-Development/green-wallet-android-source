@@ -322,5 +322,11 @@
 			android:label="Tibet Liquid Detail"
 			tools:layout="@layout/fragment_tibet_liquidity_detail" />
 
+		<fragment
+			android:id="@+id/fragmentTrader"
+			android:name="com.green.wallet.presentation.main.dapp.trade.TraderFragment"
+			android:label="Trader Fragmetn" />
+
+
 
 </navigation>

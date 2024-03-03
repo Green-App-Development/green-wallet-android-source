@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.green.wallet.data.local.*
 import com.green.wallet.data.local.entity.NFTCoinEntity
 import com.green.wallet.data.local.entity.NFTInfoEntity
+import com.green.wallet.data.local.entity.SpentCoinsEntity
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.network.BlockChainService
@@ -21,11 +22,11 @@ import com.green.wallet.data.network.dto.spendbundle.SpenBunde
 import com.green.wallet.data.network.dto.spendbundle.SpendBundle
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTInfo
+import com.green.wallet.domain.domainmodel.NftOfferCoin
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
-import com.green.wallet.presentation.custom.encryptor.Encryptor
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.Resource
@@ -74,6 +75,7 @@ class BlockChainInteractImpl @Inject constructor(
         var savedTime = greenAppInteract.getServerTime()
         if (savedTime == -1L) savedTime = System.currentTimeMillis()
         val walletEntity = wallet.toWalletEntity(encMnemonics, savedTime)
+        VLog.d("Inserting wallet Entity mnemonics : ${walletEntity.encMnemonics}")
         walletDao.insertWallet(walletEntity = walletEntity)
         if (imported) {
             CoroutineScope(Dispatchers.IO + handler).launch {
@@ -216,7 +218,6 @@ class BlockChainInteractImpl @Inject constructor(
                         return
                     }
                     VLog.d("Inserting nftInfo to db : $nftInfoEntity")
-                    VLog.d("Inserting nftCoin to db : $nftCoinEntity")
                     nftInfoDao.insertNftInfoEntity(nftInfoEntity)
                     nftCoinsDao.insertNftCoinsEntity(nftCoinEntity)
                     if (nftCoinEntity.time_stamp * 1000L >= wallet.savedTime) {
@@ -419,8 +420,7 @@ class BlockChainInteractImpl @Inject constructor(
                     }
 
                 } else {
-
-                    val unSpentCoinRecordHeight = getFirstUnSpentCoinRecordHeight(tran)
+                    val unSpentCoinRecordHeight = checkingUnSpentCoinHeightByTran(tran)
                     VLog.d("Trying to update coin Record Height for inProgress transaction : $tran : $unSpentCoinRecordHeight")
                     if (unSpentCoinRecordHeight != -1L) {
                         transactionDao.updateTransactionStatusHeight(
@@ -433,10 +433,10 @@ class BlockChainInteractImpl @Inject constructor(
                         val resLanguageResource =
                             prefs.getSettingString(PrefsManager.LANGUAGE_RESOURCE, "")
                         val resMap = Converters.stringToHashMap(resLanguageResource)
-                        val outgoing_transaction =
+                        val outgoingTransaction =
                             resMap["push_notifications_outgoing"] ?: "Outgoing transaction"
                         notificationHelper.callGreenAppNotificationMessages(
-                            "$outgoing_transaction : $formatted ${tran.code}",
+                            "$outgoingTransaction : $formatted ${tran.code}",
                             System.currentTimeMillis()
                         )
                     }
@@ -477,6 +477,44 @@ class BlockChainInteractImpl @Inject constructor(
         return -1
     }
 
+    private suspend fun checkingUnSpentCoinHeightByTran(tran: TransactionEntity): Long {
+        try {
+            val networkItem = getNetworkItemFromPrefs(tran.networkType)
+                ?: throw Exception("Exception in converting json str to networkItem")
+            val curBlockChainService = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+                .create(BlockChainService::class.java)
+            val coinsByTranTime = spentCoinsDao.getSpentCoinsByTranTimeCreated(tran.created_at_time)
+            if (coinsByTranTime.isNotEmpty()) {
+                val coin = coinsByTranTime[0]
+                return checkingUnSpentCoin(coin, curBlockChainService)
+            }
+        } catch (ex: Exception) {
+            VLog.d("Exception in checking unSpent height by tran :$ex")
+        }
+        return -1
+    }
+
+    private suspend fun checkingUnSpentCoin(
+        coin: SpentCoinsEntity,
+        service: BlockChainService
+    ): Long {
+        val targetAmount = (coin.amount * getTokenPrecisionByCode(coin.code)).toLong()
+        val body = hashMapOf<String, Any>()
+        body["parent_ids"] =
+            listOf(coin.parent_coin_info)
+        body["include_spent_coins"] = true
+        val coinsByParentIdRes =
+            service.getCoinRecordsByParentIds(body)
+        VLog.d("Coins by parents ids for transaction : ${coinsByParentIdRes.body()} : TargetAmount : $targetAmount")
+        if (coinsByParentIdRes.isSuccessful) {
+            for (c in coinsByParentIdRes.body()?.coin_records ?: return -1) {
+                if (c.coin.amount >= targetAmount && c.coin.parent_coin_info == coin.parent_coin_info && c.spent)
+                    return c.spent_block_index
+            }
+        }
+        return -1
+    }
+
     private suspend fun searchForSpentNFTByPuzzleHashAndCoin(tran: TransactionEntity): Int {
         try {
             val networkItem = getNetworkItemFromPrefs(tran.networkType)
@@ -511,17 +549,16 @@ class BlockChainInteractImpl @Inject constructor(
         networkType: String,
         fingerPrint: Long,
         code: String,
-        dest_puzzle_hash: String,
+        destPuzzleHash: String,
         address: String,
         fee: Double,
         spentCoinsJson: String,
         spentCoinsToken: String
     ): Resource<String> {
         try {
-            val serverTime = greenAppInteract.getServerTime()
+            val serverTime = greenAppInteract.getServerTime() - 1000 * 60 * 2
             if (serverTime == -1L)
                 throw ServerMaintenanceExceptions()
-            val timeBeforePushingTrans = serverTime - 60 * 1000
             VLog.d("Push method got called in data layer code : $networkType")
             val curBlockChainService =
                 retrofitBuilder.baseUrl("$url/").build().create(BlockChainService::class.java)
@@ -539,8 +576,8 @@ class BlockChainInteractImpl @Inject constructor(
                 val puzzle_reveal = coin_spend.getString("puzzle_reveal")
                 val solution = coin_spend.getString("solution")
                 val coinJSON = JSONObject(coin_spend.get("coin").toString())
-                val parent_coin_info = "0x" + coinJSON.getString("parent_coin_info")
-                val puzzle_hash = "0x" + coinJSON.getString("puzzle_hash")
+                val parent_coin_info = coinJSON.getString("parent_coin_info")
+                val puzzle_hash = coinJSON.getString("puzzle_hash")
                 val amount = coinJSON.getLong("amount")
                 val coin = CoinDto(amount, parent_coin_info, puzzle_hash)
                 val coinSpend = CoinSpend(coin, puzzle_reveal, solution)
@@ -557,11 +594,11 @@ class BlockChainInteractImpl @Inject constructor(
                     val trans = TransactionEntity(
                         UUID.randomUUID().toString(),
                         sendAmount,
-                        timeBeforePushingTrans,
+                        serverTime,
                         0,
                         Status.InProgress,
                         networkType,
-                        dest_puzzle_hash,
+                        destPuzzleHash,
                         address,
                         fee,
                         code,
@@ -569,15 +606,17 @@ class BlockChainInteractImpl @Inject constructor(
                     )
                     VLog.d("Inserting transaction entity : $trans and coinJson $spentCoinsJson and coinToken : $spentCoinsToken")
                     transactionDao.insertTransaction(trans)
-                    spentCoinsInteract.insertSpentCoinsJson(
-                        spentCoinsJson,
-                        timeBeforePushingTrans,
-                        getShortNetworkType(networkType),
-                        address
-                    )
-                    spentCoinsInteract.insertSpentCoinsJson(
-                        spentCoinsToken, timeBeforePushingTrans, code, address
-                    )
+                    if (spentCoinsJson.isNotEmpty())
+                        spentCoinsInteract.insertSpentCoinsJson(
+                            spentCoinsJson,
+                            serverTime,
+                            getShortNetworkType(networkType),
+                            address
+                        )
+                    if (spentCoinsToken.isNotEmpty())
+                        spentCoinsInteract.insertSpentCoinsJson(
+                            spentCoinsToken, serverTime, code, address
+                        )
                     return Resource.success("OK")
                 }
             } else {
@@ -855,11 +894,11 @@ class BlockChainInteractImpl @Inject constructor(
     override suspend fun push_tx_nft(
         jsonSpendBundle: String,
         url: String,
-        dest_puzzle_hash: String,
+        destPuzzleHash: String,
         nftInfo: NFTInfo,
         spentCoinsJson: String,
         fee: Double,
-        confirm_height: Int,
+        confirmHeight: Int,
         networkType: String
     ): Resource<String> {
         try {
@@ -879,8 +918,8 @@ class BlockChainInteractImpl @Inject constructor(
                 val puzzle_reveal = coin_spend.getString("puzzle_reveal")
                 val solution = coin_spend.getString("solution")
                 val coinJSON = JSONObject(coin_spend.get("coin").toString())
-                val parent_coin_info = "0x" + coinJSON.getString("parent_coin_info")
-                val puzzle_hash = "0x" + coinJSON.getString("puzzle_hash")
+                val parent_coin_info = coinJSON.getString("parent_coin_info")
+                val puzzle_hash = coinJSON.getString("puzzle_hash")
                 val amount = coinJSON.getLong("amount")
                 val coin = CoinDto(amount, parent_coin_info, puzzle_hash)
                 val coinSpend = CoinSpend(coin, puzzle_reveal, solution)
@@ -901,11 +940,11 @@ class BlockChainInteractImpl @Inject constructor(
                         0,
                         Status.InProgress,
                         networkType,
-                        dest_puzzle_hash,
+                        destPuzzleHash,
                         fkAddress = nftInfo.fk_address,
                         fee,
                         "NFT",
-                        confirm_height,
+                        confirmHeight,
                         nft_coin_hash = nftInfo.nft_coin_hash
                     )
                     val inserted = transactionDao.insertTransaction(trans)
@@ -1022,5 +1061,30 @@ class BlockChainInteractImpl @Inject constructor(
         return null
     }
 
-
+    override suspend fun getNftInfoByCoinID(
+        networkType: String,
+        coinID: String
+    ): NftOfferCoin? {
+        val networkItem = getNetworkItemFromPrefs(networkType)
+            ?: throw Exception("Exception in converting json str to networkItem")
+        val walletService = retrofitBuilder.baseUrl(networkItem.wallet + '/').build()
+            .create(BlockChainService::class.java)
+        val body = hashMapOf<String, Any>()
+        body["coin_id"] = coinID
+        body["latest"] = true
+        body["ignore_size_limit"] = false
+        body["reuse_puzhash"] = true
+        val reqNFTInfo = walletService.getNFTInfoByCoinId(body)
+        if (reqNFTInfo.isSuccessful) {
+            val nftInfo = reqNFTInfo.body()!!.nft_info
+            val metaData = getMetaDataNFT(nftInfo.metadata_uris?.get(0) ?: "") ?: return null
+            val collection = metaData["collection"].toString()
+            return NftOfferCoin(
+                imageUrl = nftInfo.data_uris?.get(0) ?: "",
+                collection = collection,
+                nftID = nftInfo.nft_id ?: "",
+            )
+        }
+        return null
+    }
 }

@@ -89,6 +89,8 @@ class FAQFragment : DaggerDialogFragment() {
                     Resource.State.LOADING -> {
 
                     }
+
+                    else -> Unit
                 }
             }
         }

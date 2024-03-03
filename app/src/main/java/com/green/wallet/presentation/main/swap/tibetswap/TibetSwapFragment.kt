@@ -44,10 +44,10 @@ import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.green.wallet.presentation.tools.makeGreenDuringFocus
 import com.green.wallet.presentation.tools.makeGreyDuringNonFocus
-import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_tibetswap.containerSwap
 import kotlinx.android.synthetic.main.fragment_tibetswap.edtAmountTo
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
@@ -118,8 +118,10 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
 
     }
 
-    override suspend fun collectingFlowsOnStarted() {
-        vm.fiveMinTillGetListOfTokensFromTibet()
+    override fun collectFlowOnStarted(scope: CoroutineScope) {
+        scope.launch {
+            vm.fiveMinTillGetListOfTokensFromTibet()
+        }
     }
 
     private fun initSuccessClearingFields() {
@@ -296,6 +298,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 binding.changeSwapAdapter(ad2Swap, ad1Swap)
                 choosingXCHToCAT(false)
             }
+            vm.validateFeeEnoughXCHCAT()
         }
 
     }
@@ -419,7 +422,6 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
         }
 
         if (vm.swapInputState.isNotEmpty()) edtAmountFrom.setText(vm.swapInputState)
-
 
     }
 
@@ -743,6 +745,7 @@ class TibetSwapFragment : BaseFragment(), BtmCreateOfferXCHCATDialog.OnXCHCATLis
                 setTextColor(requireActivity().getColorResource(R.color.red_mnemonic))
             }
         }
+        vm.validateFeeEnoughAmountsLiquidity()
     }
 
     private fun FragmentTibetswapBinding.listenersForSwapDest(width: Int) {

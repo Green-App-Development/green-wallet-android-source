@@ -40,8 +40,8 @@ class CoinSpend with ToBytesMixin {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'coin': coin.toJson(),
-    'puzzle_reveal': const HexEncoder().convert(puzzleReveal.serialize()),
-    'solution': const HexEncoder().convert(solution.serialize())
+    'puzzle_reveal': puzzleReveal.serialize().toHexWithPrefix(),
+    'solution': solution.serialize().toHexWithPrefix()
   };
 
   factory CoinSpend.fromBytes(Bytes bytes) {

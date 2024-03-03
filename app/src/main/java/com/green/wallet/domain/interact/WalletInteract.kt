@@ -11,73 +11,74 @@ import kotlin.collections.HashMap
 
 interface WalletInteract {
 
-	fun getFlowOfWalletList(): Flow<List<Wallet>>
+    fun getFlowOfWalletList(): Flow<List<Wallet>>
 
-	suspend fun getAllWalletList(): List<Wallet>
+    suspend fun getAllWalletList(): List<Wallet>
 
-	fun getHomeAddedWalletWithTokensFlow(): Flow<List<WalletWithTokens>>
+    fun getHomeAddedWalletWithTokensFlow(): Flow<List<WalletWithTokens>>
 
-	suspend fun deleteWallet(wallet: Wallet): Int
+    suspend fun deleteWallet(wallet: Wallet): Int
 
-	suspend fun getWalletByFingerPrint(id: Long): List<Wallet>
+    suspend fun getWalletByFingerPrint(id: Long): List<Wallet>
 
-	suspend fun update_home_is_added(time: Long, fingerPrint: Long): Int
+    suspend fun update_home_is_added(time: Long, fingerPrint: Long): Int
 
-	suspend fun getWalletListByNetworkTypeFingerPrint(
-		networkType: String,
-		fingerPrint: Long?
-	): List<Wallet>
+    suspend fun getWalletListByNetworkTypeFingerPrint(
+        networkType: String,
+        fingerPrint: Long?
+    ): List<Wallet>
 
-	suspend fun getRandomWalletByNetworktype(networkType: NetworkType): List<Wallet>
+    suspend fun getRandomWalletByNetworktype(networkType: NetworkType): List<Wallet>
 
-	suspend fun getDistinctNetworkTypes(): List<String>
+    suspend fun getDistinctNetworkTypes(): List<String>
 
-	suspend fun checkIfMnemonicsExistInDB(
-		mnemonics: List<String>,
-		networkType: String
-	): Optional<Boolean>
+    suspend fun checkIfMnemonicsExistInDB(
+        mnemonics: List<String>,
+        networkType: String
+    ): Optional<Boolean>
 
-	fun getAllWalletListFirstHomeIsAddedThenRemainFlow(): Flow<List<Wallet>>
-
-
-	suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet>
-
-	suspend fun getWalletWithTokensByFingerPrintNetworkType(
-		fingerPrint: Long?,
-		networkType: String
-	): List<WalletWithTokens>
+    fun getAllWalletListFirstHomeIsAddedThenRemainFlow(): Flow<List<Wallet>>
 
 
-	fun getWalletWithTokensByFingerPrintNetworkTypeFlow(
-		fingerPrint: Long?,
-		networkType: String
-	): Flow<List<WalletWithTokens>>
+    suspend fun getAllWalletListFirstHomeIsAddedThenRemain(): List<Wallet>
+
+    suspend fun getWalletWithTokensByFingerPrintNetworkType(
+        fingerPrint: Long?,
+        networkType: String
+    ): List<WalletWithTokens>
 
 
-	suspend fun importTokenByAddress(
-		address: String,
-		add: Boolean,
-		asset_id: String,
-		outer_puzzle_hashes: List<String>
-	)
+    fun getWalletWithTokensByFingerPrintNetworkTypeFlow(
+        fingerPrint: Long?,
+        networkType: String
+    ): Flow<List<WalletWithTokens>>
 
-	suspend fun checkingTokenOnHome(
-		address: String,
-		asset_id: String
-	): Boolean
 
-	suspend fun getWalletByAddress(address: String): Wallet
+    suspend fun importTokenByAddress(
+        address: String,
+        add: Boolean,
+        asset_id: String,
+        outer_puzzle_hashes: List<String>
+    )
 
-	suspend fun updateHashListImported(
-		address: String,
-		main_puzzle_hashes: List<String>,
-		hashListImported: HashMap<String, List<String>>,
-		observer: Int,
-		nonObserver: Int
-	)
+    suspend fun checkingTokenOnHome(
+        address: String,
+        asset_id: String
+    ): Boolean
 
-	suspend fun getChiaWalletListForExchange(): List<ChiaWallet>
-	suspend fun getMainPuzzleHashes(address: String): List<String>
+    suspend fun getWalletByAddress(address: String): Wallet
 
+    suspend fun updateHashListImported(
+        address: String,
+        main_puzzle_hashes: List<String>,
+        hashListImported: HashMap<String, List<String>>,
+        observer: Int,
+        nonObserver: Int
+    )
+
+    suspend fun getChiaWalletListForExchange(): List<ChiaWallet>
+    suspend fun getMainPuzzleHashes(address: String): List<String>
+
+    suspend fun getHomeFirstWallet(): Wallet?
 
 }

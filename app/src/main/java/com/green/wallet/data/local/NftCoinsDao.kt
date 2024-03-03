@@ -11,7 +11,7 @@ import java.util.*
 @Dao
 interface NftCoinsDao {
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	@Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
 	suspend fun insertNftCoinsEntity(nftCoinEntity: NFTCoinEntity)
 
 	@Query("SELECT * FROM NFTCoinEntity WHERE coin_info=:nft_hash")

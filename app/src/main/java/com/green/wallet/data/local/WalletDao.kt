@@ -1,7 +1,7 @@
 package com.green.wallet.data.local
 
 import androidx.room.*
-import androidx.room.OnConflictStrategy.IGNORE
+import androidx.room.OnConflictStrategy.Companion.IGNORE
 import com.green.wallet.data.local.dto.ChiaWalletDTO
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.data.local.relations.WalletWithNFTInfoRelation
@@ -144,4 +144,8 @@ interface WalletDao {
 
     @Query("UPDATE WalletEntity SET mnemonics=:encrypted,encrypt_stage=:stage WHERE address=:address")
     suspend fun updateMnemonicsAndEncStage(encrypted: String, stage: Int, address: String)
+
+    @Query("SELECT * FROM WalletEntity WHERE homeAdded>0 ORDER BY homeAdded ASC LIMIT 1")
+    suspend fun getHomeFirstWallet(): List<WalletEntity>
+
 }

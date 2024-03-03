@@ -1,14 +1,12 @@
 package com.green.wallet.domain.domainmodel
 
-import androidx.room.PrimaryKey
-
 data class NFTCoin(
-    val coin_info: String,
-    val address_fk: String,
-    val coin_hash: String,
+    val coinInfo: String,
+    val addressFk: String,
+    val coinHash: String,
     val amount: Int,
-    val confirmed_block_index: Long,
-    val spent_block_index: Long,
-    val time_stamp: Long,
-    val puzzle_hash:String
+    val confirmedBlockIndex: Long,
+    val spentBlockIndex: Long,
+    val timeStamp: Long,
+    val puzzleHash:String
 )

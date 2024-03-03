@@ -62,8 +62,6 @@ android {
     }
 
 
-
-
     buildTypes {
 
         release {
@@ -80,9 +78,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             firebaseAppDistribution {
-                serviceCredentialsFile="${rootDir}/app/green_wallet_firebase.json"
-                releaseNotes="Sample release notes"
-                testers="internal-testers"
+                serviceCredentialsFile = "${rootDir}/app/green_wallet_firebase.json"
+                releaseNotes = "Sample release notes"
+                testers = "internal-testers"
             }
 
         }
@@ -108,13 +106,18 @@ android {
     }
 
     buildFeatures {
+        compose true
+        buildConfig true
         viewBinding true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion "1.2.0"
     }
 
     lintOptions {
         checkReleaseBuilds false
     }
-
 
 }
 
@@ -140,7 +143,7 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
 
-    def dag_version = "2.22"
+    def dag_version = "2.24"
     //Dagger Core
     implementation "com.google.dagger:dagger:$dag_version"
     kapt "com.google.dagger:dagger-compiler:$dag_version"
@@ -192,7 +195,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
     //Room dataBase
-    def room_version = "2.4.0"
+    def room_version = "2.6.0"
 
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -228,6 +231,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9"
 
     implementation project(':flutter')
+    implementation project(':compose')
+    implementation project(':core')
+    implementation project(':uikit')
 
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
@@ -254,6 +260,10 @@ dependencies {
 
     debugImplementation("com.readystatesoftware.chuck:library:1.1.0")
     releaseImplementation("com.readystatesoftware.chuck:library-no-op:1.1.0")
+
+    implementation("com.github.andycandy-de:simple-android-bridge:1.0.2")
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
 
 }
 

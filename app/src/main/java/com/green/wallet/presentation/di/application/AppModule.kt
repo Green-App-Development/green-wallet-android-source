@@ -74,6 +74,7 @@ class AppModule {
         }
     }
 
+
     @Provides
     fun provideEncryptor(context: Context): EncryptorProvider {
         val encryptor= EncryptorProviderImpl(context)
