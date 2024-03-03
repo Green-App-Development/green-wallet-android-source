@@ -164,7 +164,7 @@ class SpeedyDialogViewModel @Inject constructor(
                     VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
                     _viewState.update {
                         it.copy(
-                            spendableBalance = feeSpendable
+                            spendableBalance = Math.max(feeSpendable, 0.0)
                         )
                     }
                     validateEnoughFee()

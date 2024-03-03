@@ -75,12 +75,13 @@ fun CancelOfferScreen(
         Column(
             modifier = Modifier
                 .background(
-                    color = Provider.current.blackAppBackground, shape = RoundedCornerShape(size_15)
+                    color = Provider.current.blackAppBackground,
+                    shape = RoundedCornerShape(size_15)
                 )
-                .fillMaxWidth()
                 .padding(
                     top = size_18, start = size_16, end = size_16
-                ), horizontalAlignment = Alignment.CenterHorizontally
+                )
+                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
