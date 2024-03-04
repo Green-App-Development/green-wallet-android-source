@@ -13,6 +13,6 @@ sealed interface TransactionIntent {
 
     data class OnShowTransactionDetails(val tran: TransferTransaction) : TransactionIntent
 
-    data class OnCancelOfferBtmSheet(val tran: OfferTransaction) : TransactionIntent
+    data class OnCancelOfferBtmSheet(val tranID:String) : TransactionIntent
 
 }

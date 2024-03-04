@@ -36,8 +36,15 @@ class OfferTransactionInteractImpl @Inject constructor(
         ).map { it -> it.map { it.toOfferTransaction() } }
     }
 
-    override suspend fun getOfferTransactionByTranID(tranID: String): OfferTransaction {
-        return offerTranDao.getOfferTransactionByTranID(tranID).get().toOfferTransaction()
+    override suspend fun getOfferTransactionByTranID(tranID: String): OfferTransaction? {
+        val result = offerTranDao.getOfferTransactionByTranID(tranID)
+        if (result.isPresent)
+            return result.get().toOfferTransaction()
+        return null
+    }
+
+    override suspend fun getAllOfferTransactions(): List<OfferTransaction> {
+        return offerTranDao.getAllOfferTransactions().map { it.toOfferTransaction() }
     }
 
 }

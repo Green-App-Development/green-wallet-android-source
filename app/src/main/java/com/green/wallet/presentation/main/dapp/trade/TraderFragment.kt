@@ -1,5 +1,6 @@
 package com.green.wallet.presentation.main.dapp.trade
 
+import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,6 +48,11 @@ class TraderFragment : BaseComposeFragment() {
             (context?.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
             METHOD_CHANNEL_GENERATE_HASH
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.tempCleanUpOfferTranAndSpentCoins()
     }
 
     @Composable

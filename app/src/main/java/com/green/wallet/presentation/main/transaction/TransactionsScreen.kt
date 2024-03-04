@@ -74,9 +74,7 @@ fun TransactionListScreen(
 
                     is OfferTransaction -> {
                         OfferTransactionItem(
-                            state = OfferTransaction(
-                                transId = "$index"
-                            ),
+                            state = item,
                             initialOpen = openedTrans.contains("$index"),
                             onIntent = onIntent,
                             onDetailsOpen = {

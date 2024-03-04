@@ -34,7 +34,7 @@ class CancelOfferViewModel @Inject constructor(
     private val blockChainInteract: BlockChainInteract,
 ) : BaseViewModel<CancelOfferState, CancelOfferEvent>(CancelOfferState()) {
 
-    private lateinit var offerTransaction: OfferTransaction
+    var offerTransaction: OfferTransaction? = null
     lateinit var wallet: Wallet
 
     private val handler = CoroutineExceptionHandler { _, ex ->
@@ -44,9 +44,12 @@ class CancelOfferViewModel @Inject constructor(
     fun initOfferTransaction(tranID: String) {
         viewModelScope.launch(handler) {
             offerTransaction = offerTransactionInteract.getOfferTransactionByTranID(tranID)
-            _viewState.update { it.copy(addressFk = offerTransaction.addressFk) }
+            if (offerTransaction == null) {
+                VLog.d("OfferTransaction with tranID : $tranID is null")
+            }
+            _viewState.update { it.copy(addressFk = offerTransaction!!.addressFk) }
 
-            initWallet(offerTransaction.addressFk)
+            initWallet(offerTransaction!!.addressFk)
             getSpentCoinsSum()
         }
 
@@ -69,6 +72,7 @@ class CancelOfferViewModel @Inject constructor(
             }
 
             is CancelOfferEvent.OnSign -> {
+                setEvent(CancelOfferEvent.OnSign)
                 _viewState.update { it.copy(isLoading = true) }
             }
         }
@@ -118,7 +122,7 @@ class CancelOfferViewModel @Inject constructor(
 
     suspend fun getTranXCHCoins() = withContext(Dispatchers.IO) {
         val tranCoins =
-            coinsInteract.getSpentCoinsByTransactionTimeCode(offerTransaction.createAtTime, "XCH")
+            coinsInteract.getSpentCoinsByTransactionTimeCode(offerTransaction!!.createAtTime, "XCH")
         tranCoins
     }
 
@@ -127,19 +131,17 @@ class CancelOfferViewModel @Inject constructor(
     }
 
 
-    private fun getSpentCoinsSum() {
-        viewModelScope.launch {
-            coinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
-                .collectLatest { it ->
-                    val feeSpendable = wallet.balance - it
-                    VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
-                    _viewState.update {
-                        it.copy(
-                            spendableBalance = Math.max(feeSpendable, 0.0)
-                        )
-                    }
+    private suspend fun getSpentCoinsSum() {
+        coinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
+            .collectLatest { it ->
+                val feeSpendable = wallet.balance - it
+                VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
+                _viewState.update {
+                    it.copy(
+                        spendableBalance = Math.max(feeSpendable, 0.0)
+                    )
                 }
-        }
+            }
     }
 
     fun setLoading(isLoading: Boolean) {

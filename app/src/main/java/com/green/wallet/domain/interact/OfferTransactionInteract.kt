@@ -17,6 +17,9 @@ interface OfferTransactionInteract {
         today: Long?,
     ): Flow<List<OfferTransaction>>
 
-    suspend fun getOfferTransactionByTranID(tranID: String): OfferTransaction
+    suspend fun getOfferTransactionByTranID(tranID: String): OfferTransaction?
+
+    suspend fun getAllOfferTransactions(): List<OfferTransaction>
+
 
 }

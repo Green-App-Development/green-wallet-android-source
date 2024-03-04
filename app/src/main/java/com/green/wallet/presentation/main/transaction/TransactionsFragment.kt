@@ -611,7 +611,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
                 }
 
                 is TransactionEvent.ShowBtmDialogCancelOffer -> {
-                    CancelOfferDialog.build(it.transaction.transId).show(childFragmentManager, "")
+                    CancelOfferDialog.build(it.tranID).show(childFragmentManager, "")
                 }
             }
         }

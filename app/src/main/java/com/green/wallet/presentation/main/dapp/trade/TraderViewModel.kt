@@ -512,6 +512,17 @@ class TraderViewModel @Inject constructor(
         return nftInteractor.getNFTCoinByHash(coinHash)
     }
 
+    fun tempCleanUpOfferTranAndSpentCoins() {
+        viewModelScope.launch {
+            val offerTrans = offerTransactionInteract.getAllOfferTransactions()
+            for (offer in offerTrans) {
+                val affectedRows =
+                    spentCoinsInteract.deleteSpentConsByTimeCreated(offer.createAtTime)
+                VLog.d("Affected Rows after deleting : $affectedRows")
+            }
+        }
+    }
+
     suspend fun getNftCoinFromWallet(nftCoinID: String) =
         nftInteractor.getNFTCoinByNFTIDFromWallet(
             getNetworkItemFromPrefs(wallet!!.networkType)!!,

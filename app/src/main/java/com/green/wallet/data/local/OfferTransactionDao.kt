@@ -35,4 +35,7 @@ interface OfferTransactionDao {
     @Query("SELECT * FROM OfferTransactionEntity WHERE tranId=:tranID")
     suspend fun getOfferTransactionByTranID(tranID: String): Optional<OfferTransactionEntity>
 
+    @Query("SELECT * FROM OfferTransactionEntity")
+    suspend fun getAllOfferTransactions(): List<OfferTransactionEntity>
+
 }

@@ -50,6 +50,7 @@ class CancelOfferDialog :
                 when (it) {
                     is CancelOfferEvent.OnSign -> {
                         //need to call pin code
+                        VLog.d("On Sign cancelling offering")
                         sendingTransactionToItself()
                     }
 
@@ -71,7 +72,7 @@ class CancelOfferDialog :
         argSpendBundle["nonObserver"] = vm.wallet.nonObserverHash
         argSpendBundle["tranCoins"] = Gson().toJson(vm.getTranXCHCoins())
         argSpendBundle["spentCoins"] = Gson().toJson(vm.getSpentCoins())
-        argSpendBundle["amount"] = 0.0
+        argSpendBundle["amount"] = 0
         methodChannel.invokeMethod("SpeedyTransferXCH", argSpendBundle)
         initListeningMethod(url)
     }

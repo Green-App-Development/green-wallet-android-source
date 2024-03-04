@@ -26,6 +26,7 @@ class SpentCoinsInteractImpl @Inject constructor(
     ) {
         try {
             val spentCoinsJsonArray = JSONArray(spentCoinsJson)
+            var total = 0.0
             for (i in 0 until spentCoinsJsonArray.length()) {
                 val coinJson = JSONObject(spentCoinsJsonArray[i].toString())
                 val amount = coinJson.getLong("amount")
@@ -40,10 +41,12 @@ class SpentCoinsInteractImpl @Inject constructor(
                     code,
                     timeCreated
                 )
+                total += amount
                 //1704544106000 1704544108523
                 VLog.d("InsertingCoinEntity on coinInteractImpl: $coinEntity")
                 spentCoinsDao.insertSpentCoins(coinEntity)
             }
+            VLog.d("Total amount inserted for $code is : $total")
         } catch (ex: Exception) {
             VLog.d("Exception in inserting spentCoins : ${ex.message}")
         }
@@ -126,6 +129,10 @@ class SpentCoinsInteractImpl @Inject constructor(
     ): Flow<Double> {
         return spentCoinsDao.getSpentCoinsByAddressCodeFlow(address, code)
             .map { list -> list.sumOf { it.amount } }
+    }
+
+    override suspend fun deleteSpentConsByTimeCreated(timeCrated: Long): Int {
+        return spentCoinsDao.deleteSpentConsByTimeCreated(timeCrated)
     }
 
 }

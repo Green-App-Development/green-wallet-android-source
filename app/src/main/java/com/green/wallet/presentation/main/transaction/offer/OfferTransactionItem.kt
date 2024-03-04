@@ -339,7 +339,7 @@ fun OfferTransactionItem(
                             ),
                         modifier = Modifier.width(size_120),
                         onClick = {
-                            onIntent(TransactionIntent.OnCancelOfferBtmSheet(state))
+                            onIntent(TransactionIntent.OnCancelOfferBtmSheet(state.transId))
                         },
                         shape = RoundedCornerShape(size_50)
                     ) {

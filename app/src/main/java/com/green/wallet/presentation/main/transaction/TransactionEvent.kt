@@ -10,6 +10,6 @@ sealed interface TransactionEvent {
 
     data class ShowWarningDeletionDialog(val transaction: TransferTransaction) : TransactionEvent
 
-    data class ShowBtmDialogCancelOffer(val transaction: OfferTransaction) : TransactionEvent
+    data class ShowBtmDialogCancelOffer(val tranID:String) : TransactionEvent
 
 }
