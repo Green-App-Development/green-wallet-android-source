@@ -83,6 +83,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
     ): View {
         binding = DialogBtmCreateOfferLiquidityBinding.inflate(layoutInflater)
         vm.calculateSpendableBalance(lifecycleScope)
+        vm.getDexieFee()
         return binding.root
     }
 

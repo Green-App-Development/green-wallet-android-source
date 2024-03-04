@@ -1,231 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-	<LinearLayout
-			android:id="@+id/containerWallet"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/dialog_bg"
-			android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/containerWallet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_bg"
+        android:orientation="vertical">
 
-		<ImageView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center_horizontal"
-				android:src="@drawable/home_indicator" />
-
-
-		<androidx.constraintlayout.widget.ConstraintLayout
-				android:layout_width="match_parent"
-				android:layout_height="375dp"
-				android:layout_marginTop="20dp"
-				android:background="@drawable/bcg_create_offer">
-
-			<TextView
-					android:id="@+id/textView18"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginTop="9dp"
-					android:text="@string/create_offer"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="16sp"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/home_indicator" />
 
 
-			<TextView
-					android:id="@+id/textView19"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="15dp"
-					android:text="@string/current_account"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="16sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView18" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="375dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bcg_create_offer">
 
-			<TextView
-					android:id="@+id/txtWalletAddress"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="10dp"
-					android:text="xch1jihbwkl...4ciyc"
-					android:textColor="@color/secondary_text_color"
-					android:textFontWeight="500"
-					app:layout_constraintBottom_toBottomOf="@+id/textView19"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/textView19" />
-
-			<View
-					android:id="@+id/view_divider"
-					android:layout_width="match_parent"
-					android:layout_height="1dp"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="8dp"
-					android:layout_marginEnd="10dp"
-					android:background="@color/network_item_line_divider"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView19" />
-
-			<TextView
-					android:id="@+id/textView20"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="10dp"
-					android:text="@string/estimated_balance"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="16sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/view_divider" />
+            <TextView
+                android:id="@+id/textView18"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:text="@string/create_offer"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
-			<TextView
-					android:id="@+id/textView21"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="12dp"
-					android:text="XCH"
-					android:textColor="@color/secondary_text_color"
-					android:textFontWeight="500"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView20" />
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/current_account"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+            <TextView
+                android:id="@+id/txtWalletAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="xch1jihbwkl...4ciyc"
+                android:textColor="@color/secondary_text_color"
+                android:textFontWeight="500"
+                app:layout_constraintBottom_toBottomOf="@+id/textView19"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView19" />
+
+            <View
+                android:id="@+id/view_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:background="@color/network_item_line_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/estimated_balance"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_divider" />
 
 
-			<TextView
-					android:id="@+id/txtCAT"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="8dp"
-					android:layout_marginTop="7dp"
-					android:text="GWT"
-					android:textColor="@color/secondary_text_color"
-					android:textFontWeight="500"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-			<TextView
-					android:id="@+id/txtXCHValue"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="10dp"
-					android:text="-1 XCH"
-					android:textColor="@color/red_mnemonic"
-					app:layout_constraintBottom_toBottomOf="@+id/textView21"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/textView21" />
-
-			<TextView
-					android:id="@+id/txtCATValue"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginEnd="10dp"
-					android:text="+20 313 GWT"
-					android:textColor="@color/green"
-					app:layout_constraintBottom_toBottomOf="@+id/txtCAT"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toTopOf="@+id/txtCAT" />
-
-			<View
-					android:id="@+id/view_divider_1"
-					android:layout_width="match_parent"
-					android:layout_height="1dp"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="20dp"
-					android:layout_marginEnd="10dp"
-					android:background="@color/network_item_line_divider"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/txtCAT" />
-
-			<TextView
-					android:id="@+id/txtSpendableBalanceAmount"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="8dp"
-					android:text="@string/spendable_balance"
-					android:textColor="@color/greey"
-					android:textFontWeight="400"
-					android:textSize="12sp"
-					android:visibility="visible"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/view_divider_1" />
-
-			<TextView
-					android:id="@+id/textView24"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="10dp"
-					android:text="@string/fee"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="14sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmount" />
-
-			<androidx.compose.ui.platform.ComposeView
-					android:id="@+id/composeFeeBlock"
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="10dp"
-					android:layout_marginEnd="10dp"
-					android:paddingStart="2dp"
-					android:paddingEnd="2dp"
-					app:layout_constraintEnd_toEndOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/textView24">
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:text="XCH"
+                android:textColor="@color/secondary_text_color"
+                android:textFontWeight="500"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
 
+            <TextView
+                android:id="@+id/txtCAT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="7dp"
+                android:text="GWT"
+                android:textColor="@color/secondary_text_color"
+                android:textFontWeight="500"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
-			</androidx.compose.ui.platform.ComposeView>
+            <TextView
+                android:id="@+id/txtXCHValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="-1 XCH"
+                android:textColor="@color/red_mnemonic"
+                app:layout_constraintBottom_toBottomOf="@+id/textView21"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView21" />
 
-			<TextView
-					android:id="@+id/textView25"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_marginStart="10dp"
-					android:layout_marginTop="15dp"
-					android:text="@string/custom"
-					android:textColor="@color/green"
-					android:textFontWeight="500"
-					android:textSize="14sp"
-					app:layout_constraintStart_toStartOf="parent"
-					app:layout_constraintTop_toBottomOf="@+id/composeFeeBlock" />
+            <TextView
+                android:id="@+id/txtCATValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="+20 313 GWT"
+                android:textColor="@color/green"
+                app:layout_constraintBottom_toBottomOf="@+id/txtCAT"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/txtCAT" />
 
-		</androidx.constraintlayout.widget.ConstraintLayout>
+            <View
+                android:id="@+id/view_divider_1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:background="@color/network_item_line_divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtCAT" />
 
-		<com.google.android.material.button.MaterialButton
-				android:id="@+id/btnSign"
-				style="@style/Widget.AppTheme.MaterialButton"
-				android:layout_width="match_parent"
-				android:layout_height="60dp"
-				android:layout_marginStart="10dp"
-				android:layout_marginTop="20dp"
-				android:layout_marginEnd="10dp"
-				android:layout_marginBottom="10dp"
-				android:background="@drawable/btn_background_draw"
-				android:enabled="true"
-				android:text="@string/sign"
-				android:textAllCaps="false"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintHorizontal_bias="0.0"
-				app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/txtSpendableBalanceAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/spendable_balance"
+                android:textColor="@color/greey"
+                android:textFontWeight="400"
+                android:textSize="12sp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_divider_1" />
 
-	</LinearLayout>
+            <TextView
+                android:id="@+id/textView24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/fee"
+                android:textColor="@color/green"
+                android:textFontWeight="500"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtSpendableBalanceAmount" />
+
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/composeFeeBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView24">
+
+
+            </androidx.compose.ui.platform.ComposeView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSign"
+            style="@style/Widget.AppTheme.MaterialButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_background_draw"
+            android:enabled="true"
+            android:text="@string/sign"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
