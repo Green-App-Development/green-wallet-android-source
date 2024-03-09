@@ -31,4 +31,6 @@ sealed interface TraderEvent {
     object PinnedCreateOffer : TraderEvent
     object ShowPinCreateOffer : TraderEvent
 
+    object OnBack : TraderEvent
+
 }

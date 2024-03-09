@@ -411,7 +411,8 @@ class BlockChainInteractImpl @Inject constructor(
                         c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
                         VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
                         val deleteSpentCoinsRow =
-                            spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
+                            spentCoinsDao.
+                            deleteSpentConsByTimeCreated(tran.created_at_time)
                         VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")
                         val formatted = formattedDoubleAmountWithPrecision(tran.amount)
                         val resLanguageResource =

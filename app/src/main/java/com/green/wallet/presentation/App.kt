@@ -85,7 +85,7 @@ class App : DaggerApplication() {
     lateinit var appComponent: AppComponent
 
     var applicationIsAlive = false
-    var isUserUnBoardDed = false
+    var isUserUnBoardDed = true
 
     private val handler = CoroutineExceptionHandler { context, ex ->
         VLog.d("Caught exception in coroutine scope : ${ex.message} for testing")

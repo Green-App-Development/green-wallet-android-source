@@ -357,6 +357,11 @@ class MainActivity : BaseActivity(), ComposeProvider {
                     window.statusBarColor = getColorResource(R.color.primary_app_background)
                 }
 
+                fragmentBrowser -> {
+                    setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+                    window.statusBarColor = getColorResource(R.color.primary_app_background)
+                }
+
                 else -> {
                     setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
                     window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -525,6 +530,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
                     fragmentQrCodeSend,
                     fragmentSwapSend,
                     fragmentTibetSwapDetail,
+                    fragmentTrader
                 ).contains(destination.id)
             ) {
                 binding.mainBottomNav.visibility = View.GONE
@@ -620,7 +626,9 @@ class MainActivity : BaseActivity(), ComposeProvider {
         navController.navigate(entPasscodeFrMain, bundle)
     }
 
-    fun popBackStackOnce() = navController.popBackStack()
+    fun popBackStackOnce() {
+        navController.popBackStack()
+    }
 
     fun popBackStackTwice() {
         navController.popBackStack()
@@ -707,6 +715,10 @@ class MainActivity : BaseActivity(), ComposeProvider {
     }
 
     fun move2DAppFragment() {
+        navController.navigate(fragmentBrowser)
+    }
+
+    fun move2TraderFragment() {
         navController.navigate(fragmentTrader)
     }
 

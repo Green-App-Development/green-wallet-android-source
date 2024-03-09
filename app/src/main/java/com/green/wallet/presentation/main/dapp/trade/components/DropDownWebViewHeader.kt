@@ -20,8 +20,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.green.compose.dimens.size_1
+import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_12
 import com.green.compose.dimens.size_15
+import com.green.compose.dimens.size_200
 import com.green.compose.dimens.size_218
 import com.green.compose.dimens.size_40
 import com.green.compose.dimens.text_12
@@ -43,9 +45,9 @@ fun DropDownWebViewHeader(
         expanded = expanded,
         modifier = modifier
             .background(
-                color = Provider.current.iconGrey
+                color = Provider.current.blackAppBackground
             )
-            .width(size_218),
+            .width(size_200),
         offset = DpOffset(300.dp, 0.dp),
         onDismissRequest = {
             close()
@@ -59,10 +61,10 @@ fun DropDownWebViewHeader(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_turn_off),
+                    painter = painterResource(id = R.drawable.ic_update),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(start = size_15)
+                        .padding(start = size_10)
                 )
                 DefaultText(
                     text = "Обновить",
@@ -91,7 +93,7 @@ fun DropDownWebViewHeader(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(start = size_15)
+                        .padding(start = size_10)
                 )
                 DefaultText(
                     text = "Поделиться",
@@ -120,10 +122,10 @@ fun DropDownWebViewHeader(
                     painter = painterResource(id = R.drawable.ic_copy_green),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(start = size_15)
+                        .padding(start = size_10)
                 )
                 DefaultText(
-                    text = "Поделиться",
+                    text = "Скопировать ссылку",
                     size = text_12,
                     color = Provider.current.txtPrimaryColor,
                     modifier = Modifier.padding(start = size_12)
@@ -150,7 +152,7 @@ fun DropDownWebViewHeader(
                     painter = painterResource(id = R.drawable.ic_turn_off),
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(start = size_15)
+                        .padding(start = size_10)
                 )
                 DefaultText(
                     text = "Поделиться",

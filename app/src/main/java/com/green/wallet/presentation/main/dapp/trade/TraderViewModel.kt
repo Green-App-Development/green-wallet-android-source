@@ -137,7 +137,6 @@ class TraderViewModel @Inject constructor(
     }
 
     fun handleEvent(event: TraderEvent) {
-        setEvent(event)
         when (event) {
             is TraderEvent.ChoseFee -> {
                 _offerViewState.update {
@@ -167,7 +166,9 @@ class TraderViewModel @Inject constructor(
                 setEvent(TraderEvent.SuccessTakingOffer)
             }
 
-            else -> Unit
+            else -> {
+                setEvent(event)
+            }
         }
     }
 

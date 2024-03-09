@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 
 
@@ -17,6 +18,7 @@ fun DefaultText(
     color: Color,
     fontWeight: FontWeight = FontWeight(400),
     textAlign: TextAlign = TextAlign.Start,
+    textDecoration: TextDecoration = TextDecoration.None
 ) {
     Text(
         text = text,
@@ -24,6 +26,7 @@ fun DefaultText(
         color = color,
         fontWeight = fontWeight,
         textAlign = textAlign,
-        modifier = modifier
+        modifier = modifier,
+        textDecoration = textDecoration
     )
 }

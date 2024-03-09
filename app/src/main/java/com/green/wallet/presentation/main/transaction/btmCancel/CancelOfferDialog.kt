@@ -49,8 +49,6 @@ class CancelOfferDialog :
             vm.event.collectFlow(this) {
                 when (it) {
                     is CancelOfferEvent.OnSign -> {
-                        //need to call pin code
-                        VLog.d("On Sign cancelling offering")
                         sendingTransactionToItself()
                     }
 

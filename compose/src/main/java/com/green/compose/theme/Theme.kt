@@ -30,7 +30,7 @@ data class CustomColorsPalette(
     val progressTrackColor: Color = Color.Unspecified,
     val bcgTransactionItem: Color = Color.Unspecified,
     val blue: Color = Color(0xFF1E93FF),
-    val offerTransactionDetails: Color = Color.Unspecified
+    val offerTransactionDetails: Color = Color.Unspecified,
 )
 
 val OnLightCustomColorsPalette = CustomColorsPalette(

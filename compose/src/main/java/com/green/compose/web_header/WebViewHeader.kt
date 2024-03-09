@@ -47,7 +47,11 @@ fun WebViewHeader(
         Icon(
             painter = painterResource(id = R.drawable.ic_back_arrow),
             contentDescription = null,
-            modifier = Modifier.size(size_24),
+            modifier = Modifier
+                .size(size_24)
+                .clickable {
+                    back()
+                },
             tint = Provider.current.txtPrimaryColor
         )
 
@@ -84,7 +88,11 @@ fun WebViewHeader(
             Icon(
                 painter = painterResource(id = R.drawable.ic_x),
                 contentDescription = null,
-                modifier = Modifier.size(size_24),
+                modifier = Modifier
+                    .size(size_24)
+                    .clickable {
+                        back()
+                    },
                 tint = Provider.current.txtPrimaryColor
             )
         }

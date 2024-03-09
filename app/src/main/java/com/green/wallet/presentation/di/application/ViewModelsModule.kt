@@ -9,6 +9,7 @@ import com.green.wallet.presentation.main.address.AddressViewModel
 import com.green.wallet.presentation.main.allsettings.AllSettingsViewModel
 import com.green.wallet.presentation.main.createnewwallet.NewWalletViewModel
 import com.green.wallet.presentation.main.dapp.DAppViewModel
+import com.green.wallet.presentation.main.dapp.browser.BrowserViewModel
 import com.green.wallet.presentation.main.dapp.trade.TraderViewModel
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeViewModel
 import com.green.wallet.presentation.main.home.HomeFragmentViewModel
@@ -236,5 +237,9 @@ abstract class ViewModelsModule {
     @ViewModelKey(CancelOfferViewModel::class)
     abstract fun bindingCancelOfferViewModel(viewModel: CancelOfferViewModel): ViewModel
 
+    @IntoMap
+    @Binds
+    @ViewModelKey(BrowserViewModel::class)
+    abstract fun bindingBrowserViewModel(viewModel: BrowserViewModel): ViewModel
 
 }

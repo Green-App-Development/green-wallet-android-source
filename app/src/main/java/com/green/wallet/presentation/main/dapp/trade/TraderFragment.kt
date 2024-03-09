@@ -70,60 +70,6 @@ class TraderFragment : BaseComposeFragment() {
                 onEvent = viewModel::handleEvent,
                 events = viewModel.event
             )
-
-            LaunchedEffect(true) {
-                launch {
-                    viewModel.event.collect {
-                        VLog.d("TraderEvent received : $it")
-                        when (it) {
-                            TraderEvent.ShowPinCode -> {
-                                PinCodeFragment.build(reason = ReasonEnterCode.CONNECTION_REQUEST)
-                                    .show(childFragmentManager, "")
-                            }
-
-                            is TraderEvent.ParseTakeOffer -> {
-                                viewModel.updateOfferDialogState(it.offer)
-                                callFlutterTakeOffer(it.offer)
-                                viewModel.handleEvent(TraderEvent.ShowTakeOfferDialog)
-                            }
-
-                            is TraderEvent.TakeOffer -> {
-                                PinCodeFragment.build(reason = ReasonEnterCode.ACCEPT_OFFER)
-                                    .show(childFragmentManager, "")
-
-                            }
-
-                            is TraderEvent.PinConfirmAcceptOffer -> {
-                                viewModel.setLoading(true)
-                                val value = viewModel.offerViewState.value
-                                callFlutterToPushTakeOffer(
-                                    value.offer, value.chosenFee
-                                )
-                            }
-
-                            is TraderEvent.FailureTakingOffer -> {
-                                showFailedSendingTransaction()
-                            }
-
-                            is TraderEvent.SuccessTakingOffer -> {
-                                showSuccessSendMoneyDialog()
-                            }
-
-                            is TraderEvent.ShowPinCreateOffer -> {
-                                callFlutterToCreateOffer()
-//                                PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
-//                                    .show(childFragmentManager, "")
-                            }
-
-                            is TraderEvent.PinnedCreateOffer -> {
-
-                            }
-
-                            else -> Unit
-                        }
-                    }
-                }
-            }
         }
 
     }
@@ -230,12 +176,66 @@ class TraderFragment : BaseComposeFragment() {
         return Gson().fromJson(item, NetworkItem::class.java)
     }
 
-    override fun collectFlowOnStart(scope: CoroutineScope) {
+    override fun collectFlowOnCreated(scope: CoroutineScope) {
         viewModel.viewState.collectFlow(scope) {
             if (it.isLoading) {
                 dialogManager.showProgress(requireActivity())
             } else {
                 dialogManager.hidePrevDialogs()
+            }
+        }
+
+        viewModel.event.collectFlow(scope) {
+            VLog.d("TraderEvent received : $it")
+            when (it) {
+                TraderEvent.ShowPinCode -> {
+                    PinCodeFragment.build(reason = ReasonEnterCode.CONNECTION_REQUEST)
+                        .show(childFragmentManager, "")
+                }
+
+                is TraderEvent.ParseTakeOffer -> {
+                    viewModel.updateOfferDialogState(it.offer)
+                    callFlutterTakeOffer(it.offer)
+                    viewModel.handleEvent(TraderEvent.ShowTakeOfferDialog)
+                }
+
+                is TraderEvent.TakeOffer -> {
+                    PinCodeFragment.build(reason = ReasonEnterCode.ACCEPT_OFFER)
+                        .show(childFragmentManager, "")
+
+                }
+
+                is TraderEvent.PinConfirmAcceptOffer -> {
+                    viewModel.setLoading(true)
+                    val value = viewModel.offerViewState.value
+                    callFlutterToPushTakeOffer(
+                        value.offer, value.chosenFee
+                    )
+                }
+
+                is TraderEvent.FailureTakingOffer -> {
+                    showFailedSendingTransaction()
+                }
+
+                is TraderEvent.SuccessTakingOffer -> {
+                    showSuccessSendMoneyDialog()
+                }
+
+                is TraderEvent.ShowPinCreateOffer -> {
+                    callFlutterToCreateOffer()
+//                                PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
+//                                    .show(childFragmentManager, "")
+                }
+
+                is TraderEvent.PinnedCreateOffer -> {
+
+                }
+
+                is TraderEvent.OnBack -> {
+                    getMainActivity().popBackStackOnce()
+                }
+
+                else -> Unit
             }
         }
     }

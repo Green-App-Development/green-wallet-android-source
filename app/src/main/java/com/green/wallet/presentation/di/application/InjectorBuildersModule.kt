@@ -14,6 +14,7 @@ import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWallet
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
 import com.green.wallet.presentation.main.dapp.DAppFragment
+import com.green.wallet.presentation.main.dapp.browser.BrowserFragment
 import com.green.wallet.presentation.main.dapp.trade.TraderFragment
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
@@ -214,5 +215,8 @@ abstract class InjectorBuildersModule {
 
     @ContributesAndroidInjector
     abstract fun injectCancelOfferDialogFragment(): CancelOfferDialog
+
+    @ContributesAndroidInjector
+    abstract fun injectBrowserFragment(): BrowserFragment
 
 }

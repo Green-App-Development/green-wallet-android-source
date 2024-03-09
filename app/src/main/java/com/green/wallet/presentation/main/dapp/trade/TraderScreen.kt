@@ -115,10 +115,10 @@ fun TraderScreen(
                         dropDownMenu = true
                     },
                     back = {
-
+                        onEvent(TraderEvent.OnBack)
                     },
                     closeX = {
-
+                        onEvent(TraderEvent.OnBack)
                     }
                 )
 
@@ -208,8 +208,8 @@ fun WebViewContainer(
                         onEvent = onEvent
                     )
                 )
-//                this.loadUrl("https://green-app-sigma.vercel.app/")
-                this.loadUrl("file:///android_asset/index.html")
+                this.loadUrl("https://green-app-sigma.vercel.app/")
+//                this.loadUrl("file:///android_asset/index.html")
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         bridge.init()
