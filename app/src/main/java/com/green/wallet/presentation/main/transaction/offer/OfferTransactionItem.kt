@@ -59,6 +59,7 @@ import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.OfferTransaction
+import com.green.wallet.presentation.custom.formattedDateForTransaction
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
@@ -133,7 +134,7 @@ fun OfferTransactionItem(
         ) {
             val ifTakeOffer = if (state.acceptOffer) "Take offer" else "Create offer"
             DefaultText(
-                text = "Take offer",
+                text = ifTakeOffer,
                 size = text_15,
                 color = Provider.current.blue,
                 modifier = Modifier
@@ -147,11 +148,13 @@ fun OfferTransactionItem(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1.2f),
-                contentAlignment = Alignment.Center
             ) {
                 CircularProgressBar(
                     modifier = Modifier
-                        .align(Alignment.Center),
+                        .align(Alignment.CenterStart)
+                        .padding(
+                            start = size_5
+                        ), 
                     size = size_20,
                     strokeWidth = 3.dp
                 )
@@ -204,10 +207,11 @@ fun OfferTransactionItem(
                         color = Provider.current.greyText
                     )
 
-                    val activity = LocalContext.current.getActivity()!!
+//                    val activity = LocalContext.current.getActivity()!!
 
                     DefaultText(
-                        text = activity.formatDateWithMonthInWord(state.createAtTime),
+//                        text = formattedDateForTransaction(activity, state.createAtTime),
+                        text = "",
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )
@@ -316,11 +320,10 @@ fun OfferTransactionItem(
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )
-
                 }
             }
 
-            if (!state.acceptOffer && !state.cancelled || true)
+            if (!state.acceptOffer && !state.cancelled)
                 Box(
                     modifier = Modifier
                         .padding(

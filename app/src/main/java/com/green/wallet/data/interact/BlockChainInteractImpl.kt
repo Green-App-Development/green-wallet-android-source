@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.green.wallet.data.local.*
 import com.green.wallet.data.local.entity.NFTCoinEntity
 import com.green.wallet.data.local.entity.NFTInfoEntity
+import com.green.wallet.data.local.entity.OfferTransactionEntity
 import com.green.wallet.data.local.entity.SpentCoinsEntity
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.data.local.entity.WalletEntity
@@ -28,6 +29,8 @@ import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.PRECISION_CAT
+import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
@@ -56,7 +59,8 @@ class BlockChainInteractImpl @Inject constructor(
     private val greenAppInteract: GreenAppInteract,
     private val context: Context,
     private val nftCoinsDao: NftCoinsDao,
-    private val nftInfoDao: NftInfoDao
+    private val nftInfoDao: NftInfoDao,
+    private val offerTransactionDao: OfferTransactionDao
 ) : BlockChainInteract {
 
     private val mutexUpdateBalance = Mutex()
@@ -148,8 +152,63 @@ class BlockChainInteractImpl @Inject constructor(
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
                 updateWalletNFTBalance(wallet)
+                updateOfferTransactions(wallet)
             }
         }
+    }
+
+    private suspend fun updateOfferTransactions(wallet: WalletEntity) {
+        try {
+            if (isThisChivesNetwork(wallet.networkType)) return
+            val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+                ?: throw Exception("Exception in converting json str to networkItem")
+            val service = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+                .create(BlockChainService::class.java)
+            val offersTrans = offerTransactionDao.getAllOfferTransactionsByAddressFk(wallet.address)
+            for (offer in offersTrans) {
+                if (offer.acceptOffer) {
+                    updateTakingOfferTransactionStatus(offer, service)
+                } else {
+
+                }
+            }
+        } catch (ex: Exception) {
+            VLog.d("Exception occurred when updating : ${ex.message}")
+        }
+    }
+
+    private suspend fun updateTakingOfferTransactionStatus(
+        offer: OfferTransactionEntity,
+        service: BlockChainService
+    ) {
+        val coin = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")[0]
+        val spentHeight = spentHeightForXCHCoin(service, coin)
+        if (spentHeight != -1L) {
+            offerTransactionDao.updateOfferTransaction(
+                status = Status.Completed,
+                height = spentHeight.toInt(),
+                tranId = offer.tranId
+            )
+        }
+    }
+
+    private suspend fun spentHeightForXCHCoin(
+        service: BlockChainService,
+        coin: SpentCoinsEntity
+    ): Long {
+        val body = hashMapOf<String, Any>()
+        body["parent_ids"] =
+            listOf(coin.parent_coin_info)
+        body["include_spent_coins"] = true
+        val res =
+            service.getCoinRecordsByParentIds(body).body()?.coin_records
+        for (curCoin in res ?: return -1L) {
+            val multi = (coin.amount * PRECISION_XCH).toLong()
+            if (curCoin.coin.amount == multi && curCoin.spent_block_index != 0L) {
+                return curCoin.spent_block_index
+            }
+        }
+        return -1L
     }
 
     private suspend fun updateWalletNFTBalance(wallet: WalletEntity) {
@@ -411,8 +470,7 @@ class BlockChainInteractImpl @Inject constructor(
                         c += nftCoinsDao.deleteNFTCoinEntityByCoinInfo(tran.nft_coin_hash)
                         VLog.d("Updating nft transaction height : ${tran.transaction_id} and deleting nftcoininfo : $c")
                         val deleteSpentCoinsRow =
-                            spentCoinsDao.
-                            deleteSpentConsByTimeCreated(tran.created_at_time)
+                            spentCoinsDao.deleteSpentConsByTimeCreated(tran.created_at_time)
                         VLog.d("Affected rows when deleting spentCoins for nft : $deleteSpentCoinsRow")
                         val formatted = formattedDoubleAmountWithPrecision(tran.amount)
                         val resLanguageResource =

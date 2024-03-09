@@ -214,7 +214,7 @@ fun Activity.formatDateWithMonthInWord(timeCreated: Long): String {
     val split = format.split(" ")
     val dateMonthYear = split[0].split('-')
     val getTranslatedMonth = getTranslatedMonth(this, dateMonthYear[1].toInt())
-    var day = dateMonthYear[0].toString()
+    var day = dateMonthYear[0]
     if (day.length == 1)
         day = "0$day"
     val hourTime = split[1].split(":").subList(0, 2)

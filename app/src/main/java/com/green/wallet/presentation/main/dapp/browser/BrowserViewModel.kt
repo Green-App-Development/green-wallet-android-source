@@ -44,7 +44,13 @@ class BrowserViewModel @Inject constructor(
     fun checkForConnectedDApps() {
         _viewState.update {
             it.copy(
-                dAppList = dAppList.map { it.copy(isConnected = connectedDApp.connected.contains(it.name)) }
+                dAppList = it.dAppList.map {
+                    it.copy(
+                        isConnected = connectedDApp.connected.contains(
+                            it.name
+                        )
+                    )
+                }
             )
         }
     }

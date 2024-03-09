@@ -1,5 +1,7 @@
 package com.green.wallet.presentation.main.dapp.browser
 
+import android.os.Bundle
+import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
@@ -17,9 +19,13 @@ class BrowserFragment : BaseComposeFragment() {
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: BrowserViewModel by viewModels { viewModelFactory }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.checkForConnectedDApps()
+    }
+
     @Composable
     override fun SetUI() {
-        viewModel.checkForConnectedDApps()
         val state by viewModel.viewState.collectAsStateWithLifecycle()
         BrowserScreen(
             state = state,

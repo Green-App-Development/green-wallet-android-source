@@ -42,10 +42,6 @@ class TransactionsViewModel @Inject constructor(
     private val _nftInfoState = MutableStateFlow<NFTInfo?>(null)
     val nftInfoState = _nftInfoState.asStateFlow()
 
-    init {
-
-    }
-
 
     suspend fun getAllQueriedTransactionList(
         fkAddress: String?,

@@ -38,4 +38,10 @@ interface OfferTransactionDao {
     @Query("SELECT * FROM OfferTransactionEntity")
     suspend fun getAllOfferTransactions(): List<OfferTransactionEntity>
 
+    @Query("SELECT * FROM OfferTransactionEntity WHERE addressFk=:addressFk")
+    suspend fun getAllOfferTransactionsByAddressFk(addressFk: String): List<OfferTransactionEntity>
+
+    @Query("UPDATE OfferTransactionEntity SET status=:status,height=:height WHERE tranId=:tranId")
+    suspend fun updateOfferTransaction(status: Status, height: Int, tranId: String): Int
+
 }

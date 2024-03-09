@@ -146,6 +146,7 @@ class TraderViewModel @Inject constructor(
     }
 
     fun handleEvent(event: TraderEvent) {
+        setEvent(event)
         when (event) {
             is TraderEvent.ChoseFee -> {
                 _offerViewState.update {
@@ -271,7 +272,8 @@ class TraderViewModel @Inject constructor(
                     }
 
                     is CatToken -> {
-                        isEnough = false
+                        if (req.spendableBalance <= req.amount)
+                            isEnough = false
                         break
                     }
                 }

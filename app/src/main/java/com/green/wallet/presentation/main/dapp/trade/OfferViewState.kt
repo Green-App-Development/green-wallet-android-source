@@ -13,5 +13,5 @@ data class OfferViewState(
     val feeEnough: Boolean = true,
     val dexieFee: Double = 0.0,
     val spendCoins: List<SpentCoin> = emptyList(),
-    val btnEnabled: Boolean = false
+    val btnEnabled: Boolean = true
 )
