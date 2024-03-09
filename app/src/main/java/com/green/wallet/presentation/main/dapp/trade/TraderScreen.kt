@@ -36,6 +36,9 @@ import com.green.wallet.presentation.main.dapp.trade.bottom.ModelBottomSheetOffe
 import com.green.wallet.presentation.main.dapp.trade.components.DropDownWebViewHeader
 import com.green.wallet.presentation.tools.VLog
 import de.andycandy.android.bridge.Bridge
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
@@ -126,7 +129,8 @@ fun TraderScreen(
                     expanded = dropDownMenu,
                     close = {
                         dropDownMenu = false
-                    }
+                    },
+                    onEvent = onEvent
                 )
             }
 
@@ -205,11 +209,12 @@ fun WebViewContainer(
                 val bridge = Bridge(mContext, this)
                 bridge.addJSInterface(
                     GreenWalletJS(
+                        state = state,
                         onEvent = onEvent
                     )
                 )
-                this.loadUrl("https://green-app-sigma.vercel.app/")
-//                this.loadUrl("file:///android_asset/index.html")
+                this.loadUrl("file:///android_asset/index.html")
+//                this.loadUrl("https://green-app-sigma.vercel.app/")
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         bridge.init()

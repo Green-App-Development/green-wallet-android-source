@@ -348,11 +348,13 @@ fun DAppItemRepresentation(
                     )
                 }
             }
-            Image(
+            Icon(
                 painter = painterResource(id = com.greenwallet.uikit.R.drawable.ic_script),
                 contentDescription = null,
                 modifier = Modifier
                     .size(size_30),
+                tint = if (item.isConnected) Provider.current.green
+                else Provider.current.secondGrey
             )
         }
 

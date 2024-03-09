@@ -2,14 +2,16 @@ package com.green.wallet.presentation.main.dapp.browser
 
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.DAppModel
+import com.green.wallet.presentation.di.appState.ConnectedDApp
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-class BrowserViewModel @Inject constructor() :
-    BaseViewModel<BrowserState, BrowserEvent>(
-        BrowserState()
-    ) {
+class BrowserViewModel @Inject constructor(
+    private val connectedDApp: ConnectedDApp
+) : BaseViewModel<BrowserState, BrowserEvent>(
+    BrowserState()
+) {
 
     private val dAppList = listOf(
         DAppModel(
@@ -36,6 +38,14 @@ class BrowserViewModel @Inject constructor() :
             else -> {
                 setEvent(event)
             }
+        }
+    }
+
+    fun checkForConnectedDApps() {
+        _viewState.update {
+            it.copy(
+                dAppList = dAppList.map { it.copy(isConnected = connectedDApp.connected.contains(it.name)) }
+            )
         }
     }
 

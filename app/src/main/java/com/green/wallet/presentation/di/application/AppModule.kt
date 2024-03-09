@@ -12,6 +12,7 @@ import com.green.wallet.data.local.AppDatabase.Companion.migration6To37
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl
 import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl.Companion.SECOND_STAGE
+import com.green.wallet.presentation.di.appState.ConnectedDApp
 import com.green.wallet.presentation.tools.VLog
 import dagger.Module
 import dagger.Provides
@@ -86,5 +87,11 @@ class AppModule {
 
     @Provides
     fun provideOfferTransactionDao(appDatabase: AppDatabase) = appDatabase.offerTransDao
+
+    @Provides
+    @AppScope
+    fun providerConnectDAppList(): ConnectedDApp {
+        return ConnectedDApp()
+    }
 
 }

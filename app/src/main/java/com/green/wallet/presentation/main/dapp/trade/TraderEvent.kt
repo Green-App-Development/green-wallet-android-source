@@ -33,4 +33,12 @@ sealed interface TraderEvent {
 
     object OnBack : TraderEvent
 
+    object OnReload : TraderEvent
+
+    object OnShare : TraderEvent
+
+    object OnCopyLink : TraderEvent
+
+    object OnDisable : TraderEvent
+
 }

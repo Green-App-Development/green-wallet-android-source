@@ -8,11 +8,16 @@ import de.andycandy.android.bridge.DefaultJSInterface
 import de.andycandy.android.bridge.NativeCall
 
 class GreenWalletJS(
+    private val state: TraderViewState,
     private val onEvent: (TraderEvent) -> Unit
 ) : DefaultJSInterface("GreenWallet") {
 
     @NativeCall(CallType.FULL_PROMISE)
     fun connect() = doInBackground { promise ->
+        if (state.isConnected) {
+            promise.resolve(true)
+            return@doInBackground
+        }
         onEvent(TraderEvent.ShowConnectionDialog)
         JavaJSThreadCommunicator.wait = true
         while (JavaJSThreadCommunicator.wait) {

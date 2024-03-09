@@ -16,6 +16,7 @@ import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
+import com.green.wallet.presentation.di.appState.ConnectedDApp
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
@@ -42,7 +43,7 @@ import kotlin.math.abs
 
 
 class TraderViewModel @Inject constructor(
-    val passCodeCommunicator: PassCodeCommunicator,
+    passCodeCommunicator: PassCodeCommunicator,
     private val tokenInteract: TokenInteract,
     private val walletInteract: WalletInteract,
     private val spentCoinsInteract: SpentCoinsInteract,
@@ -51,7 +52,8 @@ class TraderViewModel @Inject constructor(
     private val dexieInteract: DexieInteract,
     private val nftInteractor: NFTInteract,
     private val pinCodeCommunicator: PinCodeCommunicator,
-    private val offerTransactionInteract: OfferTransactionInteract
+    private val offerTransactionInteract: OfferTransactionInteract,
+    private val connectedDApp: ConnectedDApp
 ) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
 
     var wallet: Wallet? = null
@@ -90,6 +92,7 @@ class TraderViewModel @Inject constructor(
         pinCodeCommunicator.onSuccessPassCode = {
             when (it) {
                 ReasonEnterCode.CONNECTION_REQUEST -> {
+                    connectedDApp.connected.add("Dexie")
                     _viewState.update { it.copy(isConnected = true) }
                     JavaJSThreadCommunicator.connected = true
                     JavaJSThreadCommunicator.wait = false
@@ -108,6 +111,12 @@ class TraderViewModel @Inject constructor(
         }
 
         initFirstWallet()
+
+        checkConnectedDApp()
+    }
+
+    private fun checkConnectedDApp() {
+        _viewState.update { it.copy(isConnected = connectedDApp.connected.contains("Dexie")) }
     }
 
     private fun initFirstWallet() {
@@ -529,5 +538,9 @@ class TraderViewModel @Inject constructor(
             getNetworkItemFromPrefs(wallet!!.networkType)!!,
             nftCoinID
         )
+
+    fun disableDApp() {
+        connectedDApp.connected.remove("Dexie")
+    }
 
 }

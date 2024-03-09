@@ -1,8 +1,8 @@
 package com.green.wallet.presentation.main.dapp.trade
 
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
@@ -21,17 +21,18 @@ import com.green.wallet.presentation.main.dapp.trade.models.FlutterToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.main.pincode.PinCodeFragment
+import com.green.wallet.presentation.tools.DEXIE_BASE_URL
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.copyToClipBoard
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TraderFragment : BaseComposeFragment() {
@@ -42,6 +43,8 @@ class TraderFragment : BaseComposeFragment() {
 
     @Inject
     lateinit var dialogManager: DialogManager
+
+    private var webView: WebView? = null
 
     val methodChannel by lazy {
         MethodChannel(
@@ -66,12 +69,13 @@ class TraderFragment : BaseComposeFragment() {
             TraderScreen(
                 state = state,
                 offerViewState = offerState,
-                webView = {},
+                webView = {
+                    webView = it
+                },
                 onEvent = viewModel::handleEvent,
                 events = viewModel.event
             )
         }
-
     }
 
     private fun initListeningMethod() {
@@ -232,6 +236,27 @@ class TraderFragment : BaseComposeFragment() {
                 }
 
                 is TraderEvent.OnBack -> {
+                    getMainActivity().popBackStackOnce()
+                }
+
+                is TraderEvent.OnReload -> {
+                    webView?.reload()
+                }
+
+                is TraderEvent.OnShare -> {
+                    getMainActivity().launchingIntentForSendingWalletAddress(
+                        DEXIE_BASE_URL
+                    )
+                }
+
+                is TraderEvent.OnCopyLink -> {
+                    requireActivity().copyToClipBoard(
+                        DEXIE_BASE_URL
+                    )
+                }
+
+                is TraderEvent.OnDisable -> {
+                    viewModel.disableDApp()
                     getMainActivity().popBackStackOnce()
                 }
 

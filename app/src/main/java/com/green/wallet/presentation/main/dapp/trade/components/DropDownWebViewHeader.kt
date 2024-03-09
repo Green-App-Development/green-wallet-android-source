@@ -22,9 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_12
-import com.green.compose.dimens.size_15
 import com.green.compose.dimens.size_200
-import com.green.compose.dimens.size_218
 import com.green.compose.dimens.size_40
 import com.green.compose.dimens.text_12
 import com.green.compose.text.DefaultText
@@ -56,6 +54,8 @@ fun DropDownWebViewHeader(
             modifier = Modifier
                 .height(size_40),
             onClick = {
+                onEvent(TraderEvent.OnReload)
+                close()
             }) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -83,7 +83,8 @@ fun DropDownWebViewHeader(
         DropdownMenuItem(
             modifier = Modifier.height(size_40),
             onClick = {
-
+                onEvent(TraderEvent.OnShare)
+                close()
             }) {
 
             Row(
@@ -112,7 +113,8 @@ fun DropDownWebViewHeader(
         DropdownMenuItem(
             modifier = Modifier.height(size_40),
             onClick = {
-
+                onEvent(TraderEvent.OnCopyLink)
+                close()
             }) {
 
             Row(
@@ -142,7 +144,8 @@ fun DropDownWebViewHeader(
         DropdownMenuItem(
             modifier = Modifier.height(size_40),
             onClick = {
-
+                onEvent(TraderEvent.OnDisable)
+                close()
             }) {
 
             Row(
@@ -155,7 +158,7 @@ fun DropDownWebViewHeader(
                         .padding(start = size_10)
                 )
                 DefaultText(
-                    text = "Поделиться",
+                    text = "Отключить",
                     size = text_12,
                     color = Provider.current.txtPrimaryColor,
                     modifier = Modifier.padding(start = size_12)
