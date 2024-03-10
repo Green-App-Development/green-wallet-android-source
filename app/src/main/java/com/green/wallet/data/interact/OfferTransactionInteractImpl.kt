@@ -47,4 +47,8 @@ class OfferTransactionInteractImpl @Inject constructor(
         return offerTranDao.getAllOfferTransactions().map { it.toOfferTransaction() }
     }
 
+    override suspend fun updateOfferTransactionStatus(status: Status, tranID: String) {
+        offerTranDao.updateOfferTransactionStatus(status, tranID)
+    }
+
 }

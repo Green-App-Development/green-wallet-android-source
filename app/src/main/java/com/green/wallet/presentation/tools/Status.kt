@@ -5,5 +5,6 @@ enum class Status {
     InProgress,
     Outgoing,
     OTHER,
-    Completed
+    Completed,
+    Completing
 }

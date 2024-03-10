@@ -44,4 +44,7 @@ interface OfferTransactionDao {
     @Query("UPDATE OfferTransactionEntity SET status=:status,height=:height WHERE tranId=:tranId")
     suspend fun updateOfferTransaction(status: Status, height: Int, tranId: String): Int
 
+    @Query("UPDATE OfferTransactionEntity SET status=:status WHERE tranId=:tranId")
+    suspend fun updateOfferTransactionStatus(status: Status, tranId: String): Int
+
 }

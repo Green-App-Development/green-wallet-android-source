@@ -21,7 +21,7 @@ data class OfferTransaction(
     val source: String = "",
     val hashTransaction: String = " ",
     val fee: Double = 0.0,
-    val height: Long = 0L,
+    val height: Long = 1023231,
     val acceptOffer: Boolean = true,
     val cancelled: Boolean = false,
     val addressFk: String = ""

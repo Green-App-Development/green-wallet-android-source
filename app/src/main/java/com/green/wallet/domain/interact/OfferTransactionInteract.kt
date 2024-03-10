@@ -21,5 +21,6 @@ interface OfferTransactionInteract {
 
     suspend fun getAllOfferTransactions(): List<OfferTransaction>
 
+    suspend fun updateOfferTransactionStatus(status: Status, tranID: String)
 
 }

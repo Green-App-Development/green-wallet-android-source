@@ -66,13 +66,13 @@ class CancelOfferViewModel @Inject constructor(
     }
 
     fun handleEvent(event: CancelOfferEvent) {
+        setEvent(CancelOfferEvent.OnSign)
         when (event) {
             is CancelOfferEvent.OnFeeChosen -> {
                 _viewState.update { it.copy(fee = event.amount) }
             }
 
             is CancelOfferEvent.OnSign -> {
-                setEvent(CancelOfferEvent.OnSign)
                 _viewState.update { it.copy(isLoading = true) }
             }
         }

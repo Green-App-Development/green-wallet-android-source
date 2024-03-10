@@ -32,10 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.green.compose.dimens.size_1
@@ -52,20 +52,19 @@ import com.green.compose.dimens.size_8
 import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
-import com.green.compose.extension.getActivity
 import com.green.compose.progress.CircularProgressBar
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.OfferTransaction
-import com.green.wallet.presentation.custom.formattedDateForTransaction
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.transaction.TransactionIntent
-import com.green.wallet.presentation.tools.formatDateWithMonthInWord
 
+private const val HEIGHT_STATUS_DONE = 210
+private const val HEIGHT_CANCEL = 64
 
 @Composable
 fun OfferTransactionItem(
@@ -77,8 +76,14 @@ fun OfferTransactionItem(
 
     var isDetailOpen by remember { mutableStateOf(initialOpen) }
 
+    val heightButtonForCreate = remember {
+        if (state.height == 0L && !state.acceptOffer && !state.cancelled)
+            HEIGHT_CANCEL
+        else 0
+    }
+
     val additionalHeight = remember {
-        (if (state.height == 0L) 68 else 0) + 210 + ((state.offered.size + state.requested.size - 2) * 10)
+        heightButtonForCreate + HEIGHT_STATUS_DONE + ((state.offered.size + state.requested.size - 2) * 10)
     }
 
     val heightParentColumn by animateDpAsState(
@@ -132,11 +137,24 @@ fun OfferTransactionItem(
                 .background(color = Provider.current.bcgTransactionItem)
                 .padding(start = size_5)
         ) {
-            val ifTakeOffer = if (state.acceptOffer) "Take offer" else "Create offer"
+            val offerStatus =
+                if (state.acceptOffer)
+                    "Take offer"
+                else if (!state.cancelled)
+                    "Create offer"
+                else
+                    "Cancelled"
+
+            val offerColor =
+                if (state.height != 0L || state.cancelled)
+                    Provider.current.green
+                else
+                    Provider.current.blue
+            
             DefaultText(
-                text = ifTakeOffer,
+                text = offerStatus,
                 size = text_15,
-                color = Provider.current.blue,
+                color = offerColor,
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1.2f)
@@ -149,15 +167,25 @@ fun OfferTransactionItem(
                     .fillMaxHeight()
                     .weight(1.2f),
             ) {
-                CircularProgressBar(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(
-                            start = size_5
-                        ), 
-                    size = size_20,
-                    strokeWidth = 3.dp
-                )
+                if (state.height == 0L)
+                    CircularProgressBar(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(
+                                start = size_5
+                            ),
+                        size = size_20,
+                        strokeWidth = 3.dp
+                    )
+                else
+                    DefaultText(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart),
+                        text = "${state.height}",
+                        size = text_15,
+                        color = Provider.current.txtPrimaryColor,
+                        textDecoration = TextDecoration.Underline
+                    )
             }
 
             Box(
@@ -277,7 +305,7 @@ fun OfferTransactionItem(
                     )
 
                     DefaultText(
-                        text = "0 XCH",
+                        text = "${formattedDoubleAmountWithPrecision(state.fee)} XCH",
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )
@@ -315,8 +343,9 @@ fun OfferTransactionItem(
                             )
                     )
 
+                    val heightTran = if (state.height == 0L) "-" else "${state.height}"
                     DefaultText(
-                        text = "1234567",
+                        text = heightTran,
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )

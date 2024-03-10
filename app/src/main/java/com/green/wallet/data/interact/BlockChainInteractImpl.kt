@@ -167,6 +167,7 @@ class BlockChainInteractImpl @Inject constructor(
             val offersTrans = offerTransactionDao.getAllOfferTransactionsByAddressFk(wallet.address)
             for (offer in offersTrans) {
                 if (offer.acceptOffer) {
+                    VLog.d("OfferTrans AcceptOffer true : $offersTrans")
                     updateTakingOfferTransactionStatus(offer, service)
                 } else {
 
@@ -182,6 +183,7 @@ class BlockChainInteractImpl @Inject constructor(
         service: BlockChainService
     ) {
         val coin = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")[0]
+        VLog.d("Coin xch for taking offer spent : $coin")
         val spentHeight = spentHeightForXCHCoin(service, coin)
         if (spentHeight != -1L) {
             offerTransactionDao.updateOfferTransaction(
@@ -189,6 +191,10 @@ class BlockChainInteractImpl @Inject constructor(
                 height = spentHeight.toInt(),
                 tranId = offer.tranId
             )
+            notificationHelper.callGreenAppNotificationMessages(
+                "Take offer is completed", System.currentTimeMillis()
+            )
+            spentCoinsDao.deleteSpentConsByTimeCreated(offer.createdTime)
         }
     }
 

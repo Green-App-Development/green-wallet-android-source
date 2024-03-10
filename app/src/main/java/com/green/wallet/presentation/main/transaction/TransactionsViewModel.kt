@@ -17,6 +17,7 @@ import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseIntentViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -155,7 +156,7 @@ class TransactionsViewModel @Inject constructor(
     suspend fun getDistinctNetworkTypeValues() = walletInteract.getDistinctNetworkTypes()
 
     fun swipedRefreshClicked(onFinished: () -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             blockChainInteract.updateBalanceAndTransactionsPeriodically()
             greenAppInteract.requestOtherNotifItems()
             onFinished()
