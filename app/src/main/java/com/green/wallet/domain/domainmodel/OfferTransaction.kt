@@ -10,21 +10,16 @@ import com.green.wallet.presentation.tools.Status
 data class OfferTransaction(
     val transId: String = "",
     val createAtTime: Long = 0L,
-    val requested: List<Token> = listOf(
-        CatToken("XCH", "", 0.00003),
-        CatToken("XCH", "", 0.00003),
-    ),
-    val offered: List<Token> = listOf(
-        CatToken("XCH", "", 0.003),
-        NftToken("Fucking fiends of friends", "nfatadlkasjdladadas", "alsdkjalsdas"),
-    ),
+    val requested: List<Token> = listOf(),
+    val offered: List<Token> = listOf(),
     val source: String = "",
     val hashTransaction: String = " ",
     val fee: Double = 0.0,
-    val height: Long = 1023231,
-    val acceptOffer: Boolean = true,
+    val height: Long = 0,
+    val acceptOffer: Boolean = false,
     val cancelled: Boolean = false,
-    val addressFk: String = ""
+    val addressFk: String = "",
+    val status: Status = Status.InProgress
 ) : Transaction {
 
     fun toOfferTransactionEntity(addressFk: String) = OfferTransactionEntity(

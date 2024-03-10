@@ -89,6 +89,9 @@ class AppModule {
     fun provideOfferTransactionDao(appDatabase: AppDatabase) = appDatabase.offerTransDao
 
     @Provides
+    fun provideCancelTransactionDao(appDatabase: AppDatabase) = appDatabase.cancelTranDao
+
+    @Provides
     @AppScope
     fun providerConnectDAppList(): ConnectedDApp {
         return ConnectedDApp()

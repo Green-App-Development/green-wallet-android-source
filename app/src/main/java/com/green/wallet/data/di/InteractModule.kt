@@ -2,6 +2,7 @@ package com.green.wallet.data.di
 
 import com.green.wallet.data.interact.AddressInteractImpl
 import com.green.wallet.data.interact.BlockChainInteractImpl
+import com.green.wallet.data.interact.CancelTransactionInteractImpl
 import com.green.wallet.data.interact.CryptocurrencyImpl
 import com.green.wallet.data.interact.DAppOfferInteractImpl
 import com.green.wallet.data.interact.DexieInteractImpl
@@ -19,6 +20,7 @@ import com.green.wallet.data.interact.WalletInteractImpl
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.interact.AddressInteract
 import com.green.wallet.domain.interact.BlockChainInteract
+import com.green.wallet.domain.interact.CancelTransactionInteract
 import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.DAppOfferInteract
 import com.green.wallet.domain.interact.DexieInteract
@@ -93,5 +95,8 @@ abstract class InteractModule {
 
     @Binds
     abstract fun bindOfferTransactionImpl(offerTranImpl: OfferTransactionInteractImpl): OfferTransactionInteract
+
+    @Binds
+    abstract fun bindCancelTransactionImpl(cancelTransactionInteractImpl: CancelTransactionInteractImpl): CancelTransactionInteract
 
 }

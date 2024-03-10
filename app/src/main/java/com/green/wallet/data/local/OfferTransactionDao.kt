@@ -41,10 +41,14 @@ interface OfferTransactionDao {
     @Query("SELECT * FROM OfferTransactionEntity WHERE addressFk=:addressFk")
     suspend fun getAllOfferTransactionsByAddressFk(addressFk: String): List<OfferTransactionEntity>
 
-    @Query("UPDATE OfferTransactionEntity SET status=:status,height=:height WHERE tranId=:tranId")
-    suspend fun updateOfferTransaction(status: Status, height: Int, tranId: String): Int
+    @Query("UPDATE OfferTransactionEntity SET height=:height WHERE tranId=:tranId")
+    suspend fun updateOfferTransaction(height: Int, tranId: String): Int
 
     @Query("UPDATE OfferTransactionEntity SET status=:status WHERE tranId=:tranId")
     suspend fun updateOfferTransactionStatus(status: Status, tranId: String): Int
+
+    @Query("UPDATE OfferTransactionEntity SET status=:status,height=:height WHERE tranId=:tranId")
+    suspend fun updateOfferTransactionStatusHeight(status: Status, height: Int, tranId: String): Int
+
 
 }

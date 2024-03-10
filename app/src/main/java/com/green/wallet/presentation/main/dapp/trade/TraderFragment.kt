@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.green.compose.theme.GreenWalletTheme
 import com.green.wallet.R
@@ -33,6 +34,8 @@ import com.green.wallet.presentation.tools.getStringResource
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TraderFragment : BaseComposeFragment() {
@@ -55,7 +58,10 @@ class TraderFragment : BaseComposeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.tempCleanUpOfferTranAndSpentCoins()
+        lifecycleScope.launch {
+            delay(2000L)
+            callFlutterTemp()
+        }
     }
 
     @Composable
@@ -76,6 +82,7 @@ class TraderFragment : BaseComposeFragment() {
                 events = viewModel.event
             )
         }
+        initListeningMethod()
     }
 
     private fun initListeningMethod() {
@@ -119,6 +126,10 @@ class TraderFragment : BaseComposeFragment() {
                     JavaJSThreadCommunicator.wait = false
                     viewModel.handleEvent(TraderEvent.FailureTakingOffer)
                 }
+
+                "testing" -> {
+                    VLog.d("Testing has been called from flutter")
+                }
             }
         }
     }
@@ -129,6 +140,11 @@ class TraderFragment : BaseComposeFragment() {
         VLog.d("Invoked method to parse offer : $map")
         methodChannel.invokeMethod("AnalyzeOffer", map)
         initListeningMethod()
+    }
+
+    private fun callFlutterTemp() {
+        val map = hashMapOf<String, Any>()
+        methodChannel.invokeMethod("testing", map)
     }
 
     private suspend fun callFlutterToPushTakeOffer(offer: String, fee: Double) {
@@ -156,7 +172,6 @@ class TraderFragment : BaseComposeFragment() {
     }
 
     private suspend fun callFlutterToCreateOffer() {
-        VLog.d("callFlutterToCreateOffer got called")
         val map = hashMapOf<String, Any>()
         val wallet = viewModel.wallet ?: return
         val value = viewModel.offerViewState.value

@@ -28,6 +28,7 @@ import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
+import com.greenwallet.core.base.BaseIntentViewModel
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +55,7 @@ class TraderViewModel @Inject constructor(
     private val pinCodeCommunicator: PinCodeCommunicator,
     private val offerTransactionInteract: OfferTransactionInteract,
     private val connectedDApp: ConnectedDApp
-) : BaseViewModel<TraderViewState, TraderEvent>(TraderViewState()) {
+) : BaseIntentViewModel<TraderViewState, TraderEvent, TraderIntent>(TraderViewState()) {
 
     var wallet: Wallet? = null
 
@@ -145,8 +146,14 @@ class TraderViewModel @Inject constructor(
         _offerViewState.update { it.copy(dexieFee = dexieFee) }
     }
 
+    override fun handleIntent(intent: TraderIntent) {
+        when (intent) {
+
+            else -> Unit
+        }
+    }
+
     fun handleEvent(event: TraderEvent) {
-        setEvent(event)
         when (event) {
             is TraderEvent.ChoseFee -> {
                 _offerViewState.update {
@@ -160,6 +167,7 @@ class TraderViewModel @Inject constructor(
             is TraderEvent.ShowCreateOfferDialog -> {
                 _offerViewState.update { OfferViewState(dexieFee = it.dexieFee, offer = it.offer) }
                 initCreateOfferUpdateParams(event.params)
+                setEvent(TraderEvent.ShowCreateOfferDialog(event.params))
             }
 
             is TraderEvent.SendTakeOfferResult -> {
@@ -267,14 +275,12 @@ class TraderViewModel @Inject constructor(
             for (req in requested) {
                 when (req) {
                     is NftToken -> {
-                        isEnough = false
-                        break
+
                     }
 
                     is CatToken -> {
                         if (req.spendableBalance <= req.amount)
                             isEnough = false
-                        break
                     }
                 }
             }
@@ -324,6 +330,7 @@ class TraderViewModel @Inject constructor(
     }
 
     fun saveOfferTransaction(acceptOffer: Boolean): Long {
+        VLog.d("Offer View State to save offer tran : ${offerViewState.value}")
         val tranID = UUID.randomUUID().toString()
         val timeCreated = System.currentTimeMillis()
         val offerTran = OfferTransaction(

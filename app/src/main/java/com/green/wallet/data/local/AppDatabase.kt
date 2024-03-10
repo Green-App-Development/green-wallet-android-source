@@ -10,13 +10,20 @@ import com.green.wallet.data.local.entity.*
 
 @Database(
     entities = [
-        AddressEntity::class, WalletEntity::class, TransactionEntity::class,
-        NotifOtherEntity::class, TokenEntity::class,
-        SpentCoinsEntity::class, FaqItemEntity::class,
-        NFTInfoEntity::class, NFTCoinEntity::class,
-        OrderEntity::class, TibetSwapEntity::class,
+        AddressEntity::class,
+        WalletEntity::class,
+        TransactionEntity::class,
+        NotifOtherEntity::class,
+        TokenEntity::class,
+        SpentCoinsEntity::class,
+        FaqItemEntity::class,
+        NFTInfoEntity::class,
+        NFTCoinEntity::class,
+        OrderEntity::class,
+        TibetSwapEntity::class,
         TibetLiquidityEntity::class,
-        OfferTransactionEntity::class
+        OfferTransactionEntity::class,
+        CancelTransactionEntity::class
     ],
     version = 38,
     exportSchema = true,
@@ -39,6 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val orderExchangeDao: OrderExchangeDao
     abstract val tibetDao: TibetDao
     abstract val offerTransDao: OfferTransactionDao
+    abstract val cancelTranDao: CancelTransactionDao
 
     companion object {
 
@@ -205,6 +213,17 @@ abstract class AppDatabase : RoomDatabase() {
                 )
 
                 db.execSQL(createTableQuery)
+
+                val createCancelTranTable = """
+            CREATE TABLE IF NOT EXISTS CancelTransactionEntity (
+                offerTranID TEXT NOT NULL,
+                addressFk TEXT NOT NULL,
+                createdTime INTEGER NOT NULL,
+                FOREIGN KEY(addressFk) REFERENCES WalletEntity(address) ON DELETE CASCADE
+            )
+        """.trimIndent()
+
+                db.execSQL(createCancelTranTable)
             }
 
         }

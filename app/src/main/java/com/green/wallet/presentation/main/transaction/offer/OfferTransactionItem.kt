@@ -62,6 +62,7 @@ import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.transaction.TransactionIntent
+import com.green.wallet.presentation.tools.Status
 
 private const val HEIGHT_STATUS_DONE = 210
 private const val HEIGHT_CANCEL = 64
@@ -76,12 +77,11 @@ fun OfferTransactionItem(
 
     var isDetailOpen by remember { mutableStateOf(initialOpen) }
 
-    val heightButtonForCreate = remember {
-        if (state.height == 0L && !state.acceptOffer && !state.cancelled)
+    val heightButtonForCreate =
+        if (state.height == 0L && !state.acceptOffer && state.status == Status.InProgress)
             HEIGHT_CANCEL
         else 0
-    }
-
+    
     val additionalHeight = remember {
         heightButtonForCreate + HEIGHT_STATUS_DONE + ((state.offered.size + state.requested.size - 2) * 10)
     }
@@ -140,17 +140,19 @@ fun OfferTransactionItem(
             val offerStatus =
                 if (state.acceptOffer)
                     "Take offer"
-                else if (!state.cancelled)
+                else if (state.status == Status.InProgress)
                     "Create offer"
-                else
+                else if (state.status == Status.CANCELLED)
                     "Cancelled"
+                else
+                    "Cancelling"
 
             val offerColor =
-                if (state.height != 0L || state.cancelled)
+                if (state.height != 0L || state.status == Status.CANCELLED)
                     Provider.current.green
                 else
                     Provider.current.blue
-            
+
             DefaultText(
                 text = offerStatus,
                 size = text_15,

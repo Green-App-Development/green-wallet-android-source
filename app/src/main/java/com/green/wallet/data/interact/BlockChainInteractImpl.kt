@@ -23,13 +23,13 @@ import com.green.wallet.data.network.dto.spendbundle.SpendBundle
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.NftOfferCoin
+import com.green.wallet.domain.domainmodel.PushResult
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
-import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
@@ -60,7 +60,8 @@ class BlockChainInteractImpl @Inject constructor(
     private val context: Context,
     private val nftCoinsDao: NftCoinsDao,
     private val nftInfoDao: NftInfoDao,
-    private val offerTransactionDao: OfferTransactionDao
+    private val offerTransactionDao: OfferTransactionDao,
+    private val cancelTransactionDao: CancelTransactionDao
 ) : BlockChainInteract {
 
     private val mutexUpdateBalance = Mutex()
@@ -151,9 +152,48 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-                updateWalletNFTBalance(wallet)
+//                updateWalletNFTBalance(wallet)
                 updateOfferTransactions(wallet)
+                updateCancelTransaction(wallet)
             }
+        }
+    }
+
+    private suspend fun updateCancelTransaction(wallet: WalletEntity) {
+        try {
+            if (isThisChivesNetwork(wallet.networkType)) return
+            val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+                ?: throw Exception("Exception in converting json str to networkItem")
+            val service = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+                .create(BlockChainService::class.java)
+            val cancelTransList =
+                cancelTransactionDao.getCancelTransactionListByWalletAddress(wallet.address)
+            VLog.d("Cancel Trans List  : $cancelTransList")
+            for (cancel in cancelTransList) {
+                val xchCoin =
+                    spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(cancel.createAtTime, "XCH")[0]
+                val spentHeight = spentHeightForXCHCoin(service, xchCoin)
+                if (spentHeight != -1L) {
+                    cancelTransactionDao.deleteCancelTransaction(cancel)
+
+                    notificationHelper.callGreenAppNotificationMessages(
+                        "Canceling offer is completed", System.currentTimeMillis()
+                    )
+
+                    spentCoinsDao.deleteSpentConsByTimeCreated(cancel.createAtTime)
+
+                    val offerTransaction =
+                        offerTransactionDao.getOfferTransactionByTranID(cancel.offerTranID).get()
+                    spentCoinsDao.deleteSpentConsByTimeCreated(offerTransaction.createdTime)
+                    offerTransactionDao.updateOfferTransactionStatusHeight(
+                        status = Status.CANCELLED,
+                        height = spentHeight.toInt(),
+                        tranId = cancel.offerTranID
+                    )
+                }
+            }
+        } catch (ex: Exception) {
+            VLog.d("Exception occurred when updateCancelTransaction : ${ex.message}")
         }
     }
 
@@ -169,12 +209,12 @@ class BlockChainInteractImpl @Inject constructor(
                 if (offer.acceptOffer) {
                     VLog.d("OfferTrans AcceptOffer true : $offersTrans")
                     updateTakingOfferTransactionStatus(offer, service)
-                } else {
+                } else if (offer.status != Status.CANCELLING) {
 
                 }
             }
         } catch (ex: Exception) {
-            VLog.d("Exception occurred when updating : ${ex.message}")
+            VLog.d("Exception occurred when updateOfferTransactions : ${ex.message}")
         }
     }
 
@@ -183,11 +223,9 @@ class BlockChainInteractImpl @Inject constructor(
         service: BlockChainService
     ) {
         val coin = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")[0]
-        VLog.d("Coin xch for taking offer spent : $coin")
         val spentHeight = spentHeightForXCHCoin(service, coin)
         if (spentHeight != -1L) {
             offerTransactionDao.updateOfferTransaction(
-                status = Status.Completed,
                 height = spentHeight.toInt(),
                 tranId = offer.tranId
             )
@@ -625,7 +663,7 @@ class BlockChainInteractImpl @Inject constructor(
         fee: Double,
         spentCoinsJson: String,
         spentCoinsToken: String
-    ): Resource<String> {
+    ): Resource<PushResult> {
         try {
             val serverTime = greenAppInteract.getServerTime() - 1000 * 60 * 2
             if (serverTime == -1L)
@@ -689,7 +727,7 @@ class BlockChainInteractImpl @Inject constructor(
                         spentCoinsInteract.insertSpentCoinsJson(
                             spentCoinsToken, serverTime, code, address
                         )
-                    return Resource.success("OK")
+                    return Resource.success(PushResult("OK", serverTime))
                 }
             } else {
                 withContext(Dispatchers.Main) {

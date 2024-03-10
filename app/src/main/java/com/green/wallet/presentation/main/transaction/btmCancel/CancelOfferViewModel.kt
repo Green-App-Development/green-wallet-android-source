@@ -2,12 +2,14 @@ package com.green.wallet.presentation.main.transaction.btmCancel
 
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.green.wallet.data.local.entity.CancelTransactionEntity
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.OfferTransaction
 import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
+import com.green.wallet.domain.interact.CancelTransactionInteract
 import com.green.wallet.domain.interact.DexieInteract
 import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
@@ -15,6 +17,7 @@ import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyTokenEvent
 import com.green.wallet.presentation.tools.Resource
+import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -32,6 +35,7 @@ class CancelOfferViewModel @Inject constructor(
     private val coinsInteract: SpentCoinsInteract,
     private val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
+    private val cancelTransactionInteract: CancelTransactionInteract
 ) : BaseViewModel<CancelOfferState, CancelOfferEvent>(CancelOfferState()) {
 
     var offerTransaction: OfferTransaction? = null
@@ -109,6 +113,18 @@ class CancelOfferViewModel @Inject constructor(
             when (result.state) {
                 Resource.State.SUCCESS -> {
                     setLoading(false)
+                    val timeCreated = result.data!!.timeCreated
+                    cancelTransactionInteract.insertCancelTransaction(
+                        cancelTransactionEntity = CancelTransactionEntity(
+                            offerTranID = offerTransaction!!.transId,
+                            addressFk = wallet.address,
+                            createAtTime = timeCreated
+                        )
+                    )
+                    offerTransactionInteract.updateOfferTransactionStatus(
+                        status = Status.CANCELLING,
+                        tranID = offerTransaction!!.transId
+                    )
                 }
 
                 Resource.State.ERROR -> {
