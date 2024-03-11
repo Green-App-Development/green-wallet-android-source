@@ -29,7 +29,6 @@ import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseIntentViewModel
-import com.greenwallet.core.base.BaseViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,17 +65,6 @@ class TraderViewModel @Inject constructor(
     )
     val offerViewState = _offerViewState.asStateFlow()
 
-    val tempList = listOf(
-        CatToken("XCC", "", 0.0013),
-        CatToken("GWT", "", 0.11),
-        CatToken("CHIA", "", 0.456),
-        NftToken(
-            "alsdjasl;dka;",
-            "saldjasldak;ldal;sd",
-            "https://nftstorage.link/ipfs/bafybeiee256ja5xiyrec53geiyuaz352rh2422y3zr37t3dj2xca7stixe/9766.png"
-        )
-    )
-
     init {
         passCodeCommunicator.onSuccessPassCode = {
             when (it) {
@@ -100,7 +88,7 @@ class TraderViewModel @Inject constructor(
                 }
 
                 ReasonEnterCode.ACCEPT_OFFER -> {
-                    setEvent(TraderEvent.PinConfirmAcceptOffer)
+                    setEvent(TraderEvent.PinnedAcceptOffer)
                 }
 
                 ReasonEnterCode.CREATE_OFFER -> {
@@ -161,11 +149,18 @@ class TraderViewModel @Inject constructor(
                         chosenFee = event.fee
                     )
                 }
+                VLog.d("Chosen fee for trader state : ${_offerViewState.value}")
                 validateFeeEnough()
             }
 
             is TraderEvent.ShowCreateOfferDialog -> {
-                _offerViewState.update { OfferViewState(dexieFee = it.dexieFee, offer = it.offer) }
+                _offerViewState.update {
+                    OfferViewState(
+                        dexieFee = it.dexieFee,
+                        offer = it.offer,
+                        chosenFee = it.chosenFee
+                    )
+                }
                 initCreateOfferUpdateParams(event.params)
                 setEvent(TraderEvent.ShowCreateOfferDialog(event.params))
             }
@@ -199,7 +194,8 @@ class TraderViewModel @Inject constructor(
                     offer = it.offer,
                     isLoading = true,
                     requested = listOf(),
-                    offered = listOf()
+                    offered = listOf(),
+                    chosenFee = it.chosenFee
                 )
             }
             val requestJob = async {
@@ -522,9 +518,10 @@ class TraderViewModel @Inject constructor(
         _viewState.update { it.copy(isLoading = isLoading) }
     }
 
-    private fun validateFeeEnough() {
+    fun validateFeeEnough() {
         val total = requestedXCHAmount + offerViewState.value.chosenFee
         _offerViewState.update { it.copy(feeEnough = total <= (wallet?.balance ?: 0.0)) }
+        VLog.d("Checking fee chosen  on validation : ${_offerViewState.value}")
     }
 
     suspend fun getNftCoinById(coinHash: String): NFTCoin? {

@@ -301,7 +301,7 @@ fun SpendableBalance(
         if (requested.size == 1) {
             val str = when (val item = requested[0]) {
                 is CatToken -> {
-                    "${item.code} ${item.spendableBalance}"
+                    "${item.code} ${formattedDoubleAmountWithPrecision(item.spendableBalance)}"
                 }
 
                 is NftToken -> {
@@ -344,7 +344,7 @@ fun SpendableBalance(
                     for (i in requested.indices) {
                         val str = when (val item = requested[i]) {
                             is CatToken -> {
-                                "${item.code} ${item.spendableBalance}"
+                                "${item.code} ${formattedDoubleAmountWithPrecision(item.spendableBalance)}"
                             }
 
                             is NftToken -> {

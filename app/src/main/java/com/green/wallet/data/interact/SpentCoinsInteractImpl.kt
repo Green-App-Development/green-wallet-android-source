@@ -135,4 +135,8 @@ class SpentCoinsInteractImpl @Inject constructor(
         return spentCoinsDao.deleteSpentConsByTimeCreated(timeCrated)
     }
 
+    override suspend fun deleteSpentCoinsByAddressFk(addressFk: String):Int {
+        return spentCoinsDao.deleteSpentCoinsByFkAddress(addressFk)
+    }
+
 }

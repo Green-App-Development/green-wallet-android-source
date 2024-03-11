@@ -21,17 +21,18 @@ packages:
     dependency: transitive
     description:
       name: bech32
-      sha256: c36ff22d905b5864cafa7a3cf5e65dd2ca26cff30db1d6a9bd1bbfa2a231e58f
+      sha256: "156cbace936f7720c79a79d16a03efad343b1ef17106716e04b8b8e39f99f7f7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.2"
   bech32m:
     dependency: transitive
     description:
-      name: bech32m
-      sha256: "804c56e0ee5e22f95b435c8a9e62a738de38f51b8ddbb8e84e6bdfd53fc7c95a"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: "9862f20f356af305cf691d55225b4bb3fac4cab2"
+      resolved-ref: "9862f20f356af305cf691d55225b4bb3fac4cab2"
+      url: "https://github.com/MarvinQuevedo/bech32m"
+    source: git
     version: "0.2.2"
   bip39:
     dependency: transitive
@@ -49,6 +50,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  bs58check:
+    dependency: "direct main"
+    description:
+      name: bs58check
+      sha256: c4a164d42b25c2f6bc88a8beccb9fc7d01440f3c60ba23663a20a70faf484ea9
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   characters:
     dependency: transitive
     description:
@@ -84,10 +93,10 @@ packages:
     dependency: transitive
     description:
       name: convert
-      sha256: "196284f26f69444b7f5c50692b55ec25da86d9e500451dc09333bf2e3ad69259"
+      sha256: "0f08b14755d163f6e2134cb58222dd25ea2a2ee8a195e53983d57c075324d592"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.2"
+    version: "3.1.1"
   crypto:
     dependency: transitive
     description:

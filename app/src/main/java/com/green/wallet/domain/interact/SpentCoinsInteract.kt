@@ -36,6 +36,8 @@ interface SpentCoinsInteract {
 
     suspend fun getSpentCoinsBalanceByAddressAndCode(address: String, code: String): Flow<Double>
 
-    suspend fun deleteSpentConsByTimeCreated(timeCrated:Long):Int
+    suspend fun deleteSpentConsByTimeCreated(timeCrated: Long): Int
+
+    suspend fun deleteSpentCoinsByAddressFk(addressFk: String): Int
 
 }

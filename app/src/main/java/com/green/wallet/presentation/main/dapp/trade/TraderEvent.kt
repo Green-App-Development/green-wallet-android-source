@@ -26,7 +26,7 @@ sealed interface TraderEvent {
 
     data class ChoseFee(val fee: Double) : TraderEvent
 
-    object PinConfirmAcceptOffer : TraderEvent
+    object PinnedAcceptOffer : TraderEvent
 
     object PinnedCreateOffer : TraderEvent
     object ShowPinCreateOffer : TraderEvent

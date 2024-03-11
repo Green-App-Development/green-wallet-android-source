@@ -6,6 +6,7 @@ import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.tools.ReasonEnterCode
@@ -18,6 +19,7 @@ import javax.inject.Inject
 
 
 class WalletListViewModel @Inject constructor(
+    private val spentCoinsInteract: SpentCoinsInteract,
     private val walletInteract: WalletInteract,
     private val blockChainInteract: BlockChainInteract,
     private val prefs: PrefsInteract,
@@ -53,6 +55,7 @@ class WalletListViewModel @Inject constructor(
     private fun deleteWallet(wallet: Wallet) {
         viewModelScope.launch {
             walletInteract.deleteWallet(wallet)
+            spentCoinsInteract.deleteSpentCoinsByAddressFk(wallet.address)
         }
     }
 

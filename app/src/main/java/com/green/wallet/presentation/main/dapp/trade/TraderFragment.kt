@@ -104,6 +104,7 @@ class TraderFragment : BaseComposeFragment() {
                     val spentCoins = args["spentCoins"].toString()
                     val offer = args["offer"].toString()
                     with(viewModel) {
+                        setLoading(false)
                         val timeCreated = saveOfferTransaction(false)
                         saveSpentCoins(spentCoins, timeCreated)
                         handleEvent(TraderEvent.SendCreateOfferResult(offer))
@@ -115,6 +116,7 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
                     with(viewModel) {
+                        setLoading(false)
                         val timeCreated = saveOfferTransaction(true)
                         saveSpentCoins(spentCoins, timeCreated)
                         handleEvent(TraderEvent.SendTakeOfferResult)
@@ -122,8 +124,10 @@ class TraderFragment : BaseComposeFragment() {
                 }
 
                 "ErrorPushingOffer" -> {
+                    VLog.d("Returned")
                     JavaJSThreadCommunicator.resultTakeOffer = ""
                     JavaJSThreadCommunicator.wait = false
+                    viewModel.setLoading(false)
                     viewModel.handleEvent(TraderEvent.FailureTakingOffer)
                 }
 
@@ -175,6 +179,7 @@ class TraderFragment : BaseComposeFragment() {
         val map = hashMapOf<String, Any>()
         val wallet = viewModel.wallet ?: return
         val value = viewModel.offerViewState.value
+        VLog.d("Before calling create offer : ${value}}")
         val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
         map["observer"] = wallet.observerHash
         map["nonObserver"] = wallet.nonObserverHash
@@ -224,7 +229,7 @@ class TraderFragment : BaseComposeFragment() {
 
                 }
 
-                is TraderEvent.PinConfirmAcceptOffer -> {
+                is TraderEvent.PinnedAcceptOffer -> {
                     viewModel.setLoading(true)
                     val value = viewModel.offerViewState.value
                     callFlutterToPushTakeOffer(
@@ -241,13 +246,13 @@ class TraderFragment : BaseComposeFragment() {
                 }
 
                 is TraderEvent.ShowPinCreateOffer -> {
-                    callFlutterToCreateOffer()
-//                                PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
-//                                    .show(childFragmentManager, "")
+                    PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
+                        .show(childFragmentManager, "")
                 }
 
                 is TraderEvent.PinnedCreateOffer -> {
-
+                    viewModel.setLoading(true)
+                    callFlutterToCreateOffer()
                 }
 
                 is TraderEvent.OnBack -> {
