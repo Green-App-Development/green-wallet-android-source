@@ -103,8 +103,10 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("Creating offer from flutter ${call.arguments}")
                     val spentCoins = args["spentCoins"].toString()
                     val offer = args["offer"].toString()
+                    requireActivity().copyToClipBoard(offer)
                     with(viewModel) {
                         setLoading(false)
+                        handleIntent(TraderIntent.CloseBtmOffer)
                         val timeCreated = saveOfferTransaction(false)
                         saveSpentCoins(spentCoins, timeCreated)
                         handleEvent(TraderEvent.SendCreateOfferResult(offer))
@@ -117,6 +119,7 @@ class TraderFragment : BaseComposeFragment() {
                     val spentCoins = arguments["spentCoins"].toString()
                     with(viewModel) {
                         setLoading(false)
+                        handleIntent(TraderIntent.CloseBtmOffer)
                         val timeCreated = saveOfferTransaction(true)
                         saveSpentCoins(spentCoins, timeCreated)
                         handleEvent(TraderEvent.SendTakeOfferResult)
@@ -124,7 +127,7 @@ class TraderFragment : BaseComposeFragment() {
                 }
 
                 "ErrorPushingOffer" -> {
-                    VLog.d("Returned")
+                    VLog.d("Returned error from flutter on tradeFragment")
                     JavaJSThreadCommunicator.resultTakeOffer = ""
                     JavaJSThreadCommunicator.wait = false
                     viewModel.setLoading(false)
@@ -184,7 +187,7 @@ class TraderFragment : BaseComposeFragment() {
         map["observer"] = wallet.observerHash
         map["nonObserver"] = wallet.nonObserverHash
         map["url"] = url
-        map["fee"] = (value.chosenFee * PRECISION_XCH).toLong()
+        map["fee"] = (viewModel.chosenFeeXCH * PRECISION_XCH).toLong()
         map["spentCoins"] = Gson().toJson(value.spendCoins)
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
         map["requested"] = Gson().toJson(convertToTokenFlutter(value.requested))
@@ -233,7 +236,7 @@ class TraderFragment : BaseComposeFragment() {
                     viewModel.setLoading(true)
                     val value = viewModel.offerViewState.value
                     callFlutterToPushTakeOffer(
-                        value.offer, value.chosenFee
+                        value.offer, viewModel.chosenFeeXCH
                     )
                 }
 

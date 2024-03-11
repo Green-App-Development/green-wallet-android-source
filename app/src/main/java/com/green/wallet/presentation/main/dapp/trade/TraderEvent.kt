@@ -41,4 +41,6 @@ sealed interface TraderEvent {
 
     object OnDisable : TraderEvent
 
+    object CloseBtmOffer : TraderEvent
+
 }

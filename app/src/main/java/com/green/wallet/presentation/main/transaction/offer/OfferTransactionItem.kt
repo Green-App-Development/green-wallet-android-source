@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -52,12 +53,14 @@ import com.green.compose.dimens.size_8
 import com.green.compose.dimens.text_12
 import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
+import com.green.compose.extension.getActivity
 import com.green.compose.progress.CircularProgressBar
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.OfferTransaction
+import com.green.wallet.presentation.custom.formattedDateForTransaction
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
@@ -81,10 +84,9 @@ fun OfferTransactionItem(
         if (state.height == 0L && !state.acceptOffer && state.status == Status.InProgress)
             HEIGHT_CANCEL
         else 0
-    
-    val additionalHeight = remember {
+
+    val additionalHeight =
         heightButtonForCreate + HEIGHT_STATUS_DONE + ((state.offered.size + state.requested.size - 2) * 10)
-    }
 
     val heightParentColumn by animateDpAsState(
         targetValue =
@@ -237,11 +239,10 @@ fun OfferTransactionItem(
                         color = Provider.current.greyText
                     )
 
-//                    val activity = LocalContext.current.getActivity()!!
+                    val activity = LocalContext.current.getActivity()!!
 
                     DefaultText(
-//                        text = formattedDateForTransaction(activity, state.createAtTime),
-                        text = "",
+                        text = formattedDateForTransaction(activity, state.createAtTime),
                         size = text_14,
                         color = Provider.current.secondaryTextColor
                     )

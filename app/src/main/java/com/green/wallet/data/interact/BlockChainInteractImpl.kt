@@ -210,11 +210,30 @@ class BlockChainInteractImpl @Inject constructor(
                     VLog.d("OfferTrans AcceptOffer true : $offersTrans")
                     updateTakingOfferTransactionStatus(offer, service)
                 } else if (offer.status != Status.CANCELLING) {
-
+                    updateCreatingOfferTransactionStatus(offer, service)
                 }
             }
         } catch (ex: Exception) {
             VLog.d("Exception occurred when updateOfferTransactions : ${ex.message}")
+        }
+    }
+
+    private suspend fun updateCreatingOfferTransactionStatus(
+        offer: OfferTransactionEntity,
+        service: BlockChainService
+    ) {
+        val coin = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")[0]
+        val spentHeight = spentHeightForXCHCoin(service, coin)
+        if (spentHeight != -1L) {
+            offerTransactionDao.updateOfferTransaction(
+                height = spentHeight.toInt(),
+                tranId = offer.tranId
+            )
+
+            notificationHelper.callGreenAppNotificationMessages(
+                "Creating offer is accepted", System.currentTimeMillis()
+            )
+            spentCoinsDao.deleteSpentConsByTimeCreated(offer.createdTime)
         }
     }
 

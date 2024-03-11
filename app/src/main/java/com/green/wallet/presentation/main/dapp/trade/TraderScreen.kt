@@ -95,6 +95,10 @@ fun TraderScreen(
                     offerDialogState.show()
                 }
 
+                is TraderEvent.CloseBtmOffer -> {
+                    offerDialogState.hide()
+                }
+
                 else -> Unit
             }
         }

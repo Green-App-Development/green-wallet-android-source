@@ -15,7 +15,9 @@ import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
+import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyTokenEvent
+import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
 import com.green.wallet.presentation.tools.VLog
@@ -35,7 +37,8 @@ class CancelOfferViewModel @Inject constructor(
     private val coinsInteract: SpentCoinsInteract,
     private val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
-    private val cancelTransactionInteract: CancelTransactionInteract
+    private val cancelTransactionInteract: CancelTransactionInteract,
+    private val pinCodeCommunicator: PinCodeCommunicator
 ) : BaseViewModel<CancelOfferState, CancelOfferEvent>(CancelOfferState()) {
 
     var offerTransaction: OfferTransaction? = null
@@ -43,6 +46,19 @@ class CancelOfferViewModel @Inject constructor(
 
     private val handler = CoroutineExceptionHandler { _, ex ->
         VLog.d("Handler on cancelOfferVM : ${ex.message}")
+    }
+
+    init {
+        pinCodeCommunicator.onSuccessPassCode = {
+            when (it) {
+                ReasonEnterCode.CANCEL_OFFER -> {
+                    setLoading(true)
+                    setEvent(CancelOfferEvent.PinnedCodeToCancel)
+                }
+
+                else -> Unit
+            }
+        }
     }
 
     fun initOfferTransaction(tranID: String) {
@@ -70,15 +86,16 @@ class CancelOfferViewModel @Inject constructor(
     }
 
     fun handleEvent(event: CancelOfferEvent) {
-        setEvent(CancelOfferEvent.OnSign)
         when (event) {
             is CancelOfferEvent.OnFeeChosen -> {
                 _viewState.update { it.copy(fee = event.amount) }
             }
 
             is CancelOfferEvent.OnSign -> {
-                _viewState.update { it.copy(isLoading = true) }
+                setEvent(CancelOfferEvent.ShowPinCode)
             }
+
+            else -> Unit
         }
     }
 
@@ -113,6 +130,7 @@ class CancelOfferViewModel @Inject constructor(
             when (result.state) {
                 Resource.State.SUCCESS -> {
                     setLoading(false)
+                    setEvent(CancelOfferEvent.SuccessSending)
                     val timeCreated = result.data!!.timeCreated
                     cancelTransactionInteract.insertCancelTransaction(
                         cancelTransactionEntity = CancelTransactionEntity(
@@ -129,6 +147,7 @@ class CancelOfferViewModel @Inject constructor(
 
                 Resource.State.ERROR -> {
                     setLoading(false)
+                    setEvent(CancelOfferEvent.ErrorCancelled)
                 }
 
                 else -> Unit

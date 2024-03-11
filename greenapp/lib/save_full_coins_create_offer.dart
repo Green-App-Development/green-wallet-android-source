@@ -41,7 +41,7 @@ Future<void> saveFullCoinsCAT(
   var curCATAmount = 0;
   for (final coin in responseDataCAT) {
     var isCoinSpent = spentCoinsParents.contains("0x${coin.parentCoinInfo}");
-    if (!isCoinSpent) {
+    if (!isCoinSpent && coin.amount!=0) {
       curCATAmount += coin.amount;
       neededCoins.add(coin);
       await getCatCoinsDetail(
@@ -101,7 +101,7 @@ Future<void> saveFullCoinsXCH(
   var curXCHAmount = 0;
   for (var coin in totalXCHCoins) {
     var isCoinSpent = spentCoinsParents.contains("0x${coin.parentCoinInfo}");
-    if (!isCoinSpent) {
+    if (!isCoinSpent && coin.amount!=0) {
       curXCHAmount += coin.amount;
       neededXCHCoins.add(coin);
       if (curXCHAmount >= token.amount + fee) {

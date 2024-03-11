@@ -858,7 +858,7 @@ class PushingTransaction {
           for (final coin in feeStandardCoinsTotal) {
             var isSpent =
                 spentCoinsParents.contains(coin.parentCoinInfo.toString());
-            if (!isSpent) {
+            if (!isSpent && coin.amount!=0) {
               curFee += coin.amount;
               standardCoinsForFee.add(coin);
             }
@@ -1036,7 +1036,7 @@ class PushingTransaction {
         for (final coin in allCoins) {
           var isUsed =
               tranCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (isUsed) {
+          if (isUsed && coin.amount!=0) {
             sum += coin.amount;
             requiredCoins.add(coin);
           }
@@ -1287,7 +1287,7 @@ class PushingTransaction {
           "PushingOffer", {"spentCoins": jsonEncode(spentCoinsMap)});
     } catch (ex) {
       debugPrint("ErrorPushingOffer with exception : $ex");
-      _channel.invokeMethod("ErrorPushingOffer", ex);
+      _channel.invokeMethod("ErrorPushingOffer", ex.toString());
     }
   }
 
@@ -1309,7 +1309,7 @@ class PushingTransaction {
     for (final coin in totalXCHCoins) {
       var isSpentCoin =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      if (!isSpentCoin) {
+      if (!isSpentCoin && coin.amount!=0) {
         curAmount += coin.amount;
         neededCoins.add(coin);
       }
@@ -1356,7 +1356,7 @@ class PushingTransaction {
     for (final coin in basicCatCoins) {
       var isCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      if (!isCoinSpent) {
+      if (!isCoinSpent && coin.amount!=0) {
         curAmount += coin.amount;
         neededCatCoins.add(coin);
         await getCatCoinsDetail(

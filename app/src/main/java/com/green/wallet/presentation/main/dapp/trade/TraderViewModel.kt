@@ -59,6 +59,7 @@ class TraderViewModel @Inject constructor(
     var wallet: Wallet? = null
 
     private var requestedXCHAmount: Double = 0.0
+    var chosenFeeXCH = 0.0
 
     private val _offerViewState = MutableStateFlow(
         OfferViewState()
@@ -136,6 +137,9 @@ class TraderViewModel @Inject constructor(
 
     override fun handleIntent(intent: TraderIntent) {
         when (intent) {
+            is TraderIntent.CloseBtmOffer -> {
+                setEvent(TraderEvent.CloseBtmOffer)
+            }
 
             else -> Unit
         }
@@ -149,8 +153,9 @@ class TraderViewModel @Inject constructor(
                         chosenFee = event.fee
                     )
                 }
-                VLog.d("Chosen fee for trader state : ${_offerViewState.value}")
+//                VLog.d("Chosen fee for trader state : ${_offerViewState.value}")
                 validateFeeEnough()
+                chosenFeeXCH = event.fee
             }
 
             is TraderEvent.ShowCreateOfferDialog -> {
@@ -336,7 +341,7 @@ class TraderViewModel @Inject constructor(
             offered = offerViewState.value.offered,
             source = "dexie.space",
             hashTransaction = "",
-            fee = offerViewState.value.chosenFee,
+            fee = chosenFeeXCH,
             height = 0L,
             acceptOffer = acceptOffer
         )
@@ -521,7 +526,7 @@ class TraderViewModel @Inject constructor(
     fun validateFeeEnough() {
         val total = requestedXCHAmount + offerViewState.value.chosenFee
         _offerViewState.update { it.copy(feeEnough = total <= (wallet?.balance ?: 0.0)) }
-        VLog.d("Checking fee chosen  on validation : ${_offerViewState.value}")
+//        VLog.d("Checking fee chosen  on validation : ${_offerViewState.value}")
     }
 
     suspend fun getNftCoinById(coinHash: String): NFTCoin? {
