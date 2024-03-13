@@ -56,12 +56,14 @@ class TraderFragment : BaseComposeFragment() {
         )
     }
 
+    private val url by lazy {
+        arguments?.getString(URL_KEY, "") ?: ""
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch {
-            delay(2000L)
-            callFlutterTemp()
-        }
+        VLog.d("TraderFragment onCreate url arg : $url")
+        viewModel.updateViewStateUrl(url)
     }
 
     @Composable
@@ -259,7 +261,10 @@ class TraderFragment : BaseComposeFragment() {
                 }
 
                 is TraderEvent.OnBack -> {
-                    getMainActivity().popBackStackOnce()
+                    if (webView?.canGoBack() == true) {
+                        webView?.goBack()
+                    } else
+                        getMainActivity().popBackStackOnce()
                 }
 
                 is TraderEvent.OnReload -> {
@@ -281,6 +286,11 @@ class TraderFragment : BaseComposeFragment() {
                 is TraderEvent.OnDisable -> {
                     viewModel.disableDApp()
                     getMainActivity().popBackStackOnce()
+                }
+
+                is TraderEvent.OnLoadUrl -> {
+                    VLog.d("Load url for web view : ${it.url} webView : $webView")
+                    webView?.loadUrl(it.url)
                 }
 
                 else -> Unit
@@ -374,6 +384,10 @@ class TraderFragment : BaseComposeFragment() {
         }
 
         return converted
+    }
+
+    companion object {
+        const val URL_KEY = "url_key"
     }
 
 

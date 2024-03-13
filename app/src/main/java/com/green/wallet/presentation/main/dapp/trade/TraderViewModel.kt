@@ -554,4 +554,8 @@ class TraderViewModel @Inject constructor(
         connectedDApp.connected.remove("Dexie")
     }
 
+    fun updateViewStateUrl(url: String) {
+        _viewState.update { it.copy(url = url) }
+    }
+
 }

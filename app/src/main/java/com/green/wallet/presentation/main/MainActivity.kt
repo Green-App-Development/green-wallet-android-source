@@ -48,6 +48,7 @@ import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWallet
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
 import com.green.wallet.presentation.main.dapp.trade.TraderFragment
+import com.green.wallet.presentation.main.dapp.trade.TraderFragment.Companion.URL_KEY
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
@@ -718,8 +719,10 @@ class MainActivity : BaseActivity(), ComposeProvider {
         navController.navigate(fragmentBrowser)
     }
 
-    fun move2TraderFragment() {
-        navController.navigate(fragmentTrader)
+    fun move2TraderFragment(url: String) {
+        val bundle = bundleOf()
+        bundle.putString(URL_KEY, url)
+        navController.navigate(fragmentTrader, bundle)
     }
 
     fun move2SwapFragment() {

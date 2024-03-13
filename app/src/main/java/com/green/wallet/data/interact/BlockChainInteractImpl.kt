@@ -152,7 +152,7 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-//                updateWalletNFTBalance(wallet)
+                updateWalletNFTBalance(wallet)
                 updateOfferTransactions(wallet)
                 updateCancelTransaction(wallet)
             }
@@ -168,7 +168,9 @@ class BlockChainInteractImpl @Inject constructor(
                 .create(BlockChainService::class.java)
             val cancelTransList =
                 cancelTransactionDao.getCancelTransactionListByWalletAddress(wallet.address)
-            VLog.d("Cancel Trans List  : $cancelTransList")
+            VLog.d("Cancel Trans List  : $cancelTransList for Wallet Address : ${wallet.address}")
+            if (cancelTransList.isEmpty())
+                return
             for (cancel in cancelTransList) {
                 val xchCoin =
                     spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(cancel.createAtTime, "XCH")[0]
@@ -198,23 +200,27 @@ class BlockChainInteractImpl @Inject constructor(
     }
 
     private suspend fun updateOfferTransactions(wallet: WalletEntity) {
-        try {
-            if (isThisChivesNetwork(wallet.networkType)) return
-            val networkItem = getNetworkItemFromPrefs(wallet.networkType)
-                ?: throw Exception("Exception in converting json str to networkItem")
-            val service = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
-                .create(BlockChainService::class.java)
-            val offersTrans = offerTransactionDao.getAllOfferTransactionsByAddressFk(wallet.address)
-            for (offer in offersTrans) {
+        if (isThisChivesNetwork(wallet.networkType)) return
+        val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+            ?: throw Exception("Exception in converting json str to networkItem")
+        val service = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+            .create(BlockChainService::class.java)
+        val offersTrans = offerTransactionDao.getAllOfferTransactionsByAddressFk(
+            wallet.address,
+            status = Status.InProgress
+        )
+        VLog.d("Offer Trans List $offersTrans For Wallet Address : ${wallet.address}")
+        for (offer in offersTrans) {
+            try {
                 if (offer.acceptOffer) {
-                    VLog.d("OfferTrans AcceptOffer true : $offersTrans")
                     updateTakingOfferTransactionStatus(offer, service)
                 } else if (offer.status != Status.CANCELLING) {
                     updateCreatingOfferTransactionStatus(offer, service)
                 }
+            } catch (ex: Exception) {
+                VLog.d("Exception occurred when updateOfferTransactions : ${ex.message}")
+                continue
             }
-        } catch (ex: Exception) {
-            VLog.d("Exception occurred when updateOfferTransactions : ${ex.message}")
         }
     }
 
@@ -222,7 +228,9 @@ class BlockChainInteractImpl @Inject constructor(
         offer: OfferTransactionEntity,
         service: BlockChainService
     ) {
-        val coin = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")[0]
+        val coinList = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")
+        VLog.d("Coin is $coinList found for offer : $offer")
+        val coin = coinList[0]
         val spentHeight = spentHeightForXCHCoin(service, coin)
         if (spentHeight != -1L) {
             offerTransactionDao.updateOfferTransaction(

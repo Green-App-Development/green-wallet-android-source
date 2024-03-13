@@ -43,4 +43,8 @@ sealed interface TraderEvent {
 
     object CloseBtmOffer : TraderEvent
 
+    data class OnLoadUrl(val url: String) : TraderEvent
+
+
+
 }

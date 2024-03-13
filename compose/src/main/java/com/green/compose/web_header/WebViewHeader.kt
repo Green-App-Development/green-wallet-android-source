@@ -18,10 +18,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.green.compose.R
 import com.green.compose.custom.fee.FixedSpacer
+import com.green.compose.custom.fee.customFeeChosenBackground
 import com.green.compose.dimens.size_12
 import com.green.compose.dimens.size_15
 import com.green.compose.dimens.size_24
 import com.green.compose.dimens.size_44
+import com.green.compose.dimens.size_5
 import com.green.compose.dimens.text_20
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
@@ -30,6 +32,7 @@ import com.green.compose.theme.Provider
 
 @Composable
 fun WebViewHeader(
+    url: String,
     modifier: Modifier = Modifier,
     back: () -> Unit = {},
     threeDots: () -> Unit = {},
@@ -56,7 +59,8 @@ fun WebViewHeader(
         )
 
         Row(
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier.weight(1f)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.fa_lock),
@@ -65,9 +69,10 @@ fun WebViewHeader(
                 tint = Provider.current.txtPrimaryColor
             )
             DefaultText(
-                text = "dexie.space",
+                text = url,
                 size = text_20,
-                color = Provider.current.txtPrimaryColor
+                color = Provider.current.txtPrimaryColor,
+                modifier = Modifier.padding(start = size_5),
             )
         }
 
@@ -110,7 +115,7 @@ fun WebViewHeaderPreview() {
                 Provider.current.background
             )
         ) {
-            WebViewHeader()
+            WebViewHeader(url = "http://localhost:8081/student")
         }
     }
 }

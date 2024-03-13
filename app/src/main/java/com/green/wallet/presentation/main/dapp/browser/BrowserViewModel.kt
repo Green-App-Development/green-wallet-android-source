@@ -25,8 +25,8 @@ class BrowserViewModel @Inject constructor(
     fun handleEvent(event: BrowserEvent) {
         when (event) {
             is BrowserEvent.OnSearchChange -> {
-                val filtered = dAppList.filter { it.name.contains(event.text, ignoreCase = true) }
-                _viewState.update { it.copy(searchText = event.text, dAppList = filtered) }
+//                val filtered = dAppList.filter { it.name.contains(event.text, ignoreCase = true) }
+                _viewState.update { it.copy(searchText = event.text) }
             }
 
             is BrowserEvent.OnChangeCategory -> {

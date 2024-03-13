@@ -50,6 +50,7 @@ import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
 import com.green.wallet.domain.domainmodel.DAppModel
+import com.green.wallet.presentation.main.dapp.trade.TraderEvent
 
 
 @Composable
@@ -151,7 +152,10 @@ fun BrowserScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = null,
-                    tint = Provider.current.greyText
+                    tint = Provider.current.greyText,
+                    modifier = Modifier.clickable {
+                        onEvent(BrowserEvent.OnSearchIconClick)
+                    }
                 )
             }
         )

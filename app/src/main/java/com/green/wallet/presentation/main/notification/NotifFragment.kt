@@ -52,7 +52,6 @@ class NotifFragment : DaggerDialogFragment(),
 		const val SHOW_GREEN_APP_NOTIF = "show_green_notif_key"
 	}
 
-
 	private val binding: FragmentNotificationBinding by viewBinding(FragmentNotificationBinding::bind)
 	private lateinit var dateAdapter: TransactionSortingAdapter
 	private var prevCLickedStatus: TextView? = null

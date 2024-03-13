@@ -41,9 +41,13 @@ class BrowserFragment : BaseComposeFragment() {
                 }
 
                 is BrowserEvent.ChosenDexie -> {
-                    getMainActivity().move2TraderFragment()
+                    getMainActivity().move2TraderFragment("file:///android_asset/index.html")
                 }
 
+                is BrowserEvent.OnSearchIconClick -> {
+                    getMainActivity().move2TraderFragment(viewModel.viewState.value.searchText)
+                }
+                
                 else -> Unit
             }
         }

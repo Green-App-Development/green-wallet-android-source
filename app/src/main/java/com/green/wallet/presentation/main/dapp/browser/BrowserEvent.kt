@@ -10,4 +10,6 @@ sealed interface BrowserEvent {
 
     object ChosenDexie : BrowserEvent
 
+    object OnSearchIconClick : BrowserEvent
+
 }
