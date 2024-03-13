@@ -62,7 +62,6 @@ class TraderFragment : BaseComposeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        VLog.d("TraderFragment onCreate url arg : $url")
         viewModel.updateViewStateUrl(url)
     }
 
@@ -273,24 +272,19 @@ class TraderFragment : BaseComposeFragment() {
 
                 is TraderEvent.OnShare -> {
                     getMainActivity().launchingIntentForSendingWalletAddress(
-                        DEXIE_BASE_URL
+                        viewModel.viewState.value.url
                     )
                 }
 
                 is TraderEvent.OnCopyLink -> {
                     requireActivity().copyToClipBoard(
-                        DEXIE_BASE_URL
+                        viewModel.viewState.value.url
                     )
                 }
 
                 is TraderEvent.OnDisable -> {
                     viewModel.disableDApp()
                     getMainActivity().popBackStackOnce()
-                }
-
-                is TraderEvent.OnLoadUrl -> {
-                    VLog.d("Load url for web view : ${it.url} webView : $webView")
-                    webView?.loadUrl(it.url)
                 }
 
                 else -> Unit

@@ -220,12 +220,18 @@ fun WebViewContainer(
                 )
 //                this.loadUrl("file:///android_asset/index.html")
 //                this.loadUrl("https://green-app-sigma.vercel.app/")
-                VLog.d("Loading url for trader screen: $url")
                 this.loadUrl(url)
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         bridge.init()
                     }
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        val currentUrl = view?.url ?: ""
+                        onEvent(TraderEvent.ChangedUrl(currentUrl))
+                    }
+                    
                 }
             }
         },

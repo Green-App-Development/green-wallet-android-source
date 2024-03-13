@@ -69,7 +69,6 @@ class GreenWalletJS(
     fun loadNewUrl(url: String) =
         doInBackground { promise ->
             VLog.d("Url in JavaJS Communicator : $url")
-            onEvent(TraderEvent.OnLoadUrl(url))
             promise.resolve("")
         }
 

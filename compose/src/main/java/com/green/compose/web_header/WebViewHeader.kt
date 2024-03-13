@@ -28,6 +28,7 @@ import com.green.compose.dimens.text_20
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
+import com.greenwallet.core.ext.extractDomain
 
 
 @Composable
@@ -60,7 +61,6 @@ fun WebViewHeader(
 
         Row(
             verticalAlignment = Alignment.Bottom,
-            modifier = Modifier.weight(1f)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.fa_lock),
@@ -69,7 +69,7 @@ fun WebViewHeader(
                 tint = Provider.current.txtPrimaryColor
             )
             DefaultText(
-                text = url,
+                text = url.extractDomain(),
                 size = text_20,
                 color = Provider.current.txtPrimaryColor,
                 modifier = Modifier.padding(start = size_5),
@@ -115,7 +115,7 @@ fun WebViewHeaderPreview() {
                 Provider.current.background
             )
         ) {
-            WebViewHeader(url = "http://localhost:8081/student")
+            WebViewHeader(url = "http://google.com")
         }
     }
 }

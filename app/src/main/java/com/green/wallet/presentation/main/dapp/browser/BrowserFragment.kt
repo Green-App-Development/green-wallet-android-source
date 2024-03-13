@@ -45,12 +45,22 @@ class BrowserFragment : BaseComposeFragment() {
                 }
 
                 is BrowserEvent.OnSearchIconClick -> {
-                    getMainActivity().move2TraderFragment(viewModel.viewState.value.searchText)
+                    getMainActivity().move2TraderFragment(
+                        isShouldStartWithGoogleSearch(
+                            viewModel.viewState.value.searchText
+                        )
+                    )
                 }
-                
+
                 else -> Unit
             }
         }
+    }
+
+    private fun isShouldStartWithGoogleSearch(text: String): String {
+        if(text.startsWith("http"))
+            return text
+        return "https://www.google.com/search?q=$text"
     }
 
 }

@@ -184,6 +184,10 @@ class TraderViewModel @Inject constructor(
                 setEvent(TraderEvent.SuccessTakingOffer)
             }
 
+            is TraderEvent.ChangedUrl -> {
+                _viewState.update { it.copy(url = event.url) }
+            }
+
             else -> {
                 setEvent(event)
             }

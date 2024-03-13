@@ -234,6 +234,7 @@ dependencies {
     implementation project(':compose')
     implementation project(':core')
     implementation project(':uikit')
+    implementation project(':utils')
 
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
