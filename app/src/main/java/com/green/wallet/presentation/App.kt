@@ -11,7 +11,9 @@ import androidx.work.WorkerFactory
 import com.google.firebase.messaging.FirebaseMessaging
 import com.green.wallet.BuildConfig
 import com.green.wallet.R
+import com.green.wallet.data.network.firebase.FirebaseDB
 import com.green.wallet.data.preference.PrefsManager
+import com.green.wallet.domain.domainmodel.DAppLink
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.ExchangeInteract
@@ -82,6 +84,9 @@ class App : DaggerApplication() {
     @Inject
     lateinit var tibetInteract: TibetInteract
 
+    @Inject
+    lateinit var firebaseDB: FirebaseDB
+
     lateinit var appComponent: AppComponent
 
     var applicationIsAlive = false
@@ -115,6 +120,10 @@ class App : DaggerApplication() {
         initWorkManager()
         subscribingToTopic()
 
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = firebaseDB.getDAppLinkFirebaseList()
+            VLog.d("Result on FirebaseDB : $result")
+        }
     }
 
 

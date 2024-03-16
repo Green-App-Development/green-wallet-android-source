@@ -69,5 +69,6 @@ dependencies {
     api 'de.charlex.compose:revealswipe:1.0.0'
 
     implementation project(':utils')
+    implementation project(':uikit')
 
 }

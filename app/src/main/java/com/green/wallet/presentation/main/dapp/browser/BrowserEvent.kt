@@ -6,10 +6,10 @@ sealed interface BrowserEvent {
 
     data class OnChangeCategory(val category: SearchCategory) : BrowserEvent
 
+    data class OnChooseDAppLink(val link: String) : BrowserEvent
+
+    data class OnSearchIconClick(val searchText: String) : BrowserEvent
+
     object ListingApplication : BrowserEvent
-
-    object ChosenDexie : BrowserEvent
-
-    object OnSearchIconClick : BrowserEvent
 
 }

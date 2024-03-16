@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -30,14 +31,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_15
-import com.green.compose.dimens.size_16
 import com.green.compose.dimens.size_2
 import com.green.compose.dimens.size_20
+import com.green.compose.dimens.size_24
 import com.green.compose.dimens.size_30
 import com.green.compose.dimens.size_4
+import com.green.compose.dimens.size_40
+import com.green.compose.dimens.size_45
+import com.green.compose.dimens.size_48
 import com.green.compose.dimens.size_50
 import com.green.compose.dimens.size_6
 import com.green.compose.dimens.size_8
@@ -49,14 +55,15 @@ import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
-import com.green.wallet.domain.domainmodel.DAppModel
-import com.green.wallet.presentation.main.dapp.trade.TraderEvent
+import com.green.wallet.domain.domainmodel.DAppLink
+import com.greenwallet.core.ext.extractDomain
 
 
 @Composable
 fun BrowserScreen(
     state: BrowserState,
-    onEvent: (BrowserEvent) -> Unit
+    onEvent: (BrowserEvent) -> Unit,
+    back: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -114,210 +121,332 @@ fun BrowserScreen(
             }
         }
 
-        DefaultText(
-            text = "Browser",
-            size = text_25,
-            color = Provider.current.green,
-            modifier = Modifier
-                .padding(top = size_10)
-        )
-
-        TextField(
-            placeholder = {
-                DefaultText(
-                    text = "Поиск",
-                    size = text_15,
-                    color = Provider.current.greyText
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = size_20
-                ),
-            value = state.searchText,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Provider.current.background,
-                cursorColor = Color.White,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                textColor = Provider.current.txtPrimaryColor
-            ),
-            onValueChange = {
-                onEvent(BrowserEvent.OnSearchChange(it))
-            },
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = null,
-                    tint = Provider.current.greyText,
-                    modifier = Modifier.clickable {
-                        onEvent(BrowserEvent.OnSearchIconClick)
-                    }
-                )
-            }
-        )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(size_50)
                 .padding(
-                    top = size_20
+                    top = size_10
                 ),
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(
-                        end = size_8
-                    )
-                    .fillMaxHeight()
-                    .background(
-                        color = if (state.searchCategory == SearchCategory.ALL) Provider.current.green
-                        else Provider.current.background,
-                        shape = RoundedCornerShape(size_15)
-                    )
-                    .clickable {
-                        onEvent(BrowserEvent.OnChangeCategory(SearchCategory.ALL))
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                DefaultText(
-                    text = "Все",
-                    size = text_14,
-                    color = if (state.searchCategory == SearchCategory.ALL)
-                        Color.White
-                    else
-                        Provider.current.greyText,
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(
-                        horizontal = size_8
-                    )
-                    .fillMaxHeight()
-                    .background(
-                        color = if (state.searchCategory == SearchCategory.DeFi) Provider.current.green
-                        else Provider.current.background,
-                        shape = RoundedCornerShape(size_15)
-                    )
-                    .clickable {
-                        onEvent(BrowserEvent.OnChangeCategory(SearchCategory.DeFi))
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                DefaultText(
-                    text = "DeFi",
-                    size = text_14,
-                    color = if (state.searchCategory == SearchCategory.DeFi)
-                        Color.White
-                    else
-                        Provider.current.greyText,
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(
-                        start = size_8
-                    )
-                    .fillMaxHeight()
-                    .background(
-                        color = if (state.searchCategory == SearchCategory.NFT) Provider.current.green
-                        else Provider.current.background,
-                        shape = RoundedCornerShape(size_15)
-                    )
-                    .height(size_30)
-                    .clickable {
-                        onEvent(BrowserEvent.OnChangeCategory(SearchCategory.NFT))
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                DefaultText(
-                    text = "NFT",
-                    size = text_14,
-                    color = if (state.searchCategory == SearchCategory.NFT)
-                        Color.White
-                    else
-                        Provider.current.greyText,
-                    textAlign = TextAlign.Center
-                )
-            }
+            DefaultText(
+                text = "Browser",
+                size = text_25,
+                color = Provider.current.green,
+            )
         }
 
-        Column(
+        Box(
             modifier = Modifier
-                .padding(top = size_20)
+                .fillMaxWidth()
+        ) {
+            TextField(
+                placeholder = {
+                    DefaultText(
+                        text = "Поиск",
+                        size = text_15,
+                        color = Provider.current.greyText
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = size_20
+                    ),
+                value = state.searchText,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Provider.current.background,
+                    cursorColor = Color.White,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    textColor = Provider.current.txtPrimaryColor
+                ),
+                onValueChange = {
+                    onEvent(BrowserEvent.OnSearchChange(it))
+                },
+                shape = RoundedCornerShape(
+                    topStart = size_8,
+                    topEnd = size_8,
+                    bottomStart = if (state.authCompleteResult.isEmpty()) size_8 else 0.dp,
+                    bottomEnd = if (state.authCompleteResult.isEmpty()) size_8 else 0.dp,
+                ),
+                singleLine = true,
+                trailingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search),
+                        contentDescription = null,
+                        tint = Provider.current.greyText,
+                        modifier = Modifier.clickable {
+                            onEvent(BrowserEvent.OnSearchIconClick(""))
+                        }
+                    )
+                }
+            )
+
+        }
+
+        Box(
+            modifier = Modifier
                 .weight(1f)
         ) {
-            LazyColumn {
-                items(state.dAppList) {
-                    DAppItemRepresentation(
-                        item = it
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(size_50)
+                        .padding(
+                            top = size_20
+                        ),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(
+                                end = size_8
+                            )
+                            .fillMaxHeight()
+                            .background(
+                                color = if (state.searchCategory == SearchCategory.ALL) Provider.current.green
+                                else Provider.current.background,
+                                shape = RoundedCornerShape(size_15)
+                            )
+                            .clickable {
+                                onEvent(BrowserEvent.OnChangeCategory(SearchCategory.ALL))
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
-                        onEvent(BrowserEvent.ChosenDexie)
+                        DefaultText(
+                            text = "Все",
+                            size = text_14,
+                            color = if (state.searchCategory == SearchCategory.ALL)
+                                Color.White
+                            else
+                                Provider.current.greyText,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(
+                                horizontal = size_8
+                            )
+                            .fillMaxHeight()
+                            .background(
+                                color = if (state.searchCategory == SearchCategory.DeFi) Provider.current.green
+                                else Provider.current.background,
+                                shape = RoundedCornerShape(size_15)
+                            )
+                            .clickable {
+                                onEvent(BrowserEvent.OnChangeCategory(SearchCategory.DeFi))
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        DefaultText(
+                            text = "DeFi",
+                            size = text_14,
+                            color = if (state.searchCategory == SearchCategory.DeFi)
+                                Color.White
+                            else
+                                Provider.current.greyText,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(
+                                start = size_8
+                            )
+                            .fillMaxHeight()
+                            .background(
+                                color = if (state.searchCategory == SearchCategory.NFT) Provider.current.green
+                                else Provider.current.background,
+                                shape = RoundedCornerShape(size_15)
+                            )
+                            .height(size_30)
+                            .clickable {
+                                onEvent(BrowserEvent.OnChangeCategory(SearchCategory.NFT))
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        DefaultText(
+                            text = "NFT",
+                            size = text_14,
+                            color = if (state.searchCategory == SearchCategory.NFT)
+                                Color.White
+                            else
+                                Provider.current.greyText,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = size_20)
+                        .weight(1f)
+                ) {
+                    LazyColumn {
+                        items(state.dAppList) {
+                            DAppItemRepresentation(
+                                item = it
+                            ) {
+                                onEvent(BrowserEvent.OnChooseDAppLink(it.url))
+                            }
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                ) {
+                    DefaultText(
+                        text = "Not on the list?",
+                        size = text_16,
+                        color = Provider.current.secondGrey
+                    )
+
+                    DefaultText(
+                        modifier = Modifier
+                            .padding(start = size_4)
+                            .clickable {
+                                onEvent(BrowserEvent.ListingApplication)
+                            },
+                        text = "Listing application",
+                        size = text_16,
+                        color = Provider.current.green,
+                        textDecoration = TextDecoration.Underline
+                    )
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                itemsIndexed(state.authCompleteResult) { index, item ->
+                    SearchResultItem(
+                        result = item,
+                        hasDivider = index < state.authCompleteResult.size - 1
+                    ) {
+                        onEvent(BrowserEvent.OnSearchIconClick(item))
                     }
                 }
             }
-        }
-
-        Row(
-            modifier = Modifier
-        ) {
-            DefaultText(
-                text = "Not on the list?",
-                size = text_16,
-                color = Provider.current.secondGrey
-            )
-
-            DefaultText(
-                modifier = Modifier
-                    .padding(start = size_4)
-                    .clickable {
-                        onEvent(BrowserEvent.ListingApplication)
-                    },
-                text = "Listing application",
-                size = text_16,
-                color = Provider.current.green,
-                textDecoration = TextDecoration.Underline
-            )
         }
     }
 }
 
 @Composable
+fun SearchResultItem(
+    result: String,
+    hasDivider: Boolean = false,
+    onClickResult: () -> Unit = {}
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = Provider.current.resultResultBackground,
+                shape = RoundedCornerShape(
+                    bottomStart = if (!hasDivider) size_8 else 0.dp,
+                    bottomEnd = if (!hasDivider) size_8 else 0.dp
+                )
+            )
+            .clickable {
+                onClickResult()
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(
+                    size_48
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = null,
+                tint = Provider.current.greyText,
+                modifier = Modifier
+                    .padding(
+                        start = size_8
+                    )
+                    .clickable {
+
+                    }
+            )
+
+            DefaultText(
+                text = result,
+                size = text_14,
+                color = Provider.current.txtPrimaryColor,
+                modifier = Modifier
+                    .padding(
+                        start = size_10
+                    )
+                    .weight(1f)
+            )
+        }
+        if (hasDivider) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(size_1)
+                    .background(Provider.current.iconGrey)
+                    .align(Alignment.BottomCenter)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalCoilApi::class)
+@Composable
 fun DAppItemRepresentation(
-    item: DAppModel,
-    onItem: (DAppModel) -> Unit
+    item: DAppLink,
+    onItem: (DAppLink) -> Unit
 ) {
     Column(modifier = Modifier
         .clickable {
             onItem(item)
         }) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(R.drawable.ic_chia),
-                contentDescription = null,
+
+            Box(
                 modifier = Modifier
-                    .padding(end = size_10)
-            )
+                    .size(size_50)
+                    .background(
+                        color = Color.White,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = rememberImagePainter(data = item.imgUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                )
+            }
+
             Column(
                 modifier = Modifier
+                    .padding(
+                        start = size_8
+                    )
                     .weight(1f)
             ) {
                 DefaultText(
@@ -337,16 +466,17 @@ fun DAppItemRepresentation(
                         ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = com.greenwallet.uikit.R.drawable.ic_checked_green),
-                        contentDescription = null
-                    )
+                    if (item.isVerified)
+                        Image(
+                            painter = painterResource(id = com.greenwallet.uikit.R.drawable.ic_checked_green),
+                            contentDescription = null
+                        )
                     DefaultText(
                         modifier = Modifier
                             .padding(
                                 start = size_4
                             ),
-                        text = "dexie.space",
+                        text = item.url.extractDomain(),
                         size = text_14,
                         color = Provider.current.green
                     )

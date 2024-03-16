@@ -1,5 +1,6 @@
 package com.green.compose.web_header
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import com.green.compose.dimens.text_20
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
+import com.green.compose.utils.HTTPS
 import com.greenwallet.core.ext.extractDomain
 
 
@@ -62,12 +64,25 @@ fun WebViewHeader(
         Row(
             verticalAlignment = Alignment.Bottom,
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.fa_lock),
-                contentDescription = null,
-                modifier = Modifier.size(size_24),
-                tint = Provider.current.txtPrimaryColor
-            )
+            if (url.startsWith(HTTPS)) {
+                Icon(
+                    painter = painterResource(
+                        id = R.drawable.fa_lock
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(size_24),
+                    tint = Provider.current.txtPrimaryColor
+                )
+            } else {
+                Image(
+                    painter = painterResource(
+                        id = R.drawable.ic_unsecure_lock
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(size_24)
+                )
+            }
+            
             DefaultText(
                 text = url.extractDomain(),
                 size = text_20,

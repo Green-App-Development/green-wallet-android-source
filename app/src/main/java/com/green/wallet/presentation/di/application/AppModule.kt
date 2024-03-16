@@ -9,6 +9,8 @@ import com.green.wallet.data.local.AppDatabase.Companion.migration34To35
 import com.green.wallet.data.local.AppDatabase.Companion.migration35To36
 import com.green.wallet.data.local.AppDatabase.Companion.migration37To38
 import com.green.wallet.data.local.AppDatabase.Companion.migration6To37
+import com.green.wallet.data.network.firebase.FirebaseDB
+import com.green.wallet.data.network.firebase.FirebaseDBImpl
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl
 import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl.Companion.SECOND_STAGE
@@ -96,5 +98,9 @@ class AppModule {
     fun providerConnectDAppList(): ConnectedDApp {
         return ConnectedDApp()
     }
+
+    @Provides
+    @AppScope
+    fun provideFirebaseDatabase(): FirebaseDB = FirebaseDBImpl()
 
 }

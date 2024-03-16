@@ -23,7 +23,9 @@
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyLightTheme">
+        android:theme="@style/MyLightTheme"
+        android:usesCleartextTraffic="true">
+
         <activity
             android:name="com.green.wallet.presentation.main.MainActivity"
             android:exported="true"

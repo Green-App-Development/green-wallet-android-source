@@ -142,7 +142,14 @@ class SendViewModel @Inject constructor(
             spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
                 .collect { amount ->
 //                    VLog.d("Wallet's With Amount : ${wallet.tokenWalletList[0].amount} on update spendable balance")
-                    _viewState.update { it.copy(xchSpendableBalance = wallet.tokenWalletList[0].amount - amount) }
+                    _viewState.update {
+                        it.copy(
+                            xchSpendableBalance = Math.max(
+                                0.0,
+                                wallet.tokenWalletList[0].amount - amount
+                            )
+                        )
+                    }
                     validatingEnoughAmounts()
                 }
         }

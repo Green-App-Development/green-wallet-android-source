@@ -40,14 +40,14 @@ class BrowserFragment : BaseComposeFragment() {
                     getMainActivity().move2ListingFragment()
                 }
 
-                is BrowserEvent.ChosenDexie -> {
-                    getMainActivity().move2TraderFragment("file:///android_asset/index.html")
+                is BrowserEvent.OnChooseDAppLink -> {
+                    getMainActivity().move2TraderFragment(it.link)
                 }
 
                 is BrowserEvent.OnSearchIconClick -> {
                     getMainActivity().move2TraderFragment(
                         isShouldStartWithGoogleSearch(
-                            viewModel.viewState.value.searchText
+                            it.searchText.ifEmpty { viewModel.viewState.value.searchText }
                         )
                     )
                 }
@@ -58,7 +58,7 @@ class BrowserFragment : BaseComposeFragment() {
     }
 
     private fun isShouldStartWithGoogleSearch(text: String): String {
-        if(text.startsWith("http"))
+        if (text.startsWith("http"))
             return text
         return "https://www.google.com/search?q=$text"
     }

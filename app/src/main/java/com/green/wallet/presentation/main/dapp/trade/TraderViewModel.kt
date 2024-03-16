@@ -10,6 +10,7 @@ import com.green.wallet.domain.domainmodel.SpentCoin
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DexieInteract
+import com.green.wallet.domain.interact.FirebaseInteract
 import com.green.wallet.domain.interact.NFTInteract
 import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
@@ -53,7 +54,8 @@ class TraderViewModel @Inject constructor(
     private val nftInteractor: NFTInteract,
     private val pinCodeCommunicator: PinCodeCommunicator,
     private val offerTransactionInteract: OfferTransactionInteract,
-    private val connectedDApp: ConnectedDApp
+    private val connectedDApp: ConnectedDApp,
+    private val firebaseInteract: FirebaseInteract,
 ) : BaseIntentViewModel<TraderViewState, TraderEvent, TraderIntent>(TraderViewState()) {
 
     var wallet: Wallet? = null
@@ -408,7 +410,6 @@ class TraderViewModel @Inject constructor(
                 )
             }
 
-            VLog.d("Adding Token Abstract : $token")
             list.add(token)
         }
 
