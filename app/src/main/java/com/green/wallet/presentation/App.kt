@@ -157,7 +157,7 @@ class App : DaggerApplication() {
 
     private fun quickNavigationIfUserUnBoarded() {
         CoroutineScope(Dispatchers.IO).launch {
-            isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, false)
+            isUserUnBoardDed = prefs.getSettingBoolean(PrefsManager.USER_UNBOARDED, true)
             val guid = prefs.getSettingString(PrefsManager.USER_GUID, "")
             if (guid.isEmpty()) {
                 val generateGuid = UUID.randomUUID().toString().replace("-", "").uppercase()
