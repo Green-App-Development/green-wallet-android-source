@@ -9,7 +9,7 @@ function helperFunction(){
 
     Bridge.interfaces.GreenWallet.connect().then((ans) => {
         console.log(ans,'Call from Android for checking connection');
-    });
+    });C
 
 
 //    Bridge.interfaces.GreenWallet.connect().then((ans) => {
@@ -29,8 +29,8 @@ function helperFunction2(){
     Bridge.interfaces.GreenWallet.createOffer({'offerAssets': [
 //    {'assetId':'nft133fm6pgen3mmqpwz6xg577fnxrzuxcr4k5696c7vqq456mc5k9aqd87ns6','amount':'1'},
         {'assetId':'','amount':'0.0002'}],
-       'requestAssets': [{'assetId':'7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02','amount':'1.31'}
-//           {'assetId':'nft1k7t35zy6kq4ss70jjf7h5kt6rydh9nk0yr8wfnyr0ugffg7j7m0s839gy4','amount':'1'}
+       'requestAssets': [{'assetId':'7108b478ac51f79b6ebf8ce40fa695e6eb6bef654a657d2694f1183deb78cc02','amount':'1.31'},
+           {'assetId':'nft1k7t35zy6kq4ss70jjf7h5kt6rydh9nk0yr8wfnyr0ugffg7j7m0s839gy4','amount':'1'}
         ]
     }).then((ans) => {
      let id=ans['id']

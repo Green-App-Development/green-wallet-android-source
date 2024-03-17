@@ -40,4 +40,6 @@ interface SpentCoinsInteract {
 
     suspend fun deleteSpentCoinsByAddressFk(addressFk: String): Int
 
+    suspend fun clearAllSpentCoins()
+
 }

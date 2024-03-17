@@ -152,7 +152,7 @@ class BlockChainInteractImpl @Inject constructor(
                 updateInProgressTransactions()
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
-                updateWalletNFTBalance(wallet)
+//                updateWalletNFTBalance(wallet)
                 updateOfferTransactions(wallet)
                 updateCancelTransaction(wallet)
             }

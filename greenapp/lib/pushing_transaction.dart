@@ -552,100 +552,109 @@ class PushingTransaction {
       required String spentCoins,
       required String offeredStr,
       required String requestedStr}) async {
-    // try {
-    NetworkContext().setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
+    try {
+      NetworkContext()
+          .setBlockchainNetwork(blockchainNetworks[Network.mainnet]!);
 
-    final fullNodeRpc = FullNodeHttpRpc(url);
-    var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
+      final fullNodeRpc = FullNodeHttpRpc(url);
+      var key = "${mnemonics.join(" ")}_${observer}_$nonObserver";
 
-    final keychain = cachedWalletChains[key] ??
-        generateKeyChain(mnemonics, observer, nonObserver);
+      final keychain = cachedWalletChains[key] ??
+          generateKeyChain(mnemonics, observer, nonObserver);
 
-    final fullNode = ChiaFullNodeInterface(fullNodeRpc);
-    final offerService = OffersService(fullNode: fullNode, keychain: keychain);
+      final fullNode = ChiaFullNodeInterface(fullNodeRpc);
+      final offerService =
+          OffersService(fullNode: fullNode, keychain: keychain);
 
-    final puzzleHashes =
-        keychain.hardenedMap.entries.map((e) => e.key).toList();
-    keychain.unhardenedMap.entries.forEach((element) {
-      puzzleHashes.add(element.key);
-    });
+      final puzzleHashes =
+          keychain.hardenedMap.entries.map((e) => e.key).toList();
+      keychain.unhardenedMap.entries.forEach((element) {
+        puzzleHashes.add(element.key);
+      });
 
-    List<String> spentCoinsParents = [];
-    if (spentCoins.isNotEmpty) {
-      List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoins);
-      for (var item in spentCoinsJsonDecoded) {
-        var parentCoinInfo = item["parent_coin_info"].toString();
-        spentCoinsParents.add(parentCoinInfo);
+      List<String> spentCoinsParents = [];
+      if (spentCoins.isNotEmpty) {
+        List<dynamic> spentCoinsJsonDecoded = json.decode(spentCoins);
+        for (var item in spentCoinsJsonDecoded) {
+          var parentCoinInfo = item["parent_coin_info"].toString();
+          spentCoinsParents.add(parentCoinInfo);
+        }
       }
-    }
 
-    var offered = parseFlutterTokenJsonString(offeredStr);
-    var requested = parseFlutterTokenJsonString(requestedStr);
+      var offered = parseFlutterTokenJsonString(offeredStr);
+      var requested = parseFlutterTokenJsonString(requestedStr);
 
-    List<FullCoin> fullCoins = [];
+      List<FullCoin> fullCoins = [];
 
-    Map<String, List<Coin>> spentCoinsMap = {};
-    final nftService =
-        NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+      Map<String, List<Coin>> spentCoinsMap = {};
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
 
-    var offerMap = offerAssetDataParamsOffered(offered);
-    Map<OfferAssetData?, List<int>> requestMap = <OfferAssetData?, List<int>>{};
+      var offerMap = offerAssetDataParamsOffered(offered);
+      Map<OfferAssetData?, List<int>> requestMap =
+          <OfferAssetData?, List<int>>{};
 
-    for (var token in offered) {
-      if (token.type == "XCH") {
-        await saveFullCoinsXCH(fee, url, token, spentCoinsParents, fullCoins,
-            spentCoinsMap, fullNode, keychain);
-      } else if (token.type == "CAT") {
-        await saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins,
-            spentCoinsMap, fullNode, keychain);
-      } else {
-        var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-            assetId: Bytes.fromHex(token.assetID),
-            puzzle_hash: Puzzlehash.fromHex(token.fromAddress));
-        final nftCoin = nftCoins[0];
-        final nftFullCoin = await nftService.convertFullCoin(nftCoin);
-        fullCoins.add(nftFullCoin);
+      for (var token in offered) {
+        if (token.type == "XCH") {
+          await saveFullCoinsXCH(fee, url, token, spentCoinsParents, fullCoins,
+              spentCoinsMap, fullNode, keychain);
+        } else if (token.type == "CAT") {
+          keychain.addOuterPuzzleHashesForAssetId(
+              Puzzlehash.fromHex(token.assetID.toString()));
+          await saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins,
+              spentCoinsMap, fullNode, keychain);
+        } else {
+          var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+              assetId: Bytes.fromHex(token.assetID),
+              puzzle_hash: Puzzlehash.fromHex(token.fromAddress));
+          final nftCoin = nftCoins[0];
+          final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+          fullCoins.add(nftFullCoin);
+        }
       }
-    }
 
-    for (var item in requested) {
-      final amount = item.amount;
-      if (item.type == "CAT") {
-        final tokenHash = Puzzlehash.fromHex(item.assetID);
-        requestMap[OfferAssetData.cat(tailHash: tokenHash)] = [amount];
-      } else if (item.type == 'XCH') {
-        requestMap[null] = [amount];
-      } else {
-        var nftCoin = await nftService
-            .getNftFullCoinWithLauncherId(Puzzlehash.fromHex(item.assetID));
+      for (var item in requested) {
+        final amount = item.amount;
+        if (item.type == "CAT") {
+          keychain.addOuterPuzzleHashesForAssetId(
+              Puzzlehash.fromHex(item.assetID.toString()));
+          final tokenHash = Puzzlehash.fromHex(item.assetID);
+          requestMap[OfferAssetData.cat(tailHash: tokenHash)] = [amount];
+        } else if (item.type == 'XCH') {
+          requestMap[null] = [amount];
+        } else {
+          var nftCoin = await nftService
+              .getNftFullCoinWithLauncherId(Puzzlehash.fromHex(item.assetID));
 
-        final nftFullCoin = await nftService.convertFullCoin(nftCoin!);
-        fullCoins.add(nftFullCoin);
-        requestMap[OfferAssetData.singletonNft(
-            launcherPuzhash: nftFullCoin.launcherId)] = [1];
+          final nftFullCoin = await nftService.convertFullCoin(nftCoin!);
+          // fullCoins.add(nftFullCoin);
+          requestMap[OfferAssetData.singletonNft(
+              launcherPuzhash: nftFullCoin.launcherId)] = [1];
+        }
       }
+
+      final changePh = keychain.puzzlehashes[2];
+      final targetPh = keychain.puzzlehashes[3];
+
+      debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
+      debugPrint(
+          "Offer Mapping when creating an offer $offerMap : $spentCoinsParents");
+
+      final offer = await offerService.createOffer(
+          requesteAmounts: requestMap,
+          offerredAmounts: offerMap,
+          coins: fullCoins.toSet().toList(),
+          changePuzzlehash: changePh,
+          targetPuzzleHash: targetPh,
+          fee: fee);
+      final str = offer.toBench32();
+
+      _channel.invokeMethod("CreateOffer",
+          {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
+    } catch (ex) {
+      debugPrint("Exception in creating an offer : $ex");
+      _channel.invokeMethod("ErrorPushingOffer");
     }
-
-    final changePh = keychain.puzzlehashes[2];
-    final targetPh = keychain.puzzlehashes[3];
-
-    debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
-
-    final offer = await offerService.createOffer(
-        requesteAmounts: requestMap,
-        offerredAmounts: offerMap,
-        coins: fullCoins.toSet().toList(),
-        changePuzzlehash: changePh,
-        targetPuzzleHash: targetPh,
-        fee: fee);
-    final str = offer.toBench32();
-    debugPrint("Offer String to createOffer : $str");
-    _channel.invokeMethod(
-        "CreateOffer", {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
-    // } catch (ex) {
-    //   debugPrint("Exception in creating an offer : $ex");
-    //   _channel.invokeMethod("exception");
-    // }
   }
 
   Future<void> speedyTransferNFT(
@@ -858,7 +867,7 @@ class PushingTransaction {
           for (final coin in feeStandardCoinsTotal) {
             var isSpent =
                 spentCoinsParents.contains(coin.parentCoinInfo.toString());
-            if (!isSpent && coin.amount!=0) {
+            if (!isSpent && coin.amount != 0) {
               curFee += coin.amount;
               standardCoinsForFee.add(coin);
             }
@@ -1036,7 +1045,7 @@ class PushingTransaction {
         for (final coin in allCoins) {
           var isUsed =
               tranCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (isUsed && coin.amount!=0) {
+          if (isUsed && coin.amount != 0) {
             sum += coin.amount;
             requiredCoins.add(coin);
           }
@@ -1309,7 +1318,7 @@ class PushingTransaction {
     for (final coin in totalXCHCoins) {
       var isSpentCoin =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      if (!isSpentCoin && coin.amount!=0) {
+      if (!isSpentCoin && coin.amount != 0) {
         curAmount += coin.amount;
         neededCoins.add(coin);
       }
@@ -1356,7 +1365,7 @@ class PushingTransaction {
     for (final coin in basicCatCoins) {
       var isCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      if (!isCoinSpent && coin.amount!=0) {
+      if (!isCoinSpent && coin.amount != 0) {
         curAmount += coin.amount;
         neededCatCoins.add(coin);
         await getCatCoinsDetail(

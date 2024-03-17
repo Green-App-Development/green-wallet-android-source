@@ -19,6 +19,7 @@ import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.PrefsInteract
+import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.SupportInteract
 import com.green.wallet.domain.interact.TibetInteract
 import com.green.wallet.domain.interact.WalletInteract
@@ -87,6 +88,9 @@ class App : DaggerApplication() {
     @Inject
     lateinit var firebaseDB: FirebaseDB
 
+    @Inject
+    lateinit var spentCoinsInteract: SpentCoinsInteract
+
     lateinit var appComponent: AppComponent
 
     var applicationIsAlive = false
@@ -121,8 +125,7 @@ class App : DaggerApplication() {
         subscribingToTopic()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val result = firebaseDB.getDAppLinkFirebaseList()
-            VLog.d("Result on FirebaseDB : $result")
+            spentCoinsInteract.clearAllSpentCoins()
         }
     }
 

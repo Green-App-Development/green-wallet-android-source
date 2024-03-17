@@ -349,10 +349,10 @@ class TraderFragment : BaseComposeFragment() {
         for (i in list) {
             val token = when (i) {
                 is NftToken -> {
-                    var nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
-                    if (nftCoin == null) {
-                        nftCoin = viewModel.getNftCoinFromWallet(i.nftId)
-                    }
+//                    var nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+//                    if (nftCoin == null) {
+                    val nftCoin = viewModel.getNftCoinFromWallet(i.nftId)
+//                    }
                     FlutterToken(
                         assetID = nftCoin?.coinInfo
                             ?: throw Exception("No found nft locally and on the server"),
