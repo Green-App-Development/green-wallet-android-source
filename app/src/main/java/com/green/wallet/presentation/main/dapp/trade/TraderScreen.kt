@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.ViewGroup
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.background
@@ -115,6 +117,7 @@ fun TraderScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 WebViewHeader(
+                    pageLoading = state.webPageLoading,
                     modifier = Modifier.background(
                         color = Provider.current.background
                     ),
@@ -223,15 +226,27 @@ fun WebViewContainer(
                 this.loadUrl(url)
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                        VLog.d("On page started called with url: $url")
                         bridge.init()
+                        onEvent(TraderEvent.PageStarting)
                     }
 
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
+                        VLog.d("On page finished called with url: $url")
                         val currentUrl = view?.url ?: ""
                         onEvent(TraderEvent.ChangedUrl(currentUrl))
+                        onEvent(TraderEvent.PageFinishedLoading)
                     }
-                    
+
+                    override fun onReceivedError(
+                        view: WebView?,
+                        request: WebResourceRequest?,
+                        error: WebResourceError?
+                    ) {
+                        VLog.d("On page error called with error: ${error?.description}")
+                    }
+
                 }
             }
         },

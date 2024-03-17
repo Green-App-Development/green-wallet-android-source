@@ -190,6 +190,14 @@ class TraderViewModel @Inject constructor(
                 _viewState.update { it.copy(url = event.url) }
             }
 
+            is TraderEvent.PageStarting -> {
+                _viewState.update { it.copy(webPageLoading = true) }
+            }
+
+            is TraderEvent.PageFinishedLoading -> {
+                _viewState.update { it.copy(webPageLoading = false) }
+            }
+
             else -> {
                 setEvent(event)
             }

@@ -45,4 +45,8 @@ sealed interface TraderEvent {
 
     data class ChangedUrl(val url: String) : TraderEvent
 
+    object PageStarting : TraderEvent
+
+    object PageFinishedLoading : TraderEvent
+
 }
