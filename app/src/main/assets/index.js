@@ -4,13 +4,20 @@ var btn=document.querySelector('.btn');
 var btn2=document.querySelector('.btn2');
 var btn3=document.querySelector('.btn3');
 var btn4=document.querySelector('.btn4');
+var btn5=document.querySelector('.btn5');
+
+function helperFunction5(){
+    Bridge.interfaces.GreenWallet.checkGreenWallet().then((ans) => {
+         console.log('Checking green wallet existence = ',ans);
+      }
+    )
+}
 
 function helperFunction(){
 
     Bridge.interfaces.GreenWallet.connect().then((ans) => {
-        console.log(ans,'Call from Android for checking connection');
-    });C
-
+        console.log('Call from Android for checking connection',ans);
+    });
 
 //    Bridge.interfaces.GreenWallet.connect().then((ans) => {
 //         console.log(ans,"Ans from connect method")
@@ -61,3 +68,4 @@ btn.onclick=helperFunction;
 btn2.onclick=helperFunction2;
 btn3.onclick=helperFunction3;
 btn4.onclick=helperFunction4;
+btn5.onclick=helperFunction5;

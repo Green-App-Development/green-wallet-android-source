@@ -627,7 +627,7 @@ class PushingTransaction {
               .getNftFullCoinWithLauncherId(Puzzlehash.fromHex(item.assetID));
 
           final nftFullCoin = await nftService.convertFullCoin(nftCoin!);
-          // fullCoins.add(nftFullCoin);
+          fullCoins.add(nftFullCoin);
           requestMap[OfferAssetData.singletonNft(
               launcherPuzhash: nftFullCoin.launcherId)] = [1];
         }
@@ -639,6 +639,7 @@ class PushingTransaction {
       debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
       debugPrint(
           "Offer Mapping when creating an offer $offerMap : $spentCoinsParents");
+      debugPrint("Request Mapping when creating an offer $requestMap");
 
       final offer = await offerService.createOffer(
           requesteAmounts: requestMap,

@@ -7,6 +7,8 @@ import de.andycandy.android.bridge.CallType
 import de.andycandy.android.bridge.DefaultJSInterface
 import de.andycandy.android.bridge.NativeCall
 
+//        android:networkSecurityConfig="@xml/network_security_config"
+
 class GreenWalletJS(
     private val state: TraderViewState,
     private val onEvent: (TraderEvent) -> Unit
@@ -71,5 +73,10 @@ class GreenWalletJS(
             VLog.d("Url in JavaJS Communicator : $url")
             promise.resolve("")
         }
+
+    @NativeCall(CallType.FULL_PROMISE)
+    fun checkGreenWallet() = doInBackground { promise ->
+        promise.resolve(true)
+    }
 
 }
