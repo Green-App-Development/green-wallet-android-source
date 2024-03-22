@@ -36,22 +36,27 @@ import coil.compose.rememberImagePainter
 import com.green.compose.dimens.size_1
 import com.green.compose.dimens.size_10
 import com.green.compose.dimens.size_15
+import com.green.compose.dimens.size_18
 import com.green.compose.dimens.size_2
 import com.green.compose.dimens.size_20
 import com.green.compose.dimens.size_24
 import com.green.compose.dimens.size_30
+import com.green.compose.dimens.size_36
 import com.green.compose.dimens.size_4
 import com.green.compose.dimens.size_40
 import com.green.compose.dimens.size_45
 import com.green.compose.dimens.size_48
 import com.green.compose.dimens.size_50
 import com.green.compose.dimens.size_6
+import com.green.compose.dimens.size_60
 import com.green.compose.dimens.size_8
+import com.green.compose.dimens.size_80
 import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
 import com.green.compose.dimens.text_16
 import com.green.compose.dimens.text_25
 import com.green.compose.text.DefaultText
+import com.green.compose.text.DefaultTextField
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
 import com.green.wallet.R
@@ -140,50 +145,26 @@ fun BrowserScreen(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(
+                    top = size_18
+                )
         ) {
-            TextField(
-                placeholder = {
-                    DefaultText(
-                        text = "Поиск",
-                        size = text_15,
-                        color = Provider.current.greyText
-                    )
-                },
+            DefaultTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        top = size_20
-                    ),
-                value = state.searchText,
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Provider.current.background,
-                    cursorColor = Color.White,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    textColor = Provider.current.txtPrimaryColor
-                ),
-                onValueChange = {
+                    .height(size_36),
+                input = state.searchText,
+                onTextChange = {
                     onEvent(BrowserEvent.OnSearchChange(it))
                 },
-                shape = RoundedCornerShape(
-                    topStart = size_8,
-                    topEnd = size_8,
-                    bottomStart = if (state.authCompleteResult.isEmpty()) size_8 else 0.dp,
-                    bottomEnd = if (state.authCompleteResult.isEmpty()) size_8 else 0.dp,
-                ),
-                singleLine = true,
-                trailingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = null,
-                        tint = Provider.current.greyText,
-                        modifier = Modifier.clickable {
-                            onEvent(BrowserEvent.OnSearchIconClick(""))
-                        }
+                bottomRounded = state.authCompleteResult.isEmpty(),
+                onSearchClick = {
+                    onEvent(
+                        BrowserEvent.OnSearchIconClick(
+                            state.searchText
+                        )
                     )
                 }
-            )
-
         }
 
         Box(
