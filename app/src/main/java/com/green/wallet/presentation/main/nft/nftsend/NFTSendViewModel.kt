@@ -26,7 +26,8 @@ class NFTSendViewModel @Inject constructor(
     private val prefsManager: PrefsManager,
     private val blockChainInteract: BlockChainInteract,
     private val addressInteract: AddressInteract,
-    private val dexieInteract: DexieInteract
+    private val dexieInteract: DexieInteract,
+    private val namesXCHDaoInteract: NamesXCHDaoInteract
 ) : BaseViewModel<NftSendViewState, Unit>(NftSendViewState()) {
 
     var wallet: Wallet? = null
@@ -127,6 +128,28 @@ class NFTSendViewModel @Inject constructor(
 
     fun updateDestAddress(destAddress: String) {
         _viewState.update { it.copy(destAddress = destAddress) }
+        lookUpNamesDao()
+    }
+
+    private fun lookUpNamesDao() {
+        val address = viewState.value.destAddress
+        if (address.endsWith(".xch")) {
+            viewModelScope.launch {
+                val result =
+                    namesXCHDaoInteract.getNamesXCHAddress(address.removeSuffix(".xch").trim())
+                _viewState.update {
+                    it.copy(
+                        namesDao = result
+                    )
+                }
+            }
+        } else {
+            _viewState.update {
+                it.copy(
+                    namesDao = null
+                )
+            }
+        }
     }
 
     fun updateChosenFee(fee: Double) {

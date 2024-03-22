@@ -530,6 +530,7 @@ class PushingTransaction {
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
+    testingNamesDao();
     final nftId = NftAddress(
         "nft1j7hsh8uwg2ce0s8xagrcm6m5uzqjr3qdm4y45zwprddfyna80srq8y9q86");
     debugPrint("NftId Address on Flutter : ${nftId.toPuzzlehash()}");
@@ -3290,5 +3291,20 @@ class PushingTransaction {
       debugPrint("Exception in uncurry nft second way : $ex");
       _channel.invokeMethod("exceptionNFT", ex.toString());
     }
+  }
+
+  Future<void> testingNamesDao() async {
+
+    await Future.delayed(Duration(seconds: 2));
+
+    final namesdaoInterface = NamesdaoApi();
+    const name = '___hahaha';
+    final nameInfo = await namesdaoInterface.getNameInfo(name);
+    debugPrint("Name info Address on testingNamesDao: ${nameInfo?.address.address}");
+    // expect(
+    //   nameInfo?.address.address,
+    //   equals('xch1l9hj8emh7xdk3y2d4kszeuu0z6gn27s9rlc0yz7uqgyjjtd0fegsvgsjtv'),
+    // );
+
   }
 }

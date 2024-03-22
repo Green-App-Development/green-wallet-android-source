@@ -10,6 +10,7 @@ import com.green.wallet.data.interact.ExchangeInteractImpl
 import com.green.wallet.data.interact.FirebaseInteractImpl
 import com.green.wallet.data.interact.GreenAppInteractImpl
 import com.green.wallet.data.interact.NFtInteractImpl
+import com.green.wallet.data.interact.NamesXCHDaoInteractImpl
 import com.green.wallet.data.interact.NotifinteractImpl
 import com.green.wallet.data.interact.OfferTransactionInteractImpl
 import com.green.wallet.data.interact.SearchInteractImpl
@@ -32,6 +33,7 @@ import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.FirebaseInteract
 import com.green.wallet.domain.interact.GreenAppInteract
 import com.green.wallet.domain.interact.NFTInteract
+import com.green.wallet.domain.interact.NamesXCHDaoInteract
 import com.green.wallet.domain.interact.NotifInteract
 import com.green.wallet.domain.interact.OfferTransactionInteract
 import com.green.wallet.domain.interact.PrefsInteract
@@ -111,5 +113,8 @@ abstract class InteractModule {
 
     @Binds
     abstract fun bindSearchInteractImpl(searchInteract: SearchInteractImpl): SearchInteract
+
+    @Binds
+    abstract fun bindNamesXCHDaoInteractImpl(namesXCHInteract: NamesXCHDaoInteractImpl): NamesXCHDaoInteract
 
 }

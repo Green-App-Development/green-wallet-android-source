@@ -274,6 +274,22 @@ fun getNumberFromDouble(value: String): Double {
     return double.toDoubleOrNull() ?: 0.0
 }
 
+fun parseQuery(query: String): List<String> {
+    try {
+        val start = query.indexOf('[', 1)
+        val end = query.indexOf(']', start + 1)
+
+        return query.substring(start + 1, end - 1).split(',').map { str ->
+            val trim = str.trim()
+            trim.substring(1, trim.length - 1)
+        }
+    } catch (ex: java.lang.Exception) {
+        println("Exception occurred while parsing query : ${ex.message}")
+    }
+    return emptyList()
+}
+
+
 
 
 

@@ -1,6 +1,6 @@
 package com.green.wallet.data.interact
 
-import com.green.wallet.BuildConfig
+import com.example.common.tools.parseQuery
 import com.green.wallet.data.network.SearchService
 import com.green.wallet.domain.interact.SearchInteract
 import com.green.wallet.presentation.tools.VLog
@@ -12,8 +12,8 @@ class SearchInteractImpl @Inject constructor(
 
     override suspend fun getSearchResultList(prefix: String): List<String> {
         try {
-            val response = searchService.getSearchResult(BuildConfig.SEARCH_API_KEY, prefix)
-            return response.body()!!.suggestions.map { it.value }
+            val response = searchService.getSearchResult(prefix).string()
+            return parseQuery(response)
         } catch (ex: Exception) {
             VLog.d("Exception while getting search result : ${ex.message}")
         }

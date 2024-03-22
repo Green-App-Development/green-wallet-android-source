@@ -18,6 +18,7 @@ import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.CryptocurrencyInteract
 import com.green.wallet.domain.interact.ExchangeInteract
 import com.green.wallet.domain.interact.GreenAppInteract
+import com.green.wallet.domain.interact.NamesXCHDaoInteract
 import com.green.wallet.domain.interact.PrefsInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.SupportInteract
@@ -91,6 +92,9 @@ class App : DaggerApplication() {
     @Inject
     lateinit var spentCoinsInteract: SpentCoinsInteract
 
+    @Inject
+    lateinit var namesXCHDaoInteract: NamesXCHDaoInteract
+
     lateinit var appComponent: AppComponent
 
     var applicationIsAlive = false
@@ -127,6 +131,7 @@ class App : DaggerApplication() {
         CoroutineScope(Dispatchers.IO).launch {
             spentCoinsInteract.clearAllSpentCoins()
         }
+
     }
 
 

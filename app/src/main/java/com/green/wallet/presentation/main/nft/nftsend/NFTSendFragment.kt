@@ -54,6 +54,7 @@ import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.nft.nftdetail.NFTDetailsFragment
+import com.green.wallet.presentation.main.send.TransferState
 import com.green.wallet.presentation.tools.*
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
@@ -348,6 +349,53 @@ class NFTSendFragment : BaseFragment() {
         }
     }
 
+    private fun initAddressLookUp(it: NftSendViewState) {
+        binding.apply {
+            if (it.namesDao == null) {
+                edtAddressWallet.setTextColor(requireActivity().getColorResource(R.color.secondary_text_color))
+                txtEnterAddressWallet.setTextColor(requireActivity().getColorResource(R.color.green))
+                addressNamesLay.visibility = View.GONE
+                return@apply
+            }
+            addressNamesLay.visibility = View.VISIBLE
+
+            txtEnterAddressWallet.setTextColor(
+                requireActivity().getColorResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.color.green
+                    else
+                        R.color.red_mnemonic
+                )
+            )
+
+            edtAddressWallet.setTextColor(
+                requireActivity().getColorResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.color.secondary_text_color
+                    else
+                        R.color.red_mnemonic
+                )
+            )
+
+            txtCoinsWillBeSent.setTextColor(
+                requireActivity().getColorResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.color.secondary_text_color
+                    else
+                        R.color.red_mnemonic
+                )
+            )
+
+            txtCoinsWillBeSent.text =
+                if (it.namesDao.isNotEmpty())
+                    "Монеты будут отправлены на адрес"
+                else
+                    "Адрес не найден или не существует"
+
+            txtCoinsWillBeSentAddress.text = formatString(10, it.namesDao, 6)
+        }
+    }
+
     private fun generateLinearLayoutProperties(
         firstView: Boolean,
         key: String,
@@ -606,6 +654,7 @@ class NFTSendFragment : BaseFragment() {
     override fun collectFlowOnStarted(scope: CoroutineScope) {
         vm.viewState.collectFlow(scope) {
             initButtonState(it)
+            initAddressLookUp(it)
         }
     }
 

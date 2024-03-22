@@ -7,6 +7,7 @@ import com.green.wallet.domain.interact.AddressInteract
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DexieInteract
 import com.green.wallet.domain.interact.GreenAppInteract
+import com.green.wallet.domain.interact.NamesXCHDaoInteract
 import com.green.wallet.domain.interact.SpentCoinsInteract
 import com.green.wallet.domain.interact.TokenInteract
 import com.green.wallet.domain.interact.WalletInteract
@@ -28,11 +29,12 @@ class SendViewModel @Inject constructor(
     private val tokenInteract: TokenInteract,
     private val spentCoinsInteract: SpentCoinsInteract,
     private val dexieInteract: DexieInteract,
-    private val pinCodeCommunicator: PinCodeCommunicator
+    private val pinCodeCommunicator: PinCodeCommunicator,
+    private val namesXCHDaoInteract: NamesXCHDaoInteract
 ) : BaseViewModel<TransferState, TransferEvent>(TransferState()) {
 
     init {
-        VLog.d("SendFragmentViewModel memory location :  $this")
+//        VLog.d("SendFragmentViewModel memory location :  $this")
         getDexieFee()
 
         pinCodeCommunicator.onSuccessPassCode = {
@@ -182,6 +184,28 @@ class SendViewModel @Inject constructor(
     fun updateSendingAddress(address: String) {
         _viewState.update { it.copy(destAddress = address) }
         validatingEnoughAmounts()
+        lookUpNamesDao()
+    }
+
+    private fun lookUpNamesDao() {
+        val address = viewState.value.destAddress
+        if (address.endsWith(".xch")) {
+            viewModelScope.launch {
+                val result =
+                    namesXCHDaoInteract.getNamesXCHAddress(address.removeSuffix(".xch").trim())
+                _viewState.update {
+                    it.copy(
+                        namesDao = result
+                    )
+                }
+            }
+        } else {
+            _viewState.update {
+                it.copy(
+                    namesDao = null
+                )
+            }
+        }
     }
 
     fun updateCATSpendableBalance(amount: Double) {

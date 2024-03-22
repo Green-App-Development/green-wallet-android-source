@@ -374,6 +374,34 @@
                             android:layout_marginTop="3dp"
                             android:background="@color/edt_divider" />
 
+                        <LinearLayout
+                            android:id="@+id/addressNamesLay"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/txtCoinsWillBeSent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:text="Монеты будут отправлены на адрес"
+                                android:textColor="@color/greey"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/txtCoinsWillBeSentAddress"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="5dp"
+                                android:text="xch1janzfpl...pd2s"
+                                android:textColor="@color/green"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/addNameAddressLay"

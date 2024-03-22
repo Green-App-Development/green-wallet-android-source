@@ -33,6 +33,7 @@ dependencies:
   chia_crypto_utils:
     path: ./wallet-sdk
   http: ^0.13.4
+  deep_pick: ^0.10.0
 
 dev_dependencies:
   flutter_test:

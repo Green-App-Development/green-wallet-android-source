@@ -11,5 +11,6 @@ data class TransferState(
     val isFeeEnough: Boolean = true,
     val xchSending: Boolean = true,
     val amountValid: Boolean = false,
-    val destAddress: String = ""
+    val destAddress: String = "",
+    val namesDao: String? = null
 )
