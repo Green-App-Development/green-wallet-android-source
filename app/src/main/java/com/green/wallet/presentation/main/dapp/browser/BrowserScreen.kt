@@ -165,6 +165,7 @@ fun BrowserScreen(
                         )
                     )
                 }
+            )
         }
 
         Box(

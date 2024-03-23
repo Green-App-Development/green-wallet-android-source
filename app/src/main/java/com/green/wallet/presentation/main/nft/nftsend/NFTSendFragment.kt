@@ -387,10 +387,12 @@ class NFTSendFragment : BaseFragment() {
             )
 
             txtCoinsWillBeSent.text =
-                if (it.namesDao.isNotEmpty())
-                    "Монеты будут отправлены на адрес"
-                else
-                    "Адрес не найден или не существует"
+                requireActivity().getStringResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.string.coins_will_be_sent
+                    else
+                        R.string.address_doesnt_found
+                )
 
             txtCoinsWillBeSentAddress.text = formatString(10, it.namesDao, 6)
         }
