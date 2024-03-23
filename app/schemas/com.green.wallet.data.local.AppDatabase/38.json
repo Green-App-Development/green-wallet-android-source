@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 38,
-    "identityHash": "024a030962f3dfecc00855489ad0923d",
+    "identityHash": "078f211b0b7c2588cd5327cf4547a4fb",
     "entities": [
       {
         "tableName": "AddressEntity",
@@ -419,7 +419,7 @@
       },
       {
         "tableName": "NFTInfoEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nft_coin_hash` TEXT NOT NULL, `nft_id` TEXT NOT NULL, `launcher_id` TEXT NOT NULL, `owner_did` TEXT NOT NULL, `minter_did` TEXT NOT NULL, `royalty_percentage` INTEGER NOT NULL, `mint_height` INTEGER NOT NULL, `data_url` TEXT NOT NULL, `data_hash` TEXT NOT NULL, `meta_hash` TEXT NOT NULL, `meta_url` TEXT NOT NULL, `description` TEXT NOT NULL, `collection` TEXT NOT NULL, `properties` TEXT NOT NULL, `name` TEXT NOT NULL, `address_fk` TEXT NOT NULL, `spent` INTEGER NOT NULL, `isPending` INTEGER NOT NULL, PRIMARY KEY(`nft_coin_hash`), FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nft_coin_hash` TEXT NOT NULL, `nft_id` TEXT NOT NULL, `launcher_id` TEXT NOT NULL, `owner_did` TEXT NOT NULL, `minter_did` TEXT NOT NULL, `royalty_percentage` INTEGER NOT NULL, `mint_height` INTEGER NOT NULL, `data_url` TEXT NOT NULL, `data_hash` TEXT NOT NULL, `meta_hash` TEXT NOT NULL, `meta_url` TEXT NOT NULL, `description` TEXT NOT NULL, `collection` TEXT NOT NULL, `properties` TEXT NOT NULL, `name` TEXT NOT NULL, `address_fk` TEXT NOT NULL, `spent` INTEGER NOT NULL, `isPending` INTEGER NOT NULL, `timePending` INTEGER NOT NULL, PRIMARY KEY(`nft_coin_hash`), FOREIGN KEY(`address_fk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "nft_coin_hash",
@@ -526,6 +526,12 @@
           {
             "fieldPath": "isPending",
             "columnName": "isPending",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timePending",
+            "columnName": "timePending",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -891,7 +897,7 @@
       },
       {
         "tableName": "OfferTransactionEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tranId` TEXT NOT NULL, `status` TEXT NOT NULL, `addressFk` TEXT NOT NULL, `requested` TEXT NOT NULL, `offered` TEXT NOT NULL, `acceptOffer` INTEGER NOT NULL, `createdTime` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashTransaction` TEXT NOT NULL, `fee` REAL NOT NULL, `height` INTEGER NOT NULL, PRIMARY KEY(`tranId`), FOREIGN KEY(`addressFk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tranId` TEXT NOT NULL, `status` TEXT NOT NULL, `addressFk` TEXT NOT NULL, `requested` TEXT NOT NULL, `offered` TEXT NOT NULL, `acceptOffer` INTEGER NOT NULL, `createdTime` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashTransaction` TEXT NOT NULL, `fee` REAL NOT NULL, `height` INTEGER NOT NULL, `cancelled` INTEGER NOT NULL, PRIMARY KEY(`tranId`), FOREIGN KEY(`addressFk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "tranId",
@@ -958,6 +964,12 @@
             "columnName": "height",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "cancelled",
+            "columnName": "cancelled",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -980,12 +992,56 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "CancelTransactionEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`offerTranID` TEXT NOT NULL, `addressFk` TEXT NOT NULL, `createAtTime` INTEGER NOT NULL, PRIMARY KEY(`offerTranID`), FOREIGN KEY(`addressFk`) REFERENCES `WalletEntity`(`address`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "offerTranID",
+            "columnName": "offerTranID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addressFk",
+            "columnName": "addressFk",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createAtTime",
+            "columnName": "createAtTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "offerTranID"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "WalletEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "addressFk"
+            ],
+            "referencedColumns": [
+              "address"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '024a030962f3dfecc00855489ad0923d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '078f211b0b7c2588cd5327cf4547a4fb')"
     ]
   }
 }

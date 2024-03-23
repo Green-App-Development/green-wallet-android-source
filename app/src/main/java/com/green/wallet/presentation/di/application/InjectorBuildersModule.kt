@@ -14,6 +14,7 @@ import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWallet
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
 import com.green.wallet.presentation.main.dapp.DAppFragment
+import com.green.wallet.presentation.main.dapp.browser.BrowserFragment
 import com.green.wallet.presentation.main.dapp.trade.TraderFragment
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
@@ -42,6 +43,7 @@ import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidi
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapFragment
 import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFragment
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
+import com.green.wallet.presentation.main.transaction.btmCancel.CancelOfferDialog
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyBtmDialog
 import com.green.wallet.presentation.main.walletlist.AllWalletListFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
@@ -211,5 +213,10 @@ abstract class InjectorBuildersModule {
     @ContributesAndroidInjector
     abstract fun injectIntoCatBtmDialogFragment(): SpeedyBtmDialog
 
+    @ContributesAndroidInjector
+    abstract fun injectCancelOfferDialogFragment(): CancelOfferDialog
+
+    @ContributesAndroidInjector
+    abstract fun injectBrowserFragment(): BrowserFragment
 
 }

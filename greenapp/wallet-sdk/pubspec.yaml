@@ -29,6 +29,7 @@ dependencies:
   tuple: ^2.0.0
   intl: ^0.17.0
   http: ^0.13.4
+  deep_pick: ^0.10.0
 
 dev_dependencies:
   csv: ^5.0.1

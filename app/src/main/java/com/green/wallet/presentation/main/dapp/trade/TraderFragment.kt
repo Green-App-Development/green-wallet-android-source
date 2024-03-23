@@ -1,10 +1,12 @@
 package com.green.wallet.presentation.main.dapp.trade
 
+import android.os.Bundle
+import android.webkit.WebView
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.green.compose.theme.GreenWalletTheme
 import com.green.wallet.R
@@ -19,18 +21,20 @@ import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.FlutterToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
 import com.green.wallet.presentation.main.dapp.trade.models.Token
-import com.green.wallet.presentation.main.dapp.trade.params.CreateOfferParams
 import com.green.wallet.presentation.main.pincode.PinCodeFragment
+import com.green.wallet.presentation.tools.DEXIE_BASE_URL
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
 import com.green.wallet.presentation.tools.PRECISION_CAT
 import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.VLog
+import com.green.wallet.presentation.tools.copyToClipBoard
 import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,11 +47,22 @@ class TraderFragment : BaseComposeFragment() {
     @Inject
     lateinit var dialogManager: DialogManager
 
+    private var webView: WebView? = null
+
     val methodChannel by lazy {
         MethodChannel(
             (context?.applicationContext as App).flutterEngine.dartExecutor.binaryMessenger,
             METHOD_CHANNEL_GENERATE_HASH
         )
+    }
+
+    private val url by lazy {
+        arguments?.getString(URL_KEY, "") ?: ""
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.updateViewStateUrl(url)
     }
 
     @Composable
@@ -61,66 +76,14 @@ class TraderFragment : BaseComposeFragment() {
             TraderScreen(
                 state = state,
                 offerViewState = offerState,
-                webView = {},
+                webView = {
+                    webView = it
+                },
                 onEvent = viewModel::handleEvent,
                 events = viewModel.event
             )
-
-            LaunchedEffect(true) {
-                launch {
-                    viewModel.event.collect {
-                        VLog.d("TraderEvent received : $it")
-                        when (it) {
-                            TraderEvent.ShowPinCode -> {
-                                PinCodeFragment.build(reason = ReasonEnterCode.CONNECTION_REQUEST)
-                                    .show(childFragmentManager, "")
-                            }
-
-                            is TraderEvent.ParseTakeOffer -> {
-                                viewModel.updateOfferDialogState(it.offer)
-                                callFlutterTakeOffer(it.offer)
-                                viewModel.handleEvent(TraderEvent.ShowTakeOfferDialog)
-                            }
-
-                            is TraderEvent.TakeOffer -> {
-                                PinCodeFragment.build(reason = ReasonEnterCode.ACCEPT_OFFER)
-                                    .show(childFragmentManager, "")
-
-                            }
-
-                            is TraderEvent.PinConfirmAcceptOffer -> {
-                                viewModel.setLoading(true)
-                                val value = viewModel.offerViewState.value
-                                callFlutterToPushTakeOffer(
-                                    value.offer, value.chosenFee
-                                )
-                            }
-
-                            is TraderEvent.FailureTakingOffer -> {
-                                showFailedSendingTransaction()
-                            }
-
-                            is TraderEvent.SuccessTakingOffer -> {
-                                showSuccessSendMoneyDialog()
-                            }
-
-                            is TraderEvent.ShowPinCreateOffer -> {
-                                callFlutterToCreateOffer()
-//                                PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
-//                                    .show(childFragmentManager, "")
-                            }
-
-                            is TraderEvent.PinnedCreateOffer -> {
-
-                            }
-
-                            else -> Unit
-                        }
-                    }
-                }
-            }
         }
-
+        initListeningMethod()
     }
 
     private fun initListeningMethod() {
@@ -141,22 +104,39 @@ class TraderFragment : BaseComposeFragment() {
                     VLog.d("Creating offer from flutter ${call.arguments}")
                     val spentCoins = args["spentCoins"].toString()
                     val offer = args["offer"].toString()
-                    viewModel.saveSpentCoins(spentCoins)
-                    viewModel.handleEvent(TraderEvent.SendCreateOfferResult(offer))
+                    requireActivity().copyToClipBoard(offer)
+                    with(viewModel) {
+                        setLoading(false)
+                        handleIntent(TraderIntent.CloseBtmOffer)
+                        val timeCreated = saveOfferTransaction(false)
+                        saveSpentCoins(spentCoins, timeCreated)
+                        handleEvent(TraderEvent.SendCreateOfferResult(offer))
+                    }
                 }
 
                 "PushingOffer" -> {
                     val arguments = (call.arguments as HashMap<*, *>)
                     VLog.d("PushingOffer result from flutter ${call.arguments}")
                     val spentCoins = arguments["spentCoins"].toString()
-                    viewModel.saveSpentCoins(spentCoins)
-                    viewModel.handleEvent(TraderEvent.SendTakeOfferResult)
+                    with(viewModel) {
+                        setLoading(false)
+                        handleIntent(TraderIntent.CloseBtmOffer)
+                        val timeCreated = saveOfferTransaction(true)
+                        saveSpentCoins(spentCoins, timeCreated)
+                        handleEvent(TraderEvent.SendTakeOfferResult)
+                    }
                 }
 
                 "ErrorPushingOffer" -> {
+                    VLog.d("Returned error from flutter on tradeFragment")
                     JavaJSThreadCommunicator.resultTakeOffer = ""
                     JavaJSThreadCommunicator.wait = false
+                    viewModel.setLoading(false)
                     viewModel.handleEvent(TraderEvent.FailureTakingOffer)
+                }
+
+                "testing" -> {
+                    VLog.d("Testing has been called from flutter")
                 }
             }
         }
@@ -168,6 +148,11 @@ class TraderFragment : BaseComposeFragment() {
         VLog.d("Invoked method to parse offer : $map")
         methodChannel.invokeMethod("AnalyzeOffer", map)
         initListeningMethod()
+    }
+
+    private fun callFlutterTemp() {
+        val map = hashMapOf<String, Any>()
+        methodChannel.invokeMethod("testing", map)
     }
 
     private suspend fun callFlutterToPushTakeOffer(offer: String, fee: Double) {
@@ -186,8 +171,10 @@ class TraderFragment : BaseComposeFragment() {
                 10.0, 12.0
             )
         )
+        map["requestedNFT"] =
+            Gson().toJson(convertToTokenFlutterNFTOnlyOffered(viewModel.offerViewState.value.requested))
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
-        map["spentCoins"] = ""
+        map["spentCoins"] = Gson().toJson(viewModel.offerViewState.value.spendCoins)
         methodChannel.invokeMethod("PushingOffer", map)
         initListeningMethod()
     }
@@ -196,11 +183,12 @@ class TraderFragment : BaseComposeFragment() {
         val map = hashMapOf<String, Any>()
         val wallet = viewModel.wallet ?: return
         val value = viewModel.offerViewState.value
+        VLog.d("Before calling create offer : ${value}}")
         val url = getNetworkItemFromPrefs(wallet.networkType)!!.full_node
         map["observer"] = wallet.observerHash
         map["nonObserver"] = wallet.nonObserverHash
         map["url"] = url
-        map["fee"] = (value.chosenFee * PRECISION_XCH).toLong()
+        map["fee"] = (viewModel.chosenFeeXCH * PRECISION_XCH).toLong()
         map["spentCoins"] = Gson().toJson(value.spendCoins)
         map["mnemonics"] = wallet.mnemonics.joinToString(" ")
         map["requested"] = Gson().toJson(convertToTokenFlutter(value.requested))
@@ -216,12 +204,90 @@ class TraderFragment : BaseComposeFragment() {
         return Gson().fromJson(item, NetworkItem::class.java)
     }
 
-    override fun collectFlowOnStart(scope: CoroutineScope) {
+    override fun collectFlowOnCreated(scope: CoroutineScope) {
         viewModel.viewState.collectFlow(scope) {
             if (it.isLoading) {
                 dialogManager.showProgress(requireActivity())
             } else {
                 dialogManager.hidePrevDialogs()
+            }
+        }
+
+        viewModel.event.collectFlow(scope) {
+            VLog.d("TraderEvent received : $it")
+            when (it) {
+                TraderEvent.ShowPinCode -> {
+                    PinCodeFragment.build(reason = ReasonEnterCode.CONNECTION_REQUEST)
+                        .show(childFragmentManager, "")
+                }
+
+                is TraderEvent.ParseTakeOffer -> {
+                    viewModel.updateOfferDialogState(it.offer)
+                    callFlutterTakeOffer(it.offer)
+                    viewModel.handleEvent(TraderEvent.ShowTakeOfferDialog)
+                }
+
+                is TraderEvent.TakeOffer -> {
+                    PinCodeFragment.build(reason = ReasonEnterCode.ACCEPT_OFFER)
+                        .show(childFragmentManager, "")
+
+                }
+
+                is TraderEvent.PinnedAcceptOffer -> {
+                    viewModel.setLoading(true)
+                    val value = viewModel.offerViewState.value
+                    callFlutterToPushTakeOffer(
+                        value.offer, viewModel.chosenFeeXCH
+                    )
+                }
+
+                is TraderEvent.FailureTakingOffer -> {
+                    showFailedSendingTransaction()
+                }
+
+                is TraderEvent.SuccessTakingOffer -> {
+                    showSuccessSendMoneyDialog()
+                }
+
+                is TraderEvent.ShowPinCreateOffer -> {
+                    PinCodeFragment.build(reason = ReasonEnterCode.CREATE_OFFER)
+                        .show(childFragmentManager, "")
+                }
+
+                is TraderEvent.PinnedCreateOffer -> {
+                    viewModel.setLoading(true)
+                    callFlutterToCreateOffer()
+                }
+
+                is TraderEvent.OnBack -> {
+                    if (webView?.canGoBack() == true) {
+                        webView?.goBack()
+                    } else
+                        getMainActivity().popBackStackOnce()
+                }
+
+                is TraderEvent.OnReload -> {
+                    webView?.reload()
+                }
+
+                is TraderEvent.OnShare -> {
+                    getMainActivity().launchingIntentForSendingWalletAddress(
+                        viewModel.viewState.value.url
+                    )
+                }
+
+                is TraderEvent.OnCopyLink -> {
+                    requireActivity().copyToClipBoard(
+                        viewModel.viewState.value.url
+                    )
+                }
+
+                is TraderEvent.OnDisable -> {
+                    viewModel.disableDApp()
+                    getMainActivity().popBackStackOnce()
+                }
+
+                else -> Unit
             }
         }
     }
@@ -259,13 +325,41 @@ class TraderFragment : BaseComposeFragment() {
         }
     }
 
-    private fun convertToTokenFlutter(list: List<Token>): List<FlutterToken> {
+    private suspend fun convertToTokenFlutterNFTOnlyOffered(list: List<Token>): List<FlutterToken> {
+        val converted = mutableListOf<FlutterToken>()
+        for (i in list) {
+            if (i is NftToken) {
+                val nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+                converted.add(
+                    FlutterToken(
+                        assetID = nftCoin?.coinInfo ?: throw Exception("No nft found locally"),
+                        amount = 1L,
+                        type = "NFT",
+                        fromAddress = nftCoin?.puzzleHash ?: ""
+                    )
+                )
+            }
+        }
+        return converted
+    }
+
+    private suspend fun convertToTokenFlutter(list: List<Token>): List<FlutterToken> {
         val converted = mutableListOf<FlutterToken>()
 
         for (i in list) {
             val token = when (i) {
                 is NftToken -> {
-                    FlutterToken(i.nftId, 0L, "NFT")
+//                    var nftCoin = viewModel.getNftCoinById(i.nftCoinHash)
+//                    if (nftCoin == null) {
+                    val nftCoin = viewModel.getNftCoinFromWallet(i.nftId)
+//                    }
+                    FlutterToken(
+                        assetID = nftCoin?.coinInfo
+                            ?: throw Exception("No found nft locally and on the server"),
+                        amount = 1L,
+                        type = "NFT",
+                        fromAddress = nftCoin.puzzleHash ?: ""
+                    )
                 }
 
                 is CatToken -> {
@@ -284,6 +378,10 @@ class TraderFragment : BaseComposeFragment() {
         }
 
         return converted
+    }
+
+    companion object {
+        const val URL_KEY = "url_key"
     }
 
 

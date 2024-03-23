@@ -74,7 +74,8 @@ fun SpeedyTransactionBtmScreen(
                 .width(size_80)
                 .height(size_6)
                 .background(
-                    color = Provider.current.iconGrey, shape = RoundedCornerShape(size_100)
+                    color = Provider.current.iconGrey,
+                    shape = RoundedCornerShape(size_100)
                 )
 
         )
@@ -107,7 +108,8 @@ fun SpeedyTransactionBtmScreen(
             }
             FixedSpacer(height = size_26)
             Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 DefaultText(
                     text = activity.getStringResource(R.string.current_account),
@@ -209,6 +211,7 @@ fun SpeedyTransactionBtmScreen(
                 color = Provider.current.txtSecondaryColor
             )
         }
+
         FixedSpacer(height = size_10)
     }
 

@@ -5,5 +5,6 @@ data class NftSendViewState(
     val dexieFee: Double = 0.0,
     val spendableBalance: Double = 0.0,
     val feeEnough: Boolean = false,
-    val destAddress: String = ""
+    val destAddress: String = "",
+    val namesDao: String? = null
 )

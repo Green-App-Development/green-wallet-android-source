@@ -40,6 +40,7 @@ fun Dialog.setDefaultParams(dialogAnim: Int) {
 }
 
 fun formattedTime(value: Long) = SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(Date(value))
+
 fun formattedTimeForOrderItem(value: Long) =
     SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date(value))
 
@@ -272,3 +273,32 @@ fun getNumberFromDouble(value: String): Double {
     val double = if (value[value.length - 1] == '.') value + "0" else value
     return double.toDoubleOrNull() ?: 0.0
 }
+
+fun parseQuery(query: String): List<String> {
+    try {
+        val start = query.indexOf('[', 1)
+        val end = query.indexOf(']', start + 1)
+
+        return query.substring(start + 1, end - 1).split(',').map { str ->
+            val trim = str.trim()
+            trim.substring(1, trim.length - 1)
+        }
+    } catch (ex: java.lang.Exception) {
+        println("Exception occurred while parsing query : ${ex.message}")
+    }
+    return emptyList()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.ViewGroup
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.background
@@ -22,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -35,6 +38,9 @@ import com.green.wallet.presentation.main.dapp.trade.bottom.ModelBottomSheetOffe
 import com.green.wallet.presentation.main.dapp.trade.components.DropDownWebViewHeader
 import com.green.wallet.presentation.tools.VLog
 import de.andycandy.android.bridge.Bridge
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
@@ -57,7 +63,7 @@ fun TraderScreen(
         initialValue = ModalBottomSheetValue.Hidden
     )
 
-    val offerDialog = rememberModalBottomSheetState(
+    val offerDialogState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
@@ -84,11 +90,15 @@ fun TraderScreen(
                 }
 
                 TraderEvent.ShowTakeOfferDialog -> {
-                    offerDialog.show()
+                    offerDialogState.show()
                 }
 
                 is TraderEvent.ShowCreateOfferDialog -> {
-                    offerDialog.show()
+                    offerDialogState.show()
+                }
+
+                is TraderEvent.CloseBtmOffer -> {
+                    offerDialogState.hide()
                 }
 
                 else -> Unit
@@ -107,6 +117,7 @@ fun TraderScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 WebViewHeader(
+                    pageLoading = state.webPageLoading,
                     modifier = Modifier.background(
                         color = Provider.current.background
                     ),
@@ -114,18 +125,20 @@ fun TraderScreen(
                         dropDownMenu = true
                     },
                     back = {
-
+                        onEvent(TraderEvent.OnBack)
                     },
                     closeX = {
-
-                    }
+                        onEvent(TraderEvent.OnBack)
+                    },
+                    url = state.url
                 )
 
                 DropDownWebViewHeader(
                     expanded = dropDownMenu,
                     close = {
                         dropDownMenu = false
-                    }
+                    },
+                    onEvent = onEvent
                 )
             }
 
@@ -133,7 +146,7 @@ fun TraderScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = Color.Black),
-                url = "",
+                url = state.url,
                 mContext = context,
                 webView = webView,
                 onEvent = onEvent,
@@ -154,13 +167,14 @@ fun TraderScreen(
         }
 
         ModelBottomSheetOffer(
-            sheetState = offerDialog,
+            sheetState = offerDialogState,
             state = offerViewState,
             modifier = Modifier,
             sign = {
                 if (offerViewState.acceptOffer) {
                     onEvent(TraderEvent.TakeOffer(offerViewState.offer))
                 } else {
+                    VLog.d("ShowPinCreateOffer on sign modalBottomSheetOffer")
                     onEvent(TraderEvent.ShowPinCreateOffer)
                 }
             },
@@ -168,6 +182,14 @@ fun TraderScreen(
                 onEvent(TraderEvent.ChoseFee(it))
             }
         )
+
+        LaunchedEffect(Unit) {
+            snapshotFlow { offerDialogState.currentValue }.collect {
+                if (it == ModalBottomSheetValue.Hidden) {
+                    JavaJSThreadCommunicator.wait = false
+                }
+            }
+        }
     }
 }
 
@@ -195,15 +217,36 @@ fun WebViewContainer(
                 val bridge = Bridge(mContext, this)
                 bridge.addJSInterface(
                     GreenWalletJS(
+                        state = state,
                         onEvent = onEvent
                     )
                 )
+//                this.loadUrl("file:///android_asset/index.html")
 //                this.loadUrl("https://green-app-sigma.vercel.app/")
-                this.loadUrl("file:///android_asset/index.html")
+                this.loadUrl(url)
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                        VLog.d("On page started called with url: $url")
                         bridge.init()
+                        onEvent(TraderEvent.PageStarting)
                     }
+
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        VLog.d("On page finished called with url: $url")
+                        val currentUrl = view?.url ?: ""
+                        onEvent(TraderEvent.ChangedUrl(currentUrl))
+                        onEvent(TraderEvent.PageFinishedLoading)
+                    }
+
+                    override fun onReceivedError(
+                        view: WebView?,
+                        request: WebResourceRequest?,
+                        error: WebResourceError?
+                    ) {
+                        VLog.d("On page error called with error: ${error?.description}")
+                    }
+
                 }
             }
         },

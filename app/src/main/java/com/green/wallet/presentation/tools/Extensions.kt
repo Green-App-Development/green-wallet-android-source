@@ -9,19 +9,19 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.example.common.tools.formattedTime
 import com.green.wallet.R
 import com.green.wallet.databinding.NftImgPlaceholderBinding
+import com.green.wallet.presentation.custom.getTranslatedMonth
 import com.green.wallet.presentation.main.MainActivity
 
 
@@ -209,7 +209,17 @@ fun Context.copyToClipBoard(data: String) {
     clipBoard.setPrimaryClip(clip)
 }
 
-
+fun Activity.formatDateWithMonthInWord(timeCreated: Long): String {
+    val format = formattedTime(timeCreated)
+    val split = format.split(" ")
+    val dateMonthYear = split[0].split('-')
+    val getTranslatedMonth = getTranslatedMonth(this, dateMonthYear[1].toInt())
+    var day = dateMonthYear[0]
+    if (day.length == 1)
+        day = "0$day"
+    val hourTime = split[1].split(":").subList(0, 2)
+    return "$day $getTranslatedMonth, $hourTime"
+}
 
 
 

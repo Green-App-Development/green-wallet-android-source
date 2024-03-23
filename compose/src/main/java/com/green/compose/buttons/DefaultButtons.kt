@@ -56,5 +56,7 @@ fun DefaultButton(
 @Preview
 @Composable
 fun DefaultButtonPreview() {
+    DefaultButton(onClick = {}) {
 
+    }
 }

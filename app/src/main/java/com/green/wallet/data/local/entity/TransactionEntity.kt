@@ -2,9 +2,8 @@ package com.green.wallet.data.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.tools.Status
 
 
@@ -48,17 +47,17 @@ data class TransactionEntity(
 ) {
 
 	fun toTransaction(localTime: Long) =
-		Transaction(
-			transaction_id,
-			amount,
-			localTime,
-			height,
-			status,
-			networkType,
-			to_dest_hash,
-			fkAddress,
-			fee_amount,
-			code,
+        TransferTransaction(
+            transaction_id,
+            amount,
+            localTime,
+            height,
+            status,
+            networkType,
+            to_dest_hash,
+            fkAddress,
+            fee_amount,
+            code,
 			nft_coin_hash
 		)
 

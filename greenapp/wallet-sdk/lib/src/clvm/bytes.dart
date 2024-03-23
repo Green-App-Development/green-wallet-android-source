@@ -26,6 +26,25 @@ class Puzzlehash extends Bytes {
 
   Puzzlehash.zeros() : super(List.filled(bytesLength, 0));
 
+  static Puzzlehash? maybe(List<int>? maybeBytesList) {
+    if (maybeBytesList == null) return null;
+    if (maybeBytesList.length != bytesLength) {
+      return null;
+    }
+
+    return Puzzlehash(maybeBytesList);
+  }
+
+  static Puzzlehash? maybeFromHex(String? phHex) {
+    if (phHex == null) return null;
+
+    try {
+      return maybe(Bytes.fromHex(phHex));
+    } catch (_) {
+      return null;
+    }
+  }
+
   static const bytesLength = 32;
   static const hexLength = 64;
 }

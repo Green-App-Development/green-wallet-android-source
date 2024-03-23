@@ -2,8 +2,6 @@ package com.green.wallet.presentation.main.transaction.btmSpeedy
 
 import android.content.res.Resources.NotFoundException
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +16,7 @@ import com.example.common.tools.convertNetworkTypeForFlutter
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
 import com.green.wallet.R
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.DialogManager
 import com.green.wallet.presentation.custom.base.BaseBottomSheetDialogFragment
@@ -34,15 +32,13 @@ import com.green.wallet.presentation.tools.getMainActivity
 import com.green.wallet.presentation.tools.getStringResource
 import com.greenwallet.core.ext.collectFlow
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.HashMap
 import javax.inject.Inject
 
 class SpeedyBtmDialog :
     BaseBottomSheetDialogFragment<SpeedyDialogViewModel>(SpeedyDialogViewModel::class.java) {
 
-    private val transaction: Transaction? by lazy {
+    private val transaction: TransferTransaction? by lazy {
         arguments?.getParcelable(TRANSACTION_KEY)
     }
 
@@ -90,7 +86,6 @@ class SpeedyBtmDialog :
                     }
 
                     SpeedyTokenEvent.ConfirmedPinCode -> {
-                        VLog.d("ConfirmedPinCode on speedy dialog fragment")
                         when (state.token) {
                             is NftToken -> {
                                 nftTokenRePush()
@@ -243,31 +238,11 @@ class SpeedyBtmDialog :
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        VLog.d("onStart on speedy btm dialog")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        VLog.d("onResume on speedy btm dialog")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        VLog.d("onDestroy on speedy btm dialog")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        VLog.d("onDestroyView on speedy btm dialog")
-    }
-
     companion object {
 
         private const val TRANSACTION_KEY = "transaction_key"
 
-        fun build(transaction: Transaction?) = SpeedyBtmDialog().apply {
+        fun build(transaction: TransferTransaction?) = SpeedyBtmDialog().apply {
             val bundle = Bundle()
             bundle.putParcelable(TRANSACTION_KEY, transaction)
             arguments = bundle

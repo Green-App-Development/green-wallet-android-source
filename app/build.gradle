@@ -41,6 +41,9 @@ android {
         buildConfigField "String", "DEXIE_API", "\"${properties.getProperty("DEXIE_API")}\""
         buildConfigField "String", "KEY_STORE_FILE_NAME", "\"${properties.getProperty("KEY_STORE_FILE_NAME")}\""
         buildConfigField "String", "KEY_STORE_PASSWORD", "\"${properties.getProperty("KEY_STORE_PASSWORD")}\""
+        buildConfigField "String", "SEARCH_API", "\"${properties.getProperty("SEARCH_API")}\""
+        buildConfigField "String", "SEARCH_API_KEY", "\"${properties.getProperty("SEARCH_API_KEY")}\""
+
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -140,6 +143,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
     implementation 'org.chromium.net:cronet-api:76.3809.111'
     implementation 'com.google.firebase:firebase-messaging:23.1.1'
+    implementation 'com.google.firebase:firebase-database:20.3.1'
     testImplementation 'junit:junit:4.+'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
 
@@ -234,6 +238,7 @@ dependencies {
     implementation project(':compose')
     implementation project(':core')
     implementation project(':uikit')
+    implementation project(':utils')
 
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
 
@@ -264,6 +269,7 @@ dependencies {
     implementation("com.github.andycandy-de:simple-android-bridge:1.0.2")
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
+    implementation("io.coil-kt:coil-compose:1.3.2")
 
 }
 
