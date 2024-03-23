@@ -64,7 +64,9 @@ class GreenWalletJS(
                 Thread.sleep(1000L)
                 VLog.d("Waiting for createOffer : Name Thread: ${Thread.currentThread().name}")
             }
-            promise.resolve(JavaJSThreadCommunicator.resultCreateOffer)
+            promise.resolve(
+                JavaJSThreadCommunicator.resultCreateOffer
+            )
         }
 
     @NativeCall(CallType.FULL_PROMISE)
