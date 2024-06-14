@@ -644,7 +644,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
             } else {
                 recTransactionItems.visibility = View.GONE
                 txtNoTrans.visibility = View.VISIBLE
-                placeHolderLinearView.visibility = View.VISIBLE
+                placeHolderLinearView.visibility = View.GONE
             }
         }
     }
