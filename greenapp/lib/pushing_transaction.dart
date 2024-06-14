@@ -2272,7 +2272,10 @@ class PushingTransaction {
       debugPrint(
           "Sending cat coins : $catCoins,  Dest Hash : ${Address(destAddress).toPuzzlehash()}");
       final spendBundle = catWalletService.createSpendBundle(
-          payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
+          payments: [
+            Payment(amount, Address(destAddress).toPuzzlehash(),
+                memos: <Bytes>[Address(destAddress).toPuzzlehash().toBytes()])
+          ],
           catCoinsInput: catCoins,
           keychain: keyChainCAT,
           changePuzzlehash: keyChainCAT.puzzlehashes[0],
@@ -3294,17 +3297,16 @@ class PushingTransaction {
   }
 
   Future<void> testingNamesDao() async {
-
     await Future.delayed(Duration(seconds: 2));
 
     final namesdaoInterface = NamesdaoApi();
     const name = '___hahaha';
     final nameInfo = await namesdaoInterface.getNameInfo(name);
-    debugPrint("Name info Address on testingNamesDao: ${nameInfo?.address.address}");
+    debugPrint(
+        "Name info Address on testingNamesDao: ${nameInfo?.address.address}");
     // expect(
     //   nameInfo?.address.address,
     //   equals('xch1l9hj8emh7xdk3y2d4kszeuu0z6gn27s9rlc0yz7uqgyjjtd0fegsvgsjtv'),
     // );
-
   }
 }

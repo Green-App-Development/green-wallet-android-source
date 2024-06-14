@@ -485,7 +485,12 @@ class NFTSendFragment : BaseFragment() {
                     VLog.d("Success entering the passcode : $it")
                     delay(500)
                     dialogManager.showProgress(getMainActivity())
-                    initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+                    var destAddress = binding.edtAddressWallet.text.toString()
+                    vm.viewState.value.namesDao?.let { names ->
+                        destAddress = names
+                    }
+
+                    initFlutterToGenerateSpendBundle(destAddress)
                     getMainActivity().mainViewModel.sendMoneyFalse()
                     pushTransactionState()
                 }

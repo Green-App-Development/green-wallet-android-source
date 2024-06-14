@@ -1177,7 +1177,11 @@ class SendFragment : BaseFragment() {
                 }
 
                 TransferEvent.OnPinConfirmed -> {
-                    initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+                    var destAddress = binding.edtAddressWallet.text.toString()
+                    viewModel.viewState.value.namesDao?.let {
+                        destAddress = it
+                    }
+                    initFlutterToGenerateSpendBundle(destAddress)
                     viewModel.setLoading(true)
                 }
             }
