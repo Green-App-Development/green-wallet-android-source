@@ -30,4 +30,6 @@ const val ACTION_REMOVE_LIQUIDITY = "REMOVE_LIQUIDITY"
 const val DEV_FEE_ADDRESS = "xch1hm6sk2ktgx3u527kp803ex2lten3xzl2tpjvrnc0affvx5upd6mq75af8y"
 const val WALLET_FEE_ADDRESS = "xch1uxvak23xm3c3dqa6m4ggm0gs8z7xut4ux0maf3c8yurg3xvp80nswtsknj"
 
-const val TWENTY_MINUTES_MILLIS_SECONDS=20*(1000*60)
+const val TWENTY_MINUTES_MILLIS_SECONDS = 20 * (1000 * 60)
+
+const val DEXIE_BASE_URL = "https://dexie.space"

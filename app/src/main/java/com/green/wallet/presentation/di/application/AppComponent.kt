@@ -4,6 +4,7 @@ import android.content.Context
 import com.green.wallet.data.di.InteractModule
 import com.green.wallet.data.di.NetworkModule
 import com.green.wallet.presentation.App
+import com.green.wallet.presentation.main.pincode.PinCodeFragment
 import com.green.wallet.presentation.main.swap.tibetswap.BtmChooseWallet
 import com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferLiquidityDialog
 import com.green.wallet.presentation.main.swap.tibetswap.BtmCreateOfferXCHCATDialog
@@ -17,19 +18,21 @@ import dagger.android.AndroidInjector
 @Component(modules = [AndroidInjectionModule::class, InteractModule::class, InjectorBuildersModule::class, ViewModelsModule::class, AppModule::class, NetworkModule::class, WorkerBindingModule::class])
 interface AppComponent : AndroidInjector<App> {
 
-	fun fcmComponentBuilder(): FCMServiceComponent.Builder
-	fun inject(dialogWallet: BtmChooseWallet)
-	fun inject(dialogWallet: BtmCreateOfferXCHCATDialog)
-	fun inject(dialogWallet: BtmCreateOfferLiquidityDialog)
+    fun fcmComponentBuilder(): FCMServiceComponent.Builder
+    fun inject(dialogWallet: BtmChooseWallet)
+    fun inject(dialogWallet: BtmCreateOfferXCHCATDialog)
+    fun inject(dialogWallet: BtmCreateOfferLiquidityDialog)
 
-	@Component.Builder
-	interface Builder {
+    fun inject(btmFragment: PinCodeFragment)
 
-		@BindsInstance
-		fun bindApplication(context: Context): Builder
-		fun build(): AppComponent
+    @Component.Builder
+    interface Builder {
 
-	}
+        @BindsInstance
+        fun bindApplication(context: Context): Builder
+        fun build(): AppComponent
+
+    }
 
 
 }

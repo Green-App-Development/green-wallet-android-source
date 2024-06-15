@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.ui.platform.ComposeView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -46,6 +47,8 @@ import com.green.wallet.presentation.main.createnewwallet.CoinsDetailsFragment.C
 import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWalletFragment
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
+import com.green.wallet.presentation.main.dapp.trade.TraderFragment
+import com.green.wallet.presentation.main.dapp.trade.TraderFragment.Companion.URL_KEY
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
@@ -67,12 +70,13 @@ import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailFr
 import com.green.wallet.presentation.main.transaction.TransactionsFragment
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsFragment
 import com.green.wallet.presentation.tools.*
+import com.greenwallet.core.base.ComposeProvider
 import dev.b3nedikt.reword.Reword
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), ComposeProvider {
 
 
     companion object {
@@ -137,6 +141,8 @@ class MainActivity : BaseActivity() {
     var listingFragmentView: View? = null
     var sendNftFragmentView: View? = null
 
+    var needToRestartHomeFragment = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         VLog.d(
@@ -153,8 +159,13 @@ class MainActivity : BaseActivity() {
         startServiceAppRemoveRecentTask()
         registerReceiver(m_timeChangedReceiver, timeIntentFilter)
         initUpdateBalanceJobRegulation()
+//        openFragment()
+
     }
 
+    private fun openFragment() {
+        supportFragmentManager.beginTransaction().replace(container, TraderFragment()).commit()
+    }
 
     private fun initCheckingBundleFromPushNotification() {
         val bundle = intent.getBundleExtra(MAIN_BUNDLE_KEY)
@@ -237,6 +248,11 @@ class MainActivity : BaseActivity() {
     private fun initStatusBarColorRegulation() {
         navController.addOnDestinationChangedListener { navController, dest, bundle ->
             VLog.d("MainNav navController destination id changed  : ${dest.id}")
+            if (dest.id != homeFragment) {
+                needToRestartHomeFragment = true
+            } else {
+                restartHomeFragment()
+            }
             when (dest.id) {
                 homeFragment -> {
                     binding.mainBottomNav.menu.findItem(home).isChecked = true
@@ -342,11 +358,24 @@ class MainActivity : BaseActivity() {
                     window.statusBarColor = getColorResource(R.color.primary_app_background)
                 }
 
+                fragmentBrowser -> {
+                    setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+                    window.statusBarColor = getColorResource(R.color.primary_app_background)
+                }
+
                 else -> {
                     setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
                     window.statusBarColor = getColorResource(R.color.status_bar_color_send)
                 }
             }
+        }
+    }
+
+    private fun restartHomeFragment() {
+        if (needToRestartHomeFragment) {
+            needToRestartHomeFragment = false
+            navController.popBackStack()
+            navController.navigate(homeFragment)
         }
     }
 
@@ -407,6 +436,7 @@ class MainActivity : BaseActivity() {
             }
             navController.popBackStack()
         }
+
     }
 
 
@@ -500,7 +530,8 @@ class MainActivity : BaseActivity() {
                     btmChooseDApps,
                     fragmentQrCodeSend,
                     fragmentSwapSend,
-                    fragmentTibetSwapDetail
+                    fragmentTibetSwapDetail,
+                    fragmentTrader
                 ).contains(destination.id)
             ) {
                 binding.mainBottomNav.visibility = View.GONE
@@ -596,7 +627,9 @@ class MainActivity : BaseActivity() {
         navController.navigate(entPasscodeFrMain, bundle)
     }
 
-    fun popBackStackOnce() = navController.popBackStack()
+    fun popBackStackOnce() {
+        navController.popBackStack()
+    }
 
     fun popBackStackTwice() {
         navController.popBackStack()
@@ -621,14 +654,14 @@ class MainActivity : BaseActivity() {
 
     fun move2FragmentImportToken(
         fingerPrint: Long,
-        main_puzzle_hash: String,
+        mainPuzzleHash: String,
         networkType: String = "Chia Network",
         address: String
     ) {
         val bundle = bundleOf(
             ImportTokenFragment.FINGER_PRINT_KEY to fingerPrint,
             ImportTokenFragment.NETWORK_TYPE_KEY to networkType,
-            ImportTokenFragment.MAIN_PUZZLE_HASH to main_puzzle_hash,
+            ImportTokenFragment.MAIN_PUZZLE_HASH to mainPuzzleHash,
             ImportTokenFragment.ADDRESS_KEY to address
         )
         navController.navigate(action_walletFragment_to_importTokenFragment2, bundle)
@@ -683,7 +716,13 @@ class MainActivity : BaseActivity() {
     }
 
     fun move2DAppFragment() {
-        navController.navigate(fragmentDApp)
+        navController.navigate(fragmentBrowser)
+    }
+
+    fun move2TraderFragment(url: String) {
+        val bundle = bundleOf()
+        bundle.putString(URL_KEY, url)
+        navController.navigate(fragmentTrader, bundle)
     }
 
     fun move2SwapFragment() {
@@ -800,12 +839,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    var prevSoftKeyboardValue = false
+    private var prevSoftKeyboardValue = false
 
     private fun changeVisibilityOfViewsDuringSoftKeyBoardOpen(visibility: Boolean) {
-//		VLog.d("Soft key board is open : $visibility")
-        if (visibility == prevSoftKeyboardValue)
-            return
 
         prevSoftKeyboardValue = visibility
 
@@ -817,12 +853,14 @@ class MainActivity : BaseActivity() {
                 tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
                 tempLinear2.visibility = if (visibility) View.VISIBLE else View.GONE
             }
+
             if (sendCoinsFragmentView != null) {
                 val tempLinear = sendCoinsFragmentView!!.findViewById<LinearLayout>(temp_linear)
                 tempLinear.visibility = if (visibility) View.VISIBLE else View.GONE
                 sendCoinsFragmentView!!.findViewById<OnlyVerticalSwipeRefreshLayout>(swipeRefresh).isEnabled =
                     !visibility
             }
+
             if (listingFragmentView != null) {
                 val linearAgree = listingFragmentView!!.findViewById<LinearLayout>(linearAgree)
                 val button = listingFragmentView!!.findViewById<Button>(btnSend)
@@ -967,6 +1005,10 @@ class MainActivity : BaseActivity() {
         val bundle = bundleOf()
         bundle.putString(TibetLiquidityDetailsFragment.TIBET_LIQUIDITY_OFFER_KEY, offerId)
         navController.navigate(fragmentTibetLiquidDetail, bundle)
+    }
+
+    override fun getComposeView(): ComposeView {
+        return binding.composeView
     }
 
 

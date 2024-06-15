@@ -9,7 +9,7 @@ import java.util.*
 interface NftInfoDao {
 
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	@Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
 	suspend fun insertNftInfoEntity(nftInfoEntity: NFTInfoEntity)
 
 	@Query("SELECT * FROM NFTInfoEntity WHERE nft_coin_hash=:nft_coin_hash")
@@ -23,5 +23,11 @@ interface NftInfoDao {
 
 	@Query("UPDATE NFTInfoEntity SET isPending=:isPending WHERE nft_coin_hash=:nft_coin_hash")
 	suspend fun updateIsPendingNFTInfoByNFTCoinHash(isPending: Boolean, nft_coin_hash: String): Int
+
+	@Query("SELECT * FROM NFTInfoEntity WHERE nft_id=:nftId")
+	suspend fun getNftInfoEntityByNftID(nftId: String): Optional<NFTInfoEntity>
+
+	@Query("UPDATE NFTInfoEntity SET isPending=:isPending,timePending=:timePending WHERE nft_coin_hash=:nft_coin_hash")
+	suspend fun updateIsPendingTimeNFTInfoByNFTCoinHash(isPending: Boolean, timePending:Long, nft_coin_hash: String): Int
 
 }

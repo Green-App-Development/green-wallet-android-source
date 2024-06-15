@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.runtime.getValue
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.common.tools.formatString
@@ -18,6 +20,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
+import com.green.compose.custom.fee.FeeContainer
+import com.green.compose.theme.GreenWalletTheme
 import com.green.wallet.R
 import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.databinding.DialogBtmCreateOfferLiquidityBinding
@@ -56,8 +60,6 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
     @Inject
     lateinit var dialogManager: DialogManager
 
-    private var feePosition = 1
-
     private val handler = CoroutineExceptionHandler { _, ex ->
         VLog.d("Exception caught on btn create offer dialog  : ${ex.message} ")
     }
@@ -80,6 +82,8 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DialogBtmCreateOfferLiquidityBinding.inflate(layoutInflater)
+        vm.calculateSpendableBalance(lifecycleScope)
+        vm.getDexieFee()
         return binding.root
     }
 
@@ -93,8 +97,25 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         VLog.d("On View Created Create Offer with vm : $vm")
-        binding.listeners()
         binding.offerValues()
+        initFeeBlock()
+    }
+
+    private fun initFeeBlock() {
+        binding.composeFeeView.setContent {
+
+            val state by vm.viewStateLiquidity.collectAsStateWithLifecycle()
+
+            GreenWalletTheme {
+                FeeContainer(
+                    normal = state.dexieFee,
+                    isEnough = state.feeEnough,
+                    fee = {
+                        vm.updateFeeChosenLiquidity(it)
+                    }
+                )
+            }
+        }
     }
 
     private fun DialogBtmCreateOfferLiquidityBinding.offerValues() {
@@ -195,7 +216,6 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                         ""
                     ).collectLatest { spendable ->
                         vm.availableXCHAmount = spendable
-                        binding.clickedPositionsFee(feePosition)
                     }
                 }
                 vm.getSpendableBalanceByTokenCodeAndAddress(
@@ -235,7 +255,6 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                                 spendable >= total,
                                 "XCH"
                             )
-                            binding.clickedPositionsFee(1)
                         }
                 }
                 vm.getSpendableBalanceByTokenCodeAndAddress(address, tokenCode, catAssetId)
@@ -313,21 +332,6 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         methodChannel.invokeMethod("CATToAddLiquidity", argSpendBundle)
     }
 
-    private fun DialogBtmCreateOfferLiquidityBinding.listeners() {
-
-        relChosenLongClick.setOnClickListener {
-            clickedPositionsFee(0)
-        }
-
-        relChosenMediumClick.setOnClickListener {
-            clickedPositionsFee(1)
-        }
-
-        relChosenShortClick.setOnClickListener {
-            clickedPositionsFee(2)
-        }
-
-    }
 
     private fun initMethodChannelHandler(
         tibetLiquidity: TibetLiquidity,
@@ -472,7 +476,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
                     isDialogOutsideTouchable = false
                 ) {
                     Handler(Looper.myLooper()!!).postDelayed({
-                       popBackStackTwice()
+                        popBackStackTwice()
                     }, 500)
                 }
             }
@@ -480,11 +484,7 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
     }
 
     private fun getFeeBasedOnPosition(): Double {
-        return when (feePosition) {
-            0 -> 0.0
-            1 -> 0.00005
-            else -> 0.0005
-        }
+        return vm.viewStateLiquidity.value.fee
     }
 
     private fun txtPlus(txt: TextView, value: Double, token: String) {
@@ -519,54 +519,11 @@ class BtmCreateOfferLiquidityDialog : BottomSheetDialogFragment() {
         return Gson().fromJson(item, NetworkItem::class.java)
     }
 
-    private fun DialogBtmCreateOfferLiquidityBinding.clickedPositionsFee(pos: Int) {
-        feePosition = pos
-        val layouts = listOf(relChosenLong, relChosenMedium, relChosenShort)
-        val txtViews = listOf(
-            listOf(txtLong, textView28),
-            listOf(txtMedium, textView29),
-            listOf(txtShort, txtShortValue)
-        )
-        for (i in 0 until layouts.size) {
-            if (i == pos) {
-                layouts[i].visibility = View.VISIBLE
-            } else {
-                layouts[i].visibility = View.INVISIBLE
-            }
-            requireActivity().apply {
-                txtViews[i][0].setTextColor(getColorResource(R.color.ic_filter_edge))
-                txtViews[i][1].setTextColor(getColorResource(R.color.ic_filter_edge))
-            }
-        }
-        val curFee = getFeeBasedOnPosition()
-        if (vm.toTibet) {
-            val enoughXCH = curFee <= vm.availableXCHAmount
-            binding.btnSign.isEnabled = enoughXCH && vm.catEnough
-            if (enoughXCH) {
-                requireActivity().apply {
-                    txtViews[pos][0].setTextColor(getColorResource(R.color.green))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.secondary_text_color))
-                }
-            } else {
-                requireActivity().apply {
-                    txtViews[pos][0].setTextColor(getColorResource(R.color.red_mnemonic))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.red_mnemonic))
-                }
-            }
-        } else {
-            val enoughXCH = curFee <= vm.availableXCHAmount
-            binding.btnSign.isEnabled = enoughXCH && vm.catEnough
-            if (enoughXCH) {
-                requireActivity().apply {
-                    txtViews[pos][0].setTextColor(getColorResource(R.color.green))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.secondary_text_color))
-                }
-            } else {
-                requireActivity().apply {
-                    txtViews[pos][0].setTextColor(getColorResource(R.color.red_mnemonic))
-                    txtViews[pos][1].setTextColor(getColorResource(R.color.red_mnemonic))
-                }
-            }
+    override fun onStart() {
+        super.onStart()
+        if (dialogManager.isProgressDialogShowing() == true) {
+            dialogManager.hidePrevDialogs()
+            dialogManager.showProgress(requireActivity())
         }
     }
 

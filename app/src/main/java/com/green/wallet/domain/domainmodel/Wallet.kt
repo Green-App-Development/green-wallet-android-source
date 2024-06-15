@@ -2,6 +2,7 @@ package com.green.wallet.domain.domainmodel
 
 import android.os.Parcelable
 import com.green.wallet.data.local.entity.WalletEntity
+import com.green.wallet.presentation.custom.encryptor.EncryptorProviderImpl.Companion.SECOND_STAGE
 import kotlinx.android.parcel.Parcelize
 
 
@@ -35,7 +36,7 @@ data class Wallet(
         hashListImported = hashListImported,
         observer_hash = observerHash,
         non_observer_hash = nonObserverHash,
-        encryptedStage = 1
+        encryptedStage = SECOND_STAGE
     )
 
 

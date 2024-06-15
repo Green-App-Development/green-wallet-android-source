@@ -2,7 +2,7 @@ package com.green.wallet.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Query
 import androidx.room.Update
 import com.green.wallet.data.local.entity.TibetLiquidityEntity

@@ -93,13 +93,11 @@ class CoinsDetailsFragment : DaggerDialogFragment() {
 			val coinDetail = viewModel.getCoinDetails(getShortNetworkType(curNetworkType))
 
 			txtCoinDescription.text = coinDetail.description
-			txtCoinName.setText(coinDetail.name)
+			txtCoinName.text = coinDetail.name
 
 			val characteristics = coinDetail.characteristics
-			edtCharacteristics.setText(
-				addDotForEachNewLineOfCharacteristics(
-					characteristics
-				)
+			edtCharacteristics.text = addDotForEachNewLineOfCharacteristics(
+				characteristics
 			)
 		}
 	}

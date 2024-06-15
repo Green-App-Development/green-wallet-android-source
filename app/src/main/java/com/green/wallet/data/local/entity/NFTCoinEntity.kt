@@ -2,7 +2,7 @@ package com.green.wallet.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
 import com.green.wallet.domain.domainmodel.NFTCoin
 

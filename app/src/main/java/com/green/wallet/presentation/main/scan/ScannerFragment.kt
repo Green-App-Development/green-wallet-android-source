@@ -11,7 +11,7 @@ import com.green.wallet.R
 import com.green.wallet.databinding.FragmentScannerBinding
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.main.send.SendFragmentViewModel
+import com.green.wallet.presentation.main.send.SendViewModel
 import com.green.wallet.presentation.viewBinding
 import com.budiyev.android.codescanner.AutoFocusMode
 import com.budiyev.android.codescanner.CodeScanner
@@ -33,7 +33,7 @@ class ScannerFragment : DaggerFragment() {
 
 	@Inject
 	lateinit var viewModelFactory: ViewModelFactory
-	private val sendFragmentViewModel: SendFragmentViewModel by viewModels { viewModelFactory }
+	private val sendFragmentViewModel: SendViewModel by viewModels { viewModelFactory }
 
 
 	companion object {

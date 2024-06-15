@@ -5,6 +5,7 @@ import 'package:tuple/tuple.dart';
 class OffersService {
   final ChiaFullNodeInterface fullNode;
   final WalletKeychain keychain;
+
   OffersService({
     required this.fullNode,
     required this.keychain,
@@ -50,7 +51,8 @@ class OffersService {
         fee: fee,
         royaltyPercentage: analizedOffer.royaltyPer,
         royaltyAmount: analizedOffer.royaltyAmount,
-        requesteAmounts: TradeManagerService().convertOfferedToRequested(analizedOffer.offered),
+        requesteAmounts: TradeManagerService()
+            .convertOfferedToRequested(analizedOffer.offered),
         coinsToUse: coinsToUse);
 
     final completedOffer = await tradeManager.responseOffer(
@@ -64,8 +66,10 @@ class OffersService {
     );
 
     if (completedOffer.isValid()) {
-      final spendBundle = completedOffer.toValidSpend(arbitragePh: changePuzzlehash);
+      final spendBundle =
+          completedOffer.toValidSpend(arbitragePh: changePuzzlehash);
       final chiaResponse = await fullNode.pushTransaction(spendBundle);
+      print('Spend Bundle Response Body : $chiaResponse');
       return Tuple2(chiaResponse, completedOffer);
     } else {
       throw Exception('Offer repsonse is not valid');
@@ -93,7 +97,8 @@ class OffersService {
       final nft = preparedData.nftCoins[asset]!;
 
       if (nft is FullNFTCoinInfo) {
-        final nftOfferAssetData = OfferAssetData.singletonNft(launcherPuzhash: launcherId);
+        final nftOfferAssetData =
+            OfferAssetData.singletonNft(launcherPuzhash: launcherId);
         preparedData.selectedCoins[nftOfferAssetData] = [nft];
       } else {
         final nftCoinData = await NftWallet().getNFTFullCoinInfo(
@@ -102,7 +107,8 @@ class OffersService {
             return keychain;
           },
         );
-        final nftOfferAssetData = OfferAssetData.singletonNft(launcherPuzhash: launcherId);
+        final nftOfferAssetData =
+            OfferAssetData.singletonNft(launcherPuzhash: launcherId);
         preparedData.selectedCoins[nftOfferAssetData] = [nftCoinData.item1];
       }
     }
@@ -214,7 +220,9 @@ class OffersService {
 
   List<FullCoin> _filterCoins(List<FullCoin> coins, OfferAssetData? asset) {
     if (asset == null) {
-      return coins.where((element) => element.type == SpendType.standard).toList();
+      return coins
+          .where((element) => element.type == SpendType.standard)
+          .toList();
     }
     if (asset.type == SpendType.nft) {
       final coinsFounded = coins.where((element) {
@@ -243,7 +251,8 @@ class OffersService {
     return coins;
   }
 
-  List<FullCoin> _getCoinsForAmount(List<FullCoin> coins, int amount, {int minCoinsCount = 1}) {
+  List<FullCoin> _getCoinsForAmount(List<FullCoin> coins, int amount,
+      {int minCoinsCount = 1}) {
     coins.sort((a, b) => a.amount.compareTo(b.amount));
     var coinsStandDefinitive = <FullCoin>[];
     var amountSum = 0;
@@ -251,7 +260,8 @@ class OffersService {
     for (var i = 0; i < coins.length; i++) {
       amountSum += coins[i].amount;
       coinsStandDefinitive.add(coins[i]);
-      if (amountSum >= amount && coinsStandDefinitive.length >= (minCoinsCount)) {
+      if (amountSum >= amount &&
+          coinsStandDefinitive.length >= (minCoinsCount)) {
         break;
       }
     }
@@ -265,7 +275,10 @@ class _PreparedOfferDataForTradeService {
   final WalletKeychain keychain;
 
   const _PreparedOfferDataForTradeService(
-      {required this.selectedCoins, required this.keychain, required this.nftCoins});
+      {required this.selectedCoins,
+      required this.keychain,
+      required this.nftCoins});
+
   List<FullCoin> get selectedCoinsList {
     return selectedCoins.values.expand((element) => element).toList();
   }
