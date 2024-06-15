@@ -31,7 +31,7 @@ android {
         minSdk 26
         targetSdk 34
         versionCode 33 //for Google Play
-        versionName "0.1.0"
+        versionName "0.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
