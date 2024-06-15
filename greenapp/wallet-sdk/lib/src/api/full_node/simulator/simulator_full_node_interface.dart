@@ -5,6 +5,12 @@ import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 class SimulatorFullNodeInterface extends ChiaFullNodeInterface {
   const SimulatorFullNodeInterface(this.fullNode) : super(fullNode);
 
+  factory SimulatorFullNodeInterface.withDefaultUrl() {
+    return SimulatorFullNodeInterface(
+      SimulatorHttpRpc(SimulatorUtils.defaultUrl),
+    );
+  }
+
   @override
   // ignore: overridden_fields
   final SimulatorHttpRpc fullNode;

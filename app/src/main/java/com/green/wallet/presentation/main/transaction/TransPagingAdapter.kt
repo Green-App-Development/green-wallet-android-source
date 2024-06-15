@@ -9,14 +9,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.chauthai.swipereveallayout.SwipeRevealLayout
 import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.green.wallet.R
+import com.green.wallet.domain.domainmodel.OfferTransaction
 import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.AnimationManager
 import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.MainActivity
@@ -29,23 +32,29 @@ class TransPagingAdapter(
     private val curActivity: MainActivity,
     private val transactionItemListener: TransactionItemAdapter.TransactionListener,
     private val animManager: AnimationManager
-) : PagingDataAdapter<Transaction, TransPagingAdapter.TransactionViewHolder>(TransDiffCallback()) {
+) : PagingDataAdapter<Transaction, ViewHolder>(TransDiffCallback()) {
 
     private val viewBinderHelper = ViewBinderHelper()
 
     class TransDiffCallback : DiffUtil.ItemCallback<Transaction>() {
-
         override fun areItemsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
-            return oldItem.transactionId == newItem.transactionId
+            if (oldItem is TransferTransaction && newItem is TransferTransaction) {
+                return oldItem.transactionId == newItem.transactionId
+            }
+            return true
         }
 
         override fun areContentsTheSame(oldItem: Transaction, newItem: Transaction): Boolean {
-            return oldItem == newItem
+            if (oldItem is TransferTransaction && newItem is TransferTransaction) {
+                return oldItem == newItem
+            }
+            return true
         }
+
     }
 
 
-    inner class TransactionViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    inner class TransferTransViewHolder(v: View) : ViewHolder(v) {
         val rootLayout: SwipeRevealLayout = v.findViewById(R.id.root_transaction_item)
         private val txtStatus: TextView = v.findViewById(R.id.txtStatus)
         private val txtHeightTransaction: TextView = v.findViewById(R.id.txtHeightTrans)
@@ -58,7 +67,7 @@ class TransPagingAdapter(
 
 
         @SuppressLint("SetTextI18n")
-        fun onBindTransaction(transaction: Transaction) {
+        fun onBindTransaction(transaction: TransferTransaction) {
             rootLayout.background.setTint(curActivity.getColorResource(R.color.cardView_background))
             txtStatus.visibility = View.VISIBLE
             txtHeightTransaction.visibility = View.VISIBLE
@@ -100,7 +109,6 @@ class TransPagingAdapter(
             }
 
             imgDelete.setOnClickListener {
-                VLog.d("Delete container transaction clicked")
                 transactionItemListener.onTransactionDelete(transaction = transaction)
             }
 
@@ -140,19 +148,56 @@ class TransPagingAdapter(
 
     }
 
-    override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
+    inner class OfferTransViewHolder(v: View) : ViewHolder(v) {
+
+        private val composeView = v.findViewById<ComposeView>(R.id.compose_offer)
+        private var heightLayout: Int = 45
+        private var open: Boolean = false
+        private var alreadyBind: Boolean = false
+
+        init {
+            VLog.d("OfferTransViewHolder initialized : $this")
+        }
+
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        if (item != null) {
+        if (item != null && item is TransferTransaction && holder is TransferTransViewHolder) {
             holder.onBindTransaction(item)
             viewBinderHelper.setOpenOnlyOne(true)
             viewBinderHelper.bind(holder.rootLayout, "$position")
-        } else holder.onBindEmptyPlaceHolder()
+        } else if (item != null && holder is OfferTransViewHolder) {
+        } else if (holder is TransferTransViewHolder)
+            holder.onBindEmptyPlaceHolder()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_transaction, parent, false)
-        return TransactionViewHolder(itemView)
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is OfferTransaction -> OFFER_TRANSACTION
+            else -> OFFER_TRANSACTION
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            OFFER_TRANSACTION -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_offer_compose, parent, false)
+                OfferTransViewHolder(view)
+            }
+
+            else -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_transaction, parent, false)
+                TransferTransViewHolder(view)
+            }
+        }
+    }
+
+    companion object {
+        private const val TRANSFER_TRANSACTION = 0
+        private const val OFFER_TRANSACTION = 1
     }
 
 }

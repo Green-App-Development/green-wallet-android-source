@@ -6,7 +6,7 @@ import com.green.wallet.data.network.dto.greenapp.network.NetworkItem
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTCoin
 import com.green.wallet.domain.domainmodel.NFTInfo
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.BlockChainInteract
 import com.green.wallet.domain.interact.DexieInteract
@@ -19,7 +19,6 @@ import com.green.wallet.domain.interact.WalletInteract
 import com.green.wallet.presentation.custom.getPreferenceKeyForNetworkItem
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
-import com.green.wallet.presentation.main.enterpasscode.PassCodeCommunicator
 import com.green.wallet.presentation.main.pincode.PinCodeCommunicator
 import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.Resource
@@ -45,7 +44,7 @@ class SpeedyDialogViewModel @Inject constructor(
     pinCodeCommunicator: PinCodeCommunicator
 ) : BaseViewModel<SpeedyTokenState, SpeedyTokenEvent>(SpeedyTokenState()) {
 
-    private lateinit var transaction: Transaction
+    private lateinit var transaction: TransferTransaction
     lateinit var wallet: Wallet
     lateinit var nftCoin: NFTCoin
     lateinit var nftInfo: NFTInfo
@@ -75,7 +74,7 @@ class SpeedyDialogViewModel @Inject constructor(
         }
     }
 
-    fun setCurTransaction(tran: Transaction?) {
+    fun setCurTransaction(tran: TransferTransaction?) {
         VLog.d("Setting up transaction property : $tran")
         tran?.let {
             this.transaction = tran
@@ -142,14 +141,6 @@ class SpeedyDialogViewModel @Inject constructor(
                 System.currentTimeMillis()
             )
         )
-        VLog.d(
-            "Transaction Coins for tran : $tranCoins time : ${
-                transaction.createdAtTime - prefs.getSettingLong(
-                    PrefsManager.TIME_DIFFERENCE,
-                    System.currentTimeMillis()
-                )
-            }"
-        )
         tranCoins
     }
 
@@ -165,7 +156,7 @@ class SpeedyDialogViewModel @Inject constructor(
                     VLog.d("Wallet Balance : ${wallet.balance}, Spent Coins Fee : $it")
                     _viewState.update {
                         it.copy(
-                            spendableBalance = feeSpendable
+                            spendableBalance = Math.max(feeSpendable, 0.0)
                         )
                     }
                     validateEnoughFee()

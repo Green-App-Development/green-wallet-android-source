@@ -77,9 +77,9 @@ class AuthFragmentIntro : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         registerBtnClicks()
         fixTxtViewLateValue()
-        //TODO: Need to delete before prod
+//        //TODO: Need to delete before prod
 //        lifecycleScope.launch {
-//            delay(500)
+//            delay(1000)
 //            determineDestination()
 //        }
     }

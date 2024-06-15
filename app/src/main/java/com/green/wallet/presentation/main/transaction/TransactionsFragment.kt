@@ -12,30 +12,27 @@ import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.view.children
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.paging.LoadState
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.common.tools.*
+import com.green.compose.theme.GreenWalletTheme
 import com.green.wallet.R
+import com.green.wallet.databinding.DialogTranNftDetailsBinding
 import com.green.wallet.databinding.FragmentTransactionsBinding
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.custom.*
+import com.green.wallet.presentation.custom.base.BaseFragment
 import com.green.wallet.presentation.di.factory.ViewModelFactory
 import com.green.wallet.presentation.main.MainActivity
-import com.green.wallet.presentation.viewBinding
-import com.example.common.tools.*
-import com.green.wallet.databinding.DialogTranNftDetailsBinding
-import com.green.wallet.presentation.custom.base.BaseFragment
-import com.green.wallet.presentation.main.pincode.PinCodeFragment
+import com.green.wallet.presentation.main.transaction.btmCancel.CancelOfferDialog
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyBtmDialog
 import com.green.wallet.presentation.tools.*
+import com.green.wallet.presentation.viewBinding
 import com.greenwallet.core.ext.collectFlow
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.coroutines.CoroutineScope
@@ -115,28 +112,10 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         initStatusHorizontalView()
         initSortingByStatusClicks()
 //		initTransactionItemAdapter()
-        initTransactionItemAdapterPagingSource()
         sortingByHeightAndSum()
         initSwipeRefreshLayout()
         addEmptyTransPlaceHolder()
     }
-
-    private fun initTransactionItemAdapterPagingSource() {
-        transAdapterPaging = TransPagingAdapter(getMainActivity(), this, animManager)
-        binding.recTransactionItems.apply {
-            adapter = transAdapterPaging
-            layoutManager = LinearLayoutManager(curActivity())
-        }
-        transAdapterPaging.registerAdapterDataObserver(object :
-            RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                if (positionStart == 0) {
-                    binding.recTransactionItems.layoutManager?.scrollToPosition(0)
-                }
-            }
-        })
-    }
-
 
     private fun initSwipeRefreshLayout() {
         binding.swipeRefresh.apply {
@@ -160,7 +139,6 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
     }
 
     private fun updateTransactions() {
-        updateTransJob?.cancel()
 //		updateTransJob = lifecycleScope.launch {
 //			viewModel.getAllQueriedFlowTransactionList(
 //				currentAddress,
@@ -184,39 +162,23 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 //				}
 //			}
 //		}
-        updateTransJob = lifecycleScope.launch {
-            launch {
-                viewModel.getAllQueriedFlowTransactionPagingSource(
-                    currentAddress,
-                    getCurSearchAmount(),
-                    getCurChosenNetworkType(),
-                    getCurChosenStatus(),
-                    getCurSearchTransByDateCreatedExceptYesterday(),
-                    getCurSearchByForYesterdayStart(),
-                    getCurSearchByForYesterdayEnds(),
-                    getTokenCode()
-                ).collectLatest { pagingData ->
-                    VLog.d("PagingData got called : $pagingData")
-                    transAdapterPaging.submitData(pagingData)
-                }
-            }
-            transAdapterPaging.loadStateFlow.collectLatest {
-                if (it.append is LoadState.NotLoading && it.append.endOfPaginationReached) {
-                    binding.apply {
-                        if (transAdapterPaging.itemCount >= 1) {
-                            recTransactionItems.visibility = View.VISIBLE
-                            txtNoTrans.visibility = View.GONE
-                            placeHolderLinearView.visibility = View.VISIBLE
-                        } else {
-                            recTransactionItems.visibility = View.GONE
-                            txtNoTrans.visibility = View.VISIBLE
-                            placeHolderLinearView.visibility = View.GONE
-                        }
-                    }
-                }
-            }
-        }
 
+        viewModel.getAllQueriedFlowTransactionList(
+            currentAddress,
+            getCurSearchAmount(),
+            getCurChosenNetworkType(),
+            getCurChosenStatus(),
+            getCurSearchTransByDateCreatedExceptYesterday(),
+            getCurSearchByForYesterdayStart(),
+            getCurSearchByForYesterdayEnds(),
+            getTokenCode()
+        )
+
+//            transAdapterPaging.loadStateFlow.collectLatest {
+//                if (it.append is LoadState.NotLoading && it.append.endOfPaginationReached) {
+//
+//                }
+//            }
     }
 
     private fun getTokenCode(): String? {
@@ -245,7 +207,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         }
     }
 
-    private suspend fun updateTransactionItems(transList: List<Transaction>) {
+    private suspend fun updateTransactionItems(transList: List<TransferTransaction>) {
         delay(50)
         val recHeight = binding.recTransactionItems.height
         val dp = curActivity().pxToDp(recHeight)
@@ -307,14 +269,6 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         txt?.apply {
             background.setTint(curActivity().getColorResource(R.color.bcg_sorting_txt_category))
             setTextColor(curActivity().getColorResource(R.color.sorting_txt_category))
-        }
-    }
-
-    private fun initTransactionItemAdapter() {
-        transactionItemAdapter = TransactionItemAdapter(effect = animManager, curActivity(), this)
-        binding.recTransactionItems.apply {
-            adapter = transactionItemAdapter
-            layoutManager = LinearLayoutManager(curActivity())
         }
     }
 
@@ -489,7 +443,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 
     }
 
-    private fun showTransactionDetails(transaction: Transaction) {
+    private fun showTransactionDetails(transaction: TransferTransaction) {
         if (transaction.code == "NFT") {
             showTransactionsNFTDetails(transaction)
         } else {
@@ -514,7 +468,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         }
     }
 
-    private fun showTransactionsNFTDetails(transaction: Transaction) {
+    private fun showTransactionsNFTDetails(transaction: TransferTransaction) {
         val dialog = Dialog(requireActivity(), R.style.RoundedCornersDialog)
         val binding = DialogTranNftDetailsBinding.inflate(layoutInflater)
         dialog.setContentView(binding.root)
@@ -538,7 +492,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
     @SuppressLint("SetTextI18n")
     private fun initTransDetailsNFT(
         binding: DialogTranNftDetailsBinding,
-        transaction: Transaction
+        transaction: TransferTransaction
     ) {
         binding.apply {
             val formattedDate = formattedDateForTransaction(
@@ -579,7 +533,7 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
 
 
     @SuppressLint("SetTextI18n")
-    private fun initTransDetails(dialog: Dialog, transaction: Transaction) {
+    private fun initTransDetails(dialog: Dialog, transaction: TransferTransaction) {
         VLog.d("Current Transaction Clicked -> : $transaction")
         dialog.apply {
 
@@ -616,33 +570,21 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
         updateTransJob?.cancel()
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        VLog.d("TransactionFragment On DestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
     private fun curActivity() = requireActivity() as MainActivity
 
-    override fun onTransactionItemClicked(transaction: Transaction) {
+    override fun onTransactionItemClicked(transaction: TransferTransaction) {
         showTransactionDetails(transaction)
     }
 
-    override fun onTransactionSpeedUpClick(transaction: Transaction) {
+    override fun onTransactionSpeedUpClick(transaction: TransferTransaction) {
         viewModel.handleIntent(TransactionIntent.OnSpeedyTran(transaction))
     }
 
-    override fun onTransactionDelete(transaction: Transaction) {
+    override fun onTransactionDelete(transaction: TransferTransaction) {
         viewModel.handleIntent(TransactionIntent.OnDeleteTransaction(transaction))
     }
 
     override fun collectFlowOnCreated(scope: CoroutineScope) {
-        VLog.d("Speedy Btm Dialog is going to be shown before collecting flow")
         viewModel.event.collectFlow(scope) {
             when (it) {
                 is TransactionEvent.SpeedyBtmDialog -> {
@@ -664,13 +606,47 @@ class TransactionsFragment : BaseFragment(), TransactionItemAdapter.TransactionL
                     }
                 }
 
+                is TransactionEvent.ShowTransactionDetails -> {
+                    showTransactionDetails(it.transaction)
+                }
+
+                is TransactionEvent.ShowBtmDialogCancelOffer -> {
+                    CancelOfferDialog.build(it.tranID).show(childFragmentManager, "")
+                }
             }
         }
     }
 
     override fun collectFlowOnStarted(scope: CoroutineScope) {
-        VLog.d("Speedy Btm Dialog is going to be shown before collecting on FlowStarted : $scope")
+        viewModel.viewState.collectFlow(scope) {
+            initTransactionList(it)
+        }
     }
 
+    private fun initTransactionList(it: TransactionState) {
+        binding.recTransactionItems.setContent {
+            GreenWalletTheme {
+                TransactionListScreen(
+                    state = it,
+                    onIntent = viewModel::handleIntent
+                )
+            }
+        }
+        isTransactionListEmpty(it.transactionList.isEmpty())
+    }
+
+    private fun isTransactionListEmpty(isEmpty: Boolean) {
+        binding.apply {
+            if (!isEmpty) {
+                recTransactionItems.visibility = View.VISIBLE
+                txtNoTrans.visibility = View.GONE
+                placeHolderLinearView.visibility = View.VISIBLE
+            } else {
+                recTransactionItems.visibility = View.GONE
+                txtNoTrans.visibility = View.VISIBLE
+                placeHolderLinearView.visibility = View.GONE
+            }
+        }
+    }
 
 }

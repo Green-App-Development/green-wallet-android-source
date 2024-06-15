@@ -60,6 +60,7 @@ import kotlinx.android.synthetic.main.fragment_receive.txtAddress
 import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.android.synthetic.main.fragment_send.chosenNetworkRel
 import kotlinx.android.synthetic.main.fragment_send.imgIconSpinner
+import kotlinx.android.synthetic.main.fragment_user_nft.txtCoin
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.math.BigDecimal
@@ -1176,7 +1177,11 @@ class SendFragment : BaseFragment() {
                 }
 
                 TransferEvent.OnPinConfirmed -> {
-                    initFlutterToGenerateSpendBundle(binding.edtAddressWallet.text.toString())
+                    var destAddress = binding.edtAddressWallet.text.toString()
+                    viewModel.viewState.value.namesDao?.let {
+                        destAddress = it
+                    }
+                    initFlutterToGenerateSpendBundle(destAddress)
                     viewModel.setLoading(true)
                 }
             }
@@ -1185,6 +1190,56 @@ class SendFragment : BaseFragment() {
         viewModel.viewState.collectFlow(scope) {
             initViewState(it)
             initAmountNotEnoughState(it)
+            initAddressLookUp(it)
+        }
+    }
+
+    private fun initAddressLookUp(it: TransferState) {
+        binding.apply {
+            if (it.namesDao == null) {
+                edtAddressWallet.setTextColor(requireActivity().getColorResource(R.color.secondary_text_color))
+                txtEnterAddressWallet.setTextColor(requireActivity().getColorResource(R.color.green))
+                addressNamesLay.visibility = View.GONE
+                return@apply
+            }
+            addressNamesLay.visibility = View.VISIBLE
+
+            txtEnterAddressWallet.setTextColor(
+                requireActivity().getColorResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.color.green
+                    else
+                        R.color.red_mnemonic
+                )
+            )
+
+            edtAddressWallet.setTextColor(
+                requireActivity().getColorResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.color.secondary_text_color
+                    else
+                        R.color.red_mnemonic
+                )
+            )
+
+            txtCoinsWillBeSent.setTextColor(
+                requireActivity().getColorResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.color.secondary_text_color
+                    else
+                        R.color.red_mnemonic
+                )
+            )
+
+            txtCoinsWillBeSent.text =
+                requireActivity().getStringResource(
+                    if (it.namesDao.isNotEmpty())
+                        R.string.coins_will_be_sent
+                    else
+                        R.string.address_doesnt_found
+                )
+
+            txtCoinsWillBeSentAddress.text = formatString(10, it.namesDao, 6)
         }
     }
 

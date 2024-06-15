@@ -4,12 +4,12 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.green.wallet.presentation.tools.VLog
 import com.example.common.tools.getTokenPrecisionByCode
 import com.google.gson.Gson
 import com.green.wallet.data.local.*
 import com.green.wallet.data.local.entity.NFTCoinEntity
 import com.green.wallet.data.local.entity.NFTInfoEntity
+import com.green.wallet.data.local.entity.OfferTransactionEntity
 import com.green.wallet.data.local.entity.SpentCoinsEntity
 import com.green.wallet.data.local.entity.TransactionEntity
 import com.green.wallet.data.local.entity.WalletEntity
@@ -23,14 +23,17 @@ import com.green.wallet.data.network.dto.spendbundle.SpendBundle
 import com.green.wallet.data.preference.PrefsManager
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.NftOfferCoin
+import com.green.wallet.domain.domainmodel.PushResult
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.domain.interact.*
 import com.green.wallet.presentation.App
 import com.green.wallet.presentation.custom.*
 import com.green.wallet.presentation.custom.encryptor.EncryptorProvider
 import com.green.wallet.presentation.tools.METHOD_CHANNEL_GENERATE_HASH
+import com.green.wallet.presentation.tools.PRECISION_XCH
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.Status
+import com.green.wallet.presentation.tools.VLog
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -39,7 +42,6 @@ import org.json.JSONObject
 import retrofit2.Retrofit
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 import kotlin.system.measureTimeMillis
 
 
@@ -57,7 +59,9 @@ class BlockChainInteractImpl @Inject constructor(
     private val greenAppInteract: GreenAppInteract,
     private val context: Context,
     private val nftCoinsDao: NftCoinsDao,
-    private val nftInfoDao: NftInfoDao
+    private val nftInfoDao: NftInfoDao,
+    private val offerTransactionDao: OfferTransactionDao,
+    private val cancelTransactionDao: CancelTransactionDao
 ) : BlockChainInteract {
 
     private val mutexUpdateBalance = Mutex()
@@ -149,8 +153,133 @@ class BlockChainInteractImpl @Inject constructor(
                 updateWalletBalanceWithTransactions(wallet)
                 updateTokenBalanceWithFullNode(wallet)
                 updateWalletNFTBalance(wallet)
+                updateOfferTransactions(wallet)
+                updateCancelTransaction(wallet)
             }
         }
+    }
+
+    private suspend fun updateCancelTransaction(wallet: WalletEntity) {
+        try {
+            if (isThisChivesNetwork(wallet.networkType)) return
+            val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+                ?: throw Exception("Exception in converting json str to networkItem")
+            val service = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+                .create(BlockChainService::class.java)
+            val cancelTransList =
+                cancelTransactionDao.getCancelTransactionListByWalletAddress(wallet.address)
+            VLog.d("Cancel Trans List  : $cancelTransList for Wallet Address : ${wallet.address}")
+            if (cancelTransList.isEmpty())
+                return
+            for (cancel in cancelTransList) {
+                val xchCoin =
+                    spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(cancel.createAtTime, "XCH")[0]
+                val spentHeight = spentHeightForXCHCoin(service, xchCoin)
+                if (spentHeight != -1L) {
+                    cancelTransactionDao.deleteCancelTransaction(cancel)
+
+                    notificationHelper.callGreenAppNotificationMessages(
+                        "Canceling offer is completed", System.currentTimeMillis()
+                    )
+
+                    spentCoinsDao.deleteSpentConsByTimeCreated(cancel.createAtTime)
+
+                    val offerTransaction =
+                        offerTransactionDao.getOfferTransactionByTranID(cancel.offerTranID).get()
+                    spentCoinsDao.deleteSpentConsByTimeCreated(offerTransaction.createdTime)
+                    offerTransactionDao.updateOfferTransactionStatusHeight(
+                        status = Status.CANCELLED,
+                        height = spentHeight.toInt(),
+                        tranId = cancel.offerTranID
+                    )
+                }
+            }
+        } catch (ex: Exception) {
+            VLog.d("Exception occurred when updateCancelTransaction : ${ex.message}")
+        }
+    }
+
+    private suspend fun updateOfferTransactions(wallet: WalletEntity) {
+        if (isThisChivesNetwork(wallet.networkType)) return
+        val networkItem = getNetworkItemFromPrefs(wallet.networkType)
+            ?: throw Exception("Exception in converting json str to networkItem")
+        val service = retrofitBuilder.baseUrl(networkItem.full_node + "/").build()
+            .create(BlockChainService::class.java)
+        val offersTrans = offerTransactionDao.getAllOfferTransactionsByAddressFk(
+            wallet.address,
+            status = Status.InProgress
+        )
+        VLog.d("Offer Trans List $offersTrans For Wallet Address : ${wallet.address}")
+        for (offer in offersTrans) {
+            try {
+                if (offer.acceptOffer) {
+                    updateTakingOfferTransactionStatus(offer, service)
+                } else if (offer.status != Status.CANCELLING) {
+                    updateCreatingOfferTransactionStatus(offer, service)
+                }
+            } catch (ex: Exception) {
+                VLog.d("Exception occurred when updateOfferTransactions : ${ex.message}")
+                continue
+            }
+        }
+    }
+
+    private suspend fun updateCreatingOfferTransactionStatus(
+        offer: OfferTransactionEntity,
+        service: BlockChainService
+    ) {
+        val coinList = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")
+        VLog.d("Coin is $coinList found for offer : $offer")
+        val coin = coinList[0]
+        val spentHeight = spentHeightForXCHCoin(service, coin)
+        if (spentHeight != -1L) {
+            offerTransactionDao.updateOfferTransaction(
+                height = spentHeight.toInt(),
+                tranId = offer.tranId
+            )
+
+            notificationHelper.callGreenAppNotificationMessages(
+                "Creating offer is accepted", System.currentTimeMillis()
+            )
+            spentCoinsDao.deleteSpentConsByTimeCreated(offer.createdTime)
+        }
+    }
+
+    private suspend fun updateTakingOfferTransactionStatus(
+        offer: OfferTransactionEntity,
+        service: BlockChainService
+    ) {
+        val coin = spentCoinsDao.getSpentCoinsByTranTimeCreatedCode(offer.createdTime, "XCH")[0]
+        val spentHeight = spentHeightForXCHCoin(service, coin)
+        if (spentHeight != -1L) {
+            offerTransactionDao.updateOfferTransaction(
+                height = spentHeight.toInt(),
+                tranId = offer.tranId
+            )
+            notificationHelper.callGreenAppNotificationMessages(
+                "Take offer is completed", System.currentTimeMillis()
+            )
+            spentCoinsDao.deleteSpentConsByTimeCreated(offer.createdTime)
+        }
+    }
+
+    private suspend fun spentHeightForXCHCoin(
+        service: BlockChainService,
+        coin: SpentCoinsEntity
+    ): Long {
+        val body = hashMapOf<String, Any>()
+        body["parent_ids"] =
+            listOf(coin.parent_coin_info)
+        body["include_spent_coins"] = true
+        val res =
+            service.getCoinRecordsByParentIds(body).body()?.coin_records
+        for (curCoin in res ?: return -1L) {
+            val multi = (coin.amount * PRECISION_XCH).toLong()
+            if (curCoin.coin.amount == multi && curCoin.spent_block_index != 0L) {
+                return curCoin.spent_block_index
+            }
+        }
+        return -1L
     }
 
     private suspend fun updateWalletNFTBalance(wallet: WalletEntity) {
@@ -206,7 +335,13 @@ class BlockChainInteractImpl @Inject constructor(
                         coin.timestamp,
                         hash
                     )
-                    VLog.d("Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+//                    VLog.d("NFTCoinEntity Hash : $hash Saving NFTCoinEntity : $nftCoinEntity")
+//                    VLog.d("NFTCoinEntity CoinName : ${coin.coin.parent_coin_info} Height : ${coin.confirmed_block_index}")
+
+                    //4942127
+                    //nftCoinName : 4a4bfcc0dcd992564fa5615f0cb4d46189c0afab352ebca463820f98f8c22fef
+                    //nftHash: 974b8fd6fcd9d87a6cee9bc8ba403749e469ea9931d3ef2476d386032baab897
+
                     val nftInfoEntity = getNFTINfoFromWalletApi(
                         networkItem,
                         coin.coin.parent_coin_info,
@@ -242,7 +377,7 @@ class BlockChainInteractImpl @Inject constructor(
                         )
                         transactionDao.insertTransaction(tran)
                         notificationHelper.callGreenAppNotificationMessages(
-                            "$incomingTransaction : 1 NFT",
+                            "$incomingTransaction : +1 NFT",
                             System.currentTimeMillis()
                         )
                     }
@@ -325,7 +460,8 @@ class BlockChainInteractImpl @Inject constructor(
                     name = name,
                     address_fk = address_fk,
                     spent = false,
-                    isPending = false
+                    isPending = false,
+                    timePending = 0L
                 )
             } else {
                 VLog.d("Request is no success for nftInfo : ${reqNFTInfo.raw()}")
@@ -554,7 +690,7 @@ class BlockChainInteractImpl @Inject constructor(
         fee: Double,
         spentCoinsJson: String,
         spentCoinsToken: String
-    ): Resource<String> {
+    ): Resource<PushResult> {
         try {
             val serverTime = greenAppInteract.getServerTime() - 1000 * 60 * 2
             if (serverTime == -1L)
@@ -605,7 +741,8 @@ class BlockChainInteractImpl @Inject constructor(
                         0
                     )
                     VLog.d("Inserting transaction entity : $trans and coinJson $spentCoinsJson and coinToken : $spentCoinsToken")
-                    transactionDao.insertTransaction(trans)
+                    if (sendAmount != -1.0)
+                        transactionDao.insertTransaction(trans)
                     if (spentCoinsJson.isNotEmpty())
                         spentCoinsInteract.insertSpentCoinsJson(
                             spentCoinsJson,
@@ -617,7 +754,7 @@ class BlockChainInteractImpl @Inject constructor(
                         spentCoinsInteract.insertSpentCoinsJson(
                             spentCoinsToken, serverTime, code, address
                         )
-                    return Resource.success("OK")
+                    return Resource.success(PushResult("OK", serverTime))
                 }
             } else {
                 withContext(Dispatchers.Main) {

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:bs58check/bs58check.dart';
 import 'package:chia_crypto_utils/chia_crypto_utils.dart' hide Client;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +9,6 @@ import 'package:flutter_splash_screen_module/SpeedyTransaction.dart';
 import 'package:flutter_splash_screen_module/flutter_token.dart';
 import 'package:flutter_splash_screen_module/save_full_coins_create_offer.dart';
 import 'package:http/http.dart';
-import 'dart:math';
 
 import 'TokenInfo.dart';
 import 'nft_service.dart';
@@ -374,14 +375,18 @@ class PushingTransaction {
               var nonObserver = int.parse(args["nonObserver"].toString());
               var fee = int.parse(args["fee"].toString());
               var spentCoins = args["spentCoins"].toString();
-              pushingOfferWithCAT(
+              var requestedNFT = args["requestedNFT"].toString();
+              debugPrint(
+                  "RequestedNFT on PushingOffer : ${call.arguments["requestedNFT"].toString()}");
+              takingAnOffer(
                   offerString: offer,
                   mnemonics: mnemonics,
                   url: url,
                   observer: observer,
                   nonObserver: nonObserver,
                   spentCoins: spentCoins,
-                  fee: fee);
+                  fee: fee,
+                  requestedNFT: requestedNFT);
             } catch (ex) {
               debugPrint(
                   "Exception in getting params from pushing offer : $ex");
@@ -487,7 +492,7 @@ class PushingTransaction {
           {
             try {
               var args = call.arguments;
-              debugPrint("SpeedyTransferNFT got called with args : $args");
+              debugPrint("CreateOffer got called with args : $args");
               var mnemonics = args["mnemonics"].toString().split(' ');
               var observer = int.parse(args["observer"].toString());
               var nonObserver = int.parse(args["nonObserver"].toString());
@@ -511,14 +516,32 @@ class PushingTransaction {
             }
           }
           break;
+        case "testing":
+          {
+            var offer =
+                "offer1qqr83wcuu2rykcmqvpsxygqqemhmlaekcenaz02ma6hs5w600dhjlvfjn477nkwz369h88kll73h37fefnwk3qqnz8s0lle00zu8ysw9su6m9xj76favk0p4m4m9a2a6a6lkphu6ns8uhlmanr4rxlc32zy4nksvnlnenckt5hnpehmdm4eh3flcx02ms4d0paz7uy8v0wmaevrtchlady4v5q8qdvp4lsmuahherk43clx402v7nr50tjajfwatqgjx28k67mcl626a6z58wtl8mcq58fftwcdzcme96hjevnuk8fwzet79vltz3s8clmamrc85gc2k3mp3c23q76wgda62yer55tj0l6zyeygfc2yp5nkstadt3jp00haalrsdu62wkexh0ykuwu0nn87sras3y2mww5aln3vkntul79myuan8hv24m3nul4u5nt6a8wdkv43wrma0v9dh5d4f4pkdscv7leykes0mp7j548sppyra90h9rwknnd9uem92aw822nmm5fghjluj6wtm6pmzt4p2unpxxar6scmqjcr50fn0snk0sqfleqs9hmeu8jlugwtdswgcana7mk7qjntuu24edfvm9jd6rur0avwvjv8uruj9a8lsxzgey5jst32klta8j6f9c5jlj3vfax5h5wve08vl4xg9d8zl5jvfdx25n2ve3xv5jehfu65ene49jk5ejkv948u5d624v6nxd3s9s4yk2ene5eu5j90eumu5vwv4g5u3nw29n95s2f39nxzl4pjxceaq270flu8h3qvvqtdyqpwrsq0vckqsupwh7vkfa2zknadu49flue0smhlva3gce0d6msl4uhy049tw7ydaelhldl9qt73v34nraj6d94y5cjfvf82vk2kwelah7gyqptlyxvgjar96v89qpu3xz05qn2wf9y6mt62fm9mdjevfdyvctdv9nxvavetf24j6d3d9a9ykn6t4385ntet9f95ujfvkvmz7dz2fxej529tf32q8w2wpu7ssspkz3nsr34l3d9uqerwgcp2hp52hgfnuxr2rehvltyjmkczwmrdfm5jpl0dxa6dns37l7kv3crcqme9x3sz48qk9tjmhuuh2zlwwc4kndm3m5fzsc9fzgaxzsahgz3ejh5n70d3ycpfwp0ewdull23v0vmua58elxum636hk4yemhd4dt57vre4u7h9wtxvh4emkx20wg7n3g5tj7h5ffchgjs3qralur7w4yfpknm5r8fgg98acatn72kuhu9vrwjy04lg9yl8rh8w2klud5gja79el8gdqv2a5ma7565sv5c89rpd8w7t5dfh8g6nw6p8umld8wwmhpsvh2hd92tpxx0nn8lsjhw20sf3zjl05qlnkj9vvmgmdjl8ulm9uzs8k6n35x84gp8xhsq3kkrwme5expqeh4n47slp5k4lah6d8daznn4aclql4rla3k9xrequp7akpuc6glxf56rq8k6h8lhhfk8nrwkajh7p6krhtp4v2nkyqft7ll07qllkkje78x3le8k27a0drfrnhxa4j7mk0pw5d6macwemnhhee25fallctt2zrwhklv8crycd0ctz7qxqr66zewqa22dmh3h30202edl2h7qcv2zhvxtgfsxxcc8q8acszg23m7gr9qs2czhr8lalurhzla0vkuhks3lv262jsy3lzeenu729386ur072xjve08mfxvfla95r632h3r0yx4k8cyccsdsmnajr9puemv7m2uy7djp28mv9unqcl6x8nl6vhrj020m64kkzl54x46caf8xz7l0x2nx0un3kxl6m7alrz4f38kmr9ln9hac4uydy37sun9mvqgl8jt40z05rm03ehgflljmfrxdavvm0fwhlgzkhtcwldq0n7npuejdhszqxn5vcwwcl8sn4";
+            var result = dexieOfferId(offer);
+            debugPrint("Result for pushing transaction : $result");
+            _channel.invokeMethod("testing");
+          }
+          break;
       }
     });
     // offeringXCHForCat();
     // offeringCatForXCH();
     // testingMethod();
+    testingNamesDao();
+    final nftId = NftAddress(
+        "nft1j7hsh8uwg2ce0s8xagrcm6m5uzqjr3qdm4y45zwprddfyna80srq8y9q86");
+    debugPrint("NftId Address on Flutter : ${nftId.toPuzzlehash()}");
     analyzeOffer(
         offerStr:
             "offer1qqr83wcuu2rykcmqvpsxygqqa6wdw7l95dk68vl9mr2dkvl98r6g76an3qez5ppgyh00jfdqw4uy5w2vrk7f6wj6lw8adl4rkhlk3mflttacl4h7lur64as8zlhqhn8h04883476dz7x6mny6jzdcga33n4s8n884cxcekcemz6mk3jk4v925trha2kuwcv0k59xl377mx32g5h2c52wfycczdlns04vgl4cx77f6d8xs4f3m23zpghmeuyfzktsvljul5lf6fragjk9qdl5ewns7nam4t68j7e4se98ynkx67tjl3kfx0zse96wllnt0ahda2x20ymlh3pwqaeu7fue4anp5hn74af8dwvdt9aatrhf5pqzt2qgvnwecw8nkvmr8mqw9r83t77l05j0slhyegkjhfnvd024xtj0mxwjthmj3zgpnyqx33cqwjsnvcuzl5crrw7xrqakw6lww0c47699l82mgktl765h0rw823r3g908whmwmlhz8lkmp7lujr0jhnt4zljde56xa8uaqm9h9vxkqey94lalur70u7m0vd7pdhdnuhl24v8nknmlvy3t60ve083dajur3elel5lc49ulsv7kqnzy9smsndcr2hd07has6sjax77tmkm59e2vyce5g7revgd8a8jh6jg3zwaz9pujzh3gdlwkjjqc9xh8jw707rsde2utp3xzxks44axmempy2wmr2622mtjk0658jlkha7j3yhswmx0dxwnjg0h7zfujf64czed7mdz67lx60hsav0u2z783f2akdkcaduyavkdpjfynttzeqlul0kh68gltqcpfpfdkcgepjqhv0tdapgq8wtt37y4534ts");
+  }
+
+  String dexieOfferId(String offerData) {
+    final hash = offerData.toBytes().sha256Hash();
+    return base58.encode(hash.byteList);
   }
 
   Future<void> creatingOffer(
@@ -565,24 +588,59 @@ class PushingTransaction {
       List<FullCoin> fullCoins = [];
 
       Map<String, List<Coin>> spentCoinsMap = {};
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+
+      var offerMap = offerAssetDataParamsOffered(offered);
+      Map<OfferAssetData?, List<int>> requestMap =
+          <OfferAssetData?, List<int>>{};
 
       for (var token in offered) {
         if (token.type == "XCH") {
           await saveFullCoinsXCH(fee, url, token, spentCoinsParents, fullCoins,
               spentCoinsMap, fullNode, keychain);
         } else if (token.type == "CAT") {
+          keychain.addOuterPuzzleHashesForAssetId(
+              Puzzlehash.fromHex(token.assetID.toString()));
           await saveFullCoinsCAT(url, token, spentCoinsParents, fullCoins,
               spentCoinsMap, fullNode, keychain);
-        } else {}
+        } else {
+          var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+              assetId: Bytes.fromHex(token.assetID),
+              puzzle_hash: Puzzlehash.fromHex(token.fromAddress));
+          final nftCoin = nftCoins[0];
+          final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+          fullCoins.add(nftFullCoin);
+        }
+      }
+
+      for (var item in requested) {
+        final amount = item.amount;
+        if (item.type == "CAT") {
+          keychain.addOuterPuzzleHashesForAssetId(
+              Puzzlehash.fromHex(item.assetID.toString()));
+          final tokenHash = Puzzlehash.fromHex(item.assetID);
+          requestMap[OfferAssetData.cat(tailHash: tokenHash)] = [amount];
+        } else if (item.type == 'XCH') {
+          requestMap[null] = [amount];
+        } else {
+          var nftCoin = await nftService
+              .getNftFullCoinWithLauncherId(Puzzlehash.fromHex(item.assetID));
+
+          final nftFullCoin = await nftService.convertFullCoin(nftCoin!);
+          fullCoins.add(nftFullCoin);
+          requestMap[OfferAssetData.singletonNft(
+              launcherPuzhash: nftFullCoin.launcherId)] = [1];
+        }
       }
 
       final changePh = keychain.puzzlehashes[2];
       final targetPh = keychain.puzzlehashes[3];
 
       debugPrint("SpentCoinsParents on creatingOffer: $spentCoinsParents");
-
-      var requestMap = offerAssetDataParamsRequested(requested);
-      var offerMap = offerAssetDataParamsOffered(offered);
+      debugPrint(
+          "Offer Mapping when creating an offer $offerMap : $spentCoinsParents");
+      debugPrint("Request Mapping when creating an offer $requestMap");
 
       final offer = await offerService.createOffer(
           requesteAmounts: requestMap,
@@ -591,13 +649,13 @@ class PushingTransaction {
           changePuzzlehash: changePh,
           targetPuzzleHash: targetPh,
           fee: fee);
-
       final str = offer.toBench32();
+
       _channel.invokeMethod("CreateOffer",
           {"offer": str, "spentCoins": jsonEncode(spentCoinsMap)});
     } catch (ex) {
       debugPrint("Exception in creating an offer : $ex");
-      _channel.invokeMethod("exception");
+      _channel.invokeMethod("ErrorPushingOffer");
     }
   }
 
@@ -692,7 +750,7 @@ class PushingTransaction {
       debugPrint(
           "PuzzleHash to get nft coins on speedy up hash : ${Puzzlehash.fromHex(fromAddress)} Info : ${Bytes.fromHex(nftCoinParentInfo)}");
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-          parent_coin_info: Bytes.fromHex(nftCoinParentInfo),
+          assetId: Bytes.fromHex(nftCoinParentInfo),
           puzzle_hash: Puzzlehash.fromHex(fromAddress));
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
@@ -811,7 +869,7 @@ class PushingTransaction {
           for (final coin in feeStandardCoinsTotal) {
             var isSpent =
                 spentCoinsParents.contains(coin.parentCoinInfo.toString());
-            if (!isSpent) {
+            if (!isSpent && coin.amount != 0) {
               curFee += coin.amount;
               standardCoinsForFee.add(coin);
             }
@@ -989,7 +1047,7 @@ class PushingTransaction {
         for (final coin in allCoins) {
           var isUsed =
               tranCoinsParents.contains(coin.parentCoinInfo.toString());
-          if (isUsed) {
+          if (isUsed && coin.amount != 0) {
             sum += coin.amount;
             requiredCoins.add(coin);
           }
@@ -1109,14 +1167,15 @@ class PushingTransaction {
     }
   }
 
-  Future<void> pushingOfferWithCAT(
+  Future<void> takingAnOffer(
       {required String offerString,
       required List<String> mnemonics,
       required String url,
       required int observer,
       required int nonObserver,
       required String spentCoins,
-      required int fee}) async {
+      required int fee,
+      required String requestedNFT}) async {
     try {
       debugPrint(
           "Fee : $fee Mnemonics : $mnemonics on pushingOfferWithCAT, url : $url observer : $observer nonObserver : $nonObserver fee: $fee");
@@ -1156,18 +1215,34 @@ class PushingTransaction {
       List<FullCoin> allFullCoins = [];
 
       Map<String, List<Coin>> spentCoinsMap = {};
+      List<FlutterToken> reqNFTList = parseFlutterTokenJsonString(requestedNFT);
 
-      debugPrint(
-          "Fee : $fee Mnemonics : $mnemonics on pushingOfferWithCAT : Analyzed : ${analized?.requested}");
+      final nftService =
+          NftNodeWalletService(fullNode: fullNode, keychain: keychain);
+
+      for (var nft in reqNFTList) {
+        var nftCoins = await nftService.getNFTCoinByParentCoinHash(
+            assetId: Bytes.fromHex(nft.assetID),
+            puzzle_hash: Puzzlehash.fromHex(nft.fromAddress));
+        final nftCoin = nftCoins[0];
+        final nftFullCoin = await nftService.convertFullCoin(nftCoin);
+        allFullCoins.add(nftFullCoin);
+      }
+
+      debugPrint("NFT Coins if requested : $allFullCoins");
+      var amountReqXCH = 0;
 
       for (var entry in analized!.requested.entries) {
         OfferAssetData? key = entry.key;
         final amountReq = entry.value[0].abs();
         debugPrint(
             "Amount CAT for pushing transaction : $amountReq, Key : $key");
+
         if (key != null &&
             key.assetId != null &&
             (key.type == SpendType.cat2 || key.type == SpendType.cat1)) {
+          keychain.addOuterPuzzleHashesForAssetId(
+              Puzzlehash.fromHex(key.assetId.toString()));
           futures.add(getFullCoinsByAssetId(
               url: url,
               fullNode: fullNode,
@@ -1177,21 +1252,22 @@ class PushingTransaction {
               spentCoinsParents: spentCoinsParents,
               spentCoinsMap: spentCoinsMap,
               reqAmount: amountReq));
-        } else {
-          futures.add(getFullXCHCoinsByAssetId(
-              url: url,
-              fullNode: fullNode,
-              assetId: "",
-              fullCoins: allFullCoins,
-              innerHashes: puzzleHashes,
-              spentCoinsParents: spentCoinsParents,
-              spentCoinsMap: spentCoinsMap,
-              xchAmount: amountReq + fee,
-              standartWalletService: standartWalletService));
+        } else if (key?.type != SpendType.nft) {
+          amountReqXCH = amountReq;
         }
       }
 
-      debugPrint("Futures size ${futures.length}");
+      futures.add(getFullXCHCoinsByAssetId(
+          url: url,
+          fullNode: fullNode,
+          assetId: "",
+          fullCoins: allFullCoins,
+          innerHashes: puzzleHashes,
+          spentCoinsParents: spentCoinsParents,
+          spentCoinsMap: spentCoinsMap,
+          xchAmount: amountReqXCH + fee,
+          standartWalletService: standartWalletService));
+
       await Future.wait(futures);
 
       final changePh = keychain.puzzlehashes[0];
@@ -1201,9 +1277,6 @@ class PushingTransaction {
           OffersService(fullNode: fullNode, keychain: keychain);
 
       final offerFrom32 = Offer.fromBench32(offerString);
-
-      debugPrint("Json Encode before responseOffer TargetPh: $targePh");
-      debugPrint("ChangePh before responseOffer: $changePh");
 
       final responseResult = await offerService.responseOffer(
           fee: fee,
@@ -1225,7 +1298,7 @@ class PushingTransaction {
           "PushingOffer", {"spentCoins": jsonEncode(spentCoinsMap)});
     } catch (ex) {
       debugPrint("ErrorPushingOffer with exception : $ex");
-      _channel.invokeMethod("ErrorPushingOffer", ex);
+      _channel.invokeMethod("ErrorPushingOffer", ex.toString());
     }
   }
 
@@ -1247,7 +1320,7 @@ class PushingTransaction {
     for (final coin in totalXCHCoins) {
       var isSpentCoin =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      if (!isSpentCoin) {
+      if (!isSpentCoin && coin.amount != 0) {
         curAmount += coin.amount;
         neededCoins.add(coin);
       }
@@ -1257,7 +1330,7 @@ class PushingTransaction {
     }
 
     fullCoins.addAll(standartWalletService.convertXchCoinsToFull(neededCoins));
-
+    debugPrint("Needed Coins for xch : $neededCoins");
     spentCoinsMap["null"] = neededCoins;
   }
 
@@ -1294,7 +1367,7 @@ class PushingTransaction {
     for (final coin in basicCatCoins) {
       var isCoinSpent =
           spentCoinsParents.contains(coin.parentCoinInfo.toString());
-      if (!isCoinSpent) {
+      if (!isCoinSpent && coin.amount != 0) {
         curAmount += coin.amount;
         neededCatCoins.add(coin);
         await getCatCoinsDetail(
@@ -2199,7 +2272,10 @@ class PushingTransaction {
       debugPrint(
           "Sending cat coins : $catCoins,  Dest Hash : ${Address(destAddress).toPuzzlehash()}");
       final spendBundle = catWalletService.createSpendBundle(
-          payments: [Payment(amount, Address(destAddress).toPuzzlehash())],
+          payments: [
+            Payment(amount, Address(destAddress).toPuzzlehash(),
+                memos: <Bytes>[Address(destAddress).toPuzzlehash().toBytes()])
+          ],
           catCoinsInput: catCoins,
           keychain: keyChainCAT,
           changePuzzlehash: keyChainCAT.puzzlehashes[0],
@@ -3027,7 +3103,7 @@ class PushingTransaction {
       debugPrint(
           "PuzzleHash to get nft coins on generate spend bundle : ${Puzzlehash.fromHex(fromAddress)}");
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-          parent_coin_info: coin.parentCoinInfo,
+          assetId: coin.parentCoinInfo,
           puzzle_hash: Puzzlehash.fromHex(fromAddress));
       final nftCoin = nftCoins[0];
       debugPrint("Found NFTCoin to send  $nftCoin");
@@ -3110,7 +3186,7 @@ class PushingTransaction {
     });
     FullNFTCoinInfo nftFullInfo = nftInfo.item1;
     if (nftInfo.item1.minterDid == null) {
-      final did = await getMinterNft(Puzzlehash(nftInfo.item1.launcherId));
+      final did = await getMinterNft(nftInfo.item1.launcherId);
       if (did != null) {
         nftFullInfo = nftFullInfo.copyWith(minterDid: did.didId);
       }
@@ -3120,7 +3196,7 @@ class PushingTransaction {
   }
 
   Future<DidInfo?> getMinterNft(
-    Puzzlehash launcherId,
+    Bytes launcherId,
   ) async {
     final body = <String, dynamic>{
       'parent_ids': [launcherId].map((parentId) => parentId.toHex()).toList(),
@@ -3179,7 +3255,7 @@ class PushingTransaction {
       final nftService =
           NftNodeWalletService(fullNode: fullNode, keychain: keychain);
       var nftCoins = await nftService.getNFTCoinByParentCoinHash(
-          parent_coin_info: Bytes.fromHex(parentCoinInfo),
+          assetId: Bytes.fromHex(parentCoinInfo),
           puzzle_hash: Puzzlehash.fromHex(puzzleHash),
           startHeight: startHeight);
       if (nftCoins.isEmpty) {
@@ -3218,5 +3294,19 @@ class PushingTransaction {
       debugPrint("Exception in uncurry nft second way : $ex");
       _channel.invokeMethod("exceptionNFT", ex.toString());
     }
+  }
+
+  Future<void> testingNamesDao() async {
+    await Future.delayed(Duration(seconds: 2));
+
+    final namesdaoInterface = NamesdaoApi();
+    const name = '___hahaha';
+    final nameInfo = await namesdaoInterface.getNameInfo(name);
+    debugPrint(
+        "Name info Address on testingNamesDao: ${nameInfo?.address.address}");
+    // expect(
+    //   nameInfo?.address.address,
+    //   equals('xch1l9hj8emh7xdk3y2d4kszeuu0z6gn27s9rlc0yz7uqgyjjtd0fegsvgsjtv'),
+    // );
   }
 }

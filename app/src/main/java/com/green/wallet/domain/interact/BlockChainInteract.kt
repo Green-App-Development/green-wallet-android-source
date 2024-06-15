@@ -3,6 +3,7 @@ package com.green.wallet.domain.interact
 import com.green.wallet.data.local.entity.WalletEntity
 import com.green.wallet.domain.domainmodel.NFTInfo
 import com.green.wallet.domain.domainmodel.NftOfferCoin
+import com.green.wallet.domain.domainmodel.PushResult
 import com.green.wallet.domain.domainmodel.Wallet
 import com.green.wallet.presentation.tools.Resource
 
@@ -28,7 +29,7 @@ interface BlockChainInteract {
         fee: Double,
         spentCoinsJson: String,
         spentCoinsToken: String
-    ): Resource<String>
+    ): Resource<PushResult>
 
     suspend fun updateTokenBalanceWithFullNode(wallet: WalletEntity)
 

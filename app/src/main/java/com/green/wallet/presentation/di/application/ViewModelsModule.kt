@@ -9,6 +9,7 @@ import com.green.wallet.presentation.main.address.AddressViewModel
 import com.green.wallet.presentation.main.allsettings.AllSettingsViewModel
 import com.green.wallet.presentation.main.createnewwallet.NewWalletViewModel
 import com.green.wallet.presentation.main.dapp.DAppViewModel
+import com.green.wallet.presentation.main.dapp.browser.BrowserViewModel
 import com.green.wallet.presentation.main.dapp.trade.TraderViewModel
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeViewModel
 import com.green.wallet.presentation.main.home.HomeFragmentViewModel
@@ -33,6 +34,7 @@ import com.green.wallet.presentation.main.swap.tibetliquiditydetail.TibetLiquidi
 import com.green.wallet.presentation.main.swap.tibetswap.TibetSwapViewModel
 import com.green.wallet.presentation.main.swap.tibetswapdetail.TibetSwapDetailViewModel
 import com.green.wallet.presentation.main.transaction.TransactionsViewModel
+import com.green.wallet.presentation.main.transaction.btmCancel.CancelOfferViewModel
 import com.green.wallet.presentation.main.transaction.btmSpeedy.SpeedyDialogViewModel
 import com.green.wallet.presentation.main.walletlist.WalletListViewModel
 import com.green.wallet.presentation.main.walletsettings.WalletSettingsViewModel
@@ -229,5 +231,15 @@ abstract class ViewModelsModule {
     @Binds
     @ViewModelKey(PinCodeViewModel::class)
     abstract fun bindingPinCodeViewModel(viewModel: PinCodeViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(CancelOfferViewModel::class)
+    abstract fun bindingCancelOfferViewModel(viewModel: CancelOfferViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(BrowserViewModel::class)
+    abstract fun bindingBrowserViewModel(viewModel: BrowserViewModel): ViewModel
 
 }

@@ -25,7 +25,7 @@ class DexieInteractImpl @Inject constructor(private val dexieService: DexieServi
             }
         } catch (ex: Exception) {
             VLog.d("Exception in getting dexie status $ex")
-            DexieFees()
+            DexieFees(min = 0.00028, 0.00028)
         }
     }
 

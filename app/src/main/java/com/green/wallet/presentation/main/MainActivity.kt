@@ -48,6 +48,7 @@ import com.green.wallet.presentation.main.createnewwallet.ProgressCreatingWallet
 import com.green.wallet.presentation.main.createnewwallet.SaveMnemonicsFragment
 import com.green.wallet.presentation.main.createnewwallet.VerificationFragment
 import com.green.wallet.presentation.main.dapp.trade.TraderFragment
+import com.green.wallet.presentation.main.dapp.trade.TraderFragment.Companion.URL_KEY
 import com.green.wallet.presentation.main.enterpasscode.EnterPasscodeFragment
 import com.green.wallet.presentation.main.home.HomeFragment
 import com.green.wallet.presentation.main.impmnemonics.ImpMnemonicFragment
@@ -357,6 +358,11 @@ class MainActivity : BaseActivity(), ComposeProvider {
                     window.statusBarColor = getColorResource(R.color.primary_app_background)
                 }
 
+                fragmentBrowser -> {
+                    setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+                    window.statusBarColor = getColorResource(R.color.primary_app_background)
+                }
+
                 else -> {
                     setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
                     window.statusBarColor = getColorResource(R.color.status_bar_color_send)
@@ -525,6 +531,7 @@ class MainActivity : BaseActivity(), ComposeProvider {
                     fragmentQrCodeSend,
                     fragmentSwapSend,
                     fragmentTibetSwapDetail,
+                    fragmentTrader
                 ).contains(destination.id)
             ) {
                 binding.mainBottomNav.visibility = View.GONE
@@ -620,7 +627,9 @@ class MainActivity : BaseActivity(), ComposeProvider {
         navController.navigate(entPasscodeFrMain, bundle)
     }
 
-    fun popBackStackOnce() = navController.popBackStack()
+    fun popBackStackOnce() {
+        navController.popBackStack()
+    }
 
     fun popBackStackTwice() {
         navController.popBackStack()
@@ -707,7 +716,13 @@ class MainActivity : BaseActivity(), ComposeProvider {
     }
 
     fun move2DAppFragment() {
-        navController.navigate(fragmentDApp)
+        navController.navigate(fragmentBrowser)
+    }
+
+    fun move2TraderFragment(url: String) {
+        val bundle = bundleOf()
+        bundle.putString(URL_KEY, url)
+        navController.navigate(fragmentTrader, bundle)
     }
 
     fun move2SwapFragment() {

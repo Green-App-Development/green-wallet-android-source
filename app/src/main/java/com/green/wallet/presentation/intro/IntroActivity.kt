@@ -25,146 +25,146 @@ import javax.inject.Inject
 
 class IntroActivity : BaseActivity() {
 
-	private val navController by lazy { findNavController(R.id.my_nav_host_fragment) }
+    private val navController by lazy { findNavController(R.id.my_nav_host_fragment) }
 
-	companion object {
-		const val INTRO_BUNDLE_KEY = "intro_bundle"
-	}
+    companion object {
+        const val INTRO_BUNDLE_KEY = "intro_bundle"
+    }
 
-	@Inject
-	lateinit var viewModelFactory: ViewModelFactory
-	val introViewModel: IntroActViewModel by viewModels { viewModelFactory }
-
-
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		navigateUser()
-		setContentView(R.layout.activity_intro)
-		initStatusBarColorRegulation()
-		VLog.d("Application is Alive : ${(application as App).applicationIsAlive}")
-		checkingIntentFromPush()
-	}
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    val introViewModel: IntroActViewModel by viewModels { viewModelFactory }
 
 
-	override fun onNewIntent(intent: Intent?) {
-		super.onNewIntent(intent)
-		VLog.d(
-			"Open with push notification message new intent : ${
-				intent?.getBundleExtra(
-					INTRO_BUNDLE_KEY
-				)
-			}"
-		)
-
-	}
-
-	private fun checkingIntentFromPush() {
-		val introBundle = intent.getBundleExtra(INTRO_BUNDLE_KEY)
-		if (introBundle == null) {
-			VLog.d("Intro Bundle is null on intro activity")
-			return
-		}
-		introBundle.keySet().forEach {
-			VLog.d("IntroBundle on intro activity key : $it -> value : ${introBundle.getString(it)}")
-		}
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        navigateUser()
+        setContentView(R.layout.activity_intro)
+        initStatusBarColorRegulation()
+        VLog.d("Application is Alive : ${(application as App).applicationIsAlive}")
+        checkingIntentFromPush()
+    }
 
 
-	private fun initStatusBarColorRegulation() {
-		navController.addOnDestinationChangedListener { navController, dest, bundle ->
-			when (dest.id) {
-				R.id.timeFragment -> {
-					setSystemUiLightStatusBar(isLightStatusBar = getStatusBarBcgColorBasedOnTime())
-					window.statusBarColor = getStatusBcgBarColorBasedOnTime(this)
-				}
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        VLog.d(
+            "Open with push notification message new intent : ${
+                intent?.getBundleExtra(
+                    INTRO_BUNDLE_KEY
+                )
+            }"
+        )
 
-				R.id.entPasscodeFragment -> {
-					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
-					window.statusBarColor = getColorResource(R.color.primary_app_background)
-				}
+    }
 
-				else -> {
-					setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
-					window.statusBarColor = getColorResource(R.color.primary_app_background)
-				}
-			}
-		}
-	}
-
-	@Suppress("DEPRECATION")
-	private fun setSystemUiLightStatusBar(isLightStatusBar: Boolean) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-				val systemUiAppearance = if (isLightStatusBar) {
-					WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-				} else {
-					0
-				}
-				window.insetsController?.setSystemBarsAppearance(
-					systemUiAppearance,
-					WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-				)
-			} else {
-				val systemUiVisibilityFlags = if (isLightStatusBar) {
-					window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-				} else {
-					window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-				}
-				window.decorView.systemUiVisibility = systemUiVisibilityFlags
-			}
-		}
-	}
-
-	private fun navigateUser() {
-		if (!(application as App).isUserUnBoardDed) {
-			move2OnboardingActivity(false)
-			return
-		}
-		lifecycleScope.launch {
-			val userUnBoarded = introViewModel.isUserUnBoarded()
-			VLog.d("UserBoarded Value : $userUnBoarded")
-			if (!userUnBoarded) {
-				move2OnboardingActivity(false)
-			}
-			val lastTimeVisited = introViewModel.getLastVisitedLongValue()
-			if ((application as App).applicationIsAlive && System.currentTimeMillis() - lastTimeVisited <= 180 * 1000) {
-				move2MainActivity()
-			}
-		}
-	}
-
-	fun move2MainActivity() {
-		Intent(this, MainActivity::class.java).apply {
-			addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-			putExtra(MAIN_BUNDLE_KEY, intent.getBundleExtra(INTRO_BUNDLE_KEY))
-			startActivity(this)
-			finish()
-		}
-	}
-
-	fun move2TimeFragment() {
-		navController.navigate(R.id.action_entPasswordFragment_to_timeFragment)
-	}
-
-	fun move2EntPasscodeFragment() {
-
-	}
+    private fun checkingIntentFromPush() {
+        val introBundle = intent.getBundleExtra(INTRO_BUNDLE_KEY)
+        if (introBundle == null) {
+            VLog.d("Intro Bundle is null on intro activity")
+            return
+        }
+        introBundle.keySet().forEach {
+            VLog.d("IntroBundle on intro activity key : $it -> value : ${introBundle.getString(it)}")
+        }
+    }
 
 
-	fun move2OnboardingActivity(reset_app_clicked: Boolean) {
-		VLog.d("Moving to onboarding activity")
-		Intent(this, OnBoardActivity::class.java).apply {
-			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-			putExtra(OnBoardActivity.RESET_APP_CLICKED, reset_app_clicked)
-			startActivity(this)
-			finish()
-		}
-	}
+    private fun initStatusBarColorRegulation() {
+        navController.addOnDestinationChangedListener { navController, dest, bundle ->
+            when (dest.id) {
+                R.id.timeFragment -> {
+                    setSystemUiLightStatusBar(isLightStatusBar = getStatusBarBcgColorBasedOnTime())
+                    window.statusBarColor = getStatusBcgBarColorBasedOnTime(this)
+                }
 
-	override fun onDestroy() {
-		super.onDestroy()
-		VLog.d("onDestroy  in IntroActivity")
-	}
+                R.id.entPasscodeFragment -> {
+                    setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+                    window.statusBarColor = getColorResource(R.color.primary_app_background)
+                }
+
+                else -> {
+                    setSystemUiLightStatusBar(isLightStatusBar = getBooleanResource(R.bool.light_status_bar))
+                    window.statusBarColor = getColorResource(R.color.primary_app_background)
+                }
+            }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setSystemUiLightStatusBar(isLightStatusBar: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val systemUiAppearance = if (isLightStatusBar) {
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                } else {
+                    0
+                }
+                window.insetsController?.setSystemBarsAppearance(
+                    systemUiAppearance,
+                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                )
+            } else {
+                val systemUiVisibilityFlags = if (isLightStatusBar) {
+                    window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                } else {
+                    window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                }
+                window.decorView.systemUiVisibility = systemUiVisibilityFlags
+            }
+        }
+    }
+
+    private fun navigateUser() {
+        if (!(application as App).isUserUnBoardDed) {
+            move2OnboardingActivity(false)
+            return
+        }
+        lifecycleScope.launch {
+            val userUnBoarded = introViewModel.isUserUnBoarded()
+            VLog.d("UserBoarded Value : $userUnBoarded")
+            if (!userUnBoarded) {
+                move2OnboardingActivity(false)
+            }
+            val lastTimeVisited = introViewModel.getLastVisitedLongValue()
+            if ((application as App).applicationIsAlive && System.currentTimeMillis() - lastTimeVisited <= 180 * 1000) {
+                move2MainActivity()
+            }
+        }
+    }
+
+    fun move2MainActivity() {
+        Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(MAIN_BUNDLE_KEY, intent.getBundleExtra(INTRO_BUNDLE_KEY))
+            startActivity(this)
+            finish()
+        }
+    }
+
+    fun move2TimeFragment() {
+        navController.navigate(R.id.action_entPasswordFragment_to_timeFragment)
+    }
+
+    fun move2EntPasscodeFragment() {
+
+    }
+
+
+    fun move2OnboardingActivity(reset_app_clicked: Boolean) {
+        VLog.d("Moving to onboarding activity")
+        Intent(this, OnBoardActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(OnBoardActivity.RESET_APP_CLICKED, reset_app_clicked)
+            startActivity(this)
+            finish()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        VLog.d("onDestroy  in IntroActivity")
+    }
 
 
 }

@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:src="@drawable/ic_speed_up"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@+id/txtHeightTrans"
                     app:layout_constraintStart_toEndOf="@+id/txtHeightTrans"
                     app:layout_constraintTop_toTopOf="@+id/txtHeightTrans" />

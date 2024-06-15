@@ -26,9 +26,27 @@ sealed interface TraderEvent {
 
     data class ChoseFee(val fee: Double) : TraderEvent
 
-    object PinConfirmAcceptOffer : TraderEvent
+    object PinnedAcceptOffer : TraderEvent
 
     object PinnedCreateOffer : TraderEvent
     object ShowPinCreateOffer : TraderEvent
+
+    object OnBack : TraderEvent
+
+    object OnReload : TraderEvent
+
+    object OnShare : TraderEvent
+
+    object OnCopyLink : TraderEvent
+
+    object OnDisable : TraderEvent
+
+    object CloseBtmOffer : TraderEvent
+
+    data class ChangedUrl(val url: String) : TraderEvent
+
+    object PageStarting : TraderEvent
+
+    object PageFinishedLoading : TraderEvent
 
 }

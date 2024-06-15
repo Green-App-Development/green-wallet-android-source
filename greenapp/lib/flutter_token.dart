@@ -26,7 +26,6 @@ class FlutterToken {
   String toString() {
     return 'FlutterToken{amount: $amount, assetID: $assetID, fromAddress: $fromAddress, type: $type}';
   }
-
 }
 
 List<FlutterToken> parseFlutterTokenJsonString(String jsonString) {
@@ -39,4 +38,3 @@ List<FlutterToken> parseFlutterTokenJsonString(String jsonString) {
 
   return flutterTokens;
 }
-

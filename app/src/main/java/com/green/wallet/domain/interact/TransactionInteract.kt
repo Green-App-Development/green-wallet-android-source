@@ -1,8 +1,7 @@
 package com.green.wallet.domain.interact
 
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
-import com.green.wallet.domain.domainmodel.Transaction
+import com.green.wallet.domain.domainmodel.TransferTransaction
 import com.green.wallet.presentation.tools.Status
 import kotlinx.coroutines.flow.Flow
 
@@ -17,7 +16,7 @@ interface TransactionInteract {
         at_least_created_at: Long?,
         yesterday: Long?,
         today: Long?
-    ): List<Transaction>
+    ): List<TransferTransaction>
 
     fun getTransactionsFlowByProvidedParameters(
         fkAddress: String?,
@@ -28,7 +27,7 @@ interface TransactionInteract {
         yesterday: Long?,
         today: Long?,
         tokenCode: String?
-    ): kotlinx.coroutines.flow.Flow<List<Transaction>>
+    ): kotlinx.coroutines.flow.Flow<List<TransferTransaction>>
 
     suspend fun getMempoolTransactionsAmountByAddressAndToken(
         address: String,
@@ -45,7 +44,7 @@ interface TransactionInteract {
         yesterday: Long?,
         today: Long?,
         tokenCode: String?
-    ): Flow<PagingData<Transaction>>
+    ): Flow<PagingData<TransferTransaction>>
 
     suspend fun deleteTransByID(tranID: String)
 

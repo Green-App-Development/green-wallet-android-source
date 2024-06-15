@@ -432,5 +432,8 @@
     <string name="delete_tran_sub_title" />
     <string name="delete_tran_btn_cancel" />
     <string name="delete_tran_btn_delete" />
+    <string name="cancel_offer">Cancel Offer</string>
+    <string name="coins_will_be_sent">Coins will be sent</string>
+    <string name="address_doesnt_found">Address does not found or exist</string>
 
 </resources>

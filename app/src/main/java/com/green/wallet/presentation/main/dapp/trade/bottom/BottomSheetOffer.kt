@@ -55,6 +55,7 @@ import com.green.compose.dimens.size_18
 import com.green.compose.dimens.size_20
 import com.green.compose.dimens.size_26
 import com.green.compose.dimens.size_300
+import com.green.compose.dimens.size_36
 import com.green.compose.dimens.size_4
 import com.green.compose.dimens.size_6
 import com.green.compose.dimens.size_80
@@ -64,6 +65,7 @@ import com.green.compose.dimens.text_14
 import com.green.compose.dimens.text_15
 import com.green.compose.dimens.text_16
 import com.green.compose.extension.pxToDp
+import com.green.compose.progress.CircularProgressBar
 import com.green.compose.text.DefaultText
 import com.green.compose.theme.GreenWalletTheme
 import com.green.compose.theme.Provider
@@ -72,6 +74,7 @@ import com.green.wallet.presentation.custom.formattedDoubleAmountWithPrecision
 import com.green.wallet.presentation.main.dapp.trade.OfferViewState
 import com.green.wallet.presentation.main.dapp.trade.models.CatToken
 import com.green.wallet.presentation.main.dapp.trade.models.NftToken
+import com.green.wallet.presentation.main.dapp.trade.models.Token
 import com.green.wallet.presentation.tools.VLog
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -181,40 +184,43 @@ fun ModelBottomSheetOffer(
                     )
                     FixedSpacer(height = size_12)
 
-                    LazyColumn(
-                        modifier = modifierLazy
-                            .fillMaxWidth()
-                            .heightIn(0.dp, size_300)
-                            .onGloballyPositioned {
-                                heightOfLazyColumn = pxToDp(it.size.height)
-                            }
-                    ) {
-                        items(items = state.offered) { item ->
-                            when (item) {
-                                is CatToken -> {
-                                    CatTokenItem(item, !state.acceptOffer)
+                    if (state.offered.isNotEmpty() && state.requested.isNotEmpty()) {
+                        LazyColumn(
+                            modifier = modifierLazy
+                                .fillMaxWidth()
+                                .heightIn(0.dp, size_300)
+                                .onGloballyPositioned {
+                                    heightOfLazyColumn = pxToDp(it.size.height)
                                 }
+                        ) {
+                            items(items = state.offered) { item ->
+                                when (item) {
+                                    is CatToken -> {
+                                        CatTokenItem(item, !state.acceptOffer)
+                                    }
 
-                                is NftToken -> {
-                                    NftItem(item, !state.acceptOffer)
+                                    is NftToken -> {
+                                        NFTTokenDApp(item, !state.acceptOffer)
+                                    }
                                 }
+                                FixedSpacer(height = size_10)
                             }
-                            FixedSpacer(height = size_10)
-                        }
-                        items(items = state.requested) { item ->
-                            when (item) {
-                                is CatToken -> {
-                                    CatTokenItem(item, state.acceptOffer)
-                                }
+                            items(items = state.requested) { item ->
+                                when (item) {
+                                    is CatToken -> {
+                                        CatTokenItem(item, state.acceptOffer)
+                                    }
 
-                                is NftToken -> {
-                                    NftItem(item, state.acceptOffer)
+                                    is NftToken -> {
+                                        NFTTokenDApp(item, state.acceptOffer)
+                                    }
                                 }
+                                FixedSpacer(height = size_10)
                             }
-                            FixedSpacer(height = size_10)
                         }
+                    } else {
+                        CircularProgressBar(size = size_36)
                     }
-
                     FixedSpacer(height = size_15)
                     Box(
                         modifier = Modifier
@@ -259,7 +265,9 @@ fun ModelBottomSheetOffer(
                 }
                 FixedSpacer(height = size_20)
                 DefaultButton(
-                    bcgColor = Provider.current.green,
+                    isEnabled = state.btnEnabled,
+                    bcgColor = if (state.btnEnabled) Provider.current.green
+                    else Provider.current.btnInActive,
                     onClick = {
                         sign()
                     }) {
@@ -293,20 +301,22 @@ fun SpendableBalance(
         if (requested.size == 1) {
             val str = when (val item = requested[0]) {
                 is CatToken -> {
-                    "${item.code} ${item.spendableBalance}"
+                    "${item.code} ${formattedDoubleAmountWithPrecision(item.spendableBalance)}"
+                }
+
+                is NftToken -> {
+                    item.collection
                 }
 
                 else -> ""
             }
 
-            if (str.isNotEmpty()) {
-                val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
-                DefaultText(
-                    text = "Spendable Balance: $str",
-                    size = text_12,
-                    color = clr
-                )
-            }
+            val clr = getColorOfSpendableBalance(state, requested[0])
+            DefaultText(
+                text = "Spendable Balance: $str",
+                size = text_12,
+                color = clr
+            )
         } else {
             if (!expanded) {
                 DefaultText(
@@ -334,21 +344,23 @@ fun SpendableBalance(
                     for (i in requested.indices) {
                         val str = when (val item = requested[i]) {
                             is CatToken -> {
-                                "${item.code} ${item.spendableBalance}"
+                                "${item.code} ${formattedDoubleAmountWithPrecision(item.spendableBalance)}"
+                            }
+
+                            is NftToken -> {
+                                item.collection
                             }
 
                             else -> ""
                         }
 
-                        if (str.isNotEmpty()) {
-                            val clr = getColorOfSpendableBalanceCAT(state, requested[0] as CatToken)
+                        val clr = getColorOfSpendableBalance(state, requested[i])
 
-                            DefaultText(
-                                text = str,
-                                size = text_12,
-                                color = clr
-                            )
-                        }
+                        DefaultText(
+                            text = str,
+                            size = text_12,
+                            color = clr
+                        )
                     }
 
                     Box(modifier = Modifier.fillMaxWidth()) {
@@ -370,21 +382,36 @@ fun SpendableBalance(
 }
 
 @Composable
-fun getColorOfSpendableBalanceCAT(state: OfferViewState, catToken: CatToken): Color {
-    return when (catToken.code) {
-        "XCH" -> {
-            val total = catToken.amount + state.chosenFee
-            if (total <= catToken.spendableBalance) {
-                Provider.current.greyText
-            } else
+fun getColorOfSpendableBalance(state: OfferViewState, token: Token): Color {
+    return when (token) {
+        is NftToken -> {
+            if (token.nftCoinHash.isEmpty())
                 Provider.current.errorColor
+            else
+                Provider.current.greyText
+        }
+
+        is CatToken -> {
+            when (token.code) {
+                "XCH" -> {
+                    val total = token.amount + state.chosenFee
+                    if (total <= token.spendableBalance) {
+                        Provider.current.greyText
+                    } else
+                        Provider.current.errorColor
+                }
+
+                else -> {
+                    if (token.amount <= token.spendableBalance) {
+                        Provider.current.greyText
+                    } else
+                        Provider.current.errorColor
+                }
+            }
         }
 
         else -> {
-            if (catToken.amount <= catToken.spendableBalance) {
-                Provider.current.greyText
-            } else
-                Provider.current.errorColor
+            Provider.current.greyText
         }
     }
 }
@@ -429,8 +456,7 @@ fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
                 DefaultText(
                     text = formatString(10, nftToken.nftId, 6),
                     size = text_14,
-                    color = Provider.current.secondPrimaryTextColor,
-                    fontWeight = FontWeight.W500
+                    color = Provider.current.secondPrimaryTextColor
                 )
             }
 
@@ -444,6 +470,31 @@ fun NftItem(nftToken: NftToken, acceptOffer: Boolean) {
                 modifier = Modifier.align(Alignment.BottomEnd)
             )
         }
+    }
+}
+
+@Composable
+fun NFTTokenDApp(item: NftToken, acceptOffer: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        DefaultText(
+            text = item.collection,
+            size = text_14,
+            color = Provider.current.txtPrimaryColor,
+            textAlign = TextAlign.Start
+        )
+        val nftText = if (acceptOffer) "-1 NFT" else "+1 NFT"
+        val nftColor =
+            if (acceptOffer) Provider.current.errorColor else Provider.current.green
+        DefaultText(
+            text = nftText,
+            size = text_14,
+            color = nftColor,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Start
+        )
     }
 }
 

@@ -7,6 +7,7 @@ import com.green.wallet.BuildConfig
 import com.green.wallet.data.network.DexieService
 import com.green.wallet.data.network.ExchangeService
 import com.green.wallet.data.network.GreenAppService
+import com.green.wallet.data.network.SearchService
 import com.green.wallet.data.network.TibetExchangeService
 import com.green.wallet.data.network.getUnsafeOkHttpClient
 import com.green.wallet.presentation.di.application.AppScope
@@ -24,7 +25,7 @@ import javax.inject.Named
 @Module
 class NetworkModule {
 
-    @AppScope
+
     @Provides
     @Named("retrofit_green_app")
     fun provideLanguageRetrofitInstance(@Named("chucker") httpClient: OkHttpClient): Retrofit {
@@ -40,7 +41,6 @@ class NetworkModule {
     }
 
 
-    @AppScope
     @Provides
     @Named("retrofit_tibet_api")
     fun provideDexieRetrofitInstance(@Named("chucker") httpClient: OkHttpClient): Retrofit {
@@ -51,11 +51,10 @@ class NetworkModule {
             ).build()
     }
 
-    @AppScope
+
     @Provides
     @Named("retrofit_dexie_api")
     fun provideTibetRetrofitInstance(@Named("chucker") httpClient: OkHttpClient): Retrofit {
-
 
         return Retrofit.Builder().baseUrl(BuildConfig.DEXIE_API)
             .client(httpClient).addConverterFactory(
@@ -65,13 +64,11 @@ class NetworkModule {
 
 
     @Provides
-    @AppScope
     fun provideLanguageService(@Named("retrofit_green_app") retrofit: Retrofit) = retrofit.create(
         GreenAppService::class.java
     )
 
     @Provides
-    @AppScope
     fun provideExchangeService(@Named("retrofit_green_app") retrofit: Retrofit) = retrofit.create(
         ExchangeService::class.java
     )
@@ -110,5 +107,13 @@ class NetworkModule {
         return getUnsafeOkHttpClient(interceptor, ChuckInterceptor(context))
     }
 
+    @Provides
+    fun provideSearchService(@Named("chucker") httpClient: OkHttpClient): SearchService {
+        return Retrofit.Builder().baseUrl(BuildConfig.SEARCH_API)
+            .client(httpClient).addConverterFactory(
+                GsonConverterFactory.create()
+            ).build()
+            .create(SearchService::class.java)
+    }
 
 }

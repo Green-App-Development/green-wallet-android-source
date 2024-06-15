@@ -35,4 +35,10 @@ interface SpentCoinsDao {
     @Query("SELECT * FROM SpentCoins WHERE time_created=:timeCreated")
     fun getSpentCoinsByTranTimeCreated(timeCreated: Long): List<SpentCoinsEntity>
 
+    @Query("SELECT * FROM SpentCoins WHERE time_created=:timeCreated AND code=:code")
+    fun getSpentCoinsByTranTimeCreatedCode(timeCreated: Long, code: String): List<SpentCoinsEntity>
+
+    @Query("DELETE FROM SpentCoins")
+    fun deleteAllSpentCoinsFromInDB()
+
 }

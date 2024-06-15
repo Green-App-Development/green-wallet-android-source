@@ -7,12 +7,19 @@ import de.andycandy.android.bridge.CallType
 import de.andycandy.android.bridge.DefaultJSInterface
 import de.andycandy.android.bridge.NativeCall
 
+//        android:networkSecurityConfig="@xml/network_security_config"
+
 class GreenWalletJS(
+    private val state: TraderViewState,
     private val onEvent: (TraderEvent) -> Unit
 ) : DefaultJSInterface("GreenWallet") {
 
     @NativeCall(CallType.FULL_PROMISE)
     fun connect() = doInBackground { promise ->
+        if (state.isConnected) {
+            promise.resolve(true)
+            return@doInBackground
+        }
         onEvent(TraderEvent.ShowConnectionDialog)
         JavaJSThreadCommunicator.wait = true
         while (JavaJSThreadCommunicator.wait) {
@@ -57,8 +64,21 @@ class GreenWalletJS(
                 Thread.sleep(1000L)
                 VLog.d("Waiting for createOffer : Name Thread: ${Thread.currentThread().name}")
             }
-            promise.resolve(JavaJSThreadCommunicator.resultCreateOffer)
+            promise.resolve(
+                JavaJSThreadCommunicator.resultCreateOffer
+            )
         }
 
+    @NativeCall(CallType.FULL_PROMISE)
+    fun loadNewUrl(url: String) =
+        doInBackground { promise ->
+            VLog.d("Url in JavaJS Communicator : $url")
+            promise.resolve("")
+        }
+
+    @NativeCall(CallType.FULL_PROMISE)
+    fun checkGreenWallet() = doInBackground { promise ->
+        promise.resolve(true)
+    }
 
 }

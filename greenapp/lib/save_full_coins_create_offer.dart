@@ -1,7 +1,8 @@
 import 'package:chia_crypto_utils/chia_crypto_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_splash_screen_module/flutter_token.dart';
-import 'package:flutter_splash_screen_module/pushing_transaction.dart';
+
+import 'nft_service.dart';
 
 Future<void> saveFullCoinsCAT(
     String url,
@@ -40,7 +41,7 @@ Future<void> saveFullCoinsCAT(
   var curCATAmount = 0;
   for (final coin in responseDataCAT) {
     var isCoinSpent = spentCoinsParents.contains("0x${coin.parentCoinInfo}");
-    if (!isCoinSpent) {
+    if (!isCoinSpent && coin.amount != 0) {
       curCATAmount += coin.amount;
       neededCoins.add(coin);
       await getCatCoinsDetail(
@@ -100,7 +101,7 @@ Future<void> saveFullCoinsXCH(
   var curXCHAmount = 0;
   for (var coin in totalXCHCoins) {
     var isCoinSpent = spentCoinsParents.contains("0x${coin.parentCoinInfo}");
-    if (!isCoinSpent) {
+    if (!isCoinSpent && coin.amount != 0) {
       curXCHAmount += coin.amount;
       neededXCHCoins.add(coin);
       if (curXCHAmount >= token.amount + fee) {
@@ -130,10 +131,10 @@ Future<void> getCatCoinsDetail(
   ));
 }
 
-Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
-    List<FlutterToken> list) {
-  Map<OfferAssetData?, List<int>> param = <OfferAssetData?, List<int>>{};
-
+Future<void> offerAssetDataParamsRequested(
+    List<FlutterToken> list,
+    NftNodeWalletService nftService,
+    Map<OfferAssetData?, List<int>> param) async {
   for (var item in list) {
     var amount = item.amount;
     if (item.type == "CAT") {
@@ -141,9 +142,23 @@ Map<OfferAssetData?, List<int>> offerAssetDataParamsRequested(
       param[OfferAssetData.cat(tailHash: tokenHash)] = [amount];
     } else if (item.type == 'XCH') {
       param[null] = [amount];
-    } else {}
+    } else {
+      //with full coin
+      var nftCoin = await nftService
+          .getNftFullCoinWithLauncherId(Puzzlehash.fromHex(item.assetID));
+
+      final nftFullCoin = await nftService.convertFullCoin(nftCoin!);
+
+      debugPrint("Found NFTCoins LauncherID : ${nftFullCoin.launcherId}");
+      param[OfferAssetData.singletonNft(
+          launcherPuzhash: nftFullCoin.launcherId)] = [1];
+
+      // //with just nftID
+      // final nftAddress = NftAddress(item.assetID);
+      // param[OfferAssetData.singletonNft(
+      //     launcherPuzhash: nftAddress.toPuzzlehash())] = [1];
+    }
   }
-  return param;
 }
 
 Map<OfferAssetData?, int> offerAssetDataParamsOffered(List<FlutterToken> list) {
@@ -156,7 +171,7 @@ Map<OfferAssetData?, int> offerAssetDataParamsOffered(List<FlutterToken> list) {
       final tokenHash = Puzzlehash.fromHex(item.assetID);
       param[OfferAssetData.cat(tailHash: tokenHash)] = -amount;
     } else if (item.type == 'XCH') {
-      param[null] = amount;
+      param[null] = -amount;
     } else {}
   }
 
