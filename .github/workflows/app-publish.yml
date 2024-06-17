@@ -43,7 +43,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew publishBundle
       - name: Build with Gradle
-        run: ./gradlew assembleRelease
+        run: ./gradlew app:assembleRelease
       - name: Display APK directory contents
         run: ls $GITHUB_WORKSPACE/app/build/outputs/apk/release/
       - name: Read permission
