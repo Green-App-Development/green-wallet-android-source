@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "fix-migration" ]
+    branches: [ "main" ]
 
 jobs:
   build:
