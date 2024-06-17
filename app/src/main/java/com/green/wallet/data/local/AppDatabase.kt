@@ -216,9 +216,9 @@ abstract class AppDatabase : RoomDatabase() {
 
                 val createCancelTranTable = """
             CREATE TABLE IF NOT EXISTS CancelTransactionEntity (
-                offerTranID TEXT NOT NULL,
+                offerTranID TEXT PRIMARY KEY NOT NULL,
                 addressFk TEXT NOT NULL,
-                createdTime INTEGER NOT NULL,
+                createAtTime INTEGER NOT NULL,
                 FOREIGN KEY(addressFk) REFERENCES WalletEntity(address) ON DELETE CASCADE
             )
         """.trimIndent()

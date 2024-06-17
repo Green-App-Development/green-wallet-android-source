@@ -128,12 +128,7 @@ class App : DaggerApplication() {
         initWorkManager()
         subscribingToTopic()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            spentCoinsInteract.clearAllSpentCoins()
-        }
-
     }
-
 
     private fun subscribingToTopic() {
         FirebaseMessaging.getInstance().subscribeToTopic("news")

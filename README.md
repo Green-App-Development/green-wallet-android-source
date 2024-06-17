@@ -9,6 +9,8 @@ Green Wallet is an open source non-custodial wallet for Chia (XCH) with a user-f
 - send and receive CAT2 tokens 🐈
 - send and receive NFTs 🖼
 - receive transaction notifications 💬
+- exchange XCH to USDT
+- get access to TibetSwap
 
 Your keys belong only to you! 🔐
 We do not send your mnemonic or private key to our server🛑
