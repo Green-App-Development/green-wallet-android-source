@@ -140,7 +140,7 @@ class SpentCoinsInteractImpl @Inject constructor(
     }
 
     override suspend fun clearAllSpentCoins() {
-        spentCoinsDao.deleteAllSpentCoinsFromInDB()
+//        spentCoinsDao.deleteAllSpentCoinsFromInDB()
     }
 
 }
