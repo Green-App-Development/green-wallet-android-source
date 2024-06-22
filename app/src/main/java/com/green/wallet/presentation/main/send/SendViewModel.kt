@@ -16,8 +16,10 @@ import com.green.wallet.presentation.tools.ReasonEnterCode
 import com.green.wallet.presentation.tools.Resource
 import com.green.wallet.presentation.tools.VLog
 import com.greenwallet.core.base.BaseViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -139,8 +141,11 @@ class SendViewModel @Inject constructor(
         _viewState.update { it.copy(isLoading = loading) }
     }
 
+    private var xchJob: Job? = null
+
     fun updateSpendableBalance(wallet: WalletWithTokens) {
-        viewModelScope.launch {
+        xchJob?.cancel()
+        xchJob = viewModelScope.launch {
             spentCoinsInteract.getSpentCoinsBalanceByAddressAndCode(wallet.address, "XCH")
                 .collect { amount ->
 //                    VLog.d("Wallet's With Amount : ${wallet.tokenWalletList[0].amount} on update spendable balance")
@@ -172,13 +177,13 @@ class SendViewModel @Inject constructor(
 
     fun updateSendingAmount(amountStr: String) {
         val amount = amountStr.toDoubleOrNull()
-//        VLog.d("Amount String Sending : $amount")
-        validatingEnoughAmounts()
+        VLog.d("Amount String Sending : $amount")
         if (amount == 0.0 || amount == null) {
             _viewState.update { it.copy(sendingAmount = 0.0, amountValid = false) }
         } else {
             _viewState.update { it.copy(sendingAmount = amount, amountValid = true) }
         }
+        validatingEnoughAmounts()
     }
 
     fun updateSendingAddress(address: String) {
@@ -216,9 +221,11 @@ class SendViewModel @Inject constructor(
     private fun validatingEnoughAmounts() {
         val value = viewState.value
         if (viewState.value.xchSending) {
+//            Timber.d("Sending Amount : ${value.sendingAmount}  Choose Fee : ${value.chosenFee}")
             val totalAmount = value.sendingAmount + value.chosenFee
             val isEnough = totalAmount <= value.xchSpendableBalance
             _viewState.update { it.copy(isSendingAmountEnough = isEnough, isFeeEnough = isEnough) }
+//            Timber.d("is enough sending view state : ${viewState.value}")
         } else {
             val sendEnough = value.sendingAmount <= value.catSpendableAmount
             val feeEnough = value.chosenFee <= value.xchSpendableBalance
